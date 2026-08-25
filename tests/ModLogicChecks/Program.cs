@@ -40,6 +40,10 @@ state.HonorRitual();
 Check(state.Order == KongziMuduoOrder.Dishonored, "A later Skill must not undo discourtesy.");
 Check(state.GetNextSkillStrengthToGrant(5) == 0, "Skills played after discourtesy must grant no Strength.");
 
+Check(KongziMuduoConsoleText.GrantSuccess ==
+        "Granted Muduo. Zhou Li applies from the player's next applicable card play.",
+    "The Muduo grant message must not claim that an immediately active relic waits for the next turn.");
+
 Console.WriteLine("Zhou Li logic checks passed.");
 
 static int PlayXunziShengMoCards(

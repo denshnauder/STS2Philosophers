@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Relics\Kongzi\KongziMuduoState.cs" Link="KongziMuduoState.cs" />
+    <Compile Include="..\..\src\Relics\Kongzi\KongziMuduoConsoleText.cs" Link="KongziMuduoConsoleText.cs" />
     <Compile Include="..\..\src\Relics\Kongzi\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />
     <Compile Include="..\..\src\Relics\Kongzi\KongziQingYuPeiRewardPolicy.cs" Link="KongziQingYuPeiRewardPolicy.cs" />
     <Compile Include="..\..\src\Relics\Mengzi\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />

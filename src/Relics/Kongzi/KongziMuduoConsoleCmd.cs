@@ -31,6 +31,6 @@ public sealed class KongziMuduoConsoleCmd : AbstractConsoleCmd
         return new CmdResult(
             RelicCmd.Obtain<KongziMuduo>(issuingPlayer),
             true,
-            "Granted Muduo. Zhou Li begins at the start of the player's next turn.");
+            KongziMuduoConsoleText.GrantSuccess);
     }
 }
