@@ -55,10 +55,14 @@ public sealed class PhilosophersGaze : EventModel
             return;
         }
 
-        if (owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null
-            || owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null)
+        PhilosophersGazeRelicOwnership ownership = new(
+            owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
+            owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
+            owner.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
+            owner.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null);
+        if (!PhilosophersGazeRelicGrantPolicy.CanGrant(ownership))
         {
-            Log.Info("[STS2MinimalMod] PhilosophersGaze skipped relic obtain because the player already owns an MVP blessing.");
+            Log.Info("[STS2MinimalMod] PhilosophersGaze skipped relic obtain because the player already owns a prototype relic.");
             return;
         }
 

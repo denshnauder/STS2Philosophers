@@ -13,5 +13,6 @@
     <Compile Include="..\..\src\Relics\Mengzi\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />
     <Compile Include="..\..\src\Relics\Xunzi\XunziShengMoState.cs" Link="XunziShengMoState.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
+    <Compile Include="..\..\src\Events\PhilosophersGazeRelicGrantPolicy.cs" Link="PhilosophersGazeRelicGrantPolicy.cs" />
   </ItemGroup>
 </Project>

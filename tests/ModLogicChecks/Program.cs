@@ -437,3 +437,36 @@ Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
     "The singleplayer MVP must not intercept multiplayer runs.");
 
 Console.WriteLine("PhilosophersGaze interception policy checks passed.");
+
+Check(PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false)),
+    "PhilosophersGaze must grant an event relic when the player owns no prototype relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: true,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false)),
+    "Owning Muduo must prevent PhilosophersGaze from granting a second prototype relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: true,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false)),
+    "Owning Green Jade Pendant must prevent PhilosophersGaze from granting a second prototype relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: true,
+        HasXunziShengMo: false)),
+    "Owning Bear Paw must prevent PhilosophersGaze from granting a second prototype relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: true)),
+    "Owning Ink Line must prevent PhilosophersGaze from granting a second prototype relic.");
+
+Console.WriteLine("PhilosophersGaze relic grant policy checks passed.");
