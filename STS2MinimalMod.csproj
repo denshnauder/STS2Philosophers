@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>STS2MinimalMod</AssemblyName>
+    <RootNamespace>STS2MinimalMod</RootNamespace>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <Import Project="local.props" Condition="Exists('local.props')" />
+
+  <PropertyGroup>
+    <GameManagedDirectory Condition="'$(GameDirectory)' != ''">$(GameDirectory)\data_sts2_windows_x86_64</GameManagedDirectory>
+    <ModInstallDirectory Condition="'$(GameDirectory)' != ''">$(GameDirectory)\mods\$(AssemblyName)</ModInstallDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**\*.cs" />
+
+    <Reference Include="sts2">
+      <HintPath>$(GameManagedDirectory)\sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="GodotSharp">
+      <HintPath>$(GameManagedDirectory)\GodotSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(GameManagedDirectory)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="BuildContentPck" BeforeTargets="DeployMod" Condition="'$(DeployOnBuild)' != 'false'">
+    <Error Condition="'$(GodotExecutable)' == ''"
+           Text="GodotExecutable is not configured. Set it in local.props." />
+    <Error Condition="!Exists('$(GodotExecutable)')"
+           Text="Could not find $(GodotExecutable). Check GodotExecutable in local.props." />
+    <Error Condition="'$(DotNetRoot)' == '' Or !Exists('$(DotNetRoot)\dotnet.exe')"
+           Text="DotNetRoot is not configured or does not contain dotnet.exe. Check DotNetRoot in local.props." />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\tools\BuildContentPck.ps1&quot; -GodotExecutable &quot;$(GodotExecutable)&quot; -DotNetRoot &quot;$(DotNetRoot)&quot; -ProjectDirectory &quot;$(MSBuildProjectDirectory)\content&quot; -OutputPath &quot;$(TargetDir)$(AssemblyName).pck&quot;" />
+  </Target>
+
+  <Target Name="ValidateGameDirectory" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(GameDirectory)' == ''"
+           Text="GameDirectory is not configured. Copy local.props.example to local.props and set the STS2 installation path." />
+    <Error Condition="!Exists('$(GameManagedDirectory)\sts2.dll')"
+           Text="Could not find $(GameManagedDirectory)\sts2.dll. Check GameDirectory in local.props." />
+  </Target>
+
+  <Target Name="DeployMod" AfterTargets="Build" Condition="'$(DeployOnBuild)' != 'false'">
+    <MakeDir Directories="$(ModInstallDirectory)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModInstallDirectory)" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).pck" DestinationFolder="$(ModInstallDirectory)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\STS2MinimalMod.json" DestinationFolder="$(ModInstallDirectory)" />
+    <Message Importance="high" Text="Deployed $(AssemblyName) to $(ModInstallDirectory)" />
+  </Target>
+</Project>

@@ -1,0 +1,11 @@
+; Minimal project used only to verify the Mod content pack in isolation.
+
+config_version=5
+
+[application]
+
+config/name="STS2MinimalMod PCK Verifier"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"

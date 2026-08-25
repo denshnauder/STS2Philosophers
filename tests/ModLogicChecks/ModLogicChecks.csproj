@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\KongziMuduoState.cs" Link="KongziMuduoState.cs" />
+    <Compile Include="..\..\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />
+    <Compile Include="..\..\KongziQingYuPeiRewardPolicy.cs" Link="KongziQingYuPeiRewardPolicy.cs" />
+    <Compile Include="..\..\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />
+    <Compile Include="..\..\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <GameDirectory>REPLACE_WITH_GAME_DIRECTORY</GameDirectory>
+    <GodotExecutable>REPLACE_WITH_GODOT_EXECUTABLE</GodotExecutable>
+    <DotNetRoot>REPLACE_WITH_DOTNET_ROOT</DotNetRoot>
+    <DeployOnBuild>true</DeployOnBuild>
+  </PropertyGroup>
+</Project>

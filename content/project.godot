@@ -1,0 +1,12 @@
+; Engine configuration file.
+; Minimal resource-only project used to pack localization for STS2MinimalMod.
+
+config_version=5
+
+[application]
+
+config/name="STS2MinimalMod Content"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"

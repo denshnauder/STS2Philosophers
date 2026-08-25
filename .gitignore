@@ -1,0 +1,23 @@
+bin/
+obj/
+local.props
+.godot/
+.dotnet_cli_home/
+.tools/
+
+# Build artifacts and generated packages
+*.dll
+*.pdb
+*.pck
+
+# Logs, temporary files, and machine-specific settings
+*.log
+*.tmp
+*.temp
+*.user
+*.suo
+.vs/
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
