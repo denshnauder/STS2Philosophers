@@ -7,5 +7,8 @@
   "KONGZI_QING_YU_PEI.flavor": "君子比德于玉，温润而泽。",
   "MENGZI_XIONG_ZHANG.title": "熊掌",
   "MENGZI_XIONG_ZHANG.description": "每场战斗的前N个回合，获得1点能量并额外抽2张牌。N等于你的德。",
-  "MENGZI_XIONG_ZHANG.flavor": "鱼，我所欲也；熊掌，亦我所欲也。"
+  "MENGZI_XIONG_ZHANG.flavor": "鱼，我所欲也；熊掌，亦我所欲也。",
+  "XUNZI_SHENG_MO.title": "绳墨",
+  "XUNZI_SHENG_MO.description": "每回合首次连续打出技能牌、攻击牌和技能牌时，获得1点力量和1点敏捷。",
+  "XUNZI_SHENG_MO.flavor": "木受绳则直，金就砺则利。"
 }

@@ -1,6 +1,6 @@
 # STS2 Minimal Mod / 儒家原型
 
-这是《杀戮尖塔 2》思想家 Mod 的最小开发项目。目前实现孔子路线的木铎与青玉佩、孟子路线的熊掌，以及单人开局的“诸子观照”事件插入原型；不依赖 BaseLib 或 RitsuLib。
+这是《杀戮尖塔 2》思想家 Mod 的最小开发项目。目前实现孔子路线的木铎与青玉佩、孟子路线的熊掌、荀子路线的绳墨，以及单人开局的“诸子观照”事件插入原型；不依赖 BaseLib 或 RitsuLib。
 
 ## 当前原型
 
@@ -27,6 +27,13 @@
 - 每场战斗的前 N 个回合获得 1 点能量并额外抽 2 张牌，N 等于当前德。
 - 只能用开发者控制台的 `mengzixiongzhang` 指令授予；当前明确复用青玉佩图片作为临时占位图，尚未设计最终熊掌图标。
 
+测试遗物“绳墨”追踪持有者连续打出的牌：
+
+- 每回合首次连续打出技能牌、攻击牌和技能牌时，获得 1 点力量和 1 点敏捷；每回合最多触发一次。
+- 只有持有者实际打出的牌参与序列，其他玩家的出牌互不影响；能力牌及其他非技能、非攻击牌会打断序列。
+- 可用开发者控制台的 `xunzishengmo` 指令授予；当前明确复用木铎图片作为临时占位图，尚未设计最终绳墨图标。
+- 绳墨已登记到事件遗物池，但尚未接入“诸子观照”事件。
+
 “诸子观照”提供事件插入 MVP：
 
 - 单人局中，涅奥选择完成后的继续按钮先进入标准事件界面，再由事件的继续按钮打开原版地图。
@@ -45,7 +52,7 @@ dotnet build -c Release -p:DeployOnBuild=false
 
 该命令只构建程序集，不构建 PCK，也不部署到游戏目录。
 
-运行不依赖游戏进程的木铎、仁与奖励稀有度策略检查：
+运行不依赖游戏进程的木铎、仁、绳墨序列与奖励稀有度策略检查：
 
 ```powershell
 dotnet run --project .\tests\ModLogicChecks\ModLogicChecks.csproj -c Release
@@ -63,4 +70,4 @@ Windows 日志位置：
 %APPDATA%\SlayTheSpire2\logs\godot.log
 ```
 
-进入一局游戏后按反引号（\`）或单引号键打开开发者控制台，可使用 `kongzimuduo`、`kongziqingyupei` 或 `mengzixiongzhang` 将对应遗物加入当前玩家的遗物栏；规则从当前玩家的下一个回合开始生效。`mengzixiongzhang virtue [amount]` 可查看或设置该玩家由青玉佩保存的德。
+进入一局游戏后按反引号（\`）或单引号键打开开发者控制台，可使用 `kongzimuduo`、`kongziqingyupei`、`mengzixiongzhang` 或 `xunzishengmo` 将对应遗物加入当前玩家的遗物栏；规则从当前玩家的下一次适用时机开始生效。`mengzixiongzhang virtue [amount]` 可查看或设置该玩家由青玉佩保存的德。

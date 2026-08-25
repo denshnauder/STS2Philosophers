@@ -18,12 +18,13 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, KongziMuduo>();
         ModHelper.AddModelToPool<EventRelicPool, KongziQingYuPei>();
         ModHelper.AddModelToPool<EventRelicPool, MengziXiongZhang>();
+        ModHelper.AddModelToPool<EventRelicPool, XunziShengMo>();
 
         if (Interlocked.Exchange(ref _harmonyInitialized, 1) == 0)
         {
             new Harmony(HarmonyId).PatchAll(typeof(Entry).Assembly);
         }
 
-        Log.Info("[STS2MinimalMod] Initialized successfully. Muduo, Green Jade Pendant, Bear Paw, and the singleplayer PhilosophersGaze MVP are available.");
+        Log.Info("[STS2MinimalMod] Initialized successfully. Muduo, Green Jade Pendant, Bear Paw, Ink Line, and the singleplayer PhilosophersGaze MVP are available.");
     }
 }

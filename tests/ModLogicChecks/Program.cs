@@ -42,6 +42,170 @@ Check(state.GetNextSkillStrengthToGrant(5) == 0, "Skills played after discourtes
 
 Console.WriteLine("Zhou Li logic checks passed.");
 
+static int PlayXunziShengMoCards(
+    ref XunziShengMoState state,
+    params XunziShengMoCardKind[] cards)
+{
+    int rewards = 0;
+    foreach (XunziShengMoCardKind card in cards)
+    {
+        if (state.RecordCard(card, new object()))
+        {
+            rewards++;
+        }
+    }
+
+    return rewards;
+}
+
+XunziShengMoState xunziShengMoState = new();
+xunziShengMoState.BeginCombat();
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1,
+    "Skill, Attack, Skill must trigger Ink Line.");
+Check(xunziShengMoState.HasTriggeredThisTurn && xunziShengMoState.Progress == 0,
+    "A successful sequence must lock the turn and hide sequence progress.");
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 0,
+    "Ink Line must trigger at most once per turn.");
+
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1,
+    "A second consecutive Skill must become the new start of the sequence.");
+
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1,
+    "An initial Attack must not prevent a later Skill, Attack, Skill sequence.");
+
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 0,
+    "Skill, Attack, Attack, Skill must not trigger Ink Line.");
+
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Other,
+        XunziShengMoCardKind.Skill) == 0,
+    "A Power or other card must break an incomplete Ink Line sequence.");
+
+xunziShengMoState.BeginTurn();
+Check(PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Other,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1,
+    "A broken sequence must be able to reform later in the same turn.");
+
+xunziShengMoState.BeginTurn();
+PlayXunziShengMoCards(ref xunziShengMoState, XunziShengMoCardKind.Skill, XunziShengMoCardKind.Attack);
+Check(xunziShengMoState.Progress == 2,
+    "An incomplete Skill, Attack sequence must show progress 2.");
+xunziShengMoState.EndTurn();
+xunziShengMoState.BeginTurn();
+Check(xunziShengMoState.Progress == 0 && !xunziShengMoState.HasTriggeredThisTurn,
+    "Changing turns must clear incomplete Ink Line progress and the trigger lock.");
+
+int permanentStrength = 0;
+int permanentDexterity = 0;
+if (PlayXunziShengMoCards(
+        ref xunziShengMoState,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1)
+{
+    permanentStrength++;
+    permanentDexterity++;
+}
+
+xunziShengMoState.EndTurn();
+Check(permanentStrength == 1 && permanentDexterity == 1,
+    "Ending a turn must not make Ink Line state remove granted Strength or Dexterity.");
+
+xunziShengMoState.BeginCombat();
+PlayXunziShengMoCards(ref xunziShengMoState, XunziShengMoCardKind.Skill, XunziShengMoCardKind.Attack);
+xunziShengMoState.EndCombat();
+Check(xunziShengMoState.Progress == 0 && !xunziShengMoState.HasTriggeredThisTurn,
+    "Ending combat must clear Ink Line state.");
+xunziShengMoState.BeginCombat();
+Check(xunziShengMoState.Progress == 0 && !xunziShengMoState.HasTriggeredThisTurn,
+    "Starting a new combat must begin with clear Ink Line state.");
+
+XunziShengMoState firstInkLinePlayer = new();
+XunziShengMoState secondInkLinePlayer = new();
+firstInkLinePlayer.BeginTurn();
+secondInkLinePlayer.BeginTurn();
+PlayXunziShengMoCards(
+    ref firstInkLinePlayer,
+    XunziShengMoCardKind.Skill,
+    XunziShengMoCardKind.Attack);
+Check(firstInkLinePlayer.Progress == 2 && secondInkLinePlayer.Progress == 0,
+    "One player's Ink Line sequence must not change another player's state.");
+Check(PlayXunziShengMoCards(
+        ref secondInkLinePlayer,
+        XunziShengMoCardKind.Skill,
+        XunziShengMoCardKind.Attack,
+        XunziShengMoCardKind.Skill) == 1,
+    "Each player must be able to complete an independent Ink Line sequence.");
+Check(!firstInkLinePlayer.HasTriggeredThisTurn,
+    "The second player's success must not lock the first player's Ink Line.");
+
+xunziShengMoState.BeginTurn();
+object firstSkillCallback = new();
+object attackCallback = new();
+object finalSkillCallback = new();
+Check(!xunziShengMoState.RecordCard(XunziShengMoCardKind.Skill, firstSkillCallback),
+    "The first Skill callback must only advance Ink Line.");
+Check(!xunziShengMoState.RecordCard(XunziShengMoCardKind.Attack, attackCallback),
+    "The Attack callback must only advance Ink Line.");
+Check(!xunziShengMoState.RecordCard(XunziShengMoCardKind.Attack, attackCallback)
+      && xunziShengMoState.Progress == 2,
+    "A duplicate callback for the same played Attack must be ignored.");
+int duplicateRewards = xunziShengMoState.RecordCard(XunziShengMoCardKind.Skill, finalSkillCallback) ? 1 : 0;
+if (xunziShengMoState.RecordCard(XunziShengMoCardKind.Skill, finalSkillCallback))
+{
+    duplicateRewards++;
+}
+
+Check(duplicateRewards == 1,
+    "Repeating callbacks for one successful sequence must grant Ink Line exactly once.");
+
+XunziShengMoState restoredInkLine = new();
+restoredInkLine.RestoreProgress(2);
+restoredInkLine.RestoreTriggeredThisTurn(true);
+Check(!restoredInkLine.RecordCard(XunziShengMoCardKind.Skill, new object()),
+    "A restored successful turn must not repay Ink Line after loading.");
+Check(restoredInkLine.Progress == 0 && restoredInkLine.HasTriggeredThisTurn,
+    "A restored trigger lock must remain authoritative over restored progress.");
+
+Console.WriteLine("Ink Line logic checks passed.");
+
 static KongziQingYuPeiState BeginKongziQingYuPeiOpportunity(bool hasPlayableAttack)
 {
     KongziQingYuPeiState state = new();

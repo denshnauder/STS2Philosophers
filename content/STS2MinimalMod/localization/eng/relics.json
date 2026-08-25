@@ -7,5 +7,8 @@
   "KONGZI_QING_YU_PEI.flavor": "The noble compare virtue to jade: gentle, lustrous, and enduring.",
   "MENGZI_XIONG_ZHANG.title": "Bear Paw",
   "MENGZI_XIONG_ZHANG.description": "For the first N turns of each combat, gain 1 Energy and draw 2 additional cards. N equals your Virtue.",
-  "MENGZI_XIONG_ZHANG.flavor": "I desire fish, and I also desire bear's paw."
+  "MENGZI_XIONG_ZHANG.flavor": "I desire fish, and I also desire bear's paw.",
+  "XUNZI_SHENG_MO.title": "Ink Line",
+  "XUNZI_SHENG_MO.description": "The first time each turn you consecutively play a Skill, an Attack, and a Skill, gain 1 Strength and 1 Dexterity.",
+  "XUNZI_SHENG_MO.flavor": "Wood becomes straight by the ink line; metal becomes sharp on the whetstone."
 }

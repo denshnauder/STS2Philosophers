@@ -11,6 +11,7 @@
     <Compile Include="..\..\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />
     <Compile Include="..\..\KongziQingYuPeiRewardPolicy.cs" Link="KongziQingYuPeiRewardPolicy.cs" />
     <Compile Include="..\..\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />
+    <Compile Include="..\..\XunziShengMoState.cs" Link="XunziShengMoState.cs" />
     <Compile Include="..\..\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
   </ItemGroup>
 </Project>
