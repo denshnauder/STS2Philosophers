@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\KongziMuduoState.cs" Link="KongziMuduoState.cs" />
-    <Compile Include="..\..\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />
-    <Compile Include="..\..\KongziQingYuPeiRewardPolicy.cs" Link="KongziQingYuPeiRewardPolicy.cs" />
-    <Compile Include="..\..\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />
-    <Compile Include="..\..\XunziShengMoState.cs" Link="XunziShengMoState.cs" />
-    <Compile Include="..\..\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
+    <Compile Include="..\..\src\Relics\Kongzi\KongziMuduoState.cs" Link="KongziMuduoState.cs" />
+    <Compile Include="..\..\src\Relics\Kongzi\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />
+    <Compile Include="..\..\src\Relics\Kongzi\KongziQingYuPeiRewardPolicy.cs" Link="KongziQingYuPeiRewardPolicy.cs" />
+    <Compile Include="..\..\src\Relics\Mengzi\MengziXiongZhangState.cs" Link="MengziXiongZhangState.cs" />
+    <Compile Include="..\..\src\Relics\Xunzi\XunziShengMoState.cs" Link="XunziShengMoState.cs" />
+    <Compile Include="..\..\src\Events\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
   </ItemGroup>
 </Project>
