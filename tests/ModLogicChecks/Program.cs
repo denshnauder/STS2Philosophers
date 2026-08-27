@@ -605,4 +605,15 @@ Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
         ContinuationContext(currentRoomIsMapRoom: false)),
     "The continuation must only be inserted while entering the act map room.");
 
+PhilosophersGazeContinuationEntryPlan continuationEntryPlan =
+    PhilosophersGazeContinuationPolicy.CreateEntryPlan(
+        mapRoomEntryCompleted: true);
+Check(continuationEntryPlan.CloseMapScreen,
+    "The act two continuation must close the map screen opened by MapRoom before entering the event.");
+Check(!continuationEntryPlan.FadeToBlack,
+    "The act two continuation must not restart the room fade while EnterAct is already transitioning.");
+Check(PhilosophersGazeContinuationPolicy.CreateEntryPlan(
+        mapRoomEntryCompleted: false) == default,
+    "The continuation entry plan must not alter screens before MapRoom entry completes.");
+
 Console.WriteLine("PhilosophersGaze continuation policy checks passed.");

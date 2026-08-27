@@ -2,6 +2,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using System.Reflection;
@@ -72,10 +73,18 @@ internal static class ActTwoPhilosophersGazePatch
             return;
         }
 
-        Log.Info("[STS2MinimalMod] Inserting the act two PhilosophersGaze continuation before map travel is enabled.");
+        Log.Info("[STS2MinimalMod] Closing the act two map screen before presenting the PhilosophersGaze continuation.");
+        PhilosophersGazeContinuationEntryPlan entryPlan =
+            PhilosophersGazeContinuationPolicy.CreateEntryPlan(
+                mapRoomEntryCompleted: true);
+        if (entryPlan.CloseMapScreen)
+        {
+            NMapScreen.Instance?.Close(animateOut: false);
+        }
+
         await runManager.EnterRoomWithoutExitingCurrentRoom(
             new EventRoom(canonicalEvent!),
-            fadeToBlack: false);
+            fadeToBlack: entryPlan.FadeToBlack);
     }
 
     private static PhilosophersGazeRelicOwnership GetOwnership(Player player)

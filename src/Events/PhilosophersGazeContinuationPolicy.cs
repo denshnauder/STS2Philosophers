@@ -17,8 +17,22 @@ internal readonly record struct PhilosophersGazeContinuationInsertionContext(
     PhilosophersGazeRelicOwnership Ownership,
     bool ContinuationRecorded);
 
+internal readonly record struct PhilosophersGazeContinuationEntryPlan(
+    bool CloseMapScreen,
+    bool FadeToBlack);
+
 internal static class PhilosophersGazeContinuationPolicy
 {
+    public static PhilosophersGazeContinuationEntryPlan CreateEntryPlan(
+        bool mapRoomEntryCompleted)
+    {
+        return mapRoomEntryCompleted
+            ? new PhilosophersGazeContinuationEntryPlan(
+                CloseMapScreen: true,
+                FadeToBlack: false)
+            : default;
+    }
+
     public static PhilosophersGazeContinuationOption GetAvailableOptions(
         PhilosophersGazeRelicOwnership ownership,
         bool continuationRecorded)
