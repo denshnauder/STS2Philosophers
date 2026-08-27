@@ -5,5 +5,15 @@
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.description": "Accept neither Muduo nor Green Jade Pendant.",
   "PHILOSOPHERS_GAZE.pages.KONGZI_MUDUO.description": "The wooden tongue sounds once. You carry the order of ritual into the Spire.",
   "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description": "The jade's quiet warmth settles in your hand. You carry benevolence into the Spire.",
-  "PHILOSOPHERS_GAZE.pages.DECLINE.description": "You bow without accepting a teaching. The way ahead remains your own."
+  "PHILOSOPHERS_GAZE.pages.DECLINE.description": "You bow without accepting a teaching. The way ahead remains your own.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "A new Act unfolds before you. Your earlier choice receives an answer. Accept one legacy, or move on.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_MENGZI_XIONG_ZHANG.title": "Refuse Bear Paw.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_MENGZI_XIONG_ZHANG.description": "Do not accept Bear Paw.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_XUNZI_SHENG_MO.title": "Refuse Ink Line.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_XUNZI_SHENG_MO.description": "Do not accept Ink Line.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_BOTH.title": "Refuse the legacies.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_BOTH.description": "Accept neither Bear Paw nor Ink Line.",
+  "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description": "You choose what is right. Bear Paw settles into your hand.",
+  "PHILOSOPHERS_GAZE.pages.XUNZI_SHENG_MO.description": "The inked cord pulls taut. Your measure is set.",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION_DECLINE.description": "You decline the legacy and enter the new Act alone."
 }

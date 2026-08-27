@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace STS2MinimalMod;
 
@@ -15,6 +16,7 @@ public sealed class KongziMuduo : RelicModel
     private const int StrengthCap = 5;
 
     private KongziMuduoState _kongziMuduo;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -27,6 +29,22 @@ public sealed class KongziMuduo : RelicModel
     protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_muduo_outline.png";
 
     protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_muduo.png";
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
+    }
 
     public override Task BeforeSideTurnStart(
         PlayerChoiceContext choiceContext,

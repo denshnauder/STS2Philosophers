@@ -2,7 +2,7 @@
   "id": "STS2MinimalMod",
   "name": "STS2 Minimal Mod",
   "author": "Local Developer",
-  "description": "Philosopher relic prototypes: choose Muduo, Green Jade Pendant, or neither in The Philosophers' Gaze after Neow and before opening the map; Bear Paw is available separately for testing.",
+  "description": "A two-stage Philosophers' Gaze: choose Muduo or Green Jade Pendant after Neow, then its matching legacy before the Act 2 map.",
   "version": "0.5.2",
   "min_game_version": "0.111.0",
   "has_pck": true,

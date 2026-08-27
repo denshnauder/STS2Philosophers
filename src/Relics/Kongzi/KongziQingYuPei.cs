@@ -20,6 +20,7 @@ public sealed class KongziQingYuPei : RelicModel
     private PlayerCombatState? _observedPlayerCombatState;
     private int _virtue;
     private bool _hasPendingReward;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -53,6 +54,22 @@ public sealed class KongziQingYuPei : RelicModel
             AssertMutable();
             _hasPendingReward = value;
         }
+    }
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
     }
 
     public static int GetVirtue(Player player)

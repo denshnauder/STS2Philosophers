@@ -474,3 +474,135 @@ Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwners
     "Owning Ink Line must prevent PhilosophersGaze from granting a second prototype relic.");
 
 Console.WriteLine("PhilosophersGaze relic grant policy checks passed.");
+
+static PhilosophersGazeRelicOwnership ContinuationOwnership(
+    bool hasKongziMuduo = false,
+    bool hasKongziQingYuPei = false,
+    bool hasMengziXiongZhang = false,
+    bool hasXunziShengMo = false)
+{
+    return new PhilosophersGazeRelicOwnership(
+        hasKongziMuduo,
+        hasKongziQingYuPei,
+        hasMengziXiongZhang,
+        hasXunziShengMo);
+}
+
+static PhilosophersGazeContinuationInsertionContext ContinuationContext(
+    PhilosophersGazeRelicOwnership? ownership = null,
+    bool continuationRecorded = false,
+    bool runInProgress = true,
+    bool currentRoomIsMapRoom = true,
+    int currentActIndex = 1,
+    bool modelAvailable = true,
+    bool isSingleplayer = true)
+{
+    return new PhilosophersGazeContinuationInsertionContext(
+        runInProgress,
+        currentRoomIsMapRoom,
+        currentActIndex,
+        modelAvailable,
+        isSingleplayer,
+        ownership ?? ContinuationOwnership(hasKongziQingYuPei: true),
+        continuationRecorded);
+}
+
+PhilosophersGazeRelicOwnership qingYuPeiRoute = ContinuationOwnership(
+    hasKongziQingYuPei: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(qingYuPeiRoute, false)
+        == PhilosophersGazeContinuationOption.MengziXiongZhang,
+    "Green Jade Pendant must display Bear Paw as its only continuation relic.");
+Check(PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.MengziXiongZhang,
+        qingYuPeiRoute,
+        continuationRecorded: false),
+    "Green Jade Pendant must make Bear Paw eligible to grant.");
+Check(!PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.XunziShengMo,
+        qingYuPeiRoute,
+        continuationRecorded: false),
+    "Green Jade Pendant alone must not make Ink Line eligible to grant.");
+
+PhilosophersGazeRelicOwnership muduoRoute = ContinuationOwnership(hasKongziMuduo: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(muduoRoute, false)
+        == PhilosophersGazeContinuationOption.XunziShengMo,
+    "Muduo must display Ink Line as its only continuation relic.");
+Check(PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.XunziShengMo,
+        muduoRoute,
+        continuationRecorded: false),
+    "Muduo must make Ink Line eligible to grant.");
+Check(!PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.MengziXiongZhang,
+        muduoRoute,
+        continuationRecorded: false),
+    "Muduo alone must not make Bear Paw eligible to grant.");
+
+PhilosophersGazeRelicOwnership debugDualRoute = ContinuationOwnership(
+    hasKongziMuduo: true,
+    hasKongziQingYuPei: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugDualRoute, false)
+        == (PhilosophersGazeContinuationOption.MengziXiongZhang
+            | PhilosophersGazeContinuationOption.XunziShengMo),
+    "Debug dual ownership must display both Bear Paw and Ink Line.");
+Check(PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.MengziXiongZhang,
+        debugDualRoute,
+        continuationRecorded: false)
+    && PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.XunziShengMo,
+        debugDualRoute,
+        continuationRecorded: false),
+    "Either displayed debug continuation must be eligible before one choice records resolution.");
+Check(!PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.MengziXiongZhang
+            | PhilosophersGazeContinuationOption.XunziShengMo,
+        debugDualRoute,
+        continuationRecorded: false),
+    "A single continuation grant must never accept both displayed debug choices at once.");
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(
+        debugDualRoute,
+        continuationRecorded: true) == PhilosophersGazeContinuationOption.None,
+    "Recording either debug continuation choice must close both choices for the event.");
+
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(ContinuationOwnership())),
+    "A player with no Kongzi route relic must skip the act two continuation.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(ContinuationOwnership(
+            hasKongziQingYuPei: true,
+            hasMengziXiongZhang: true))),
+    "Owning Bear Paw must skip the act two continuation.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(ContinuationOwnership(
+            hasKongziMuduo: true,
+            hasXunziShengMo: true))),
+    "Owning Ink Line must skip the act two continuation.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(continuationRecorded: true)),
+    "A recorded continuation choice or refusal must prevent repeat insertion.");
+Check(!PhilosophersGazeContinuationPolicy.CanGrant(
+        PhilosophersGazeContinuationOption.MengziXiongZhang,
+        qingYuPeiRoute,
+        continuationRecorded: true),
+    "A recorded refusal must also prevent a later continuation grant.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(currentActIndex: 0)),
+    "The continuation must not be inserted in act one.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(currentActIndex: 2)),
+    "The continuation must not be inserted after act two.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(isSingleplayer: false)),
+    "The continuation must not be inserted in multiplayer.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(modelAvailable: false)),
+    "The continuation must not be inserted when PhilosophersGaze is unavailable.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(runInProgress: false)),
+    "The continuation must not be inserted outside a run.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(currentRoomIsMapRoom: false)),
+    "The continuation must only be inserted while entering the act map room.");
+
+Console.WriteLine("PhilosophersGaze continuation policy checks passed.");

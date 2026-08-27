@@ -5,5 +5,15 @@
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.description": "不接受木铎或青玉佩。",
   "PHILOSOPHERS_GAZE.pages.KONGZI_MUDUO.description": "木舌一振，铎声悠然。你将礼的秩序带入尖塔。",
   "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description": "玉色温润，静静落入掌中。你将仁心带入尖塔。",
-  "PHILOSOPHERS_GAZE.pages.DECLINE.description": "你揖手致意，却未受教。前路仍由自己作答。"
+  "PHILOSOPHERS_GAZE.pages.DECLINE.description": "你揖手致意，却未受教。前路仍由自己作答。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "新的一层在前方展开。旧日的选择得到回应，你可以接受一件传承，也可以继续前行。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_MENGZI_XIONG_ZHANG.title": "拒绝熊掌。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_MENGZI_XIONG_ZHANG.description": "不接受熊掌。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_XUNZI_SHENG_MO.title": "拒绝绳墨。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_XUNZI_SHENG_MO.description": "不接受绳墨。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_BOTH.title": "拒绝传承。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_BOTH.description": "不接受熊掌或绳墨。",
+  "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description": "取义在心，熊掌落入手中。",
+  "PHILOSOPHERS_GAZE.pages.XUNZI_SHENG_MO.description": "墨线绷直，规矩已有尺度。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION_DECLINE.description": "你谢绝传承，独自走向新的一层。"
 }
