@@ -10,5 +10,8 @@
   "MENGZI_XIONG_ZHANG.flavor": "鱼，我所欲也；熊掌，亦我所欲也。",
   "XUNZI_SHENG_MO.title": "绳墨",
   "XUNZI_SHENG_MO.description": "每回合首次连续打出技能牌、攻击牌和技能牌时，获得1点力量和1点敏捷。",
-  "XUNZI_SHENG_MO.flavor": "木受绳则直，金就砺则利。"
+  "XUNZI_SHENG_MO.flavor": "木受绳则直，金就砺则利。",
+  "MOZI_MO_SE_ZHU_JIAN.title": "墨色竹简",
+  "MOZI_MO_SE_ZHU_JIAN.description": "你的回合开始时，所有角色获得6点格挡。若上一回合无人失去生命，相利增加1层，至多2层。每层相利使你获得1点能量并额外抽1张牌。任一角色失去生命时，失去所有相利。",
+  "MOZI_MO_SE_ZHU_JIAN.flavor": "兼相爱，交相利。"
 }

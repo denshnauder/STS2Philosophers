@@ -10,6 +10,8 @@ const REQUIRED_FILES := [
 	"res://STS2MinimalMod/images/kongzi_muduo_outline.png",
 	"res://STS2MinimalMod/images/kongzi_qing_yu_pei.png",
 	"res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png",
+	"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian.png",
+	"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian_outline.png",
 ]
 
 const REQUIRED_TEXTURES := [
@@ -18,6 +20,8 @@ const REQUIRED_TEXTURES := [
 	"res://STS2MinimalMod/images/kongzi_muduo_outline.png",
 	"res://STS2MinimalMod/images/kongzi_qing_yu_pei.png",
 	"res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png",
+	"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian.png",
+	"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian_outline.png",
 ]
 
 func _initialize() -> void:

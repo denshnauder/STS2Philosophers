@@ -4,7 +4,8 @@ internal readonly record struct PhilosophersGazeRelicOwnership(
     bool HasKongziMuduo,
     bool HasKongziQingYuPei,
     bool HasMengziXiongZhang,
-    bool HasXunziShengMo);
+    bool HasXunziShengMo,
+    bool HasMoziMoSeZhuJian = false);
 
 internal static class PhilosophersGazeRelicGrantPolicy
 {
@@ -13,6 +14,7 @@ internal static class PhilosophersGazeRelicGrantPolicy
         return !ownership.HasKongziMuduo
             && !ownership.HasKongziQingYuPei
             && !ownership.HasMengziXiongZhang
-            && !ownership.HasXunziShengMo;
+            && !ownership.HasXunziShengMo
+            && !ownership.HasMoziMoSeZhuJian;
     }
 }

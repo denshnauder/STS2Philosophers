@@ -37,7 +37,10 @@ internal static class PhilosophersGazeContinuationPolicy
         PhilosophersGazeRelicOwnership ownership,
         bool continuationRecorded)
     {
-        if (continuationRecorded || ownership.HasMengziXiongZhang || ownership.HasXunziShengMo)
+        if (continuationRecorded
+            || ownership.HasMengziXiongZhang
+            || ownership.HasXunziShengMo
+            || ownership.HasMoziMoSeZhuJian)
         {
             return PhilosophersGazeContinuationOption.None;
         }

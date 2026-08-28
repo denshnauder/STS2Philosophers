@@ -399,6 +399,61 @@ Check(restoredCombat.TryTrigger(2, virtue: 2),
 
 Console.WriteLine("Bear Paw logic checks passed.");
 
+Check(MoziMoSeZhuJianState.BlockAmount == 6,
+    "Ink Bamboo Slips must grant 6 Block to every living combatant each player turn.");
+Check(MoziMoSeZhuJianState.XiangLiCap == 2,
+    "Mutual Benefit must be capped at 2.");
+
+MoziMoSeZhuJianState moziMoSeZhuJianState = new();
+Check(moziMoSeZhuJianState.BeginPlayerTurn(1),
+    "The first player-turn boundary must initialize Ink Bamboo Slips.");
+Check(moziMoSeZhuJianState.XiangLi == 0
+        && moziMoSeZhuJianState.PendingRewardAmount == 0,
+    "The first turn must not gain Mutual Benefit or resources without a prior unharmed turn.");
+Check(!moziMoSeZhuJianState.BeginPlayerTurn(1),
+    "A repeated boundary hook must not resolve the same turn twice.");
+Check(moziMoSeZhuJianState.TryMarkBlockGranted(1)
+        && !moziMoSeZhuJianState.TryMarkBlockGranted(1),
+    "All-character Block must be granted at most once per player turn.");
+Check(moziMoSeZhuJianState.TryTakePendingReward(1, out int firstTurnReward)
+        && firstTurnReward == 0
+        && !moziMoSeZhuJianState.TryTakePendingReward(1, out _),
+    "The first turn's zero reward must still be recorded against duplicate payout.");
+
+Check(moziMoSeZhuJianState.BeginPlayerTurn(2)
+        && moziMoSeZhuJianState.XiangLi == 1
+        && moziMoSeZhuJianState.PendingRewardAmount == 1,
+    "One completed unharmed turn must grant 1 Mutual Benefit for the next turn.");
+Check(moziMoSeZhuJianState.RecordHpChange(-1m)
+        && moziMoSeZhuJianState.XiangLi == 0,
+    "Any actual HP loss must immediately clear Mutual Benefit.");
+Check(moziMoSeZhuJianState.TryTakePendingReward(2, out int lockedReward)
+        && lockedReward == 1,
+    "HP loss after the turn boundary must not revoke the reward already earned last turn.");
+Check(!moziMoSeZhuJianState.BeginPlayerTurn(2),
+    "A restored or replayed boundary must not increase Mutual Benefit twice.");
+Check(moziMoSeZhuJianState.BeginPlayerTurn(3)
+        && moziMoSeZhuJianState.XiangLi == 0,
+    "A harmed turn must not rebuild Mutual Benefit at its next boundary.");
+Check(!moziMoSeZhuJianState.RecordHpChange(0m)
+        && !moziMoSeZhuJianState.RecordHpChange(3m),
+    "Fully blocked damage and healing must not break an unharmed turn.");
+Check(moziMoSeZhuJianState.BeginPlayerTurn(4)
+        && moziMoSeZhuJianState.XiangLi == 1,
+    "A new complete unharmed turn must rebuild Mutual Benefit from 0 to 1.");
+Check(moziMoSeZhuJianState.BeginPlayerTurn(5)
+        && moziMoSeZhuJianState.XiangLi == 2,
+    "A second consecutive unharmed turn must raise Mutual Benefit to 2.");
+Check(moziMoSeZhuJianState.BeginPlayerTurn(6)
+        && moziMoSeZhuJianState.XiangLi == 2
+        && moziMoSeZhuJianState.PendingRewardAmount == 2,
+    "Further unharmed turns must remain at the cap and lock a 2 Energy, 2 card reward.");
+moziMoSeZhuJianState.Reset();
+Check(moziMoSeZhuJianState == default,
+    "Combat cleanup must reset all Ink Bamboo Slips state and replay locks.");
+
+Console.WriteLine("Ink Bamboo Slips logic checks passed.");
+
 static PhilosophersGazeInterceptionContext GazeContext(
     bool runInProgress = true,
     bool currentRoomIsEventRoom = true,
@@ -472,6 +527,13 @@ Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwners
         HasMengziXiongZhang: false,
         HasXunziShengMo: true)),
     "Owning Ink Line must prevent PhilosophersGaze from granting a second prototype relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false,
+        HasMoziMoSeZhuJian: true)),
+    "Owning Ink Bamboo Slips must prevent PhilosophersGaze from granting another route relic.");
 
 Console.WriteLine("PhilosophersGaze relic grant policy checks passed.");
 
@@ -479,13 +541,15 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
     bool hasKongziMuduo = false,
     bool hasKongziQingYuPei = false,
     bool hasMengziXiongZhang = false,
-    bool hasXunziShengMo = false)
+    bool hasXunziShengMo = false,
+    bool hasMoziMoSeZhuJian = false)
 {
     return new PhilosophersGazeRelicOwnership(
         hasKongziMuduo,
         hasKongziQingYuPei,
         hasMengziXiongZhang,
-        hasXunziShengMo);
+        hasXunziShengMo,
+        hasMoziMoSeZhuJian);
 }
 
 static PhilosophersGazeContinuationInsertionContext ContinuationContext(
@@ -537,6 +601,24 @@ Check(!PhilosophersGazeContinuationPolicy.CanGrant(
         muduoRoute,
         continuationRecorded: false),
     "Muduo alone must not make Bear Paw eligible to grant.");
+
+PhilosophersGazeRelicOwnership moziRoute = ContinuationOwnership(
+    hasMoziMoSeZhuJian: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(moziRoute, false)
+        == PhilosophersGazeContinuationOption.None,
+    "Ink Bamboo Slips currently has no act two continuation option.");
+Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
+        ContinuationContext(moziRoute)),
+    "The act two event must be skipped for the standalone Mohist route.");
+Check(!PhilosophersGazeContinuationPolicy.IsContinuationStage(moziRoute),
+    "Ink Bamboo Slips must not generate a continuation page with only a refusal option.");
+
+PhilosophersGazeRelicOwnership debugMixedRoute = ContinuationOwnership(
+    hasKongziMuduo: true,
+    hasMoziMoSeZhuJian: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugMixedRoute, false)
+        == PhilosophersGazeContinuationOption.None,
+    "A debug mixed Mohist and Confucian route must not grant a cross-route successor.");
 
 PhilosophersGazeRelicOwnership debugDualRoute = ContinuationOwnership(
     hasKongziMuduo: true,

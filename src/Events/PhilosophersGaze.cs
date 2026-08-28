@@ -14,6 +14,7 @@ public sealed class PhilosophersGaze : EventModel
     private const string InitialPage = "INITIAL";
     private const string KongziMuduoEndingKey = "PHILOSOPHERS_GAZE.pages.KONGZI_MUDUO.description";
     private const string KongziQingYuPeiEndingKey = "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description";
+    private const string MoziMoSeZhuJianEndingKey = "PHILOSOPHERS_GAZE.pages.MOZI_MO_SE_ZHU_JIAN.description";
     private const string DeclineEndingKey = "PHILOSOPHERS_GAZE.pages.DECLINE.description";
     private const string ContinuationDescriptionKey = "PHILOSOPHERS_GAZE.pages.CONTINUATION.description";
     private const string MengziXiongZhangEndingKey = "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description";
@@ -43,6 +44,7 @@ public sealed class PhilosophersGaze : EventModel
         [
             RelicOption<KongziMuduo>(AcceptKongziMuduo, InitialPage),
             RelicOption<KongziQingYuPei>(AcceptKongziQingYuPei, InitialPage),
+            RelicOption<MoziMoSeZhuJian>(AcceptMoziMoSeZhuJian, InitialPage),
             new EventOption(
                 this,
                 Decline,
@@ -96,6 +98,12 @@ public sealed class PhilosophersGaze : EventModel
     {
         await ObtainIfNoMvpBlessing<KongziQingYuPei>();
         SetEventFinished(L10NLookup(KongziQingYuPeiEndingKey));
+    }
+
+    private async Task AcceptMoziMoSeZhuJian()
+    {
+        await ObtainIfNoMvpBlessing<MoziMoSeZhuJian>();
+        SetEventFinished(L10NLookup(MoziMoSeZhuJianEndingKey));
     }
 
     private async Task AcceptMengziXiongZhang()
@@ -182,7 +190,8 @@ public sealed class PhilosophersGaze : EventModel
             owner?.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
-            owner?.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null);
+            owner?.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null,
+            owner?.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null);
     }
 
     private static bool HasContinuationBeenRecorded(Player? owner)

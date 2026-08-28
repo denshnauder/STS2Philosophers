@@ -93,7 +93,8 @@ internal static class ActTwoPhilosophersGazePatch
             player.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
             player.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
             player.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
-            player.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null);
+            player.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null,
+            player.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null);
     }
 
     private static bool HasContinuationBeenRecorded(Player player)
