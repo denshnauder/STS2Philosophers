@@ -12,6 +12,7 @@ namespace STS2MinimalMod;
 public sealed class MengziXiongZhang : RelicModel
 {
     private MengziXiongZhangState _mengziXiongZhang;
+    private int _inheritedVirtue;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -21,6 +22,17 @@ public sealed class MengziXiongZhang : RelicModel
     protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png";
 
     protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei.png";
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public int InheritedVirtue
+    {
+        get => _inheritedVirtue;
+        private set
+        {
+            AssertMutable();
+            _inheritedVirtue = Math.Max(0, value);
+        }
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int LastTriggeredTurn
@@ -49,7 +61,7 @@ public sealed class MengziXiongZhang : RelicModel
         }
 
         int turnNumber = player.PlayerCombatState.TurnNumber;
-        int virtue = KongziQingYuPei.GetVirtue(Owner);
+        int virtue = InheritedVirtue;
         if (!_mengziXiongZhang.TryTrigger(turnNumber, virtue))
         {
             return;
@@ -67,5 +79,10 @@ public sealed class MengziXiongZhang : RelicModel
     {
         _mengziXiongZhang.EndCombat();
         return Task.CompletedTask;
+    }
+
+    internal void SetInheritedVirtue(int virtue)
+    {
+        InheritedVirtue = virtue;
     }
 }

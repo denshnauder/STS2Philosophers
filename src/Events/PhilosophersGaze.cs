@@ -11,190 +11,441 @@ namespace STS2MinimalMod;
 
 public sealed class PhilosophersGaze : EventModel
 {
-    private const string InitialPage = "INITIAL";
-    private const string KongziMuduoEndingKey = "PHILOSOPHERS_GAZE.pages.KONGZI_MUDUO.description";
-    private const string KongziQingYuPeiEndingKey = "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description";
-    private const string MoziMoSeZhuJianEndingKey = "PHILOSOPHERS_GAZE.pages.MOZI_MO_SE_ZHU_JIAN.description";
-    private const string DeclineEndingKey = "PHILOSOPHERS_GAZE.pages.DECLINE.description";
-    private const string ContinuationDescriptionKey = "PHILOSOPHERS_GAZE.pages.CONTINUATION.description";
-    private const string MengziXiongZhangEndingKey = "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description";
-    private const string XunziShengMoEndingKey = "PHILOSOPHERS_GAZE.pages.XUNZI_SHENG_MO.description";
-    private const string ContinuationDeclineEndingKey = "PHILOSOPHERS_GAZE.pages.CONTINUATION_DECLINE.description";
+    private const string LocalizationPrefix = "PHILOSOPHERS_GAZE.pages";
+    private readonly PhilosophersGazeResolutionGate _resolutionGate = new();
 
-    public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription
-    {
-        get
-        {
-            PhilosophersGazeRelicOwnership ownership = GetOwnership(Owner);
-            return PhilosophersGazeContinuationPolicy.IsContinuationStage(ownership)
-                ? L10NLookup(ContinuationDescriptionKey)
-                : base.InitialDescription;
-        }
-    }
+    public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
+        GetCurrentActIndex(Owner) == 1
+            ? PageDescription(PhilosophersGazePage.Continuation)
+            : base.InitialDescription;
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
     {
-        PhilosophersGazeRelicOwnership ownership = GetOwnership(Owner);
-        if (PhilosophersGazeContinuationPolicy.IsContinuationStage(ownership))
-        {
-            return GenerateContinuationOptions(ownership);
-        }
+        return GetCurrentActIndex(Owner) == 1
+            ? GenerateContinuationOptions()
+            : GenerateActOneInitialOptions();
+    }
 
+    private IReadOnlyList<EventOption> GenerateActOneInitialOptions()
+    {
         return
         [
-            RelicOption<KongziMuduo>(AcceptKongziMuduo, InitialPage),
-            RelicOption<KongziQingYuPei>(AcceptKongziQingYuPei, InitialPage),
-            RelicOption<MoziMoSeZhuJian>(AcceptMoziMoSeZhuJian, InitialPage),
-            new EventOption(
-                this,
-                Decline,
-                "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE",
-                Array.Empty<IHoverTip>()),
+            Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi),
+            Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi),
+            Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline),
         ];
     }
 
-    private IReadOnlyList<EventOption> GenerateContinuationOptions(
-        PhilosophersGazeRelicOwnership ownership)
+    private IReadOnlyList<EventOption> GenerateContinuationOptions()
     {
-        bool continuationRecorded = HasContinuationBeenRecorded(Owner);
-        PhilosophersGazeContinuationOption availableOptions =
-            PhilosophersGazeContinuationPolicy.GetAvailableOptions(
-                ownership,
-                continuationRecorded);
+        PhilosophersGazeContinuationOption availableOptions = GetAvailableContinuationOptions();
         List<EventOption> options = [];
         if (availableOptions.HasFlag(PhilosophersGazeContinuationOption.MengziXiongZhang))
         {
-            options.Add(RelicOption<MengziXiongZhang>(AcceptMengziXiongZhang, "CONTINUATION"));
+            options.Add(Option(ShowMengziViewpoints, PhilosophersGazePage.Continuation, PhilosophersGazeOption.Mengzi));
         }
 
         if (availableOptions.HasFlag(PhilosophersGazeContinuationOption.XunziShengMo))
         {
-            options.Add(RelicOption<XunziShengMo>(AcceptXunziShengMo, "CONTINUATION"));
+            options.Add(Option(ShowXunziViewpoints, PhilosophersGazePage.Continuation, PhilosophersGazeOption.Xunzi));
         }
 
-        string declineOptionKey = availableOptions switch
+        if (availableOptions != PhilosophersGazeContinuationOption.None)
         {
-            PhilosophersGazeContinuationOption.MengziXiongZhang =>
-                "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_MENGZI_XIONG_ZHANG",
-            PhilosophersGazeContinuationOption.XunziShengMo =>
-                "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_XUNZI_SHENG_MO",
-            _ => "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE_BOTH",
-        };
-        options.Add(new EventOption(
-            this,
-            DeclineContinuation,
-            declineOptionKey,
-            Array.Empty<IHoverTip>()));
+            options.Add(Option(ShowActTwoDeclineConfirmation, PhilosophersGazePage.Continuation, PhilosophersGazeOption.Decline));
+        }
+
         return options;
     }
 
-    private async Task AcceptKongziMuduo()
+    private Task ShowKongziViewpoints()
     {
-        await ObtainIfNoMvpBlessing<KongziMuduo>();
-        SetEventFinished(L10NLookup(KongziMuduoEndingKey));
-    }
+        if (IsActOne())
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.KongziViewpoints),
+                [
+                    RouteRelicOption<KongziMuduo>(AcceptKongziMuduo, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Muduo),
+                    RouteRelicOption<KongziQingYuPei>(AcceptKongziQingYuPei, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.QingYuPei),
+                    Option(DeclineKongzi, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Decline),
+                ]);
+        }
 
-    private async Task AcceptKongziQingYuPei()
-    {
-        await ObtainIfNoMvpBlessing<KongziQingYuPei>();
-        SetEventFinished(L10NLookup(KongziQingYuPeiEndingKey));
-    }
-
-    private async Task AcceptMoziMoSeZhuJian()
-    {
-        await ObtainIfNoMvpBlessing<MoziMoSeZhuJian>();
-        SetEventFinished(L10NLookup(MoziMoSeZhuJianEndingKey));
-    }
-
-    private async Task AcceptMengziXiongZhang()
-    {
-        await AcceptContinuationRelic<MengziXiongZhang>(
-            PhilosophersGazeContinuationOption.MengziXiongZhang);
-        SetEventFinished(L10NLookup(MengziXiongZhangEndingKey));
-    }
-
-    private async Task AcceptXunziShengMo()
-    {
-        await AcceptContinuationRelic<XunziShengMo>(
-            PhilosophersGazeContinuationOption.XunziShengMo);
-        SetEventFinished(L10NLookup(XunziShengMoEndingKey));
-    }
-
-    private Task Decline()
-    {
-        SetEventFinished(L10NLookup(DeclineEndingKey));
         return Task.CompletedTask;
     }
 
-    private async Task DeclineContinuation()
+    private Task ShowMoziViewpoints()
     {
-        if (Owner is not null)
+        if (IsActOne())
         {
-            RecordContinuation(Owner);
-            await SaveContinuationResolution();
+            SetEventState(
+                PageDescription(PhilosophersGazePage.MoziViewpoints),
+                [
+                    RouteRelicOption<MoziMoSeZhuJian>(AcceptMoziMoSeZhuJian, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
+                    RouteRelicOption<MoziShouChengTu>(AcceptMoziShouChengTu, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
+                    Option(DeclineMozi, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
+                ]);
         }
 
-        SetEventFinished(L10NLookup(ContinuationDeclineEndingKey));
+        return Task.CompletedTask;
     }
 
-    private async Task ObtainIfNoMvpBlessing<TRelic>()
+    private Task ShowActOneDeclineConfirmation()
+    {
+        if (IsActOne())
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.ActOneDeclineConfirm),
+                [Option(ConfirmActOneDecline, PhilosophersGazePage.ActOneDeclineConfirm, PhilosophersGazeOption.Confirm)]);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task ShowMengziViewpoints()
+    {
+        if (CanChooseContinuation(PhilosophersGazeContinuationOption.MengziXiongZhang))
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.MengziViewpoints),
+                [
+                    RouteRelicOption<MengziXiongZhang>(AcceptMengziXiongZhang, PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.XiongZhang),
+                    Option(DeclineMengzi, PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.Decline),
+                ]);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task ShowXunziViewpoints()
+    {
+        if (CanChooseContinuation(PhilosophersGazeContinuationOption.XunziShengMo))
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.XunziViewpoints),
+                [
+                    RouteRelicOption<XunziShengMo>(AcceptXunziShengMo, PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.ShengMo),
+                    Option(DeclineXunzi, PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.Decline),
+                ]);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task ShowActTwoDeclineConfirmation()
+    {
+        if (GetAvailableContinuationOptions() != PhilosophersGazeContinuationOption.None)
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.ActTwoDeclineConfirm),
+                [Option(ConfirmActTwoDecline, PhilosophersGazePage.ActTwoDeclineConfirm, PhilosophersGazeOption.Confirm)]);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task AcceptKongziMuduo() => ObtainActOneRelic<KongziMuduo>(PhilosophersGazePage.KongziMuduo);
+
+    private Task AcceptKongziQingYuPei() => ObtainActOneRelic<KongziQingYuPei>(PhilosophersGazePage.KongziQingYuPei);
+
+    private Task AcceptMoziMoSeZhuJian() => ObtainActOneRelic<MoziMoSeZhuJian>(PhilosophersGazePage.MoziMoSeZhuJian);
+
+    private Task AcceptMoziShouChengTu() => ObtainActOneRelic<MoziShouChengTu>(PhilosophersGazePage.MoziShouChengTu);
+
+    private Task DeclineKongzi() => FinishActOneWithoutRelic(PhilosophersGazePage.KongziDecline);
+
+    private Task DeclineMozi() => FinishActOneWithoutRelic(PhilosophersGazePage.MoziDecline);
+
+    private Task ConfirmActOneDecline() => FinishActOneWithoutRelic(PhilosophersGazePage.Decline);
+
+    private Task AcceptMengziXiongZhang() => ReplaceWithMengziXiongZhang();
+
+    private Task AcceptXunziShengMo() => ReplaceWithXunziShengMo();
+
+    private Task DeclineMengzi() => ResolveContinuationDecline(
+        PhilosophersGazeContinuationOption.MengziXiongZhang,
+        PhilosophersGazePage.MengziDecline);
+
+    private Task DeclineXunzi() => ResolveContinuationDecline(
+        PhilosophersGazeContinuationOption.XunziShengMo,
+        PhilosophersGazePage.XunziDecline);
+
+    private Task ConfirmActTwoDecline() => ResolveContinuationDecline(
+        GetAvailableContinuationOptions(),
+        PhilosophersGazePage.ContinuationDecline);
+
+    private async Task ObtainActOneRelic<TRelic>(PhilosophersGazePage resultPage)
         where TRelic : RelicModel
     {
-        var owner = Owner;
-        if (owner is null)
+        if (!TryBeginResolution())
         {
-            Log.Error("[STS2MinimalMod] PhilosophersGaze could not obtain a relic because the event has no owner.");
             return;
         }
 
-        PhilosophersGazeRelicOwnership ownership = GetOwnership(owner);
-        if (!PhilosophersGazeRelicGrantPolicy.CanGrant(ownership))
+        try
         {
-            Log.Info("[STS2MinimalMod] PhilosophersGaze skipped relic obtain because the player already owns a prototype relic.");
+            Player? owner = Owner;
+            if (owner is null || !CanGrantActOneRelic())
+            {
+                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible act one relic callback.");
+                return;
+            }
+
+            await RelicCmd.Obtain<TRelic>(owner);
+            if (owner.GetRelicById(ModelDb.GetId<TRelic>()) is null)
+            {
+                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the act one relic was not obtained.");
+                return;
+            }
+
+            SetEventFinished(PageDescription(resultPage));
+            await SaveRunAfterResolution();
+        }
+        finally
+        {
+            EndResolution();
+        }
+    }
+
+    private async Task ReplaceWithMengziXiongZhang()
+    {
+        if (!TryBeginResolution())
+        {
             return;
         }
 
-        await RelicCmd.Obtain<TRelic>(owner);
+        try
+        {
+            Player? owner = Owner;
+            KongziQingYuPei? original = owner?.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei;
+            if (owner is null
+                || original is null
+                || !CanChooseContinuation(PhilosophersGazeContinuationOption.MengziXiongZhang))
+            {
+                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible Bear Paw callback.");
+                return;
+            }
+
+            int inheritedVirtue = PhilosophersGazeReplacementPolicy.CaptureInheritedVirtue(original.Virtue);
+            ContinuationResolutionSnapshot snapshot = RecordContinuation(owner);
+            MengziXiongZhang replacement = (MengziXiongZhang)ModelDb.Relic<MengziXiongZhang>().ToMutable();
+            replacement.SetInheritedVirtue(inheritedVirtue);
+
+            try
+            {
+                await RelicCmd.Replace(original, replacement);
+            }
+            catch (Exception exception)
+            {
+                RestoreContinuation(owner, snapshot);
+                Log.Error($"[STS2MinimalMod] PhilosophersGaze failed to replace Green Jade Pendant with Bear Paw: {exception}");
+                return;
+            }
+
+            MengziXiongZhang? obtained = owner.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) as MengziXiongZhang;
+            if (!PhilosophersGazeReplacementPolicy.IsMengziReplacementVerified(
+                    owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
+                    obtained is not null,
+                    inheritedVirtue,
+                    obtained?.InheritedVirtue ?? -1))
+            {
+                RestoreContinuation(owner, snapshot);
+                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the Bear Paw replacement could not be verified.");
+                return;
+            }
+
+            SetEventFinished(PageDescription(PhilosophersGazePage.MengziXiongZhang));
+            await SaveRunAfterResolution();
+        }
+        finally
+        {
+            EndResolution();
+        }
     }
 
-    private async Task AcceptContinuationRelic<TRelic>(
-        PhilosophersGazeContinuationOption choice)
-        where TRelic : RelicModel
+    private async Task ReplaceWithXunziShengMo()
+    {
+        if (!TryBeginResolution())
+        {
+            return;
+        }
+
+        try
+        {
+            Player? owner = Owner;
+            KongziMuduo? original = owner?.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo;
+            if (owner is null
+                || original is null
+                || !CanChooseContinuation(PhilosophersGazeContinuationOption.XunziShengMo))
+            {
+                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible Ink Line callback.");
+                return;
+            }
+
+            ContinuationResolutionSnapshot snapshot = RecordContinuation(owner);
+            XunziShengMo replacement = (XunziShengMo)ModelDb.Relic<XunziShengMo>().ToMutable();
+            try
+            {
+                await RelicCmd.Replace(original, replacement);
+            }
+            catch (Exception exception)
+            {
+                RestoreContinuation(owner, snapshot);
+                Log.Error($"[STS2MinimalMod] PhilosophersGaze failed to replace Muduo with Ink Line: {exception}");
+                return;
+            }
+
+            if (!PhilosophersGazeReplacementPolicy.IsXunziReplacementVerified(
+                    owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
+                    owner.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null))
+            {
+                RestoreContinuation(owner, snapshot);
+                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the Ink Line replacement could not be verified.");
+                return;
+            }
+
+            SetEventFinished(PageDescription(PhilosophersGazePage.XunziShengMo));
+            await SaveRunAfterResolution();
+        }
+        finally
+        {
+            EndResolution();
+        }
+    }
+
+    private async Task ResolveContinuationDecline(
+        PhilosophersGazeContinuationOption choice,
+        PhilosophersGazePage resultPage)
+    {
+        if (!TryBeginResolution())
+        {
+            return;
+        }
+
+        try
+        {
+            Player? owner = Owner;
+            PhilosophersGazeContinuationOption availableOptions = GetAvailableContinuationOptions();
+            if (owner is null
+                || choice == PhilosophersGazeContinuationOption.None
+                || (availableOptions & choice) == 0)
+            {
+                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible continuation decline callback.");
+                return;
+            }
+
+            RecordContinuation(owner);
+            SetEventFinished(PageDescription(resultPage));
+            await SaveRunAfterResolution();
+        }
+        finally
+        {
+            EndResolution();
+        }
+    }
+
+    private async Task FinishActOneWithoutRelic(PhilosophersGazePage resultPage)
+    {
+        if (!TryBeginResolution())
+        {
+            return;
+        }
+
+        try
+        {
+            if (!IsActOne())
+            {
+                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible act one decline callback.");
+                return;
+            }
+
+            SetEventFinished(PageDescription(resultPage));
+            await SaveRunAfterResolution();
+        }
+        finally
+        {
+            EndResolution();
+        }
+    }
+
+    private bool IsActOne()
+    {
+        return Owner is { } owner && GetCurrentActIndex(owner) == 0;
+    }
+
+    private bool CanGrantActOneRelic()
+    {
+        return Owner is { } owner
+            && GetCurrentActIndex(owner) == 0
+            && PhilosophersGazeRelicGrantPolicy.CanGrant(GetOwnership(owner));
+    }
+
+    private bool CanChooseContinuation(PhilosophersGazeContinuationOption choice)
     {
         Player? owner = Owner;
-        if (owner is null)
-        {
-            Log.Error("[STS2MinimalMod] PhilosophersGaze continuation could not obtain a relic because the event has no owner.");
-            return;
-        }
-
-        PhilosophersGazeRelicOwnership ownership = GetOwnership(owner);
-        bool continuationRecorded = HasContinuationBeenRecorded(owner);
-        if (!PhilosophersGazeContinuationPolicy.CanGrant(
+        return owner is not null
+            && GetCurrentActIndex(owner) == 1
+            && PhilosophersGazeContinuationPolicy.CanGrant(
                 choice,
-                ownership,
-                continuationRecorded))
-        {
-            Log.Info("[STS2MinimalMod] PhilosophersGaze continuation skipped an ineligible relic obtain.");
-            return;
-        }
-
-        await RelicCmd.Obtain<TRelic>(owner);
-        RecordContinuation(owner);
-        await SaveContinuationResolution();
+                GetOwnership(owner),
+                HasContinuationBeenRecorded(owner));
     }
 
-    private static PhilosophersGazeRelicOwnership GetOwnership(Player? owner)
+    private PhilosophersGazeContinuationOption GetAvailableContinuationOptions()
+    {
+        Player? owner = Owner;
+        if (owner is null || GetCurrentActIndex(owner) != 1)
+        {
+            return PhilosophersGazeContinuationOption.None;
+        }
+
+        return PhilosophersGazeContinuationPolicy.GetAvailableOptions(
+            GetOwnership(owner),
+            HasContinuationBeenRecorded(owner));
+    }
+
+    private EventOption Option(
+        Func<Task> onChosen,
+        PhilosophersGazePage page,
+        PhilosophersGazeOption option)
+    {
+        return new EventOption(
+            this,
+            onChosen,
+            $"{LocalizationPrefix}.{page.ToLocalizationKey()}.options.{option.ToLocalizationKey()}",
+            Array.Empty<IHoverTip>());
+    }
+
+    private EventOption RouteRelicOption<TRelic>(
+        Func<Task> onChosen,
+        PhilosophersGazePage page,
+        PhilosophersGazeOption option)
+        where TRelic : RelicModel
+    {
+        return new EventOption(
+            this,
+            onChosen,
+            $"{LocalizationPrefix}.{page.ToLocalizationKey()}.options.{option.ToLocalizationKey()}",
+            ModelDb.Relic<TRelic>().HoverTips);
+    }
+
+    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(PhilosophersGazePage page)
+    {
+        return L10NLookup($"{LocalizationPrefix}.{page.ToLocalizationKey()}.description");
+    }
+
+    internal static PhilosophersGazeRelicOwnership GetOwnership(Player? owner)
     {
         return new PhilosophersGazeRelicOwnership(
             owner?.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null,
-            owner?.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null);
+            owner?.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null,
+            owner?.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) is not null);
     }
 
-    private static bool HasContinuationBeenRecorded(Player? owner)
+    internal static bool HasContinuationBeenRecorded(Player? owner)
     {
         return (owner?.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo)
                 ?.HasResolvedPhilosophersGazeContinuation == true
@@ -202,19 +453,39 @@ public sealed class PhilosophersGaze : EventModel
                 ?.HasResolvedPhilosophersGazeContinuation == true;
     }
 
-    private static void RecordContinuation(Player owner)
+    private static ContinuationResolutionSnapshot RecordContinuation(Player owner)
     {
-        (owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo)
-            ?.RecordPhilosophersGazeContinuation();
-        (owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)
-            ?.RecordPhilosophersGazeContinuation();
+        KongziMuduo? muduo = owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo;
+        KongziQingYuPei? qingYuPei = owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei;
+        ContinuationResolutionSnapshot snapshot = new(
+            muduo?.HasResolvedPhilosophersGazeContinuation ?? false,
+            qingYuPei?.HasResolvedPhilosophersGazeContinuation ?? false);
+        muduo?.RecordPhilosophersGazeContinuation();
+        qingYuPei?.RecordPhilosophersGazeContinuation();
+        return snapshot;
     }
 
-    private static async Task SaveContinuationResolution()
+    private static void RestoreContinuation(Player owner, ContinuationResolutionSnapshot snapshot)
+    {
+        (owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo)
+            ?.RestorePhilosophersGazeContinuation(snapshot.MuduoResolved);
+        (owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)
+            ?.RestorePhilosophersGazeContinuation(snapshot.QingYuPeiResolved);
+    }
+
+    private static int GetCurrentActIndex(Player? owner) => owner?.RunState.CurrentActIndex ?? -1;
+
+    private bool TryBeginResolution() => _resolutionGate.TryBegin();
+
+    private void EndResolution() => _resolutionGate.End();
+
+    private static async Task SaveRunAfterResolution()
     {
         if (RunManager.Instance.ShouldSave)
         {
             await SaveManager.Instance.SaveRun(null);
         }
     }
+
+    private readonly record struct ContinuationResolutionSnapshot(bool MuduoResolved, bool QingYuPeiResolved);
 }

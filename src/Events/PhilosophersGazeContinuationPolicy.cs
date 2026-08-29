@@ -40,7 +40,8 @@ internal static class PhilosophersGazeContinuationPolicy
         if (continuationRecorded
             || ownership.HasMengziXiongZhang
             || ownership.HasXunziShengMo
-            || ownership.HasMoziMoSeZhuJian)
+            || ownership.HasMoziMoSeZhuJian
+            || ownership.HasMoziShouChengTu)
         {
             return PhilosophersGazeContinuationOption.None;
         }
@@ -57,14 +58,6 @@ internal static class PhilosophersGazeContinuationPolicy
         }
 
         return options;
-    }
-
-    public static bool IsContinuationStage(PhilosophersGazeRelicOwnership ownership)
-    {
-        return ownership.HasKongziMuduo
-            || ownership.HasKongziQingYuPei
-            || ownership.HasMengziXiongZhang
-            || ownership.HasXunziShengMo;
     }
 
     public static bool CanGrant(

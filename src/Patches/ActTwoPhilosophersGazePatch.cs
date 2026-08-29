@@ -57,8 +57,8 @@ internal static class ActTwoPhilosophersGazePatch
         }
 
         Player player = runState.Players[0];
-        PhilosophersGazeRelicOwnership ownership = GetOwnership(player);
-        bool continuationRecorded = HasContinuationBeenRecorded(player);
+        PhilosophersGazeRelicOwnership ownership = PhilosophersGaze.GetOwnership(player);
+        bool continuationRecorded = PhilosophersGaze.HasContinuationBeenRecorded(player);
         PhilosophersGaze? canonicalEvent = TryGetCanonicalEvent();
         PhilosophersGazeContinuationInsertionContext context = new(
             runManager.IsInProgress,
@@ -85,24 +85,6 @@ internal static class ActTwoPhilosophersGazePatch
         await runManager.EnterRoomWithoutExitingCurrentRoom(
             new EventRoom(canonicalEvent!),
             fadeToBlack: entryPlan.FadeToBlack);
-    }
-
-    private static PhilosophersGazeRelicOwnership GetOwnership(Player player)
-    {
-        return new PhilosophersGazeRelicOwnership(
-            player.GetRelicById(ModelDb.GetId<KongziMuduo>()) is not null,
-            player.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) is not null,
-            player.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
-            player.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null,
-            player.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null);
-    }
-
-    private static bool HasContinuationBeenRecorded(Player player)
-    {
-        return (player.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo)
-                ?.HasResolvedPhilosophersGazeContinuation == true
-            || (player.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)
-                ?.HasResolvedPhilosophersGazeContinuation == true;
     }
 
     private static PhilosophersGaze? TryGetCanonicalEvent()

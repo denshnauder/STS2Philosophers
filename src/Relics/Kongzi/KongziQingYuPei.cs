@@ -72,6 +72,11 @@ public sealed class KongziQingYuPei : RelicModel
         HasResolvedPhilosophersGazeContinuation = true;
     }
 
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
+
     public static int GetVirtue(Player player)
     {
         return (player.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)?.Virtue ?? 0;
