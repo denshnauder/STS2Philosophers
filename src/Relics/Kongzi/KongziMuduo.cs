@@ -46,6 +46,11 @@ public sealed class KongziMuduo : RelicModel
         HasResolvedPhilosophersGazeContinuation = true;
     }
 
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
+
     public override Task BeforeSideTurnStart(
         PlayerChoiceContext choiceContext,
         CombatSide side,

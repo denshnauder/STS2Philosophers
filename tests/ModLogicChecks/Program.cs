@@ -1,4 +1,5 @@
 using STS2MinimalMod;
+using System.Text.Json;
 
 static void Check(bool condition, string message)
 {
@@ -659,6 +660,14 @@ Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwners
         HasXunziShengMo: false,
         HasMoziMoSeZhuJian: true)),
     "Owning Ink Bamboo Slips must prevent PhilosophersGaze from granting another route relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false,
+        HasMoziMoSeZhuJian: false,
+        HasMoziShouChengTu: true)),
+    "Owning City Defense Diagram must prevent PhilosophersGaze from granting another route relic.");
 
 Console.WriteLine("PhilosophersGaze relic grant policy checks passed.");
 
@@ -667,14 +676,16 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
     bool hasKongziQingYuPei = false,
     bool hasMengziXiongZhang = false,
     bool hasXunziShengMo = false,
-    bool hasMoziMoSeZhuJian = false)
+    bool hasMoziMoSeZhuJian = false,
+    bool hasMoziShouChengTu = false)
 {
     return new PhilosophersGazeRelicOwnership(
         hasKongziMuduo,
         hasKongziQingYuPei,
         hasMengziXiongZhang,
         hasXunziShengMo,
-        hasMoziMoSeZhuJian);
+        hasMoziMoSeZhuJian,
+        hasMoziShouChengTu);
 }
 
 static PhilosophersGazeContinuationInsertionContext ContinuationContext(
@@ -735,8 +746,14 @@ Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(moziRoute, false)
 Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
         ContinuationContext(moziRoute)),
     "The act two event must be skipped for the standalone Mohist route.");
-Check(!PhilosophersGazeContinuationPolicy.IsContinuationStage(moziRoute),
-    "Ink Bamboo Slips must not generate a continuation page with only a refusal option.");
+
+PhilosophersGazeRelicOwnership shouChengTuRoute = ContinuationOwnership(
+    hasMoziShouChengTu: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(shouChengTuRoute, false)
+        == PhilosophersGazeContinuationOption.None
+      && !PhilosophersGazeContinuationPolicy.ShouldInsert(
+          ContinuationContext(shouChengTuRoute)),
+    "City Defense Diagram currently has no act two continuation and must skip the event.");
 
 PhilosophersGazeRelicOwnership debugMixedRoute = ContinuationOwnership(
     hasKongziMuduo: true,
@@ -824,3 +841,179 @@ Check(PhilosophersGazeContinuationPolicy.CreateEntryPlan(
     "The continuation entry plan must not alter screens before MapRoom entry completes.");
 
 Console.WriteLine("PhilosophersGaze continuation policy checks passed.");
+
+static PhilosophersGazeTransition Transition(
+    PhilosophersGazePage page,
+    PhilosophersGazeOption option)
+{
+    Check(PhilosophersGazeFlowPolicy.TryGetTransition(page, option, out PhilosophersGazeTransition transition),
+        $"Expected a legal transition from {page} using {option}.");
+    return transition;
+}
+
+PhilosophersGazeTransition initialKongzi = Transition(
+    PhilosophersGazePage.Initial,
+    PhilosophersGazeOption.Kongzi);
+PhilosophersGazeTransition initialMozi = Transition(
+    PhilosophersGazePage.Initial,
+    PhilosophersGazeOption.Mozi);
+PhilosophersGazeTransition initialDecline = Transition(
+    PhilosophersGazePage.Initial,
+    PhilosophersGazeOption.Decline);
+Check(initialKongzi.Destination == PhilosophersGazePage.KongziViewpoints
+      && initialMozi.Destination == PhilosophersGazePage.MoziViewpoints
+      && initialDecline.Destination == PhilosophersGazePage.ActOneDeclineConfirm,
+    "The act one home page must contain only Kongzi, Mozi, and the refusal confirmation route.");
+Check(new[] { initialKongzi, initialMozi, initialDecline }.All(transition =>
+        transition.IsNavigation
+        && transition.Effect == PhilosophersGazeEffect.None
+        && !transition.UsesNativeProceed),
+    "Every act one home-page option must be navigation-only with zero relic side effects.");
+
+PhilosophersGazeTransition[] navigationTransitions =
+[
+    initialKongzi,
+    initialMozi,
+    initialDecline,
+    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Mengzi),
+    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Xunzi),
+    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Decline),
+];
+Check(navigationTransitions.All(transition =>
+        transition.IsNavigation && transition.Effect == PhilosophersGazeEffect.None),
+    "Intermediate philosopher and confirmation pages must be safe to lose on reload because navigation has no player side effects.");
+
+PhilosophersGazeTransition[] actOneRelicResults =
+[
+    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Muduo),
+    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.QingYuPei),
+    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
+    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
+];
+Check(actOneRelicResults.Select(transition => transition.Effect).Distinct().Count() == 4,
+    "Kongzi and Mozi viewpoint pages must expose four distinct mutually exclusive root effects.");
+
+PhilosophersGazeTransition[] allResultTransitions =
+[
+    ..actOneRelicResults,
+    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.ActOneDeclineConfirm, PhilosophersGazeOption.Confirm),
+    Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.XiongZhang),
+    Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.ShengMo),
+    Transition(PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.ActTwoDeclineConfirm, PhilosophersGazeOption.Confirm),
+];
+Check(allResultTransitions.All(transition =>
+        transition.FinishesEvent && transition.UsesNativeProceed),
+    "Every accept and refusal path must finish on an independent result page that relies on native Proceed.");
+Check(!PhilosophersGazeFlowPolicy.TryGetTransition(
+        PhilosophersGazePage.Initial,
+        PhilosophersGazeOption.Muduo,
+        out _)
+      && !PhilosophersGazeFlowPolicy.TryGetTransition(
+          PhilosophersGazePage.MengziXiongZhang,
+          PhilosophersGazeOption.XiongZhang,
+          out _),
+    "Illegal callbacks and callbacks from a result page must not form valid transitions.");
+
+PhilosophersGazeResolutionGate resolutionGate = new();
+Check(resolutionGate.TryBegin(), "The first resolution callback must acquire the event gate.");
+Check(!resolutionGate.TryBegin(), "A double-click must not start a second concurrent resolution.");
+resolutionGate.End();
+Check(resolutionGate.TryBegin(), "The gate must reopen after an unsuccessful callback returns.");
+resolutionGate.End();
+
+foreach (int inheritedTestVirtue in new[] { 0, 1, 7 })
+{
+    int inheritedVirtue = PhilosophersGazeReplacementPolicy.CaptureInheritedVirtue(inheritedTestVirtue);
+    Check(inheritedVirtue == inheritedTestVirtue,
+        $"Bear Paw must inherit Green Jade Pendant Virtue {inheritedTestVirtue} exactly.");
+    Check(PhilosophersGazeReplacementPolicy.IsMengziReplacementVerified(
+            hasOriginal: false,
+            hasReplacement: true,
+            expectedVirtue: inheritedTestVirtue,
+            actualVirtue: inheritedVirtue),
+        $"A verified Bear Paw replacement must remove the pendant and preserve Virtue {inheritedTestVirtue}.");
+}
+Check(!PhilosophersGazeReplacementPolicy.IsMengziReplacementVerified(
+        hasOriginal: true,
+        hasReplacement: true,
+        expectedVirtue: 3,
+        actualVirtue: 3),
+    "Bear Paw and Green Jade Pendant must never count as a successful coexisting replacement.");
+Check(!PhilosophersGazeReplacementPolicy.IsMengziReplacementVerified(
+        hasOriginal: false,
+        hasReplacement: true,
+        expectedVirtue: 3,
+        actualVirtue: 2),
+    "A Bear Paw replacement that loses Virtue must not display a success result.");
+Check(PhilosophersGazeReplacementPolicy.IsXunziReplacementVerified(
+        hasOriginal: false,
+        hasReplacement: true)
+      && !PhilosophersGazeReplacementPolicy.IsXunziReplacementVerified(
+          hasOriginal: true,
+          hasReplacement: true),
+    "Ink Line must replace Muduo rather than coexist with it.");
+
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugDualRoute, false)
+        == (PhilosophersGazeContinuationOption.MengziXiongZhang
+            | PhilosophersGazeContinuationOption.XunziShengMo)
+      && PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugDualRoute, true)
+        == PhilosophersGazeContinuationOption.None,
+    "Debug dual roots must show both philosophers before resolution and neither after either route resolves.");
+
+string repositoryRoot = Directory.GetCurrentDirectory();
+string[] localePaths =
+[
+    Path.Combine(repositoryRoot, "content", "STS2MinimalMod", "localization", "zhs", "events.json"),
+    Path.Combine(repositoryRoot, "content", "STS2MinimalMod", "localization", "eng", "events.json"),
+];
+foreach (string localePath in localePaths)
+{
+    using JsonDocument locale = JsonDocument.Parse(File.ReadAllText(localePath));
+    JsonElement root = locale.RootElement;
+    foreach (PhilosophersGazePage page in Enum.GetValues<PhilosophersGazePage>())
+    {
+        string key = $"PHILOSOPHERS_GAZE.pages.{page.ToLocalizationKey()}.description";
+        Check(root.TryGetProperty(key, out _), $"Missing event localization key {key} in {localePath}.");
+    }
+
+    foreach (PhilosophersGazePage page in Enum.GetValues<PhilosophersGazePage>())
+    {
+        foreach (PhilosophersGazeOption option in Enum.GetValues<PhilosophersGazeOption>())
+        {
+            if (!PhilosophersGazeFlowPolicy.TryGetTransition(page, option, out _))
+            {
+                continue;
+            }
+
+            string prefix = $"PHILOSOPHERS_GAZE.pages.{page.ToLocalizationKey()}.options.{option.ToLocalizationKey()}";
+            Check(root.TryGetProperty($"{prefix}.title", out _)
+                  && root.TryGetProperty($"{prefix}.description", out _),
+                $"Missing event option localization for {prefix} in {localePath}.");
+        }
+    }
+}
+
+string eventSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Events", "PhilosophersGaze.cs"));
+string bearPawSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Mengzi", "MengziXiongZhang.cs"));
+Check(eventSource.Contains("SetEventState(", StringComparison.Ordinal)
+      && !eventSource.Contains("MarkPreFinished", StringComparison.Ordinal)
+      && !eventSource.Contains("isProceed", StringComparison.Ordinal),
+    "Navigation must use SetEventState without MarkPreFinished or a fabricated proceed option.");
+Check(eventSource.Contains("RelicCmd.Replace(original, replacement)", StringComparison.Ordinal)
+      && eventSource.Contains("ModelDb.Relic<MengziXiongZhang>().ToMutable()", StringComparison.Ordinal)
+      && eventSource.Contains("ModelDb.Relic<XunziShengMo>().ToMutable()", StringComparison.Ordinal),
+    "Both act two relic choices must replace their original with a mutable canonical successor.");
+Check(eventSource.Contains("owner?.RunState.CurrentActIndex", StringComparison.Ordinal)
+      && !eventSource.Contains("SelectedPhilosopher", StringComparison.Ordinal)
+      && !eventSource.Contains("CurrentPage", StringComparison.Ordinal)
+      && !eventSource.Contains("static int Virtue", StringComparison.Ordinal),
+    "The event must choose its Act from the owner run and must not keep forbidden static navigation or Virtue state.");
+Check(bearPawSource.Contains("int virtue = InheritedVirtue;", StringComparison.Ordinal)
+      && !bearPawSource.Contains("KongziQingYuPei.GetVirtue(Owner)", StringComparison.Ordinal),
+    "Bear Paw combat hooks must read the relic's own saved inherited Virtue after replacement.");
+
+Console.WriteLine("PhilosophersGaze three-stage flow and localization checks passed.");

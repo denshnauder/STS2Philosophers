@@ -25,17 +25,17 @@ public sealed class MengziXiongZhangConsoleCmd : AbstractConsoleCmd
 
         if (args.Length == 0)
         {
-            if (issuingPlayer.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null)
+            if (issuingPlayer.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is MengziXiongZhang existing)
             {
                 return new CmdResult(
                     true,
-                    $"Bear Paw is already in this player's relic inventory. Current Virtue: {KongziQingYuPei.GetVirtue(issuingPlayer)}.");
+                    $"Bear Paw is already in this player's relic inventory. Current Virtue: {existing.InheritedVirtue}.");
             }
 
             return new CmdResult(
-                RelicCmd.Obtain<MengziXiongZhang>(issuingPlayer),
+                GrantWithCurrentVirtue(issuingPlayer),
                 true,
-                $"Granted Bear Paw. Current Virtue: {KongziQingYuPei.GetVirtue(issuingPlayer)}.");
+                $"Granted Bear Paw with the player's current Virtue.");
         }
 
         if (!args[0].Equals("virtue", StringComparison.OrdinalIgnoreCase))
@@ -45,7 +45,7 @@ public sealed class MengziXiongZhangConsoleCmd : AbstractConsoleCmd
 
         if (args.Length == 1)
         {
-            return new CmdResult(true, $"Current Virtue: {KongziQingYuPei.GetVirtue(issuingPlayer)}.");
+            return new CmdResult(true, $"Current Virtue: {GetVirtue(issuingPlayer)}.");
         }
 
         if (args.Length != 2 || !int.TryParse(args[1], out int virtue) || virtue < 0)
@@ -61,8 +61,28 @@ public sealed class MengziXiongZhangConsoleCmd : AbstractConsoleCmd
 
     private static async Task SetVirtue(Player player, int virtue)
     {
+        if (player.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is MengziXiongZhang xiongZhang)
+        {
+            xiongZhang.SetInheritedVirtue(virtue);
+            return;
+        }
+
         KongziQingYuPei? kongziQingYuPei = player.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei;
         kongziQingYuPei ??= await RelicCmd.Obtain<KongziQingYuPei>(player);
         kongziQingYuPei.SetVirtueForDebug(virtue);
+    }
+
+    private static async Task GrantWithCurrentVirtue(Player player)
+    {
+        int virtue = KongziQingYuPei.GetVirtue(player);
+        MengziXiongZhang xiongZhang = await RelicCmd.Obtain<MengziXiongZhang>(player);
+        xiongZhang.SetInheritedVirtue(virtue);
+    }
+
+    private static int GetVirtue(Player player)
+    {
+        return (player.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) as MengziXiongZhang)
+                ?.InheritedVirtue
+            ?? KongziQingYuPei.GetVirtue(player);
     }
 }

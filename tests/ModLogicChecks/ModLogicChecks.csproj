@@ -19,5 +19,7 @@
     <Compile Include="..\..\src\Events\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeContinuationPolicy.cs" Link="PhilosophersGazeContinuationPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeRelicGrantPolicy.cs" Link="PhilosophersGazeRelicGrantPolicy.cs" />
+    <Compile Include="..\..\src\Events\PhilosophersGazeFlowPolicy.cs" Link="PhilosophersGazeFlowPolicy.cs" />
+    <Compile Include="..\..\src\Events\PhilosophersGazeResolutionPolicy.cs" Link="PhilosophersGazeResolutionPolicy.cs" />
   </ItemGroup>
 </Project>
