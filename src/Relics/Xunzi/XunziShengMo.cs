@@ -24,12 +24,11 @@ public sealed class XunziShengMo : RelicModel
 
     public override int DisplayAmount => IsMutable ? _xunziShengMo.Progress : 0;
 
-    // Explicit temporary placeholder until Ink Line receives final artwork.
-    public override string PackedIconPath => "res://STS2MinimalMod/images/kongzi_muduo.png";
+    public override string PackedIconPath => "res://STS2MinimalMod/images/xunzi_sheng_mo.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_muduo_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/xunzi_sheng_mo_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_muduo.png";
+    protected override string BigIconPath => "res://STS2MinimalMod/images/xunzi_sheng_mo.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int SequenceProgress

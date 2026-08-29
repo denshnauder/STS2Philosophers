@@ -16,12 +16,11 @@ public sealed class MengziXiongZhang : RelicModel
 
     public override RelicRarity Rarity => RelicRarity.None;
 
-    // Explicit temporary placeholder until Bear Paw receives final artwork.
-    public override string PackedIconPath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei.png";
+    public override string PackedIconPath => "res://STS2MinimalMod/images/mengzi_xiong_zhang.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/mengzi_xiong_zhang_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei.png";
+    protected override string BigIconPath => "res://STS2MinimalMod/images/mengzi_xiong_zhang.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int InheritedVirtue
