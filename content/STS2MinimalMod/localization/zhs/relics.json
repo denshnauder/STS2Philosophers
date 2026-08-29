@@ -1,9 +1,9 @@
 {
   "KONGZI_MUDUO.title": "木铎",
-  "KONGZI_MUDUO.description": "周礼：每回合若先于攻击打出技能牌或能力牌，第一张技能牌获得2点临时力量，后续技能牌各获得1点，最多5点。若先打出攻击牌，本回合失去1点力量，且技能牌不再获得力量。",
+  "KONGZI_MUDUO.description": "每回合，若先打出技能牌或能力牌，第一张技能牌给予2点临时力量，之后每张给予1点，至多5点。若先打出攻击牌，本回合失去1点力量且不再触发前述效果。",
   "KONGZI_MUDUO.flavor": "以木为舌，振铎宣令。",
   "KONGZI_QING_YU_PEI.title": "青玉佩",
-  "KONGZI_QING_YU_PEI.description": "当所有存活敌人均无攻击意图时，若你本回合曾可打出攻击牌却未打出，则践行仁：永久获得1点德，并在本场战斗的正常卡牌奖励末尾额外展示1张不同的罕见或稀有牌。你仍只能选择1张牌。仁行成立前若打出攻击牌，本场战斗失仁；结果一旦成立便不会改变。",
+  "KONGZI_QING_YU_PEI.description": "每场战斗一次。若所有敌人均无攻击意图，且你本回合曾可打出攻击牌但未打出，获得1点德，并在本场战斗的卡牌奖励中额外展示1张不同的罕见或稀有牌。",
   "KONGZI_QING_YU_PEI.flavor": "君子比德于玉，温润而泽。",
   "MENGZI_XIONG_ZHANG.title": "熊掌",
   "MENGZI_XIONG_ZHANG.description": "每场战斗的前N个回合，获得1点能量并额外抽2张牌。N等于你的德。",

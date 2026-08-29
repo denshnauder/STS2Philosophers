@@ -3,7 +3,7 @@
   "name": "STS2 Minimal Mod",
   "author": "Local Developer",
   "description": "A Philosophers' Gaze route mod: choose a Confucian relic or Ink Bamboo Slips after Neow, with Confucian legacies before the Act 2 map.",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "min_game_version": "0.111.0",
   "has_pck": true,
   "has_dll": true,
