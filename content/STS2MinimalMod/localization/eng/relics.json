@@ -13,5 +13,8 @@
   "XUNZI_SHENG_MO.flavor": "Wood becomes straight by the ink line; metal becomes sharp on the whetstone.",
   "MOZI_MO_SE_ZHU_JIAN.title": "Ink Bamboo Slips",
   "MOZI_MO_SE_ZHU_JIAN.description": "At the start of your turn, ALL characters gain 6 Block. If no character lost HP last turn, gain 1 Mutual Benefit, up to 2. Gain 1 Energy and draw 1 additional card per Mutual Benefit. When any character loses HP, lose all Mutual Benefit.",
-  "MOZI_MO_SE_ZHU_JIAN.flavor": "Care for one another; benefit one another."
+  "MOZI_MO_SE_ZHU_JIAN.flavor": "Care for one another; benefit one another.",
+  "MOZI_SHOU_CHENG_TU.title": "City Defense Diagram",
+  "MOZI_SHOU_CHENG_TU.description": "If an enemy intends to Attack and you take no direct damage from enemies, gain 6 Block at the start of your next turn.",
+  "MOZI_SHOU_CHENG_TU.flavor": "To stop aggression, first make the defense unbroken."
 }

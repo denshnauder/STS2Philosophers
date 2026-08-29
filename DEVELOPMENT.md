@@ -19,7 +19,7 @@
 dotnet run --project .\tests\ModLogicChecks\ModLogicChecks.csproj -c Release
 ```
 
-当前覆盖木铎回合规则、青玉佩仁行与奖励策略、熊掌回合触发、绳墨序列、墨色竹简的相利与防重复状态，以及“诸子观照”两阶段插入和授予策略。
+当前覆盖木铎回合规则、青玉佩仁行与奖励策略、熊掌回合触发、绳墨序列、墨色竹简的相利状态、守城图的守御窗口与伤害来源过滤，以及“诸子观照”两阶段插入和授予策略。
 
 ## 构建 DLL
 
@@ -94,6 +94,7 @@ Windows 日志位置：
 - `mengzixiongzhang`：授予熊掌。
 - `xunzishengmo`：授予绳墨。
 - `mozimosezhujian`：授予墨色竹简。
+- `mozishouchengtu`：授予守城图。
 - `mengzixiongzhang virtue [amount]`：查看或设置当前玩家由青玉佩保存的德。
 
 ## 项目结构

@@ -13,5 +13,8 @@
   "XUNZI_SHENG_MO.flavor": "木受绳则直，金就砺则利。",
   "MOZI_MO_SE_ZHU_JIAN.title": "墨色竹简",
   "MOZI_MO_SE_ZHU_JIAN.description": "你的回合开始时，所有角色获得6点格挡。若上一回合无人失去生命，相利增加1层，至多2层。每层相利使你获得1点能量并额外抽1张牌。任一角色失去生命时，失去所有相利。",
-  "MOZI_MO_SE_ZHU_JIAN.flavor": "兼相爱，交相利。"
+  "MOZI_MO_SE_ZHU_JIAN.flavor": "兼相爱，交相利。",
+  "MOZI_SHOU_CHENG_TU.title": "守城图",
+  "MOZI_SHOU_CHENG_TU.description": "若有敌人具有攻击意图且你未受到敌人直接造成的伤害，下回合开始时获得6点格挡。",
+  "MOZI_SHOU_CHENG_TU.flavor": "止攻之道，始于善守。"
 }

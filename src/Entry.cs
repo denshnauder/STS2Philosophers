@@ -20,12 +20,13 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, MengziXiongZhang>();
         ModHelper.AddModelToPool<EventRelicPool, XunziShengMo>();
         ModHelper.AddModelToPool<EventRelicPool, MoziMoSeZhuJian>();
+        ModHelper.AddModelToPool<EventRelicPool, MoziShouChengTu>();
 
         if (Interlocked.Exchange(ref _harmonyInitialized, 1) == 0)
         {
             new Harmony(HarmonyId).PatchAll(typeof(Entry).Assembly);
         }
 
-        Log.Info("[STS2MinimalMod] Initialized successfully. Confucian and Mohist PhilosophersGaze routes are available for singleplayer testing.");
+        Log.Info("[STS2MinimalMod] Initialized successfully. Confucian and Mohist relic prototypes are available for singleplayer testing.");
     }
 }

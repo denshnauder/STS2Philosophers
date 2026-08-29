@@ -454,6 +454,131 @@ Check(moziMoSeZhuJianState == default,
 
 Console.WriteLine("Ink Bamboo Slips logic checks passed.");
 
+Check(MoziShouChengTuState.BlockAmount == 6,
+    "City Defense Diagram must grant exactly 6 Block after a successful defense.");
+
+MoziShouChengTuState moziShouChengTuState = new();
+Check(moziShouChengTuState.BeginPlayerTurn(1),
+    "The first player-turn boundary must initialize City Defense Diagram.");
+Check(!moziShouChengTuState.HasPendingReward,
+    "The first turn must not receive a reward without an earlier defense window.");
+Check(!moziShouChengTuState.BeginPlayerTurn(1),
+    "A repeated boundary hook must not resolve City Defense Diagram twice.");
+Check(moziShouChengTuState.SampleEnemyIntents(1, anyLivingEnemyIntendsToAttack: true),
+    "A visible enemy Attack intent must open the defense window.");
+Check(!moziShouChengTuState.SampleEnemyIntents(1, anyLivingEnemyIntendsToAttack: false),
+    "A repeated intent hook must not replace the turn's locked observation.");
+Check(!MoziShouChengTuDamagePolicy.IsEnemyHpLossToOwner(
+        resultReceiverIsOwner: true,
+        hookTargetIsOwner: true,
+        dealerIsEnemy: false,
+        unblockedDamage: 5),
+    "Player self-damage must not fail City Defense Diagram.");
+Check(!MoziShouChengTuDamagePolicy.IsEnemyHpLossToOwner(
+        resultReceiverIsOwner: false,
+        hookTargetIsOwner: false,
+        dealerIsEnemy: true,
+        unblockedDamage: 5),
+    "Enemy damage to another player must not fail the owner's City Defense Diagram.");
+Check(!MoziShouChengTuDamagePolicy.IsEnemyHpLossToOwner(
+        resultReceiverIsOwner: true,
+        hookTargetIsOwner: true,
+        dealerIsEnemy: true,
+        unblockedDamage: 0),
+    "Fully prevented enemy damage must not fail City Defense Diagram.");
+Check(MoziShouChengTuDamagePolicy.IsEnemyHpLossToOwner(
+        resultReceiverIsOwner: true,
+        hookTargetIsOwner: true,
+        dealerIsEnemy: true,
+        unblockedDamage: 1),
+    "A lethal or nonlethal enemy hit with actual HP loss must fail City Defense Diagram.");
+Check(moziShouChengTuState.BeginPlayerTurn(2)
+        && moziShouChengTuState.HasPendingReward,
+    "An enemy Attack intent followed by no enemy HP damage must earn next-turn Block.");
+Check(moziShouChengTuState.TryTakePendingReward(2, out bool firstDefenseReward)
+        && firstDefenseReward,
+    "A successful defense must grant its locked Block reward.");
+Check(!moziShouChengTuState.TryTakePendingReward(2, out _),
+    "A successful defense must not pay twice after replay or restoration.");
+
+Check(moziShouChengTuState.SampleEnemyIntents(2, anyLivingEnemyIntendsToAttack: true),
+    "City Defense Diagram must open a fresh window on a later eligible turn.");
+Check(moziShouChengTuState.RecordEnemyHpLoss(unblockedDamage: 1),
+    "Actual HP damage from an enemy must fail the current defense window.");
+Check(!moziShouChengTuState.RecordEnemyHpLoss(unblockedDamage: 8),
+    "Multiple enemy hits must merge into one failed round state.");
+Check(moziShouChengTuState.BeginPlayerTurn(3)
+        && !moziShouChengTuState.HasPendingReward,
+    "A failed defense must not earn next-turn Block.");
+Check(moziShouChengTuState.TryTakePendingReward(3, out bool failedDefenseReward)
+        && !failedDefenseReward,
+    "A zero reward must still be locked against duplicate payout.");
+
+Check(moziShouChengTuState.SampleEnemyIntents(3, anyLivingEnemyIntendsToAttack: false),
+    "A non-Attack turn must be sampled without opening a defense window.");
+Check(!moziShouChengTuState.RecordEnemyHpLoss(unblockedDamage: 4),
+    "Enemy damage must not create a failure state when no Attack intent qualified the round.");
+Check(moziShouChengTuState.BeginPlayerTurn(4)
+        && !moziShouChengTuState.HasPendingReward,
+    "A turn without an enemy Attack intent must not earn Block.");
+
+Check(moziShouChengTuState.SampleEnemyIntents(4, anyLivingEnemyIntendsToAttack: true),
+    "City Defense Diagram must remain reusable throughout combat.");
+Check(moziShouChengTuState.BeginPlayerTurn(5)
+        && moziShouChengTuState.TryTakePendingReward(5, out bool repeatedDefenseReward)
+        && repeatedDefenseReward,
+    "A later successful defense must independently grant Block once, even if the original attacker was killed or stunned.");
+
+MoziShouChengTuState restoredShouChengTuState = new();
+Check(restoredShouChengTuState.BeginPlayerTurn(1)
+        && restoredShouChengTuState.SampleEnemyIntents(1, anyLivingEnemyIntendsToAttack: true)
+        && restoredShouChengTuState.BeginPlayerTurn(2),
+    "A restorable City Defense Diagram state must be able to lock a pending reward.");
+restoredShouChengTuState = new MoziShouChengTuState
+{
+    HasActiveDefenseWindow = restoredShouChengTuState.HasActiveDefenseWindow,
+    EnemyDamageTaken = restoredShouChengTuState.EnemyDamageTaken,
+    LastBoundaryTurn = restoredShouChengTuState.LastBoundaryTurn,
+    LastIntentSampleTurn = restoredShouChengTuState.LastIntentSampleTurn,
+    HasPendingReward = restoredShouChengTuState.HasPendingReward,
+    PendingRewardTurn = restoredShouChengTuState.PendingRewardTurn,
+    LastRewardedTurn = restoredShouChengTuState.LastRewardedTurn,
+};
+Check(restoredShouChengTuState.TryTakePendingReward(2, out bool restoredDefenseReward)
+        && restoredDefenseReward,
+    "A property-by-property restored pending reward must still pay once.");
+restoredShouChengTuState = new MoziShouChengTuState
+{
+    HasActiveDefenseWindow = restoredShouChengTuState.HasActiveDefenseWindow,
+    EnemyDamageTaken = restoredShouChengTuState.EnemyDamageTaken,
+    LastBoundaryTurn = restoredShouChengTuState.LastBoundaryTurn,
+    LastIntentSampleTurn = restoredShouChengTuState.LastIntentSampleTurn,
+    HasPendingReward = restoredShouChengTuState.HasPendingReward,
+    PendingRewardTurn = restoredShouChengTuState.PendingRewardTurn,
+    LastRewardedTurn = restoredShouChengTuState.LastRewardedTurn,
+};
+Check(!restoredShouChengTuState.TryTakePendingReward(2, out _),
+    "Restoring after payout must preserve the saved replay lock and prevent a second grant.");
+
+MoziShouChengTuState firstShouChengTuOwner = new();
+MoziShouChengTuState secondShouChengTuOwner = new();
+firstShouChengTuOwner.BeginPlayerTurn(1);
+secondShouChengTuOwner.BeginPlayerTurn(1);
+firstShouChengTuOwner.SampleEnemyIntents(1, anyLivingEnemyIntendsToAttack: true);
+secondShouChengTuOwner.SampleEnemyIntents(1, anyLivingEnemyIntendsToAttack: true);
+Check(firstShouChengTuOwner.RecordEnemyHpLoss(unblockedDamage: 2),
+    "Enemy damage to one owner must fail only that owner's defense window.");
+Check(firstShouChengTuOwner.BeginPlayerTurn(2)
+        && !firstShouChengTuOwner.HasPendingReward
+        && secondShouChengTuOwner.BeginPlayerTurn(2)
+        && secondShouChengTuOwner.HasPendingReward,
+    "City Defense Diagram state must remain isolated between players.");
+moziShouChengTuState.Reset();
+Check(moziShouChengTuState == default,
+    "Combat cleanup must reset City Defense Diagram windows and replay locks.");
+
+Console.WriteLine("City Defense Diagram logic checks passed.");
+
 static PhilosophersGazeInterceptionContext GazeContext(
     bool runInProgress = true,
     bool currentRoomIsEventRoom = true,
