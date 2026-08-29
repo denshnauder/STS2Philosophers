@@ -21,12 +21,14 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, XunziShengMo>();
         ModHelper.AddModelToPool<EventRelicPool, MoziMoSeZhuJian>();
         ModHelper.AddModelToPool<EventRelicPool, MoziShouChengTu>();
+        ModHelper.AddModelToPool<EventRelicPool, LaoziWuWeiShuJian>();
+        ModHelper.AddModelToPool<EventRelicPool, LaoziShuiYu>();
 
         if (Interlocked.Exchange(ref _harmonyInitialized, 1) == 0)
         {
             new Harmony(HarmonyId).PatchAll(typeof(Entry).Assembly);
         }
 
-        Log.Info("[STS2Philosophers] Initialized successfully. Confucian and Mohist relic prototypes are available for singleplayer testing.");
+        Log.Info("[STS2Philosophers] Initialized successfully. Confucian, Mohist, and Daoist relic prototypes are available for singleplayer testing.");
     }
 }

@@ -1,10 +1,12 @@
 {
   "PHILOSOPHERS_GAZE.title": "诸子观照",
-  "PHILOSOPHERS_GAZE.pages.INITIAL.description": "越过涅奥的门槛，两道目光落在前路。孔子谈仁与礼，问关系如何安顿、行动如何有序；墨子追问兼爱、非攻与实际利害。你愿听谁说？",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.description": "越过涅奥的门槛，三道目光落在前路。孔子谈仁与礼，墨子追问兼爱与非攻，老子则观照无为与柔弱。你愿听谁说？",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.KONGZI.title": "聆听孔子。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.KONGZI.description": "看看仁与礼如何成为行动。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.MOZI.title": "聆听墨子。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.MOZI.description": "看看兼爱与非攻如何衡量结果。",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.options.LAOZI.title": "聆听老子。",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.options.LAOZI.description": "看看无为与柔弱如何顺势而行。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.title": "拒绝邀请。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.description": "先停一步，再决定是否独自前行。",
 
@@ -24,6 +26,14 @@
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.title": "谢绝墨子的教诲。",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.description": "不接受遗物，保留自己的答案。",
 
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.description": "无为不是不做，而是不妄为；水至柔，却能因势化解强攻。老子放下书简与水玉：有所不为，方能留下余地。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.title": "无为：无为书简。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.description": "少出牌，保留手牌并积蓄下回合。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.title": "若水：水玉。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.description": "留下能量，以柔化解敌方攻势。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.title": "谢绝老子的教诲。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.description": "不接受遗物，保留自己的答案。",
+
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.description": "不借诸子之言，也是一种选择。你确认让这次观照止于一礼吗？",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.title": "确认拒绝。",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.description": "不接受任何第一层路线遗物。",
@@ -32,8 +42,11 @@
   "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description": "青玉温润。你选择在有能力攻击时克制自己、积累德行——至少奖励机制听懂了。",
   "PHILOSOPHERS_GAZE.pages.MOZI_MO_SE_ZHU_JIAN.description": "墨色竹简将众人放在同一张账上：共同格挡，无人失血才积相利。有人掀桌便难算共同利益。",
   "PHILOSOPHERS_GAZE.pages.MOZI_SHOU_CHENG_TU.description": "守城图在手。非攻不是站着挨打，而是让进攻不能造成结果——先守住这一回合，再谈天下太平。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_WU_WEI_SHU_JIAN.description": "书简未尽，余意自生。你选择少作妄为，把未出的牌与未尽的力留给下一回合。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_SHUI_YU.description": "水玉随势而转。你留下余力，不与攻势争强，只让锋芒落下时减去一半。",
   "PHILOSOPHERS_GAZE.pages.KONGZI_DECLINE.description": "你谢过孔子，不取木铎，也不取青玉佩。问题留下，前路仍由你作答。",
   "PHILOSOPHERS_GAZE.pages.MOZI_DECLINE.description": "你谢过墨子，不取竹简，也不取守城图。利害已看过，选择仍归自己。",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_DECLINE.description": "你谢过老子，不取书简，也不取水玉。无为不必借物，前路仍顺其自然。",
   "PHILOSOPHERS_GAZE.pages.DECLINE.description": "你揖手致意，没有接受任何教诲。前路仍由自己作答。",
 
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "旧日的选择来到第二层。仁可推进为义，礼可落实为可检验的规范；你也可以保留旧说与旧遗物。",

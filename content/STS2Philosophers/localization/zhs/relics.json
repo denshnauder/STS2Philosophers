@@ -16,5 +16,11 @@
   "MOZI_MO_SE_ZHU_JIAN.flavor": "兼相爱，交相利。",
   "MOZI_SHOU_CHENG_TU.title": "守城图",
   "MOZI_SHOU_CHENG_TU.description": "若有敌人具有攻击意图且你未受到敌人直接造成的伤害，下回合开始时获得6点格挡。",
-  "MOZI_SHOU_CHENG_TU.flavor": "止攻之道，始于善守。"
+  "MOZI_SHOU_CHENG_TU.flavor": "止攻之道，始于善守。",
+  "LAOZI_WU_WEI_SHU_JIAN.title": "无为书简",
+  "LAOZI_WU_WEI_SHU_JIAN.description": "回合结束时，若本回合打出的牌不超过2张，保留所有手牌。下回合获得2点能量和2点敏捷。",
+  "LAOZI_WU_WEI_SHU_JIAN.flavor": "不妄为，方能无不为。",
+  "LAOZI_SHUI_YU.title": "水玉",
+  "LAOZI_SHUI_YU.description": "回合结束时，若有未消耗的能量，直到你的下回合开始，受到的攻击伤害降低50%。",
+  "LAOZI_SHUI_YU.flavor": "天下莫柔弱于水，而攻坚强者莫之能胜。"
 }

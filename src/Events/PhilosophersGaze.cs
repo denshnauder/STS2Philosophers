@@ -32,6 +32,7 @@ public sealed class PhilosophersGaze : EventModel
         [
             Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi),
             Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi),
+            Option(ShowLaoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Laozi),
             Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline),
         ];
     }
@@ -84,6 +85,22 @@ public sealed class PhilosophersGaze : EventModel
                     RouteRelicOption<MoziMoSeZhuJian>(AcceptMoziMoSeZhuJian, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
                     RouteRelicOption<MoziShouChengTu>(AcceptMoziShouChengTu, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
                     Option(DeclineMozi, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
+                ]);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task ShowLaoziViewpoints()
+    {
+        if (IsActOne())
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.LaoziViewpoints),
+                [
+                    RouteRelicOption<LaoziWuWeiShuJian>(AcceptLaoziWuWeiShuJian, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.WuWeiShuJian),
+                    RouteRelicOption<LaoziShuiYu>(AcceptLaoziShuiYu, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.ShuiYu),
+                    Option(DeclineLaozi, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.Decline),
                 ]);
         }
 
@@ -152,9 +169,15 @@ public sealed class PhilosophersGaze : EventModel
 
     private Task AcceptMoziShouChengTu() => ObtainActOneRelic<MoziShouChengTu>(PhilosophersGazePage.MoziShouChengTu);
 
+    private Task AcceptLaoziWuWeiShuJian() => ObtainActOneRelic<LaoziWuWeiShuJian>(PhilosophersGazePage.LaoziWuWeiShuJian);
+
+    private Task AcceptLaoziShuiYu() => ObtainActOneRelic<LaoziShuiYu>(PhilosophersGazePage.LaoziShuiYu);
+
     private Task DeclineKongzi() => FinishActOneWithoutRelic(PhilosophersGazePage.KongziDecline);
 
     private Task DeclineMozi() => FinishActOneWithoutRelic(PhilosophersGazePage.MoziDecline);
+
+    private Task DeclineLaozi() => FinishActOneWithoutRelic(PhilosophersGazePage.LaoziDecline);
 
     private Task ConfirmActOneDecline() => FinishActOneWithoutRelic(PhilosophersGazePage.Decline);
 
@@ -442,7 +465,9 @@ public sealed class PhilosophersGaze : EventModel
             owner?.GetRelicById(ModelDb.GetId<MengziXiongZhang>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) is not null,
-            owner?.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) is not null);
+            owner?.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) is not null,
+            owner?.GetRelicById(ModelDb.GetId<LaoziWuWeiShuJian>()) is not null,
+            owner?.GetRelicById(ModelDb.GetId<LaoziShuiYu>()) is not null);
     }
 
     internal static bool HasContinuationBeenRecorded(Player? owner)

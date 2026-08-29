@@ -1,10 +1,12 @@
 {
   "PHILOSOPHERS_GAZE.title": "The Philosophers' Gaze",
-  "PHILOSOPHERS_GAZE.pages.INITIAL.description": "Beyond Neow's threshold, two gazes settle on the road ahead. Kongzi considers how benevolence and ritual order relationships and action; Mozi asks what impartial care, opposition to aggression, and practical benefit demand. Whom will you hear?",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.description": "Beyond Neow's threshold, three gazes settle on the road ahead. Kongzi speaks of benevolence and ritual, Mozi of impartial care and opposition to aggression, and Laozi of non-action and softness. Whom will you hear?",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.KONGZI.title": "Listen to Kongzi.",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.KONGZI.description": "See how benevolence and ritual become action.",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.MOZI.title": "Listen to Mozi.",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.MOZI.description": "See how impartial care and opposition to aggression measure results.",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.options.LAOZI.title": "Listen to Laozi.",
+  "PHILOSOPHERS_GAZE.pages.INITIAL.options.LAOZI.description": "See how non-action and softness follow the situation.",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.title": "Decline the invitation.",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.description": "Pause before deciding to proceed alone.",
 
@@ -24,6 +26,14 @@
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.title": "Decline Mozi's teaching.",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.description": "Take no relic and keep your own answer.",
 
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.description": "Non-action is not idleness, but freedom from contrivance. Water is soft, yet yields around force and wears down what is hard. Laozi sets down slips and jade: leave something undone, and room remains for what follows.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.title": "Non-action: Wu Wei Slips.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.description": "Play sparingly, Retain your hand, and prepare the next turn.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.title": "Be like water: Water Jade.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.description": "Leave Energy unspent and soften incoming attacks.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.title": "Decline Laozi's teaching.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.description": "Take no relic and keep your own answer.",
+
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.description": "Proceeding without the philosophers is also a choice. Will you end this encounter with a bow?",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.title": "Confirm the refusal.",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.description": "Take no Act One route relic.",
@@ -32,8 +42,11 @@
   "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description": "Cool jade rests in your hand. You choose restraint when an attack was possible, storing Virtue. At least the reward system understood.",
   "PHILOSOPHERS_GAZE.pages.MOZI_MO_SE_ZHU_JIAN.description": "The ink-dark slips place everyone on one ledger: shared Block, and Mutual Benefit only while nobody loses HP. Shared interests are hard to tally once someone flips the table.",
   "PHILOSOPHERS_GAZE.pages.MOZI_SHOU_CHENG_TU.description": "The diagram is yours. Opposing aggression is not standing still to be struck, but denying the attack its result. Secure this turn first; discuss peace under heaven later.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_WU_WEI_SHU_JIAN.description": "The slips remain unfinished, yet their meaning continues. You refrain from excess and leave both cards and strength for the next turn.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_SHUI_YU.description": "The jade turns with the current. You keep strength in reserve and do not contend with force; when the blow falls, half its edge is gone.",
   "PHILOSOPHERS_GAZE.pages.KONGZI_DECLINE.description": "You thank Kongzi but take neither bell nor jade. The question remains, and the answer is still yours.",
   "PHILOSOPHERS_GAZE.pages.MOZI_DECLINE.description": "You thank Mozi but take neither slips nor diagram. The consequences have been weighed; the choice remains yours.",
+  "PHILOSOPHERS_GAZE.pages.LAOZI_DECLINE.description": "You thank Laozi but take neither slips nor jade. Non-action needs no object, and the road follows its own course.",
   "PHILOSOPHERS_GAZE.pages.DECLINE.description": "You bow and accept no teaching. The road ahead remains your own answer.",
 
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "Your earlier choice reaches the second Act. Benevolence may advance into righteousness; ritual may become a tested standard. You may also keep the old teaching and its relic.",

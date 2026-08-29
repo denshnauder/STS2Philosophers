@@ -18,6 +18,10 @@ const REQUIRED_FILES := [
 	"res://STS2Philosophers/images/mozi_mo_se_zhu_jian_outline.png",
 	"res://STS2Philosophers/images/mozi_shou_cheng_tu.png",
 	"res://STS2Philosophers/images/mozi_shou_cheng_tu_outline.png",
+	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian.png",
+	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian_outline.png",
+	"res://STS2Philosophers/images/laozi_shui_yu.png",
+	"res://STS2Philosophers/images/laozi_shui_yu_outline.png",
 ]
 
 const REQUIRED_TEXTURES := [
@@ -34,6 +38,10 @@ const REQUIRED_TEXTURES := [
 	"res://STS2Philosophers/images/mozi_mo_se_zhu_jian_outline.png",
 	"res://STS2Philosophers/images/mozi_shou_cheng_tu.png",
 	"res://STS2Philosophers/images/mozi_shou_cheng_tu_outline.png",
+	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian.png",
+	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian_outline.png",
+	"res://STS2Philosophers/images/laozi_shui_yu.png",
+	"res://STS2Philosophers/images/laozi_shui_yu_outline.png",
 ]
 
 func _initialize() -> void:

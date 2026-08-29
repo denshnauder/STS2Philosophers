@@ -16,5 +16,11 @@
   "MOZI_MO_SE_ZHU_JIAN.flavor": "Care for one another; benefit one another.",
   "MOZI_SHOU_CHENG_TU.title": "City Defense Diagram",
   "MOZI_SHOU_CHENG_TU.description": "If an enemy intends to Attack and you take no direct damage from enemies, gain 6 Block at the start of your next turn.",
-  "MOZI_SHOU_CHENG_TU.flavor": "To stop aggression, first make the defense unbroken."
+  "MOZI_SHOU_CHENG_TU.flavor": "To stop aggression, first make the defense unbroken.",
+  "LAOZI_WU_WEI_SHU_JIAN.title": "Wu Wei Slips",
+  "LAOZI_WU_WEI_SHU_JIAN.description": "At the end of your turn, if you played no more than 2 cards this turn, Retain your hand. Next turn, gain 2 Energy and 2 Dexterity.",
+  "LAOZI_WU_WEI_SHU_JIAN.flavor": "Act without contrivance, and nothing remains undone.",
+  "LAOZI_SHUI_YU.title": "Water Jade",
+  "LAOZI_SHUI_YU.description": "At the end of your turn, if you have unspent Energy, take 50% less Attack damage until your next turn.",
+  "LAOZI_SHUI_YU.flavor": "Nothing is softer than water, yet nothing surpasses it in overcoming the hard."
 }

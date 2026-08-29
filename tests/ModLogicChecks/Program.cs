@@ -580,6 +580,74 @@ Check(moziShouChengTuState == default,
 
 Console.WriteLine("City Defense Diagram logic checks passed.");
 
+LaoziWuWeiShuJianState wuWeiState = new();
+wuWeiState.BeginCombat();
+wuWeiState.BeginPlayerTurn();
+Check(wuWeiState.TryQualifyTurn(turnNumber: 1, maximumCardsPlayed: 2),
+    "Playing no cards must qualify Wu Wei Slips.");
+Check(!wuWeiState.TryQualifyTurn(turnNumber: 1, maximumCardsPlayed: 2),
+    "Wu Wei Slips must evaluate each turn at most once.");
+Check(wuWeiState.PendingRewardTurn == 2,
+    "A qualifying turn must schedule the Wu Wei reward for the next turn.");
+Check(wuWeiState.TryTakePendingReward(2)
+      && !wuWeiState.TryTakePendingReward(2),
+    "A pending Wu Wei reward must pay exactly once.");
+
+wuWeiState.BeginPlayerTurn();
+object firstWuWeiCard = new();
+Check(wuWeiState.RecordCardPlayed(firstWuWeiCard)
+      && !wuWeiState.RecordCardPlayed(firstWuWeiCard),
+    "Repeated callbacks for one card play must count only once for Wu Wei Slips.");
+Check(wuWeiState.RecordCardPlayed(new object())
+      && wuWeiState.TryQualifyTurn(turnNumber: 2, maximumCardsPlayed: 2),
+    "Exactly two played cards must qualify Wu Wei Slips.");
+
+wuWeiState.BeginPlayerTurn();
+wuWeiState.RecordCardPlayed(new object());
+wuWeiState.RecordCardPlayed(new object());
+wuWeiState.RecordCardPlayed(new object());
+Check(!wuWeiState.TryQualifyTurn(turnNumber: 3, maximumCardsPlayed: 2)
+      && wuWeiState.PendingRewardTurn == 3,
+    "A third card must fail Wu Wei Slips without replacing an already scheduled reward.");
+Check(wuWeiState.TryTakePendingReward(3),
+    "The reward earned on the previous turn must survive the next turn's failed qualification.");
+wuWeiState.EndCombat();
+Check(wuWeiState.CardsPlayedThisTurn == 0
+      && wuWeiState.PendingRewardTurn == 0
+      && wuWeiState.LastRewardedTurn == 0,
+    "Combat end must clear all Wu Wei Slips combat state.");
+
+LaoziShuiYuState shuiYuState = new();
+shuiYuState.BeginCombat();
+Check(shuiYuState.EvaluateTurnEnd(turnNumber: 1, remainingEnergy: 1)
+      && shuiYuState.DamageReductionActive,
+    "Unspent Energy must activate Water Jade for the enemy turn.");
+Check(!shuiYuState.EvaluateTurnEnd(turnNumber: 1, remainingEnergy: 0)
+      && shuiYuState.DamageReductionActive,
+    "Water Jade must evaluate a turn only once and preserve the first result.");
+Check(LaoziShuiYuDamagePolicy.GetMultiplier(
+        damageReductionActive: true,
+        targetIsOwner: true,
+        dealerIsEnemy: true,
+        isAttackDamage: true) == 0.5m,
+    "Active Water Jade must halve enemy Attack damage to its owner.");
+Check(LaoziShuiYuDamagePolicy.GetMultiplier(true, true, true, false) == 1m
+      && LaoziShuiYuDamagePolicy.GetMultiplier(true, true, false, true) == 1m
+      && LaoziShuiYuDamagePolicy.GetMultiplier(true, false, true, true) == 1m
+      && LaoziShuiYuDamagePolicy.GetMultiplier(false, true, true, true) == 1m,
+    "Water Jade must not change non-Attack damage, allied damage, other targets, or inactive turns.");
+shuiYuState.BeginPlayerTurn();
+Check(!shuiYuState.DamageReductionActive,
+    "Water Jade must expire at the start of its owner's next turn.");
+Check(!shuiYuState.EvaluateTurnEnd(turnNumber: 2, remainingEnergy: 0)
+      && !shuiYuState.DamageReductionActive,
+    "A turn with no unspent Energy must leave Water Jade inactive.");
+shuiYuState.EndCombat();
+Check(!shuiYuState.DamageReductionActive && shuiYuState.LastEvaluatedTurn == 0,
+    "Combat end must clear Water Jade combat state.");
+
+Console.WriteLine("Laozi relic logic checks passed.");
+
 static PhilosophersGazeInterceptionContext GazeContext(
     bool runInProgress = true,
     bool currentRoomIsEventRoom = true,
@@ -668,6 +736,20 @@ Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwners
         HasMoziMoSeZhuJian: false,
         HasMoziShouChengTu: true)),
     "Owning City Defense Diagram must prevent PhilosophersGaze from granting another route relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false,
+        HasLaoziWuWeiShuJian: true)),
+    "Owning Wu Wei Slips must prevent PhilosophersGaze from granting another route relic.");
+Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
+        HasKongziMuduo: false,
+        HasKongziQingYuPei: false,
+        HasMengziXiongZhang: false,
+        HasXunziShengMo: false,
+        HasLaoziShuiYu: true)),
+    "Owning Water Jade must prevent PhilosophersGaze from granting another route relic.");
 
 Console.WriteLine("PhilosophersGaze relic grant policy checks passed.");
 
@@ -677,7 +759,9 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
     bool hasMengziXiongZhang = false,
     bool hasXunziShengMo = false,
     bool hasMoziMoSeZhuJian = false,
-    bool hasMoziShouChengTu = false)
+    bool hasMoziShouChengTu = false,
+    bool hasLaoziWuWeiShuJian = false,
+    bool hasLaoziShuiYu = false)
 {
     return new PhilosophersGazeRelicOwnership(
         hasKongziMuduo,
@@ -685,7 +769,9 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
         hasMengziXiongZhang,
         hasXunziShengMo,
         hasMoziMoSeZhuJian,
-        hasMoziShouChengTu);
+        hasMoziShouChengTu,
+        hasLaoziWuWeiShuJian,
+        hasLaoziShuiYu);
 }
 
 static PhilosophersGazeContinuationInsertionContext ContinuationContext(
@@ -754,6 +840,20 @@ Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(shouChengTuRoute, f
       && !PhilosophersGazeContinuationPolicy.ShouldInsert(
           ContinuationContext(shouChengTuRoute)),
     "City Defense Diagram currently has no act two continuation and must skip the event.");
+
+PhilosophersGazeRelicOwnership wuWeiRoute = ContinuationOwnership(
+    hasLaoziWuWeiShuJian: true);
+PhilosophersGazeRelicOwnership shuiYuRoute = ContinuationOwnership(
+    hasLaoziShuiYu: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(wuWeiRoute, false)
+        == PhilosophersGazeContinuationOption.None
+      && !PhilosophersGazeContinuationPolicy.ShouldInsert(
+          ContinuationContext(wuWeiRoute))
+      && PhilosophersGazeContinuationPolicy.GetAvailableOptions(shuiYuRoute, false)
+        == PhilosophersGazeContinuationOption.None
+      && !PhilosophersGazeContinuationPolicy.ShouldInsert(
+          ContinuationContext(shuiYuRoute)),
+    "Both Laozi route relics currently have no act two continuation and must skip the event.");
 
 PhilosophersGazeRelicOwnership debugMixedRoute = ContinuationOwnership(
     hasKongziMuduo: true,
@@ -857,14 +957,18 @@ PhilosophersGazeTransition initialKongzi = Transition(
 PhilosophersGazeTransition initialMozi = Transition(
     PhilosophersGazePage.Initial,
     PhilosophersGazeOption.Mozi);
+PhilosophersGazeTransition initialLaozi = Transition(
+    PhilosophersGazePage.Initial,
+    PhilosophersGazeOption.Laozi);
 PhilosophersGazeTransition initialDecline = Transition(
     PhilosophersGazePage.Initial,
     PhilosophersGazeOption.Decline);
 Check(initialKongzi.Destination == PhilosophersGazePage.KongziViewpoints
       && initialMozi.Destination == PhilosophersGazePage.MoziViewpoints
+      && initialLaozi.Destination == PhilosophersGazePage.LaoziViewpoints
       && initialDecline.Destination == PhilosophersGazePage.ActOneDeclineConfirm,
-    "The act one home page must contain only Kongzi, Mozi, and the refusal confirmation route.");
-Check(new[] { initialKongzi, initialMozi, initialDecline }.All(transition =>
+    "The act one home page must contain Kongzi, Mozi, Laozi, and the refusal confirmation route.");
+Check(new[] { initialKongzi, initialMozi, initialLaozi, initialDecline }.All(transition =>
         transition.IsNavigation
         && transition.Effect == PhilosophersGazeEffect.None
         && !transition.UsesNativeProceed),
@@ -874,6 +978,7 @@ PhilosophersGazeTransition[] navigationTransitions =
 [
     initialKongzi,
     initialMozi,
+    initialLaozi,
     initialDecline,
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Mengzi),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Xunzi),
@@ -889,15 +994,18 @@ PhilosophersGazeTransition[] actOneRelicResults =
     Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.QingYuPei),
     Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
     Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
+    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.WuWeiShuJian),
+    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.ShuiYu),
 ];
-Check(actOneRelicResults.Select(transition => transition.Effect).Distinct().Count() == 4,
-    "Kongzi and Mozi viewpoint pages must expose four distinct mutually exclusive root effects.");
+Check(actOneRelicResults.Select(transition => transition.Effect).Distinct().Count() == 6,
+    "Kongzi, Mozi, and Laozi viewpoint pages must expose six distinct mutually exclusive root effects.");
 
 PhilosophersGazeTransition[] allResultTransitions =
 [
     ..actOneRelicResults,
     Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Decline),
     Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.Decline),
     Transition(PhilosophersGazePage.ActOneDeclineConfirm, PhilosophersGazeOption.Confirm),
     Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.XiongZhang),
     Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.Decline),

@@ -16,6 +16,9 @@
     <Compile Include="..\..\src\Relics\Mozi\MoziMoSeZhuJianState.cs" Link="MoziMoSeZhuJianState.cs" />
     <Compile Include="..\..\src\Relics\Mozi\MoziShouChengTuState.cs" Link="MoziShouChengTuState.cs" />
     <Compile Include="..\..\src\Relics\Mozi\MoziShouChengTuDamagePolicy.cs" Link="MoziShouChengTuDamagePolicy.cs" />
+    <Compile Include="..\..\src\Relics\Laozi\LaoziWuWeiShuJianState.cs" Link="LaoziWuWeiShuJianState.cs" />
+    <Compile Include="..\..\src\Relics\Laozi\LaoziShuiYuState.cs" Link="LaoziShuiYuState.cs" />
+    <Compile Include="..\..\src\Relics\Laozi\LaoziShuiYuDamagePolicy.cs" Link="LaoziShuiYuDamagePolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeContinuationPolicy.cs" Link="PhilosophersGazeContinuationPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeRelicGrantPolicy.cs" Link="PhilosophersGazeRelicGrantPolicy.cs" />

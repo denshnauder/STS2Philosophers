@@ -41,7 +41,9 @@ internal static class PhilosophersGazeContinuationPolicy
             || ownership.HasMengziXiongZhang
             || ownership.HasXunziShengMo
             || ownership.HasMoziMoSeZhuJian
-            || ownership.HasMoziShouChengTu)
+            || ownership.HasMoziShouChengTu
+            || ownership.HasLaoziWuWeiShuJian
+            || ownership.HasLaoziShuiYu)
         {
             return PhilosophersGazeContinuationOption.None;
         }
