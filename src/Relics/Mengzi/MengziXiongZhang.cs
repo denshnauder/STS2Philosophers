@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class MengziXiongZhang : RelicModel
 {
@@ -16,11 +16,11 @@ public sealed class MengziXiongZhang : RelicModel
 
     public override RelicRarity Rarity => RelicRarity.None;
 
-    public override string PackedIconPath => "res://STS2MinimalMod/images/mengzi_xiong_zhang.png";
+    public override string PackedIconPath => "res://STS2Philosophers/images/mengzi_xiong_zhang.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/mengzi_xiong_zhang_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/mengzi_xiong_zhang_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/mengzi_xiong_zhang.png";
+    protected override string BigIconPath => "res://STS2Philosophers/images/mengzi_xiong_zhang.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int InheritedVirtue
@@ -69,7 +69,7 @@ public sealed class MengziXiongZhang : RelicModel
         // Lock this saved turn before awaiting either reward. A repeated hook,
         // reconnect, or restored combat therefore cannot pay the same turn twice.
         Flash();
-        Log.Info($"[STS2MinimalMod] Bear Paw triggered for player {Owner.NetId} on turn {turnNumber} with {virtue} Virtue.");
+        Log.Info($"[STS2Philosophers] Bear Paw triggered for player {Owner.NetId} on turn {turnNumber} with {virtue} Virtue.");
         await PlayerCmd.GainEnergy(1m, Owner);
         await CardPileCmd.Draw(choiceContext, 2m, Owner);
     }

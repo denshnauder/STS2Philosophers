@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using System.Reflection;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 [HarmonyPatch]
 internal static class ActTwoPhilosophersGazePatch
@@ -73,7 +73,7 @@ internal static class ActTwoPhilosophersGazePatch
             return;
         }
 
-        Log.Info("[STS2MinimalMod] Closing the act two map screen before presenting the PhilosophersGaze continuation.");
+        Log.Info("[STS2Philosophers] Closing the act two map screen before presenting the PhilosophersGaze continuation.");
         PhilosophersGazeContinuationEntryPlan entryPlan =
             PhilosophersGazeContinuationPolicy.CreateEntryPlan(
                 mapRoomEntryCompleted: true);
@@ -95,7 +95,7 @@ internal static class ActTwoPhilosophersGazePatch
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2MinimalMod] PhilosophersGaze is unavailable; skipping the act two continuation: {exception}");
+            Log.Error($"[STS2Philosophers] PhilosophersGaze is unavailable; skipping the act two continuation: {exception}");
             return null;
         }
     }

@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class PhilosophersGaze : EventModel
 {
@@ -187,14 +187,14 @@ public sealed class PhilosophersGaze : EventModel
             Player? owner = Owner;
             if (owner is null || !CanGrantActOneRelic())
             {
-                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible act one relic callback.");
+                Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible act one relic callback.");
                 return;
             }
 
             await RelicCmd.Obtain<TRelic>(owner);
             if (owner.GetRelicById(ModelDb.GetId<TRelic>()) is null)
             {
-                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the act one relic was not obtained.");
+                Log.Error("[STS2Philosophers] PhilosophersGaze did not finish because the act one relic was not obtained.");
                 return;
             }
 
@@ -222,7 +222,7 @@ public sealed class PhilosophersGaze : EventModel
                 || original is null
                 || !CanChooseContinuation(PhilosophersGazeContinuationOption.MengziXiongZhang))
             {
-                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible Bear Paw callback.");
+                Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible Bear Paw callback.");
                 return;
             }
 
@@ -238,7 +238,7 @@ public sealed class PhilosophersGaze : EventModel
             catch (Exception exception)
             {
                 RestoreContinuation(owner, snapshot);
-                Log.Error($"[STS2MinimalMod] PhilosophersGaze failed to replace Green Jade Pendant with Bear Paw: {exception}");
+                Log.Error($"[STS2Philosophers] PhilosophersGaze failed to replace Green Jade Pendant with Bear Paw: {exception}");
                 return;
             }
 
@@ -250,7 +250,7 @@ public sealed class PhilosophersGaze : EventModel
                     obtained?.InheritedVirtue ?? -1))
             {
                 RestoreContinuation(owner, snapshot);
-                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the Bear Paw replacement could not be verified.");
+                Log.Error("[STS2Philosophers] PhilosophersGaze did not finish because the Bear Paw replacement could not be verified.");
                 return;
             }
 
@@ -278,7 +278,7 @@ public sealed class PhilosophersGaze : EventModel
                 || original is null
                 || !CanChooseContinuation(PhilosophersGazeContinuationOption.XunziShengMo))
             {
-                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible Ink Line callback.");
+                Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible Ink Line callback.");
                 return;
             }
 
@@ -291,7 +291,7 @@ public sealed class PhilosophersGaze : EventModel
             catch (Exception exception)
             {
                 RestoreContinuation(owner, snapshot);
-                Log.Error($"[STS2MinimalMod] PhilosophersGaze failed to replace Muduo with Ink Line: {exception}");
+                Log.Error($"[STS2Philosophers] PhilosophersGaze failed to replace Muduo with Ink Line: {exception}");
                 return;
             }
 
@@ -300,7 +300,7 @@ public sealed class PhilosophersGaze : EventModel
                     owner.GetRelicById(ModelDb.GetId<XunziShengMo>()) is not null))
             {
                 RestoreContinuation(owner, snapshot);
-                Log.Error("[STS2MinimalMod] PhilosophersGaze did not finish because the Ink Line replacement could not be verified.");
+                Log.Error("[STS2Philosophers] PhilosophersGaze did not finish because the Ink Line replacement could not be verified.");
                 return;
             }
 
@@ -330,7 +330,7 @@ public sealed class PhilosophersGaze : EventModel
                 || choice == PhilosophersGazeContinuationOption.None
                 || (availableOptions & choice) == 0)
             {
-                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible continuation decline callback.");
+                Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible continuation decline callback.");
                 return;
             }
 
@@ -355,7 +355,7 @@ public sealed class PhilosophersGaze : EventModel
         {
             if (!IsActOne())
             {
-                Log.Info("[STS2MinimalMod] PhilosophersGaze rejected an ineligible act one decline callback.");
+                Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible act one decline callback.");
                 return;
             }
 

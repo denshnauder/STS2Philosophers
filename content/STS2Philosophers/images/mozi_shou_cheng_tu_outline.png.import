@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxf2n0m6w4dct"
-path="res://.godot/imported/mozi_mo_se_zhu_jian_outline.png-9585771bc49d9e1de91b00c6b4ffb937.ctex"
+uid="uid://bfah14lrse0b3"
+path="res://.godot/imported/mozi_shou_cheng_tu_outline.png-be7548fe5dceba82e26765a6070a93ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://STS2MinimalMod/images/mozi_mo_se_zhu_jian_outline.png"
-dest_files=["res://.godot/imported/mozi_mo_se_zhu_jian_outline.png-9585771bc49d9e1de91b00c6b4ffb937.ctex"]
+source_file="res://STS2Philosophers/images/mozi_shou_cheng_tu_outline.png"
+dest_files=["res://.godot/imported/mozi_shou_cheng_tu_outline.png-be7548fe5dceba82e26765a6070a93ed.ctex"]
 
 [params]
 

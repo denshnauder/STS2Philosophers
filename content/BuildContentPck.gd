@@ -22,10 +22,10 @@ func _initialize() -> void:
 		return
 
 	var resource_paths: Array[String] = [
-		"STS2MinimalMod/localization/eng/events.json",
-		"STS2MinimalMod/localization/eng/relics.json",
-		"STS2MinimalMod/localization/zhs/events.json",
-		"STS2MinimalMod/localization/zhs/relics.json",
+		"STS2Philosophers/localization/eng/events.json",
+		"STS2Philosophers/localization/eng/relics.json",
+		"STS2Philosophers/localization/zhs/events.json",
+		"STS2Philosophers/localization/zhs/relics.json",
 	]
 
 	for resource_path in resource_paths:
@@ -40,18 +40,18 @@ func _initialize() -> void:
 
 	var texture_paths: Array[String] = [
 		"res://images/events/philosophers_gaze.png",
-		"res://STS2MinimalMod/images/kongzi_muduo.png",
-		"res://STS2MinimalMod/images/kongzi_muduo_outline.png",
-		"res://STS2MinimalMod/images/kongzi_qing_yu_pei.png",
-		"res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png",
-		"res://STS2MinimalMod/images/mengzi_xiong_zhang.png",
-		"res://STS2MinimalMod/images/mengzi_xiong_zhang_outline.png",
-		"res://STS2MinimalMod/images/xunzi_sheng_mo.png",
-		"res://STS2MinimalMod/images/xunzi_sheng_mo_outline.png",
-		"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian.png",
-		"res://STS2MinimalMod/images/mozi_mo_se_zhu_jian_outline.png",
-		"res://STS2MinimalMod/images/mozi_shou_cheng_tu.png",
-		"res://STS2MinimalMod/images/mozi_shou_cheng_tu_outline.png",
+		"res://STS2Philosophers/images/kongzi_muduo.png",
+		"res://STS2Philosophers/images/kongzi_muduo_outline.png",
+		"res://STS2Philosophers/images/kongzi_qing_yu_pei.png",
+		"res://STS2Philosophers/images/kongzi_qing_yu_pei_outline.png",
+		"res://STS2Philosophers/images/mengzi_xiong_zhang.png",
+		"res://STS2Philosophers/images/mengzi_xiong_zhang_outline.png",
+		"res://STS2Philosophers/images/xunzi_sheng_mo.png",
+		"res://STS2Philosophers/images/xunzi_sheng_mo_outline.png",
+		"res://STS2Philosophers/images/mozi_mo_se_zhu_jian.png",
+		"res://STS2Philosophers/images/mozi_mo_se_zhu_jian_outline.png",
+		"res://STS2Philosophers/images/mozi_shou_cheng_tu.png",
+		"res://STS2Philosophers/images/mozi_shou_cheng_tu_outline.png",
 	]
 
 	for texture_path in texture_paths:

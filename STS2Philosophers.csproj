@@ -4,8 +4,8 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>STS2MinimalMod</AssemblyName>
-    <RootNamespace>STS2MinimalMod</RootNamespace>
+    <AssemblyName>STS2Philosophers</AssemblyName>
+    <RootNamespace>STS2Philosophers</RootNamespace>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
@@ -55,7 +55,7 @@
     <MakeDir Directories="$(ModInstallDirectory)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModInstallDirectory)" />
     <Copy SourceFiles="$(TargetDir)$(AssemblyName).pck" DestinationFolder="$(ModInstallDirectory)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\STS2MinimalMod.json" DestinationFolder="$(ModInstallDirectory)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\STS2Philosophers.json" DestinationFolder="$(ModInstallDirectory)" />
     <Message Importance="high" Text="Deployed $(AssemblyName) to $(ModInstallDirectory)" />
   </Target>
 </Project>

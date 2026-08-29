@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class KongziQingYuPei : RelicModel
 {
@@ -28,11 +28,11 @@ public sealed class KongziQingYuPei : RelicModel
 
     public override int DisplayAmount => IsMutable ? Virtue : 0;
 
-    public override string PackedIconPath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei.png";
+    public override string PackedIconPath => "res://STS2Philosophers/images/kongzi_qing_yu_pei.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/kongzi_qing_yu_pei_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_qing_yu_pei.png";
+    protected override string BigIconPath => "res://STS2Philosophers/images/kongzi_qing_yu_pei.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int Virtue
@@ -122,7 +122,7 @@ public sealed class KongziQingYuPei : RelicModel
         _kongziQingYuPei.BeginTurn(allLivingEnemiesAreNonAttacking);
         if (allLivingEnemiesAreNonAttacking)
         {
-            Log.Info("[STS2MinimalMod] Green Jade Pendant opened an opportunity turn because every living enemy shows a non-Attack intent.");
+            Log.Info("[STS2Philosophers] Green Jade Pendant opened an opportunity turn because every living enemy shows a non-Attack intent.");
         }
 
         StartObservingNativePlayability();
@@ -183,7 +183,7 @@ public sealed class KongziQingYuPei : RelicModel
         {
             if (cardPlay.Card.Type == CardType.Attack)
             {
-                Log.Info("[STS2MinimalMod] Green Jade Pendant ignored a later Attack because this combat's reward is already locked.");
+                Log.Info("[STS2Philosophers] Green Jade Pendant ignored a later Attack because this combat's reward is already locked.");
             }
 
             return Task.CompletedTask;
@@ -199,7 +199,7 @@ public sealed class KongziQingYuPei : RelicModel
             && _kongziQingYuPei.CancelOpportunityIfEnemiesAttack(
                 AllLivingEnemiesAreNonAttacking(combatState)))
         {
-            Log.Info("[STS2MinimalMod] Green Jade Pendant canceled a stale opportunity because a living enemy currently shows an Attack intent.");
+            Log.Info("[STS2Philosophers] Green Jade Pendant canceled a stale opportunity because a living enemy currently shows an Attack intent.");
             UpdatePresentation();
             return Task.CompletedTask;
         }
@@ -209,7 +209,7 @@ public sealed class KongziQingYuPei : RelicModel
         {
             StopObservingNativePlayability();
             UpdatePresentation();
-            Log.Info("[STS2MinimalMod] Green Jade Pendant opportunity was lost by playing an Attack before the reward was locked.");
+            Log.Info("[STS2Philosophers] Green Jade Pendant opportunity was lost by playing an Attack before the reward was locked.");
             Flash();
         }
 
@@ -311,7 +311,7 @@ public sealed class KongziQingYuPei : RelicModel
 
         if (!hasUncommon && !hasRare)
         {
-            Log.Warn("[STS2MinimalMod] Green Jade Pendant could not append a reward card: no distinct Uncommon or Rare candidate exists.");
+            Log.Warn("[STS2Philosophers] Green Jade Pendant could not append a reward card: no distinct Uncommon or Rare candidate exists.");
             return false;
         }
 
@@ -322,13 +322,13 @@ public sealed class KongziQingYuPei : RelicModel
 
         if (!decision.Rarity.HasValue)
         {
-            Log.Warn("[STS2MinimalMod] Green Jade Pendant could not append a reward card after its single native rarity roll: no distinct Uncommon fallback exists.");
+            Log.Warn("[STS2Philosophers] Green Jade Pendant could not append a reward card after its single native rarity roll: no distinct Uncommon fallback exists.");
             return false;
         }
 
         if (decision.FellBackFromRare)
         {
-            Log.Warn("[STS2MinimalMod] Green Jade Pendant rolled Rare but no distinct Rare candidate exists; deterministically falling back to Uncommon.");
+            Log.Warn("[STS2Philosophers] Green Jade Pendant rolled Rare but no distinct Rare candidate exists; deterministically falling back to Uncommon.");
         }
 
         CardRarity targetRarity = decision.Rarity == KongziQingYuPeiBonusCardRarity.Rare
@@ -364,19 +364,19 @@ public sealed class KongziQingYuPei : RelicModel
 
             if (extraCard is null)
             {
-                Log.Warn("[STS2MinimalMod] Green Jade Pendant could not append a reward card: native reward generation returned no card.");
+                Log.Warn("[STS2Philosophers] Green Jade Pendant could not append a reward card: native reward generation returned no card.");
                 return false;
             }
 
             CardCreationResult result = new(extraCard);
             result.ModifyCard(extraCard, this);
             rewardOptions.Add(result);
-            Log.Info($"[STS2MinimalMod] Green Jade Pendant appended locked bonus reward card {extraCard.Id} at option {rewardOptions.Count}.");
+            Log.Info($"[STS2Philosophers] Green Jade Pendant appended locked bonus reward card {extraCard.Id} at option {rewardOptions.Count}.");
             return true;
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2MinimalMod] Green Jade Pendant skipped its bonus card because native reward generation failed safely: {exception}");
+            Log.Error($"[STS2Philosophers] Green Jade Pendant skipped its bonus card because native reward generation failed safely: {exception}");
             return false;
         }
     }
@@ -465,7 +465,7 @@ public sealed class KongziQingYuPei : RelicModel
 
         if (_kongziQingYuPei.ObserveAttackOpportunity(hasPlayableAttack))
         {
-            Log.Info("[STS2MinimalMod] Green Jade Pendant observed a real playable Attack opportunity this turn.");
+            Log.Info("[STS2Philosophers] Green Jade Pendant observed a real playable Attack opportunity this turn.");
         }
     }
 
@@ -476,7 +476,7 @@ public sealed class KongziQingYuPei : RelicModel
             && _kongziQingYuPei.CancelOpportunityIfEnemiesAttack(
                 AllLivingEnemiesAreNonAttacking(combatState)))
         {
-            Log.Info("[STS2MinimalMod] Green Jade Pendant canceled a stale opportunity at turn end because a living enemy shows an Attack intent.");
+            Log.Info("[STS2Philosophers] Green Jade Pendant canceled a stale opportunity at turn end because a living enemy shows an Attack intent.");
         }
     }
 
@@ -489,7 +489,7 @@ public sealed class KongziQingYuPei : RelicModel
 
         Virtue++;
         HasPendingReward = true;
-        Log.Info($"[STS2MinimalMod] Green Jade Pendant locked this combat's bonus card reward; Virtue is now {Virtue}.");
+        Log.Info($"[STS2Philosophers] Green Jade Pendant locked this combat's bonus card reward; Virtue is now {Virtue}.");
         Flash();
     }
 

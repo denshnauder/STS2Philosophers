@@ -1,4 +1,4 @@
-# STS2 Minimal Mod / 诸子原型
+# STS2 Philosophers / 诸子原型
 
 这是一个以先秦诸子思想为灵感的《杀戮尖塔 2》内容 Mod。礼、仁、义、法度与兼爱不只是遗物名称，而是会改变出牌顺序、回合取舍和路线成长的战斗规则。
 
@@ -61,13 +61,13 @@
 
 ## 安装
 
-将以下三个文件放入游戏目录的 `mods\STS2MinimalMod` 文件夹：
+将以下三个文件放入游戏目录的 `mods\STS2Philosophers` 文件夹：
 
-- `STS2MinimalMod.dll`
-- `STS2MinimalMod.pck`
-- `STS2MinimalMod.json`
+- `STS2Philosophers.dll`
+- `STS2Philosophers.pck`
+- `STS2Philosophers.json`
 
-从 Steam 启动《杀戮尖塔 2》，并在 Mod 列表中启用 `STS2 Minimal Mod`。直接运行游戏可执行文件可能因缺少 Steam 启动上下文而退出。
+从 Steam 启动《杀戮尖塔 2》，并在 Mod 列表中启用 `STS2 Philosophers`。直接运行游戏可执行文件可能因缺少 Steam 启动上下文而退出。
 
 ## 兼容性与限制
 

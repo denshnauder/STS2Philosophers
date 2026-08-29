@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4m3ckdli874f"
-path="res://.godot/imported/kongzi_muduo_outline.png-3e8ec13b014b803300b430f7283e3efa.ctex"
+uid="uid://buhxaaiejsxkl"
+path="res://.godot/imported/kongzi_qing_yu_pei.png-4e4200e36131b359f5517cb4d2f11883.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://STS2MinimalMod/images/kongzi_muduo_outline.png"
-dest_files=["res://.godot/imported/kongzi_muduo_outline.png-3e8ec13b014b803300b430f7283e3efa.ctex"]
+source_file="res://STS2Philosophers/images/kongzi_qing_yu_pei.png"
+dest_files=["res://.godot/imported/kongzi_qing_yu_pei.png-4e4200e36131b359f5517cb4d2f11883.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Modding;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 [ModInitializer(nameof(Initialize))]
 public static class Entry
@@ -27,6 +27,6 @@ public static class Entry
             new Harmony(HarmonyId).PatchAll(typeof(Entry).Assembly);
         }
 
-        Log.Info("[STS2MinimalMod] Initialized successfully. Confucian and Mohist relic prototypes are available for singleplayer testing.");
+        Log.Info("[STS2Philosophers] Initialized successfully. Confucian and Mohist relic prototypes are available for singleplayer testing.");
     }
 }

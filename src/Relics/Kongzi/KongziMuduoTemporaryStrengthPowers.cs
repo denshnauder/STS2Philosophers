@@ -1,7 +1,7 @@
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class KongziMuduoRitualStrengthPower : TemporaryStrengthPower
 {

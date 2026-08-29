@@ -1,4 +1,4 @@
-using STS2MinimalMod;
+using STS2Philosophers;
 using System.Text.Json;
 
 static void Check(bool condition, string message)
@@ -967,8 +967,8 @@ Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugDualRoute, fal
 string repositoryRoot = Directory.GetCurrentDirectory();
 string[] localePaths =
 [
-    Path.Combine(repositoryRoot, "content", "STS2MinimalMod", "localization", "zhs", "events.json"),
-    Path.Combine(repositoryRoot, "content", "STS2MinimalMod", "localization", "eng", "events.json"),
+    Path.Combine(repositoryRoot, "content", "STS2Philosophers", "localization", "zhs", "events.json"),
+    Path.Combine(repositoryRoot, "content", "STS2Philosophers", "localization", "eng", "events.json"),
 ];
 foreach (string localePath in localePaths)
 {

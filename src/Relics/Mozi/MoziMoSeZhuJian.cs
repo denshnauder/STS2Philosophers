@@ -10,7 +10,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class MoziMoSeZhuJian : RelicModel
 {
@@ -22,11 +22,11 @@ public sealed class MoziMoSeZhuJian : RelicModel
 
     public override int DisplayAmount => IsMutable ? XiangLi : 0;
 
-    public override string PackedIconPath => "res://STS2MinimalMod/images/mozi_mo_se_zhu_jian.png";
+    public override string PackedIconPath => "res://STS2Philosophers/images/mozi_mo_se_zhu_jian.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/mozi_mo_se_zhu_jian_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/mozi_mo_se_zhu_jian_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/mozi_mo_se_zhu_jian.png";
+    protected override string BigIconPath => "res://STS2Philosophers/images/mozi_mo_se_zhu_jian.png";
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

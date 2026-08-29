@@ -6,7 +6,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 [HarmonyPatch(typeof(NEventRoom), nameof(NEventRoom.Proceed))]
 internal static class NeowProceedPatch
@@ -81,7 +81,7 @@ internal static class NeowProceedPatch
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2MinimalMod] PhilosophersGaze is unavailable; allowing the original event proceed behavior: {exception}");
+            Log.Error($"[STS2Philosophers] PhilosophersGaze is unavailable; allowing the original event proceed behavior: {exception}");
             return null;
         }
     }

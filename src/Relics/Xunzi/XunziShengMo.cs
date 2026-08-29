@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class XunziShengMo : RelicModel
 {
@@ -24,11 +24,11 @@ public sealed class XunziShengMo : RelicModel
 
     public override int DisplayAmount => IsMutable ? _xunziShengMo.Progress : 0;
 
-    public override string PackedIconPath => "res://STS2MinimalMod/images/xunzi_sheng_mo.png";
+    public override string PackedIconPath => "res://STS2Philosophers/images/xunzi_sheng_mo.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/xunzi_sheng_mo_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/xunzi_sheng_mo_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/xunzi_sheng_mo.png";
+    protected override string BigIconPath => "res://STS2Philosophers/images/xunzi_sheng_mo.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int SequenceProgress

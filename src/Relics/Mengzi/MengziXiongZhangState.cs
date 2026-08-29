@@ -1,4 +1,4 @@
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 internal struct MengziXiongZhangState
 {

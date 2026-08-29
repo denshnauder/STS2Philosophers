@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm7tqdrns2k6c"
-path="res://.godot/imported/mengzi_xiong_zhang.png-c19463ce351bad50f94c0a974bec0695.ctex"
+uid="uid://dq87grmm5j0lf"
+path="res://.godot/imported/xunzi_sheng_mo_outline.png-e7b4eebd7262713b940e96bf6c462eb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://STS2MinimalMod/images/mengzi_xiong_zhang.png"
-dest_files=["res://.godot/imported/mengzi_xiong_zhang.png-c19463ce351bad50f94c0a974bec0695.ctex"]
+source_file="res://STS2Philosophers/images/xunzi_sheng_mo_outline.png"
+dest_files=["res://.godot/imported/xunzi_sheng_mo_outline.png-e7b4eebd7262713b940e96bf6c462eb0.ctex"]
 
 [params]
 

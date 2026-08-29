@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
-namespace STS2MinimalMod;
+namespace STS2Philosophers;
 
 public sealed class KongziMuduo : RelicModel
 {
@@ -24,11 +24,11 @@ public sealed class KongziMuduo : RelicModel
 
     public override int DisplayAmount => IsMutable ? _kongziMuduo.GrantedStrength : 0;
 
-    public override string PackedIconPath => "res://STS2MinimalMod/images/kongzi_muduo.png";
+    public override string PackedIconPath => "res://STS2Philosophers/images/kongzi_muduo.png";
 
-    protected override string PackedIconOutlinePath => "res://STS2MinimalMod/images/kongzi_muduo_outline.png";
+    protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/kongzi_muduo_outline.png";
 
-    protected override string BigIconPath => "res://STS2MinimalMod/images/kongzi_muduo.png";
+    protected override string BigIconPath => "res://STS2Philosophers/images/kongzi_muduo.png";
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public bool HasResolvedPhilosophersGazeContinuation

@@ -1,11 +1,11 @@
 ; Engine configuration file.
-; Minimal resource-only project used to pack localization for STS2MinimalMod.
+; Resource-only project used to pack localization for STS2Philosophers.
 
 config_version=5
 
 [application]
 
-config/name="STS2MinimalMod Content"
+config/name="STS2Philosophers Content"
 
 [rendering]
 
