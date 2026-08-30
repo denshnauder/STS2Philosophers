@@ -1285,6 +1285,10 @@ foreach (string localePath in localePaths)
 
 string eventSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Events", "PhilosophersGaze.cs"));
 string bearPawSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Mengzi", "MengziXiongZhang.cs"));
+string waterJadeSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Laozi", "LaoziShuiYu.cs"))
+    .ReplaceLineEndings("\n");
+string wholeLifeBiSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Yangzhu", "YangzhuQuanShengBi.cs"))
+    .ReplaceLineEndings("\n");
 Check(eventSource.Contains("SetEventState(", StringComparison.Ordinal)
       && !eventSource.Contains("MarkPreFinished", StringComparison.Ordinal)
       && !eventSource.Contains("isProceed", StringComparison.Ordinal),
@@ -1302,5 +1306,9 @@ Check(eventSource.Contains("owner?.RunState.CurrentActIndex", StringComparison.O
 Check(bearPawSource.Contains("int virtue = InheritedVirtue;", StringComparison.Ordinal)
       && !bearPawSource.Contains("KongziQingYuPei.GetVirtue(Owner)", StringComparison.Ordinal),
     "Bear Paw combat hooks must read the relic's own saved inherited Virtue after replacement.");
+const string damageHookParameterOrder = "Creature? target,\n        decimal damage,\n        ValueProp props,\n        Creature? dealer,";
+Check(waterJadeSource.Contains(damageHookParameterOrder, StringComparison.Ordinal)
+      && wholeLifeBiSource.Contains(damageHookParameterOrder, StringComparison.Ordinal),
+    "Water Jade and Whole Life Bi must map the damage hook's target before its dealer.");
 
 Console.WriteLine("PhilosophersGaze three-stage flow and localization checks passed.");

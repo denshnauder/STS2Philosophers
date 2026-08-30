@@ -136,10 +136,10 @@ public sealed class YangzhuQuanShengBi : RelicModel
     }
 
     public override decimal ModifyDamageMultiplicative(
-        Creature? dealer,
+        Creature? target,
         decimal damage,
         ValueProp props,
-        Creature? target,
+        Creature? dealer,
         CardModel? cardSource,
         CardPlay? cardPlay)
     {
