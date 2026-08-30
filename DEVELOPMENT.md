@@ -97,6 +97,8 @@ Windows 日志位置：
 - `huishiliwuchou`：授予历物筹。
 - `mozishouchengtu`：授予守城图。
 - `qingulishouchengxie`：授予守城械。
+- `laoziwuweishujian`：授予无为书简。
+- `laozishuiyu`：授予水玉。
 - `zhuangzidahu`：授予大瓠。
 - `yangzhuquanshengbi`：授予全生璧。
 - `mengzixiongzhang virtue [amount]`：查看或设置当前玩家的德；持有熊掌时读写熊掌自身继承的德，否则读写青玉佩。
