@@ -22,6 +22,12 @@ const REQUIRED_FILES := [
 	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian_outline.png",
 	"res://STS2Philosophers/images/laozi_shui_yu.png",
 	"res://STS2Philosophers/images/laozi_shui_yu_outline.png",
+	"res://STS2Philosophers/images/qin_guli_shou_cheng_xie.png",
+	"res://STS2Philosophers/images/qin_guli_shou_cheng_xie_outline.png",
+	"res://STS2Philosophers/images/zhuangzi_da_hu.png",
+	"res://STS2Philosophers/images/zhuangzi_da_hu_outline.png",
+	"res://STS2Philosophers/images/yangzhu_quan_sheng_bi.png",
+	"res://STS2Philosophers/images/yangzhu_quan_sheng_bi_outline.png",
 ]
 
 const REQUIRED_TEXTURES := [
@@ -42,6 +48,12 @@ const REQUIRED_TEXTURES := [
 	"res://STS2Philosophers/images/laozi_wu_wei_shu_jian_outline.png",
 	"res://STS2Philosophers/images/laozi_shui_yu.png",
 	"res://STS2Philosophers/images/laozi_shui_yu_outline.png",
+	"res://STS2Philosophers/images/qin_guli_shou_cheng_xie.png",
+	"res://STS2Philosophers/images/qin_guli_shou_cheng_xie_outline.png",
+	"res://STS2Philosophers/images/zhuangzi_da_hu.png",
+	"res://STS2Philosophers/images/zhuangzi_da_hu_outline.png",
+	"res://STS2Philosophers/images/yangzhu_quan_sheng_bi.png",
+	"res://STS2Philosophers/images/yangzhu_quan_sheng_bi_outline.png",
 ]
 
 func _initialize() -> void:

@@ -39,4 +39,11 @@ internal static class PhilosophersGazeReplacementPolicy
     {
         return !hasOriginal && hasReplacement;
     }
+
+    public static bool IsSimpleReplacementVerified(
+        bool hasOriginal,
+        bool hasReplacement)
+    {
+        return !hasOriginal && hasReplacement;
+    }
 }

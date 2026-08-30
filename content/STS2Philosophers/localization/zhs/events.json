@@ -49,11 +49,17 @@
   "PHILOSOPHERS_GAZE.pages.LAOZI_DECLINE.description": "你谢过老子，不取书简，也不取水玉。无为不必借物，前路仍顺其自然。",
   "PHILOSOPHERS_GAZE.pages.DECLINE.description": "你揖手致意，没有接受任何教诲。前路仍由自己作答。",
 
-  "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "旧日的选择来到第二层。仁可推进为义，礼可落实为可检验的规范；你也可以保留旧说与旧遗物。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "旧日的选择来到第二层。仁、礼、非攻、无为与贵生各有后继；你也可以保留旧说与旧遗物。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.MENGZI.title": "聆听孟子。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.MENGZI.description": "从仁行中追问义的取舍。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.XUNZI.title": "聆听荀子。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.XUNZI.description": "用学习、规范与实践建立秩序。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.QIN_GULI.title": "聆听禽滑厘。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.QIN_GULI.description": "把非攻落实为逐敌布置的守城之法。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.ZHUANGZI.title": "聆听庄子。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.ZHUANGZI.description": "让未用之物在另一处得到用途。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.YANGZHU.title": "聆听杨朱。",
+  "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.YANGZHU.description": "不以外物耗尽自身，保全余力。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE.title": "保留旧说。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE.description": "先确认是否拒绝后继，不替换已有遗物。",
 
@@ -69,13 +75,37 @@
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.DECLINE.title": "保留木铎。",
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.DECLINE.description": "拒绝绳墨，木铎保持不变。",
 
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.description": "禽滑厘把非攻落实为守城之术。攻势显露时逐敌备械；若仍未失血，来日便使敌人的锋芒转弱。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.SHOU_CHENG_XIE.title": "备守：守城械。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.SHOU_CHENG_XIE.description": "以守城械替换守城图，按攻击敌人数布防并以虚弱回报成功守御。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.DECLINE.title": "保留守城图。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.DECLINE.description": "拒绝守城械，守城图保持不变。",
+
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.description": "庄子看见大瓠，所见不是无用，而是未得其用。少作妄为留下的牌，来日可以更轻地打出，并在行动时护住自身。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DA_HU.title": "乘浮：大瓠。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DA_HU.description": "以大瓠替换无为书简，让少出牌后保留的可能转成减费与格挡。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DECLINE.title": "保留无为书简。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DECLINE.description": "拒绝大瓠，无为书简保持不变。",
+
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.description": "杨朱所贵，在于不以外物累形。留下的能量既能护住生命，也不必就此耗散；锋芒过去，余力仍归自身。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.QUAN_SHENG_BI.title": "全生：全生璧。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.QUAN_SHENG_BI.description": "以全生璧替换水玉，保全至多2点未用能量并在下回合取回。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.DECLINE.title": "保留水玉。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.DECLINE.description": "拒绝全生璧，水玉保持不变。",
+
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.description": "拒绝后继不会抹去此前选择，旧遗物也会保留。你确认就此作结吗？",
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.options.CONFIRM.title": "确认保留旧说。",
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.options.CONFIRM.description": "不替换已有路线遗物，并结束本局后继事件。",
 
   "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description": "青玉佩让位于熊掌，积下的德一分未失。往后它会把德化作开局助力；若只看直接扣血，某些职业大概会另有高见。",
   "PHILOSOPHERS_GAZE.pages.XUNZI_SHENG_MO.description": "木铎让位于绳墨。秩序从先后原则化为反复可验的尺度——尖塔以后每回合抽查。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_SHOU_CHENG_XIE.description": "守城图让位于守城械。纸上的非攻成为逐敌备守的工事；攻势若仍无所得，来日便失去锋芒。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_DA_HU.description": "无为书简让位于大瓠。昨日未用的牌没有被判作无用，只是换了一种更轻、更稳的用法。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_QUAN_SHENG_BI.description": "水玉让位于全生璧。余力护身而不耗散；外物不能强令你把自己用尽。",
   "PHILOSOPHERS_GAZE.pages.MENGZI_DECLINE.description": "你谢绝熊掌。青玉佩与积下的德都被保留，此前的仁行没有被抹去。",
   "PHILOSOPHERS_GAZE.pages.XUNZI_DECLINE.description": "你谢绝绳墨。木铎仍在，此前选择的礼序没有被抹去。",
+  "PHILOSOPHERS_GAZE.pages.QIN_GULI_DECLINE.description": "你谢绝守城械。守城图仍在，此前选择的非攻没有被抹去。",
+  "PHILOSOPHERS_GAZE.pages.ZHUANGZI_DECLINE.description": "你谢绝大瓠。无为书简仍在，此前留下的余地没有被抹去。",
+  "PHILOSOPHERS_GAZE.pages.YANGZHU_DECLINE.description": "你谢绝全生璧。水玉仍在，此前选择的若水之道没有被抹去。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION_DECLINE.description": "你拒绝后继，保留旧说与旧遗物。此前的选择仍然有效，地图在前方展开。"
 }

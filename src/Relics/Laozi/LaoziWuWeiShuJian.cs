@@ -19,6 +19,7 @@ public sealed class LaoziWuWeiShuJian : RelicModel
     private const int DexterityReward = 2;
 
     private LaoziWuWeiShuJianState _laoziWuWeiShuJian;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -27,6 +28,27 @@ public sealed class LaoziWuWeiShuJian : RelicModel
     protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/laozi_wu_wei_shu_jian_outline.png";
 
     protected override string BigIconPath => "res://STS2Philosophers/images/laozi_wu_wei_shu_jian.png";
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
+    }
+
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int CardsPlayedThisTurn

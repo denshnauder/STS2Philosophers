@@ -16,6 +16,7 @@ namespace STS2Philosophers;
 public sealed class MoziShouChengTu : RelicModel
 {
     private MoziShouChengTuState _moziShouChengTu;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -29,6 +30,27 @@ public sealed class MoziShouChengTu : RelicModel
     [
         new BlockVar(MoziShouChengTuState.BlockAmount, ValueProp.Unpowered),
     ];
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
+    }
+
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public bool HasActiveDefenseWindow

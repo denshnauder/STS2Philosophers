@@ -6,6 +6,9 @@ internal enum PhilosophersGazeContinuationOption
     None = 0,
     MengziXiongZhang = 1,
     XunziShengMo = 2,
+    QinGuliShouChengXie = 4,
+    ZhuangziDaHu = 8,
+    YangzhuQuanShengBi = 16,
 }
 
 internal readonly record struct PhilosophersGazeContinuationInsertionContext(
@@ -40,10 +43,23 @@ internal static class PhilosophersGazeContinuationPolicy
         if (continuationRecorded
             || ownership.HasMengziXiongZhang
             || ownership.HasXunziShengMo
-            || ownership.HasMoziMoSeZhuJian
-            || ownership.HasMoziShouChengTu
-            || ownership.HasLaoziWuWeiShuJian
-            || ownership.HasLaoziShuiYu)
+            || ownership.HasQinGuliShouChengXie
+            || ownership.HasZhuangziDaHu
+            || ownership.HasYangzhuQuanShengBi)
+        {
+            return PhilosophersGazeContinuationOption.None;
+        }
+
+        bool hasConfucianRoot = ownership.HasKongziQingYuPei
+            || ownership.HasKongziMuduo;
+        bool hasMohistRoot = ownership.HasMoziMoSeZhuJian
+            || ownership.HasMoziShouChengTu;
+        bool hasDaoistRoot = ownership.HasLaoziWuWeiShuJian
+            || ownership.HasLaoziShuiYu;
+        int rootFamilyCount = Convert.ToInt32(hasConfucianRoot)
+            + Convert.ToInt32(hasMohistRoot)
+            + Convert.ToInt32(hasDaoistRoot);
+        if (rootFamilyCount != 1)
         {
             return PhilosophersGazeContinuationOption.None;
         }
@@ -59,6 +75,21 @@ internal static class PhilosophersGazeContinuationPolicy
             options |= PhilosophersGazeContinuationOption.XunziShengMo;
         }
 
+        if (ownership.HasMoziShouChengTu && !ownership.HasMoziMoSeZhuJian)
+        {
+            options |= PhilosophersGazeContinuationOption.QinGuliShouChengXie;
+        }
+
+        if (ownership.HasLaoziWuWeiShuJian && !ownership.HasLaoziShuiYu)
+        {
+            options |= PhilosophersGazeContinuationOption.ZhuangziDaHu;
+        }
+
+        if (ownership.HasLaoziShuiYu && !ownership.HasLaoziWuWeiShuJian)
+        {
+            options |= PhilosophersGazeContinuationOption.YangzhuQuanShengBi;
+        }
+
         return options;
     }
 
@@ -71,7 +102,10 @@ internal static class PhilosophersGazeContinuationPolicy
             ownership,
             continuationRecorded);
         return (choice is PhilosophersGazeContinuationOption.MengziXiongZhang
-                or PhilosophersGazeContinuationOption.XunziShengMo)
+                or PhilosophersGazeContinuationOption.XunziShengMo
+                or PhilosophersGazeContinuationOption.QinGuliShouChengXie
+                or PhilosophersGazeContinuationOption.ZhuangziDaHu
+                or PhilosophersGazeContinuationOption.YangzhuQuanShengBi)
             && (availableOptions & choice) == choice;
     }
 

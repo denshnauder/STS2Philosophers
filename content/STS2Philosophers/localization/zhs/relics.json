@@ -22,5 +22,14 @@
   "LAOZI_WU_WEI_SHU_JIAN.flavor": "不妄为，方能无不为。",
   "LAOZI_SHUI_YU.title": "水玉",
   "LAOZI_SHUI_YU.description": "回合结束时，若有未消耗的能量，直到你的下回合开始，受到的攻击伤害降低50%。",
-  "LAOZI_SHUI_YU.flavor": "天下莫柔弱于水，而攻坚强者莫之能胜。"
+  "LAOZI_SHUI_YU.flavor": "天下莫柔弱于水，而攻坚强者莫之能胜。",
+  "QIN_GULI_SHOU_CHENG_XIE.title": "守城械",
+  "QIN_GULI_SHOU_CHENG_XIE.description": "你的回合开始时，每名具有攻击意图的敌人使你获得4点格挡，至多12点。若直到下回合未受到敌人直接造成的伤害，对所有敌人施加1层虚弱。",
+  "QIN_GULI_SHOU_CHENG_XIE.flavor": "守小国，拒大攻，器备而后可待。",
+  "ZHUANGZI_DA_HU.title": "大瓠",
+  "ZHUANGZI_DA_HU.description": "回合结束时，若本回合打出的牌不超过2张，保留所有手牌。下回合最先打出的2张牌费用减少1，并各获得4点格挡。",
+  "ZHUANGZI_DA_HU.flavor": "何不虑以为大樽，而浮乎江湖？",
+  "YANGZHU_QUAN_SHENG_BI.title": "全生璧",
+  "YANGZHU_QUAN_SHENG_BI.description": "回合结束时，若有未消耗的能量，保全至多2点。直到下回合开始，受到的攻击伤害降低50%，随后返还保全的能量。",
+  "YANGZHU_QUAN_SHENG_BI.flavor": "全性保真，不以物累形。"
 }

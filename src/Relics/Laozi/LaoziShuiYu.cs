@@ -14,6 +14,7 @@ namespace STS2Philosophers;
 public sealed class LaoziShuiYu : RelicModel
 {
     private LaoziShuiYuState _laoziShuiYu;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -22,6 +23,27 @@ public sealed class LaoziShuiYu : RelicModel
     protected override string PackedIconOutlinePath => "res://STS2Philosophers/images/laozi_shui_yu_outline.png";
 
     protected override string BigIconPath => "res://STS2Philosophers/images/laozi_shui_yu.png";
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
+    }
+
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public bool DamageReductionActive
