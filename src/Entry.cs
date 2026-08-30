@@ -26,6 +26,7 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, QinGuliShouChengXie>();
         ModHelper.AddModelToPool<EventRelicPool, ZhuangziDaHu>();
         ModHelper.AddModelToPool<EventRelicPool, YangzhuQuanShengBi>();
+        ModHelper.AddModelToPool<EventRelicPool, HuishiLiWuChou>();
 
         if (Interlocked.Exchange(ref _harmonyInitialized, 1) == 0)
         {

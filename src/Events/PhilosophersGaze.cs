@@ -56,6 +56,11 @@ public sealed class PhilosophersGaze : EventModel
             options.Add(Option(ShowQinGuliViewpoints, PhilosophersGazePage.Continuation, PhilosophersGazeOption.QinGuli));
         }
 
+        if (availableOptions.HasFlag(PhilosophersGazeContinuationOption.HuishiLiWuChou))
+        {
+            options.Add(Option(ShowHuishiViewpoints, PhilosophersGazePage.Continuation, PhilosophersGazeOption.Huishi));
+        }
+
         if (availableOptions.HasFlag(PhilosophersGazeContinuationOption.ZhuangziDaHu))
         {
             options.Add(Option(ShowZhuangziViewpoints, PhilosophersGazePage.Continuation, PhilosophersGazeOption.Zhuangzi));
@@ -194,6 +199,21 @@ public sealed class PhilosophersGaze : EventModel
         return Task.CompletedTask;
     }
 
+    private Task ShowHuishiViewpoints()
+    {
+        if (CanChooseContinuation(PhilosophersGazeContinuationOption.HuishiLiWuChou))
+        {
+            SetEventState(
+                PageDescription(PhilosophersGazePage.HuishiViewpoints),
+                [
+                    RouteRelicOption<HuishiLiWuChou>(AcceptHuishiLiWuChou, PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.LiWuChou),
+                    Option(DeclineHuishi, PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.Decline),
+                ]);
+        }
+
+        return Task.CompletedTask;
+    }
+
     private Task ShowYangzhuViewpoints()
     {
         if (CanChooseContinuation(PhilosophersGazeContinuationOption.YangzhuQuanShengBi))
@@ -251,6 +271,12 @@ public sealed class PhilosophersGaze : EventModel
         "City Defense Diagram",
         "City Defense Machinery");
 
+    private Task AcceptHuishiLiWuChou() => ReplaceContinuationRelic<MoziMoSeZhuJian, HuishiLiWuChou>(
+        PhilosophersGazeContinuationOption.HuishiLiWuChou,
+        PhilosophersGazePage.HuishiLiWuChou,
+        "Ink Bamboo Slips",
+        "Enumeration Counters");
+
     private Task AcceptZhuangziDaHu() => ReplaceContinuationRelic<LaoziWuWeiShuJian, ZhuangziDaHu>(
         PhilosophersGazeContinuationOption.ZhuangziDaHu,
         PhilosophersGazePage.ZhuangziDaHu,
@@ -274,6 +300,10 @@ public sealed class PhilosophersGaze : EventModel
     private Task DeclineQinGuli() => ResolveContinuationDecline(
         PhilosophersGazeContinuationOption.QinGuliShouChengXie,
         PhilosophersGazePage.QinGuliDecline);
+
+    private Task DeclineHuishi() => ResolveContinuationDecline(
+        PhilosophersGazeContinuationOption.HuishiLiWuChou,
+        PhilosophersGazePage.HuishiDecline);
 
     private Task DeclineZhuangzi() => ResolveContinuationDecline(
         PhilosophersGazeContinuationOption.ZhuangziDaHu,
@@ -616,7 +646,8 @@ public sealed class PhilosophersGaze : EventModel
             owner?.GetRelicById(ModelDb.GetId<LaoziShuiYu>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<QinGuliShouChengXie>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<ZhuangziDaHu>()) is not null,
-            owner?.GetRelicById(ModelDb.GetId<YangzhuQuanShengBi>()) is not null);
+            owner?.GetRelicById(ModelDb.GetId<YangzhuQuanShengBi>()) is not null,
+            owner?.GetRelicById(ModelDb.GetId<HuishiLiWuChou>()) is not null);
     }
 
     internal static bool HasContinuationBeenRecorded(Player? owner)
@@ -624,6 +655,8 @@ public sealed class PhilosophersGaze : EventModel
         return (owner?.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo)
                 ?.HasResolvedPhilosophersGazeContinuation == true
             || (owner?.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)
+                ?.HasResolvedPhilosophersGazeContinuation == true
+            || (owner?.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) as MoziMoSeZhuJian)
                 ?.HasResolvedPhilosophersGazeContinuation == true
             || (owner?.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) as MoziShouChengTu)
                 ?.HasResolvedPhilosophersGazeContinuation == true
@@ -637,17 +670,20 @@ public sealed class PhilosophersGaze : EventModel
     {
         KongziMuduo? muduo = owner.GetRelicById(ModelDb.GetId<KongziMuduo>()) as KongziMuduo;
         KongziQingYuPei? qingYuPei = owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei;
+        MoziMoSeZhuJian? moSeZhuJian = owner.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) as MoziMoSeZhuJian;
         MoziShouChengTu? shouChengTu = owner.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) as MoziShouChengTu;
         LaoziWuWeiShuJian? wuWeiShuJian = owner.GetRelicById(ModelDb.GetId<LaoziWuWeiShuJian>()) as LaoziWuWeiShuJian;
         LaoziShuiYu? shuiYu = owner.GetRelicById(ModelDb.GetId<LaoziShuiYu>()) as LaoziShuiYu;
         ContinuationResolutionSnapshot snapshot = new(
             muduo?.HasResolvedPhilosophersGazeContinuation ?? false,
             qingYuPei?.HasResolvedPhilosophersGazeContinuation ?? false,
+            moSeZhuJian?.HasResolvedPhilosophersGazeContinuation ?? false,
             shouChengTu?.HasResolvedPhilosophersGazeContinuation ?? false,
             wuWeiShuJian?.HasResolvedPhilosophersGazeContinuation ?? false,
             shuiYu?.HasResolvedPhilosophersGazeContinuation ?? false);
         muduo?.RecordPhilosophersGazeContinuation();
         qingYuPei?.RecordPhilosophersGazeContinuation();
+        moSeZhuJian?.RecordPhilosophersGazeContinuation();
         shouChengTu?.RecordPhilosophersGazeContinuation();
         wuWeiShuJian?.RecordPhilosophersGazeContinuation();
         shuiYu?.RecordPhilosophersGazeContinuation();
@@ -660,6 +696,8 @@ public sealed class PhilosophersGaze : EventModel
             ?.RestorePhilosophersGazeContinuation(snapshot.MuduoResolved);
         (owner.GetRelicById(ModelDb.GetId<KongziQingYuPei>()) as KongziQingYuPei)
             ?.RestorePhilosophersGazeContinuation(snapshot.QingYuPeiResolved);
+        (owner.GetRelicById(ModelDb.GetId<MoziMoSeZhuJian>()) as MoziMoSeZhuJian)
+            ?.RestorePhilosophersGazeContinuation(snapshot.MoSeZhuJianResolved);
         (owner.GetRelicById(ModelDb.GetId<MoziShouChengTu>()) as MoziShouChengTu)
             ?.RestorePhilosophersGazeContinuation(snapshot.ShouChengTuResolved);
         (owner.GetRelicById(ModelDb.GetId<LaoziWuWeiShuJian>()) as LaoziWuWeiShuJian)
@@ -685,6 +723,7 @@ public sealed class PhilosophersGaze : EventModel
     private readonly record struct ContinuationResolutionSnapshot(
         bool MuduoResolved,
         bool QingYuPeiResolved,
+        bool MoSeZhuJianResolved,
         bool ShouChengTuResolved,
         bool WuWeiShuJianResolved,
         bool ShuiYuResolved);

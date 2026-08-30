@@ -9,6 +9,7 @@ internal enum PhilosophersGazeContinuationOption
     QinGuliShouChengXie = 4,
     ZhuangziDaHu = 8,
     YangzhuQuanShengBi = 16,
+    HuishiLiWuChou = 32,
 }
 
 internal readonly record struct PhilosophersGazeContinuationInsertionContext(
@@ -45,7 +46,8 @@ internal static class PhilosophersGazeContinuationPolicy
             || ownership.HasXunziShengMo
             || ownership.HasQinGuliShouChengXie
             || ownership.HasZhuangziDaHu
-            || ownership.HasYangzhuQuanShengBi)
+            || ownership.HasYangzhuQuanShengBi
+            || ownership.HasHuishiLiWuChou)
         {
             return PhilosophersGazeContinuationOption.None;
         }
@@ -80,6 +82,11 @@ internal static class PhilosophersGazeContinuationPolicy
             options |= PhilosophersGazeContinuationOption.QinGuliShouChengXie;
         }
 
+        if (ownership.HasMoziMoSeZhuJian && !ownership.HasMoziShouChengTu)
+        {
+            options |= PhilosophersGazeContinuationOption.HuishiLiWuChou;
+        }
+
         if (ownership.HasLaoziWuWeiShuJian && !ownership.HasLaoziShuiYu)
         {
             options |= PhilosophersGazeContinuationOption.ZhuangziDaHu;
@@ -105,7 +112,8 @@ internal static class PhilosophersGazeContinuationPolicy
                 or PhilosophersGazeContinuationOption.XunziShengMo
                 or PhilosophersGazeContinuationOption.QinGuliShouChengXie
                 or PhilosophersGazeContinuationOption.ZhuangziDaHu
-                or PhilosophersGazeContinuationOption.YangzhuQuanShengBi)
+                or PhilosophersGazeContinuationOption.YangzhuQuanShengBi
+                or PhilosophersGazeContinuationOption.HuishiLiWuChou)
             && (availableOptions & choice) == choice;
     }
 

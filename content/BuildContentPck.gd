@@ -62,6 +62,8 @@ func _initialize() -> void:
 		"res://STS2Philosophers/images/zhuangzi_da_hu_outline.png",
 		"res://STS2Philosophers/images/yangzhu_quan_sheng_bi.png",
 		"res://STS2Philosophers/images/yangzhu_quan_sheng_bi_outline.png",
+		"res://STS2Philosophers/images/huishi_li_wu_chou.png",
+		"res://STS2Philosophers/images/huishi_li_wu_chou_outline.png",
 	]
 
 	for texture_path in texture_paths:

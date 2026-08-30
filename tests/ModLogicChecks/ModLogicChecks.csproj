@@ -21,6 +21,7 @@
     <Compile Include="..\..\src\Relics\Laozi\LaoziShuiYuDamagePolicy.cs" Link="LaoziShuiYuDamagePolicy.cs" />
     <Compile Include="..\..\src\Relics\QinGuli\QinGuliShouChengXieState.cs" Link="QinGuliShouChengXieState.cs" />
     <Compile Include="..\..\src\Relics\QinGuli\QinGuliShouChengXieDamagePolicy.cs" Link="QinGuliShouChengXieDamagePolicy.cs" />
+    <Compile Include="..\..\src\Relics\Huishi\HuishiLiWuChouState.cs" Link="HuishiLiWuChouState.cs" />
     <Compile Include="..\..\src\Relics\Zhuangzi\ZhuangziDaHuState.cs" Link="ZhuangziDaHuState.cs" />
     <Compile Include="..\..\src\Relics\Yangzhu\YangzhuQuanShengBiState.cs" Link="YangzhuQuanShengBiState.cs" />
     <Compile Include="..\..\src\Relics\Yangzhu\YangzhuQuanShengBiDamagePolicy.cs" Link="YangzhuQuanShengBiDamagePolicy.cs" />

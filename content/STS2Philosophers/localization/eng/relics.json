@@ -31,5 +31,8 @@
   "ZHUANGZI_DA_HU.flavor": "Why not make it a great vessel and float through the rivers and lakes?",
   "YANGZHU_QUAN_SHENG_BI.title": "Whole Life Bi",
   "YANGZHU_QUAN_SHENG_BI.description": "At the end of your turn, preserve up to 2 unspent Energy. Take 50% less Attack damage until your next turn, then regain the preserved Energy.",
-  "YANGZHU_QUAN_SHENG_BI.flavor": "Keep one's nature whole and true, unburdened by external things."
+  "YANGZHU_QUAN_SHENG_BI.flavor": "Keep one's nature whole and true, unburdened by external things.",
+  "HUISHI_LI_WU_CHOU.title": "Enumeration Counters",
+  "HUISHI_LI_WU_CHOU.description": "At the start of your turn, you and ALL enemies gain 8 Block. The first time each turn you break an enemy's Block, gain 1 Energy, draw 1 card, and deal 8 damage to ALL enemies.",
+  "HUISHI_LI_WU_CHOU.flavor": "Extend care to all things; Heaven and Earth are one body."
 }

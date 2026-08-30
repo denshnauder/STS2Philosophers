@@ -15,6 +15,7 @@ namespace STS2Philosophers;
 public sealed class MoziMoSeZhuJian : RelicModel
 {
     private MoziMoSeZhuJianState _moziMoSeZhuJian;
+    private bool _hasResolvedPhilosophersGazeContinuation;
 
     public override RelicRarity Rarity => RelicRarity.None;
 
@@ -32,6 +33,27 @@ public sealed class MoziMoSeZhuJian : RelicModel
     [
         new BlockVar(MoziMoSeZhuJianState.BlockAmount, ValueProp.Unpowered),
     ];
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public bool HasResolvedPhilosophersGazeContinuation
+    {
+        get => _hasResolvedPhilosophersGazeContinuation;
+        private set
+        {
+            AssertMutable();
+            _hasResolvedPhilosophersGazeContinuation = value;
+        }
+    }
+
+    internal void RecordPhilosophersGazeContinuation()
+    {
+        HasResolvedPhilosophersGazeContinuation = true;
+    }
+
+    internal void RestorePhilosophersGazeContinuation(bool resolved)
+    {
+        HasResolvedPhilosophersGazeContinuation = resolved;
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public int XiangLi

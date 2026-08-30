@@ -31,5 +31,8 @@
   "ZHUANGZI_DA_HU.flavor": "何不虑以为大樽，而浮乎江湖？",
   "YANGZHU_QUAN_SHENG_BI.title": "全生璧",
   "YANGZHU_QUAN_SHENG_BI.description": "回合结束时，若有未消耗的能量，保全至多2点。直到下回合开始，受到的攻击伤害降低50%，随后返还保全的能量。",
-  "YANGZHU_QUAN_SHENG_BI.flavor": "全性保真，不以物累形。"
+  "YANGZHU_QUAN_SHENG_BI.flavor": "全性保真，不以物累形。",
+  "HUISHI_LI_WU_CHOU.title": "历物筹",
+  "HUISHI_LI_WU_CHOU.description": "你的回合开始时，你与所有敌人获得8点格挡。每回合第一次击破敌人的格挡时，获得1点能量，抽1张牌，并对所有敌人造成8点伤害。",
+  "HUISHI_LI_WU_CHOU.flavor": "泛爱万物，天地一体也。"
 }

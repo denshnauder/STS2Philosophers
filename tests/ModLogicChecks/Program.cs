@@ -679,6 +679,37 @@ Check(shouChengXieState == default,
 
 Console.WriteLine("City Defense Machinery logic checks passed.");
 
+HuishiLiWuChouState liWuChouState = new();
+Check(liWuChouState.BeginPlayerTurn(1)
+      && !liWuChouState.BeginPlayerTurn(1),
+    "Enumeration Counters must initialize each player turn exactly once.");
+Check(!liWuChouState.TryRewardBlockBreak(
+        turnNumber: 1,
+        targetIsEnemy: false,
+        breakerIsPlayer: true)
+      && !liWuChouState.TryRewardBlockBreak(
+          turnNumber: 1,
+          targetIsEnemy: true,
+          breakerIsPlayer: false),
+    "Enumeration Counters must ignore allied targets and non-player breakers.");
+Check(liWuChouState.TryRewardBlockBreak(
+        turnNumber: 1,
+        targetIsEnemy: true,
+        breakerIsPlayer: true)
+      && !liWuChouState.TryRewardBlockBreak(
+          turnNumber: 1,
+          targetIsEnemy: true,
+          breakerIsPlayer: true),
+    "Enumeration Counters must reward only the first enemy Block break each turn.");
+Check(liWuChouState.BeginPlayerTurn(2)
+      && liWuChouState.TryRewardBlockBreak(2, true, true),
+    "Enumeration Counters must become eligible again on the next player turn.");
+liWuChouState.Reset();
+Check(liWuChouState == default,
+    "Combat cleanup must clear Enumeration Counters state.");
+
+Console.WriteLine("Enumeration Counters logic checks passed.");
+
 ZhuangziDaHuState daHuState = new();
 daHuState.BeginCombat();
 Check(daHuState.BeginPlayerTurn(1, discountedPlayCount: 2)
@@ -861,7 +892,8 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
     bool hasLaoziShuiYu = false,
     bool hasQinGuliShouChengXie = false,
     bool hasZhuangziDaHu = false,
-    bool hasYangzhuQuanShengBi = false)
+    bool hasYangzhuQuanShengBi = false,
+    bool hasHuishiLiWuChou = false)
 {
     return new PhilosophersGazeRelicOwnership(
         hasKongziMuduo,
@@ -874,7 +906,8 @@ static PhilosophersGazeRelicOwnership ContinuationOwnership(
         hasLaoziShuiYu,
         hasQinGuliShouChengXie,
         hasZhuangziDaHu,
-        hasYangzhuQuanShengBi);
+        hasYangzhuQuanShengBi,
+        hasHuishiLiWuChou);
 }
 
 static PhilosophersGazeContinuationInsertionContext ContinuationContext(
@@ -930,11 +963,14 @@ Check(!PhilosophersGazeContinuationPolicy.CanGrant(
 PhilosophersGazeRelicOwnership moziRoute = ContinuationOwnership(
     hasMoziMoSeZhuJian: true);
 Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(moziRoute, false)
-        == PhilosophersGazeContinuationOption.None,
-    "Ink Bamboo Slips currently has no act two continuation option.");
-Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
-        ContinuationContext(moziRoute)),
-    "The act two event must be skipped for the standalone Mohist route.");
+        == PhilosophersGazeContinuationOption.HuishiLiWuChou
+      && PhilosophersGazeContinuationPolicy.ShouldInsert(
+          ContinuationContext(moziRoute))
+      && PhilosophersGazeContinuationPolicy.CanGrant(
+          PhilosophersGazeContinuationOption.HuishiLiWuChou,
+          moziRoute,
+          continuationRecorded: false),
+    "Ink Bamboo Slips must display Enumeration Counters and insert the act two event.");
 
 PhilosophersGazeRelicOwnership shouChengTuRoute = ContinuationOwnership(
     hasMoziShouChengTu: true);
@@ -1006,7 +1042,11 @@ Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
       && !PhilosophersGazeContinuationPolicy.ShouldInsert(
           ContinuationContext(ContinuationOwnership(
               hasLaoziShuiYu: true,
-              hasYangzhuQuanShengBi: true))),
+              hasYangzhuQuanShengBi: true)))
+      && !PhilosophersGazeContinuationPolicy.ShouldInsert(
+          ContinuationContext(ContinuationOwnership(
+              hasMoziMoSeZhuJian: true,
+              hasHuishiLiWuChou: true))),
     "Owning any new successor must prevent repeat continuation insertion.");
 Check(!PhilosophersGazeContinuationPolicy.ShouldInsert(
         ContinuationContext(ContinuationOwnership(
@@ -1099,6 +1139,7 @@ PhilosophersGazeTransition[] navigationTransitions =
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Mengzi),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Xunzi),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.QinGuli),
+    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Huishi),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Zhuangzi),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Yangzhu),
     Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Decline),
@@ -1132,6 +1173,8 @@ PhilosophersGazeTransition[] allResultTransitions =
     Transition(PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.Decline),
     Transition(PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.ShouChengXie),
     Transition(PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.Decline),
+    Transition(PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.LiWuChou),
+    Transition(PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.Decline),
     Transition(PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.DaHu),
     Transition(PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.Decline),
     Transition(PhilosophersGazePage.YangzhuViewpoints, PhilosophersGazeOption.QuanShengBi),
