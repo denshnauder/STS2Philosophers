@@ -2,6 +2,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -70,8 +71,17 @@ internal static class BehaviorObservationCombatEndPatch
             return;
         }
 
-        BehaviorObservationRecorder.CompleteCombat(
-            PhilosophyRunStateService.GetOrCreate(concreteRunState),
-            concreteRunState.CurrentActIndex);
+        PhilosophyRunState philosophyState =
+            PhilosophyRunStateService.GetOrCreate(concreteRunState);
+        int actIndex = concreteRunState.CurrentActIndex;
+        if (BehaviorObservationRecorder.CompleteCombat(
+                philosophyState,
+                actIndex))
+        {
+            Log.Info(
+                "[STS2Philosophers] Behavior observation: "
+                + BehaviorObservationDiagnostics.FormatActSummary(
+                    philosophyState.ActBehaviorStates[actIndex]));
+        }
     }
 }

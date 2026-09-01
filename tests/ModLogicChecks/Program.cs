@@ -948,6 +948,9 @@ Check(observedActState.CompletedCombatCount == 1
       && observedActState.GameFacts[BehaviorGameFactIds.AttackCardPlayed] == 1
       && observedActState.GameFacts[BehaviorGameFactIds.SkillCardPlayed] == 1,
     "The first neutral fact set must aggregate without creating behavior impressions.");
+Check(BehaviorObservationDiagnostics.FormatActSummary(observedActState) ==
+      "act=0 combats=1 facts=ATTACK_CARD_PLAYED:1,CARD_PLAYED:2,COMBAT_COMPLETED:1,COMBAT_STARTED:1,SKILL_CARD_PLAYED:1 opportunities=none impressions=none",
+    "Behavior diagnostics must be stable, sorted, and explicit about empty observation groups.");
 Check(BehaviorObservationRecorder.BeginCombat(observedRunState, 0, "102")
       && BehaviorObservationRecorder.RecordCardPlayed(
           observedRunState,

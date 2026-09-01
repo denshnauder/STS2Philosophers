@@ -11,6 +11,7 @@
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。状态以不可见的 `STS2PhilosophersRunState.V1_*` 保存标记写入本局存档，载入时先取出标记再交给游戏恢复原始事件历史；该标记没有本地化或资源，也不产生可见遗物。
 - Phase 2A 在 `ActBehaviorState` 中分开保存通用游戏事实、表达机会与行为印象。事实可在一场战斗内累计；同一表达机会和同一行为印象每场最多结算一次。`ActiveCombat` 支持战斗中途随局内状态往返，旧 Phase 1 存档缺少的新字段会恢复为空集合。
 - `src/Patches/BehaviorObservationPatch.cs` 监听游戏全局战斗开始、出牌完成与战斗结束钩子，仅在单人局调用 `BehaviorObservationRecorder`。当前事实包括战斗开始/完成、出牌总数及攻击、技能、能力、状态、诅咒、任务等牌类型；事实不直接生成行为印象，也不参与候选。
+- 每场被记录的单人战斗结束后，日志会输出 `[STS2Philosophers] Behavior observation:` 摘要；字段按固定顺序排列，事实键按代码序排序，可用于核对跨战斗累计与读档恢复。
 - `config/thinker_proposals.json` 是“人物 + 具体思想提案”的配置雏形，以嵌入资源进入 DLL。Phase 1 只登记六件现有根遗物；`qualification_rule_ids` 与 `resonance_tags` 保持为空，等待后续行为候选设计。
 - 六件根遗物分别保存第二层是否已经处理；12 件遗物的战斗状态保存在各自实例上。当前唯一显式跨遗物数据迁移是青玉佩的 `Virtue` 在替换时写入熊掌的 `InheritedVirtue`。
 - `tests/ModLogicChecks/Program.cs` 覆盖页面流、根遗物互斥、第二层过滤与替换、德继承、重复回调和本地化键。

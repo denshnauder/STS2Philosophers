@@ -80,3 +80,25 @@ internal static class BehaviorObservationRecorder
             && actState.CompleteCombat();
     }
 }
+
+internal static class BehaviorObservationDiagnostics
+{
+    public static string FormatActSummary(ActBehaviorState state)
+    {
+        return $"act={state.ActIndex} combats={state.CompletedCombatCount} "
+            + $"facts={FormatCounts(state.GameFacts)} "
+            + $"opportunities={FormatCounts(state.ExpressionOpportunities)} "
+            + $"impressions={FormatCounts(state.Impressions)}";
+    }
+
+    private static string FormatCounts(IReadOnlyDictionary<string, int> counts)
+    {
+        return counts.Count == 0
+            ? "none"
+            : string.Join(
+                ",",
+                counts
+                    .OrderBy(entry => entry.Key, StringComparer.Ordinal)
+                    .Select(entry => $"{entry.Key}:{entry.Value}"));
+    }
+}
