@@ -781,6 +781,7 @@ static PhilosophersGazeInterceptionContext GazeContext(
     bool runInProgress = true,
     bool currentRoomIsEventRoom = true,
     CurrentEventKind currentEvent = CurrentEventKind.Neow,
+    bool currentEventFinished = true,
     bool historyContainsPhilosophersGaze = false,
     bool modelAvailable = true,
     bool isSingleplayer = true)
@@ -789,6 +790,7 @@ static PhilosophersGazeInterceptionContext GazeContext(
         runInProgress,
         currentRoomIsEventRoom,
         currentEvent,
+        currentEventFinished,
         historyContainsPhilosophersGaze,
         modelAvailable,
         isSingleplayer);
@@ -799,6 +801,9 @@ Check(PhilosophersGazeInterceptionPolicy.ShouldIntercept(GazeContext()),
 Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
         GazeContext(currentEvent: CurrentEventKind.Other)),
     "A non-Neow event must not be intercepted.");
+Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
+        GazeContext(currentEventFinished: false)),
+    "Neow must not be intercepted before its reward flow has finished.");
 Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
         GazeContext(runInProgress: false)),
     "Proceed must not be intercepted when no run is in progress.");
@@ -1466,9 +1471,11 @@ Check(eventSource.Contains("GetActOneCandidates()", StringComparison.Ordinal)
     "The act one event must display and authorize only the generated thinker candidates.");
 Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
         < neowPatchSource.IndexOf("EnterRoomWithoutExitingCurrentRoom(", StringComparison.Ordinal)
+      && neowPatchSource.IndexOf("neowRoom.MarkPreFinished()", StringComparison.Ordinal)
+        < neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
       && runStateSavePatchSource.Contains("nameof(RunManager.ToSave)", StringComparison.Ordinal)
       && runStateSavePatchSource.Contains("nameof(RunState.FromSerializable)", StringComparison.Ordinal),
-    "New act one candidates must be written into the run save before the event is entered and restored on load.");
+    "Finished Neow and act one candidates must be saved before the event is entered and restored on load.");
 Check(eventSource.Contains("RelicCmd.Replace(original, replacement)", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<MengziXiongZhang>().ToMutable()", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<XunziShengMo>().ToMutable()", StringComparison.Ordinal)

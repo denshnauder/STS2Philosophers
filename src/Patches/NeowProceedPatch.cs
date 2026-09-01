@@ -50,6 +50,7 @@ internal static class NeowProceedPatch
                 runInProgress,
                 eventRoom is not null,
                 currentEvent,
+                eventRoom?.LocalMutableEvent.IsFinished ?? false,
                 historyContainsEvent,
                 canonicalEvent is not null,
                 runState?.Players.Count == 1);
@@ -62,6 +63,7 @@ internal static class NeowProceedPatch
             Task entryTask = EnterPhilosophersGaze(
                 runManager,
                 runState!,
+                eventRoom!,
                 canonicalEvent!);
             _activeEntryTask = entryTask;
             _ = entryTask.ContinueWith(
@@ -78,14 +80,12 @@ internal static class NeowProceedPatch
     private static async Task EnterPhilosophersGaze(
         RunManager runManager,
         RunState runState,
+        EventRoom neowRoom,
         PhilosophersGaze canonicalEvent)
     {
-        PhilosophyRunState philosophyState = PhilosophyRunStateService.GetOrCreate(runState);
-        philosophyState.GeneratedCandidates.TryGetValue(
-            PhilosophersGazeActOneCandidatePolicy.GenerationKey,
-            out GeneratedCandidates? previousCandidates);
-        GeneratedCandidates candidates = PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
-        if (!ReferenceEquals(previousCandidates, candidates) && runManager.ShouldSave)
+        neowRoom.MarkPreFinished();
+        PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
+        if (runManager.ShouldSave)
         {
             await SaveManager.Instance.SaveRun(null);
         }

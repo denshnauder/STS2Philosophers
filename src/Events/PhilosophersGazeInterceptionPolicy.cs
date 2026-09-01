@@ -12,6 +12,7 @@ internal readonly record struct PhilosophersGazeInterceptionContext(
     bool RunInProgress,
     bool CurrentRoomIsEventRoom,
     CurrentEventKind CurrentEvent,
+    bool CurrentEventFinished,
     bool HistoryContainsPhilosophersGaze,
     bool ModelAvailable,
     bool IsSingleplayer);
@@ -23,6 +24,7 @@ internal static class PhilosophersGazeInterceptionPolicy
         return context.RunInProgress
             && context.CurrentRoomIsEventRoom
             && context.CurrentEvent == CurrentEventKind.Neow
+            && context.CurrentEventFinished
             && !context.HistoryContainsPhilosophersGaze
             && context.ModelAvailable
             && context.IsSingleplayer;

@@ -5,6 +5,7 @@
 ## 赐福流程代码结构
 
 - `src/Patches/NeowProceedPatch.cs` 与 `src/Patches/ActTwoPhilosophersGazePatch.cs` 分别负责第一层和第二层事件插入。
+- 第一层插入会拦截已经结束的涅奥事件；必须先对底层涅奥 `EventRoom` 调用 `MarkPreFinished` 并保存，再用嵌套房间进入“诸子观照”。否则退出读档会恢复一个仍可结算的涅奥房间，造成奖励重复领取。
 - `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
