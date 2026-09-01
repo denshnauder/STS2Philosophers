@@ -261,33 +261,27 @@ public sealed class PhilosophersGaze : EventModel
 
     private Task AcceptKongziMuduo() => ObtainActOneRelic<KongziMuduo>(
         PhilosophersGazePage.KongziMuduo,
-        PhilosophersGazeActOneCandidatePolicy.Kongzi,
-        "LI");
+        ThinkerProposalCatalog.KongziLi);
 
     private Task AcceptKongziQingYuPei() => ObtainActOneRelic<KongziQingYuPei>(
         PhilosophersGazePage.KongziQingYuPei,
-        PhilosophersGazeActOneCandidatePolicy.Kongzi,
-        "REN");
+        ThinkerProposalCatalog.KongziRen);
 
     private Task AcceptMoziMoSeZhuJian() => ObtainActOneRelic<MoziMoSeZhuJian>(
         PhilosophersGazePage.MoziMoSeZhuJian,
-        PhilosophersGazeActOneCandidatePolicy.Mozi,
-        "JIAN_AI");
+        ThinkerProposalCatalog.MoziJianAi);
 
     private Task AcceptMoziShouChengTu() => ObtainActOneRelic<MoziShouChengTu>(
         PhilosophersGazePage.MoziShouChengTu,
-        PhilosophersGazeActOneCandidatePolicy.Mozi,
-        "FEI_GONG");
+        ThinkerProposalCatalog.MoziFeiGong);
 
     private Task AcceptLaoziWuWeiShuJian() => ObtainActOneRelic<LaoziWuWeiShuJian>(
         PhilosophersGazePage.LaoziWuWeiShuJian,
-        PhilosophersGazeActOneCandidatePolicy.Laozi,
-        "WU_WEI");
+        ThinkerProposalCatalog.LaoziWuWei);
 
     private Task AcceptLaoziShuiYu() => ObtainActOneRelic<LaoziShuiYu>(
         PhilosophersGazePage.LaoziShuiYu,
-        PhilosophersGazeActOneCandidatePolicy.Laozi,
-        "RUO_SHUI");
+        ThinkerProposalCatalog.LaoziRuoShui);
 
     private Task DeclineKongzi() => FinishActOneWithoutRelic(PhilosophersGazePage.KongziDecline);
 
@@ -355,8 +349,7 @@ public sealed class PhilosophersGaze : EventModel
 
     private async Task ObtainActOneRelic<TRelic>(
         PhilosophersGazePage resultPage,
-        string thinkerId,
-        string doctrineId)
+        string proposalId)
         where TRelic : RelicModel
     {
         if (!TryBeginResolution())
@@ -366,8 +359,9 @@ public sealed class PhilosophersGaze : EventModel
 
         try
         {
+            ThinkerProposal proposal = ThinkerProposalCatalog.Get(proposalId);
             Player? owner = Owner;
-            if (owner is null || !CanGrantActOneRelic(thinkerId))
+            if (owner is null || !CanGrantActOneRelic(proposal.ThinkerId))
             {
                 Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible act one relic callback.");
                 return;
@@ -384,8 +378,7 @@ public sealed class PhilosophersGaze : EventModel
             {
                 PhilosophyRunStateService.RecordCurrentDoctrine(
                     runState,
-                    thinkerId,
-                    doctrineId);
+                    proposal);
             }
 
             SetEventFinished(PageDescription(resultPage));

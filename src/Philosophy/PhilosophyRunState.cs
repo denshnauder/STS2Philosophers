@@ -23,8 +23,14 @@ internal sealed class PhilosophyRunState
         return state;
     }
 
-    public void RecordCurrentDoctrine(string thinkerId, string doctrineId)
+    public void RecordCurrentDoctrine(
+        string thinkerId,
+        string doctrineId,
+        IEnumerable<string>? routeTags = null)
     {
+        List<string> recordedRouteTags = routeTags?
+            .Distinct(StringComparer.Ordinal)
+            .ToList() ?? [];
         CurrentDoctrine = new CurrentDoctrine
         {
             ThinkerId = thinkerId,
@@ -40,11 +46,13 @@ internal sealed class PhilosophyRunState
             {
                 ThinkerId = thinkerId,
                 DoctrineId = doctrineId,
+                RouteTags = recordedRouteTags,
                 RelationshipState = ThoughtImprintRelationship.Current,
             });
         }
         else
         {
+            existing.RouteTags = recordedRouteTags;
             existing.RelationshipState = ThoughtImprintRelationship.Current;
         }
     }

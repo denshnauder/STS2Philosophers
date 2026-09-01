@@ -1,0 +1,56 @@
+[
+  {
+    "proposal_id": "KONGZI_LI",
+    "thinker_id": "KONGZI",
+    "doctrine_id": "LI",
+    "relic_model_id": "KONGZI_MUDUO",
+    "route_tags": ["CONFUCIAN", "ORDER"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  },
+  {
+    "proposal_id": "KONGZI_REN",
+    "thinker_id": "KONGZI",
+    "doctrine_id": "REN",
+    "relic_model_id": "KONGZI_QING_YU_PEI",
+    "route_tags": ["CONFUCIAN", "RESTRAINT"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  },
+  {
+    "proposal_id": "MOZI_JIAN_AI",
+    "thinker_id": "MOZI",
+    "doctrine_id": "JIAN_AI",
+    "relic_model_id": "MOZI_MO_SE_ZHU_JIAN",
+    "route_tags": ["MOHIST", "MUTUAL_BENEFIT"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  },
+  {
+    "proposal_id": "MOZI_FEI_GONG",
+    "thinker_id": "MOZI",
+    "doctrine_id": "FEI_GONG",
+    "relic_model_id": "MOZI_SHOU_CHENG_TU",
+    "route_tags": ["MOHIST", "DEFENSE"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  },
+  {
+    "proposal_id": "LAOZI_WU_WEI",
+    "thinker_id": "LAOZI",
+    "doctrine_id": "WU_WEI",
+    "relic_model_id": "LAOZI_WU_WEI_SHU_JIAN",
+    "route_tags": ["DAOIST", "FEW_ACTIONS"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  },
+  {
+    "proposal_id": "LAOZI_RUO_SHUI",
+    "thinker_id": "LAOZI",
+    "doctrine_id": "RUO_SHUI",
+    "relic_model_id": "LAOZI_SHUI_YU",
+    "route_tags": ["DAOIST", "RESERVE"],
+    "qualification_rule_ids": [],
+    "resonance_tags": []
+  }
+]

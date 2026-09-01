@@ -41,6 +41,17 @@ internal static class PhilosophersGazeContinuationPolicy
         PhilosophersGazeRelicOwnership ownership,
         bool continuationRecorded)
     {
+        return GetAvailableOptions(
+            ownership,
+            continuationRecorded,
+            LegacyRelicContinuationCandidateSource.Instance);
+    }
+
+    internal static PhilosophersGazeContinuationOption GetAvailableOptions(
+        PhilosophersGazeRelicOwnership ownership,
+        bool continuationRecorded,
+        IPhilosophersGazeContinuationCandidateSource candidateSource)
+    {
         if (continuationRecorded
             || ownership.HasMengziXiongZhang
             || ownership.HasXunziShengMo
@@ -52,52 +63,7 @@ internal static class PhilosophersGazeContinuationPolicy
             return PhilosophersGazeContinuationOption.None;
         }
 
-        bool hasConfucianRoot = ownership.HasKongziQingYuPei
-            || ownership.HasKongziMuduo;
-        bool hasMohistRoot = ownership.HasMoziMoSeZhuJian
-            || ownership.HasMoziShouChengTu;
-        bool hasDaoistRoot = ownership.HasLaoziWuWeiShuJian
-            || ownership.HasLaoziShuiYu;
-        int rootFamilyCount = Convert.ToInt32(hasConfucianRoot)
-            + Convert.ToInt32(hasMohistRoot)
-            + Convert.ToInt32(hasDaoistRoot);
-        if (rootFamilyCount != 1)
-        {
-            return PhilosophersGazeContinuationOption.None;
-        }
-
-        PhilosophersGazeContinuationOption options = PhilosophersGazeContinuationOption.None;
-        if (ownership.HasKongziQingYuPei)
-        {
-            options |= PhilosophersGazeContinuationOption.MengziXiongZhang;
-        }
-
-        if (ownership.HasKongziMuduo)
-        {
-            options |= PhilosophersGazeContinuationOption.XunziShengMo;
-        }
-
-        if (ownership.HasMoziShouChengTu && !ownership.HasMoziMoSeZhuJian)
-        {
-            options |= PhilosophersGazeContinuationOption.QinGuliShouChengXie;
-        }
-
-        if (ownership.HasMoziMoSeZhuJian && !ownership.HasMoziShouChengTu)
-        {
-            options |= PhilosophersGazeContinuationOption.HuishiLiWuChou;
-        }
-
-        if (ownership.HasLaoziWuWeiShuJian && !ownership.HasLaoziShuiYu)
-        {
-            options |= PhilosophersGazeContinuationOption.ZhuangziDaHu;
-        }
-
-        if (ownership.HasLaoziShuiYu && !ownership.HasLaoziWuWeiShuJian)
-        {
-            options |= PhilosophersGazeContinuationOption.YangzhuQuanShengBi;
-        }
-
-        return options;
+        return candidateSource.GetCandidates(ownership);
     }
 
     public static bool CanGrant(

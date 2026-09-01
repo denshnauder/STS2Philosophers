@@ -20,6 +20,8 @@
   <ItemGroup>
     <Compile Remove="tests\**\*.cs" />
 
+    <EmbeddedResource Include="config\thinker_proposals.json" />
+
     <Reference Include="sts2">
       <HintPath>$(GameManagedDirectory)\sts2.dll</HintPath>
       <Private>false</Private>

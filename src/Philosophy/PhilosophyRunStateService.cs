@@ -32,11 +32,13 @@ internal static class PhilosophyRunStateService
 
     public static void RecordCurrentDoctrine(
         RunState runState,
-        string thinkerId,
-        string doctrineId)
+        ThinkerProposal proposal)
     {
         PhilosophyRunState state = GetOrCreate(runState);
-        state.RecordCurrentDoctrine(thinkerId, doctrineId);
+        state.RecordCurrentDoctrine(
+            proposal.ThinkerId,
+            proposal.DoctrineId,
+            proposal.RouteTags);
         state.GetOrCreateActBehaviorState(runState.CurrentActIndex);
     }
 }

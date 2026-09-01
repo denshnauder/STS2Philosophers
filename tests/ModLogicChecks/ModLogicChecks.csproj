@@ -27,11 +27,13 @@
     <Compile Include="..\..\src\Relics\Yangzhu\YangzhuQuanShengBiDamagePolicy.cs" Link="YangzhuQuanShengBiDamagePolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeInterceptionPolicy.cs" Link="PhilosophersGazeInterceptionPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeContinuationPolicy.cs" Link="PhilosophersGazeContinuationPolicy.cs" />
+    <Compile Include="..\..\src\Events\PhilosophersGazeContinuationCandidateSource.cs" Link="PhilosophersGazeContinuationCandidateSource.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeRelicGrantPolicy.cs" Link="PhilosophersGazeRelicGrantPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeFlowPolicy.cs" Link="PhilosophersGazeFlowPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeResolutionPolicy.cs" Link="PhilosophersGazeResolutionPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunState.cs" Link="PhilosophyRunState.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunStateCodec.cs" Link="PhilosophyRunStateCodec.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>
 </Project>

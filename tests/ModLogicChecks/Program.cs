@@ -983,6 +983,12 @@ static PhilosophersGazeContinuationInsertionContext ContinuationContext(
 
 PhilosophersGazeRelicOwnership qingYuPeiRoute = ContinuationOwnership(
     hasKongziQingYuPei: true);
+Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(
+        ContinuationOwnership(),
+        continuationRecorded: false,
+        new FixedContinuationCandidateSource(PhilosophersGazeContinuationOption.HuishiLiWuChou))
+        == PhilosophersGazeContinuationOption.HuishiLiWuChou,
+    "The continuation policy must accept a replaceable candidate source instead of requiring relic mappings.");
 Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(qingYuPeiRoute, false)
         == PhilosophersGazeContinuationOption.MengziXiongZhang,
     "Green Jade Pendant must display Bear Paw as its only continuation relic.");
@@ -1303,6 +1309,17 @@ Check(PhilosophersGazeContinuationPolicy.GetAvailableOptions(debugDualRoute, fal
     "Debug dual roots must show both philosophers before resolution and neither after either route resolves.");
 
 string repositoryRoot = Directory.GetCurrentDirectory();
+string thinkerProposalPath = Path.Combine(repositoryRoot, "config", "thinker_proposals.json");
+IReadOnlyDictionary<string, ThinkerProposal> thinkerProposals = ThinkerProposalCatalog.ParseJson(
+    File.ReadAllText(thinkerProposalPath));
+Check(thinkerProposals.Count == 6
+      && thinkerProposals.Values.Select(proposal => proposal.RelicModelId)
+          .Distinct(StringComparer.Ordinal).Count() == 6
+      && thinkerProposals.Values.All(proposal =>
+          proposal.RouteTags.Count > 0
+          && proposal.QualificationRuleIds.Count == 0
+          && proposal.ResonanceTags.Count == 0),
+    "The Phase 1 proposal configuration must describe all six roots without inventing eligibility or resonance rules.");
 string[] localePaths =
 [
     Path.Combine(repositoryRoot, "content", "STS2Philosophers", "localization", "zhs", "events.json"),
@@ -1378,3 +1395,14 @@ Check(waterJadeSource.Contains(damageHookParameterOrder, StringComparison.Ordina
     "Water Jade and Whole Life Bi must map the damage hook's target before its dealer.");
 
 Console.WriteLine("PhilosophersGaze three-stage flow and localization checks passed.");
+
+internal sealed class FixedContinuationCandidateSource(
+    PhilosophersGazeContinuationOption candidates)
+    : IPhilosophersGazeContinuationCandidateSource
+{
+    public PhilosophersGazeContinuationOption GetCandidates(
+        PhilosophersGazeRelicOwnership ownership)
+    {
+        return candidates;
+    }
+}
