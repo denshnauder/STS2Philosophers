@@ -2,6 +2,17 @@
 
 本文档面向参与 STS2 Philosophers 开发与验证的同学。玩家玩法、安装方法和当前限制请先阅读 [README.md](./README.md)。
 
+## 赐福流程代码结构
+
+- `src/Patches/NeowProceedPatch.cs` 与 `src/Patches/ActTwoPhilosophersGazePatch.cs` 分别负责第一层和第二层事件插入。
+- `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。
+- `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
+- `src/Events/PhilosophersGazeContinuationPolicy.cs` 当前包含六条“根遗物 → 固定后继”兼容映射，后续动态候选系统不应直接依赖这些映射。
+- 六件根遗物分别保存第二层是否已经处理；12 件遗物的战斗状态保存在各自实例上。当前唯一显式跨遗物数据迁移是青玉佩的 `Virtue` 在替换时写入熊掌的 `InheritedVirtue`。
+- `tests/ModLogicChecks/Program.cs` 覆盖页面流、根遗物互斥、第二层过滤与替换、德继承、重复回调和本地化键。
+
+以上是 Phase 1 开始时的兼容基线，不代表未来动态候选架构；详细设计状态与未决定问题以 Obsidian 的 `02想法与机制/02赐福系统` 和活动问题队列为准。
+
 ## 本机配置
 
 项目从根目录的 `local.props` 读取本机路径。该文件不会提交；新机器请复制 `local.props.example`，并设置：
