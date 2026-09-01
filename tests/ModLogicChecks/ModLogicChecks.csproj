@@ -30,5 +30,8 @@
     <Compile Include="..\..\src\Events\PhilosophersGazeRelicGrantPolicy.cs" Link="PhilosophersGazeRelicGrantPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeFlowPolicy.cs" Link="PhilosophersGazeFlowPolicy.cs" />
     <Compile Include="..\..\src\Events\PhilosophersGazeResolutionPolicy.cs" Link="PhilosophersGazeResolutionPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunState.cs" Link="PhilosophyRunState.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunStateCodec.cs" Link="PhilosophyRunStateCodec.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
   </ItemGroup>
 </Project>

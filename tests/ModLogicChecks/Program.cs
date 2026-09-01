@@ -819,6 +819,58 @@ Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
 
 Console.WriteLine("PhilosophersGaze interception policy checks passed.");
 
+Dictionary<string, int> actOneThinkerAppearances = new(StringComparer.Ordinal)
+{
+    [PhilosophersGazeActOneCandidatePolicy.Kongzi] = 0,
+    [PhilosophersGazeActOneCandidatePolicy.Mozi] = 0,
+    [PhilosophersGazeActOneCandidatePolicy.Laozi] = 0,
+};
+for (ulong randomValue = 0; randomValue < 300; randomValue++)
+{
+    PhilosophyRunState candidateState = new();
+    GeneratedCandidates candidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
+        candidateState,
+        randomValue);
+    Check(candidates.CandidateIds.Count == 2
+          && candidates.CandidateIds.Distinct(StringComparer.Ordinal).Count() == 2,
+        "Each act one generation must contain exactly two distinct thinkers.");
+    foreach (string thinkerId in candidates.CandidateIds)
+    {
+        actOneThinkerAppearances[thinkerId]++;
+    }
+
+    GeneratedCandidates reloadedCandidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
+        candidateState,
+        randomValue + 1);
+    Check(ReferenceEquals(candidates, reloadedCandidates),
+        "An existing act one candidate set must not be regenerated from a later random value.");
+}
+
+Check(actOneThinkerAppearances.Values.All(count => count == 200),
+    "Kongzi, Mozi, and Laozi must have equal inclusion probability across uniform random values.");
+
+PhilosophyRunState persistedPhilosophyState = new();
+GeneratedCandidates persistedCandidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
+    persistedPhilosophyState,
+    randomValue: 2);
+persistedPhilosophyState.RecordCurrentDoctrine(
+    PhilosophersGazeActOneCandidatePolicy.Kongzi,
+    "REN");
+persistedPhilosophyState.GetOrCreateActBehaviorState(0).Impressions["RESTRAINT"] = 1;
+string encodedPhilosophyState = PhilosophyRunStateCodec.Encode(persistedPhilosophyState);
+PhilosophyRunState decodedPhilosophyState = PhilosophyRunStateCodec.Decode(encodedPhilosophyState);
+Check(decodedPhilosophyState.CurrentDoctrine?.ThinkerId
+        == PhilosophersGazeActOneCandidatePolicy.Kongzi
+      && decodedPhilosophyState.CurrentDoctrine.DoctrineId == "REN"
+      && decodedPhilosophyState.ThoughtImprints.Count == 1
+      && decodedPhilosophyState.ActBehaviorStates[0].Impressions["RESTRAINT"] == 1
+      && decodedPhilosophyState.GeneratedCandidates[
+          PhilosophersGazeActOneCandidatePolicy.GenerationKey]
+          .CandidateIds.SequenceEqual(persistedCandidates.CandidateIds),
+    "The philosophy run state must round-trip current doctrine, imprints, act behavior, and generated candidates.");
+
+Console.WriteLine("Philosophy run state and act one candidate checks passed.");
+
 Check(PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
         HasKongziMuduo: false,
         HasKongziQingYuPei: false,
@@ -1123,7 +1175,7 @@ Check(initialKongzi.Destination == PhilosophersGazePage.KongziViewpoints
       && initialMozi.Destination == PhilosophersGazePage.MoziViewpoints
       && initialLaozi.Destination == PhilosophersGazePage.LaoziViewpoints
       && initialDecline.Destination == PhilosophersGazePage.ActOneDeclineConfirm,
-    "The act one home page must contain Kongzi, Mozi, Laozi, and the refusal confirmation route.");
+    "The act one flow must support Kongzi, Mozi, Laozi, and the refusal confirmation route before candidate filtering.");
 Check(new[] { initialKongzi, initialMozi, initialLaozi, initialDecline }.All(transition =>
         transition.IsNavigation
         && transition.Effect == PhilosophersGazeEffect.None
@@ -1284,6 +1336,12 @@ foreach (string localePath in localePaths)
 }
 
 string eventSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Events", "PhilosophersGaze.cs"));
+string neowPatchSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Patches", "NeowProceedPatch.cs"));
+string runStateSavePatchSource = File.ReadAllText(Path.Combine(
+    repositoryRoot,
+    "src",
+    "Patches",
+    "PhilosophyRunStateSavePatch.cs"));
 string bearPawSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Mengzi", "MengziXiongZhang.cs"));
 string waterJadeSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Laozi", "LaoziShuiYu.cs"))
     .ReplaceLineEndings("\n");
@@ -1293,6 +1351,14 @@ Check(eventSource.Contains("SetEventState(", StringComparison.Ordinal)
       && !eventSource.Contains("MarkPreFinished", StringComparison.Ordinal)
       && !eventSource.Contains("isProceed", StringComparison.Ordinal),
     "Navigation must use SetEventState without MarkPreFinished or a fabricated proceed option.");
+Check(eventSource.Contains("GetActOneCandidates()", StringComparison.Ordinal)
+      && eventSource.Contains("IsActOneCandidate(thinkerId)", StringComparison.Ordinal),
+    "The act one event must display and authorize only the generated thinker candidates.");
+Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
+        < neowPatchSource.IndexOf("EnterRoomWithoutExitingCurrentRoom(", StringComparison.Ordinal)
+      && runStateSavePatchSource.Contains("nameof(RunManager.ToSave)", StringComparison.Ordinal)
+      && runStateSavePatchSource.Contains("nameof(RunState.FromSerializable)", StringComparison.Ordinal),
+    "New act one candidates must be written into the run save before the event is entered and restored on load.");
 Check(eventSource.Contains("RelicCmd.Replace(original, replacement)", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<MengziXiongZhang>().ToMutable()", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<XunziShengMo>().ToMutable()", StringComparison.Ordinal)

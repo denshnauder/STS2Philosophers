@@ -28,13 +28,31 @@ public sealed class PhilosophersGaze : EventModel
 
     private IReadOnlyList<EventOption> GenerateActOneInitialOptions()
     {
-        return
-        [
-            Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi),
-            Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi),
-            Option(ShowLaoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Laozi),
-            Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline),
-        ];
+        GeneratedCandidates candidates = GetActOneCandidates();
+        List<EventOption> options = [];
+        if (PhilosophersGazeActOneCandidatePolicy.Contains(
+                candidates,
+                PhilosophersGazeActOneCandidatePolicy.Kongzi))
+        {
+            options.Add(Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi));
+        }
+
+        if (PhilosophersGazeActOneCandidatePolicy.Contains(
+                candidates,
+                PhilosophersGazeActOneCandidatePolicy.Mozi))
+        {
+            options.Add(Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi));
+        }
+
+        if (PhilosophersGazeActOneCandidatePolicy.Contains(
+                candidates,
+                PhilosophersGazeActOneCandidatePolicy.Laozi))
+        {
+            options.Add(Option(ShowLaoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Laozi));
+        }
+
+        options.Add(Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline));
+        return options;
     }
 
     private IReadOnlyList<EventOption> GenerateContinuationOptions()
@@ -81,7 +99,7 @@ public sealed class PhilosophersGaze : EventModel
 
     private Task ShowKongziViewpoints()
     {
-        if (IsActOne())
+        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Kongzi))
         {
             SetEventState(
                 PageDescription(PhilosophersGazePage.KongziViewpoints),
@@ -97,7 +115,7 @@ public sealed class PhilosophersGaze : EventModel
 
     private Task ShowMoziViewpoints()
     {
-        if (IsActOne())
+        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Mozi))
         {
             SetEventState(
                 PageDescription(PhilosophersGazePage.MoziViewpoints),
@@ -113,7 +131,7 @@ public sealed class PhilosophersGaze : EventModel
 
     private Task ShowLaoziViewpoints()
     {
-        if (IsActOne())
+        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Laozi))
         {
             SetEventState(
                 PageDescription(PhilosophersGazePage.LaoziViewpoints),
@@ -241,17 +259,35 @@ public sealed class PhilosophersGaze : EventModel
         return Task.CompletedTask;
     }
 
-    private Task AcceptKongziMuduo() => ObtainActOneRelic<KongziMuduo>(PhilosophersGazePage.KongziMuduo);
+    private Task AcceptKongziMuduo() => ObtainActOneRelic<KongziMuduo>(
+        PhilosophersGazePage.KongziMuduo,
+        PhilosophersGazeActOneCandidatePolicy.Kongzi,
+        "LI");
 
-    private Task AcceptKongziQingYuPei() => ObtainActOneRelic<KongziQingYuPei>(PhilosophersGazePage.KongziQingYuPei);
+    private Task AcceptKongziQingYuPei() => ObtainActOneRelic<KongziQingYuPei>(
+        PhilosophersGazePage.KongziQingYuPei,
+        PhilosophersGazeActOneCandidatePolicy.Kongzi,
+        "REN");
 
-    private Task AcceptMoziMoSeZhuJian() => ObtainActOneRelic<MoziMoSeZhuJian>(PhilosophersGazePage.MoziMoSeZhuJian);
+    private Task AcceptMoziMoSeZhuJian() => ObtainActOneRelic<MoziMoSeZhuJian>(
+        PhilosophersGazePage.MoziMoSeZhuJian,
+        PhilosophersGazeActOneCandidatePolicy.Mozi,
+        "JIAN_AI");
 
-    private Task AcceptMoziShouChengTu() => ObtainActOneRelic<MoziShouChengTu>(PhilosophersGazePage.MoziShouChengTu);
+    private Task AcceptMoziShouChengTu() => ObtainActOneRelic<MoziShouChengTu>(
+        PhilosophersGazePage.MoziShouChengTu,
+        PhilosophersGazeActOneCandidatePolicy.Mozi,
+        "FEI_GONG");
 
-    private Task AcceptLaoziWuWeiShuJian() => ObtainActOneRelic<LaoziWuWeiShuJian>(PhilosophersGazePage.LaoziWuWeiShuJian);
+    private Task AcceptLaoziWuWeiShuJian() => ObtainActOneRelic<LaoziWuWeiShuJian>(
+        PhilosophersGazePage.LaoziWuWeiShuJian,
+        PhilosophersGazeActOneCandidatePolicy.Laozi,
+        "WU_WEI");
 
-    private Task AcceptLaoziShuiYu() => ObtainActOneRelic<LaoziShuiYu>(PhilosophersGazePage.LaoziShuiYu);
+    private Task AcceptLaoziShuiYu() => ObtainActOneRelic<LaoziShuiYu>(
+        PhilosophersGazePage.LaoziShuiYu,
+        PhilosophersGazeActOneCandidatePolicy.Laozi,
+        "RUO_SHUI");
 
     private Task DeclineKongzi() => FinishActOneWithoutRelic(PhilosophersGazePage.KongziDecline);
 
@@ -317,7 +353,10 @@ public sealed class PhilosophersGaze : EventModel
         GetAvailableContinuationOptions(),
         PhilosophersGazePage.ContinuationDecline);
 
-    private async Task ObtainActOneRelic<TRelic>(PhilosophersGazePage resultPage)
+    private async Task ObtainActOneRelic<TRelic>(
+        PhilosophersGazePage resultPage,
+        string thinkerId,
+        string doctrineId)
         where TRelic : RelicModel
     {
         if (!TryBeginResolution())
@@ -328,7 +367,7 @@ public sealed class PhilosophersGaze : EventModel
         try
         {
             Player? owner = Owner;
-            if (owner is null || !CanGrantActOneRelic())
+            if (owner is null || !CanGrantActOneRelic(thinkerId))
             {
                 Log.Info("[STS2Philosophers] PhilosophersGaze rejected an ineligible act one relic callback.");
                 return;
@@ -339,6 +378,14 @@ public sealed class PhilosophersGaze : EventModel
             {
                 Log.Error("[STS2Philosophers] PhilosophersGaze did not finish because the act one relic was not obtained.");
                 return;
+            }
+
+            if (owner.RunState is RunState runState)
+            {
+                PhilosophyRunStateService.RecordCurrentDoctrine(
+                    runState,
+                    thinkerId,
+                    doctrineId);
             }
 
             SetEventFinished(PageDescription(resultPage));
@@ -572,11 +619,33 @@ public sealed class PhilosophersGaze : EventModel
         return Owner is { } owner && GetCurrentActIndex(owner) == 0;
     }
 
-    private bool CanGrantActOneRelic()
+    private bool CanGrantActOneRelic(string thinkerId)
     {
         return Owner is { } owner
             && GetCurrentActIndex(owner) == 0
+            && IsActOneCandidate(thinkerId)
             && PhilosophersGazeRelicGrantPolicy.CanGrant(GetOwnership(owner));
+    }
+
+    private bool IsActOneCandidate(string thinkerId)
+    {
+        return IsActOne()
+            && PhilosophersGazeActOneCandidatePolicy.Contains(
+                GetActOneCandidates(),
+                thinkerId);
+    }
+
+    private GeneratedCandidates GetActOneCandidates()
+    {
+        if (Owner?.RunState is RunState runState)
+        {
+            return PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
+        }
+
+        PhilosophyRunState fallbackState = new();
+        return PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
+            fallbackState,
+            randomValue: 0);
     }
 
     private bool CanChooseContinuation(PhilosophersGazeContinuationOption choice)

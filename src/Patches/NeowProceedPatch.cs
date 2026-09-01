@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
@@ -58,9 +59,10 @@ internal static class NeowProceedPatch
                 return true;
             }
 
-            Task entryTask = runManager.EnterRoomWithoutExitingCurrentRoom(
-                new EventRoom(canonicalEvent!),
-                fadeToBlack: true);
+            Task entryTask = EnterPhilosophersGaze(
+                runManager,
+                runState!,
+                canonicalEvent!);
             _activeEntryTask = entryTask;
             _ = entryTask.ContinueWith(
                 completedTask => ClearActiveEntryTask(completedTask),
@@ -71,6 +73,26 @@ internal static class NeowProceedPatch
             __result = entryTask;
             return false;
         }
+    }
+
+    private static async Task EnterPhilosophersGaze(
+        RunManager runManager,
+        RunState runState,
+        PhilosophersGaze canonicalEvent)
+    {
+        PhilosophyRunState philosophyState = PhilosophyRunStateService.GetOrCreate(runState);
+        philosophyState.GeneratedCandidates.TryGetValue(
+            PhilosophersGazeActOneCandidatePolicy.GenerationKey,
+            out GeneratedCandidates? previousCandidates);
+        GeneratedCandidates candidates = PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
+        if (!ReferenceEquals(previousCandidates, candidates) && runManager.ShouldSave)
+        {
+            await SaveManager.Instance.SaveRun(null);
+        }
+
+        await runManager.EnterRoomWithoutExitingCurrentRoom(
+            new EventRoom(canonicalEvent),
+            fadeToBlack: true);
     }
 
     private static PhilosophersGaze? TryGetCanonicalEvent()
