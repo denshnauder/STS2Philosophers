@@ -1,4 +1,5 @@
 using STS2Philosophers;
+using System.Text;
 using System.Text.Json;
 
 static void Check(bool condition, string message)
@@ -856,18 +857,67 @@ GeneratedCandidates persistedCandidates = PhilosophersGazeActOneCandidatePolicy.
 persistedPhilosophyState.RecordCurrentDoctrine(
     PhilosophersGazeActOneCandidatePolicy.Kongzi,
     "REN");
-persistedPhilosophyState.GetOrCreateActBehaviorState(0).Impressions["RESTRAINT"] = 1;
+ActBehaviorState actBehaviorState = persistedPhilosophyState.GetOrCreateActBehaviorState(0);
+Check(actBehaviorState.TryBeginCombat("ACT_0_COMBAT_1"),
+    "The first behavior observation must open a combat window.");
+Check(!actBehaviorState.TryBeginCombat("ACT_0_COMBAT_1")
+      && !actBehaviorState.TryBeginCombat("ACT_0_COMBAT_2"),
+    "An active combat window must reject duplicate and conflicting combat starts.");
+Check(actBehaviorState.RecordGameFact("CARD_PLAYED", 2)
+      && actBehaviorState.RecordGameFact("CARD_PLAYED"),
+    "Game facts must accumulate within the active combat window.");
+Check(actBehaviorState.RecordExpressionOpportunity("RESTRAINT")
+      && !actBehaviorState.RecordExpressionOpportunity("RESTRAINT"),
+    "The same expression opportunity must be recorded at most once per combat.");
+Check(actBehaviorState.RecordImpression("RESTRAINT")
+      && !actBehaviorState.RecordImpression("RESTRAINT"),
+    "The same behavior impression must be recorded at most once per combat.");
+Check(actBehaviorState.CompleteCombat()
+      && !actBehaviorState.CompleteCombat()
+      && actBehaviorState.CompletedCombatCount == 1
+      && actBehaviorState.GameFacts["CARD_PLAYED"] == 3
+      && actBehaviorState.ExpressionOpportunities["RESTRAINT"] == 1
+      && actBehaviorState.Impressions["RESTRAINT"] == 1,
+    "Combat completion must aggregate facts and one observation per opportunity and impression.");
+Check(actBehaviorState.TryBeginCombat("ACT_0_COMBAT_2")
+      && actBehaviorState.RecordExpressionOpportunity("RESTRAINT")
+      && actBehaviorState.CompleteCombat()
+      && actBehaviorState.ExpressionOpportunities["RESTRAINT"] == 2
+      && actBehaviorState.Impressions["RESTRAINT"] == 1,
+    "An unexpressed opportunity must remain distinguishable from a recorded impression.");
+Check(!actBehaviorState.RecordGameFact("CARD_PLAYED")
+      && !actBehaviorState.RecordExpressionOpportunity("RESTRAINT")
+      && !actBehaviorState.RecordImpression("RESTRAINT"),
+    "Behavior observations must not be recorded outside a combat window.");
+Check(actBehaviorState.TryBeginCombat("ACT_0_COMBAT_3")
+      && actBehaviorState.RecordGameFact("ENERGY_UNSPENT")
+      && actBehaviorState.RecordExpressionOpportunity("RESERVE"),
+    "An active combat observation must be serializable before combat completion.");
 string encodedPhilosophyState = PhilosophyRunStateCodec.Encode(persistedPhilosophyState);
 PhilosophyRunState decodedPhilosophyState = PhilosophyRunStateCodec.Decode(encodedPhilosophyState);
 Check(decodedPhilosophyState.CurrentDoctrine?.ThinkerId
         == PhilosophersGazeActOneCandidatePolicy.Kongzi
       && decodedPhilosophyState.CurrentDoctrine.DoctrineId == "REN"
       && decodedPhilosophyState.ThoughtImprints.Count == 1
+      && decodedPhilosophyState.ActBehaviorStates[0].CompletedCombatCount == 2
+      && decodedPhilosophyState.ActBehaviorStates[0].GameFacts["CARD_PLAYED"] == 3
+      && decodedPhilosophyState.ActBehaviorStates[0].ExpressionOpportunities["RESTRAINT"] == 2
       && decodedPhilosophyState.ActBehaviorStates[0].Impressions["RESTRAINT"] == 1
+      && decodedPhilosophyState.ActBehaviorStates[0].ActiveCombat?.GameFacts["ENERGY_UNSPENT"] == 1
+      && decodedPhilosophyState.ActBehaviorStates[0].ActiveCombat?.ExpressionOpportunities.Contains("RESERVE") == true
       && decodedPhilosophyState.GeneratedCandidates[
           PhilosophersGazeActOneCandidatePolicy.GenerationKey]
           .CandidateIds.SequenceEqual(persistedCandidates.CandidateIds),
     "The philosophy run state must round-trip current doctrine, imprints, act behavior, and generated candidates.");
+
+const string phaseOneBehaviorPayload =
+    "{\"ActBehaviorStates\":{\"0\":{\"ActIndex\":0,\"Impressions\":{\"RESTRAINT\":1}}}}";
+PhilosophyRunState phaseOneBehaviorState = PhilosophyRunStateCodec.Decode(
+    Convert.ToHexString(Encoding.UTF8.GetBytes(phaseOneBehaviorPayload)));
+Check(phaseOneBehaviorState.ActBehaviorStates[0].Impressions["RESTRAINT"] == 1
+      && phaseOneBehaviorState.ActBehaviorStates[0].GameFacts.Count == 0
+      && phaseOneBehaviorState.ActBehaviorStates[0].ExpressionOpportunities.Count == 0,
+    "Phase 1 saves must load with empty Phase 2A fact and opportunity collections.");
 
 Console.WriteLine("Philosophy run state and act one candidate checks passed.");
 

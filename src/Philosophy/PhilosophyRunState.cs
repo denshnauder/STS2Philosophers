@@ -62,6 +62,10 @@ internal sealed class PhilosophyRunState
         ThoughtImprints ??= [];
         ActBehaviorStates ??= [];
         GeneratedCandidates ??= [];
+        foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
+        {
+            behaviorState.NormalizeAfterLoad();
+        }
     }
 }
 
@@ -87,7 +91,105 @@ internal static class ThoughtImprintRelationship
 internal sealed class ActBehaviorState
 {
     public int ActIndex { get; set; }
+    public int CompletedCombatCount { get; set; }
+    public Dictionary<string, int> GameFacts { get; set; } = [];
+    public Dictionary<string, int> ExpressionOpportunities { get; set; } = [];
     public Dictionary<string, int> Impressions { get; set; } = [];
+    public CombatBehaviorState? ActiveCombat { get; set; }
+
+    public bool TryBeginCombat(string combatId)
+    {
+        if (string.IsNullOrWhiteSpace(combatId))
+        {
+            return false;
+        }
+
+        if (ActiveCombat is not null)
+        {
+            return false;
+        }
+
+        ActiveCombat = new CombatBehaviorState { CombatId = combatId };
+        return true;
+    }
+
+    public bool RecordGameFact(string factId, int amount = 1)
+    {
+        if (ActiveCombat is null
+            || string.IsNullOrWhiteSpace(factId)
+            || amount <= 0)
+        {
+            return false;
+        }
+
+        ActiveCombat.GameFacts[factId] = ActiveCombat.GameFacts.GetValueOrDefault(factId) + amount;
+        return true;
+    }
+
+    public bool RecordExpressionOpportunity(string impressionId)
+    {
+        return ActiveCombat is not null
+            && !string.IsNullOrWhiteSpace(impressionId)
+            && ActiveCombat.ExpressionOpportunities.Add(impressionId);
+    }
+
+    public bool RecordImpression(string impressionId)
+    {
+        return ActiveCombat is not null
+            && !string.IsNullOrWhiteSpace(impressionId)
+            && ActiveCombat.Impressions.Add(impressionId);
+    }
+
+    public bool CompleteCombat()
+    {
+        if (ActiveCombat is null)
+        {
+            return false;
+        }
+
+        foreach ((string factId, int amount) in ActiveCombat.GameFacts)
+        {
+            GameFacts[factId] = GameFacts.GetValueOrDefault(factId) + amount;
+        }
+
+        foreach (string impressionId in ActiveCombat.ExpressionOpportunities)
+        {
+            ExpressionOpportunities[impressionId] =
+                ExpressionOpportunities.GetValueOrDefault(impressionId) + 1;
+        }
+
+        foreach (string impressionId in ActiveCombat.Impressions)
+        {
+            Impressions[impressionId] = Impressions.GetValueOrDefault(impressionId) + 1;
+        }
+
+        CompletedCombatCount++;
+        ActiveCombat = null;
+        return true;
+    }
+
+    internal void NormalizeAfterLoad()
+    {
+        GameFacts ??= [];
+        ExpressionOpportunities ??= [];
+        Impressions ??= [];
+        ActiveCombat?.NormalizeAfterLoad();
+    }
+}
+
+internal sealed class CombatBehaviorState
+{
+    public string CombatId { get; set; } = string.Empty;
+    public Dictionary<string, int> GameFacts { get; set; } = [];
+    public HashSet<string> ExpressionOpportunities { get; set; } = [];
+    public HashSet<string> Impressions { get; set; } = [];
+
+    internal void NormalizeAfterLoad()
+    {
+        GameFacts ??= [];
+        ExpressionOpportunities ??= [];
+        Impressions ??= [];
+    }
 }
 
 internal sealed class GeneratedCandidates
