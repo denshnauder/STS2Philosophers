@@ -168,6 +168,17 @@ internal sealed class ActBehaviorState
         return true;
     }
 
+    public bool DiscardActiveCombat()
+    {
+        if (ActiveCombat is null)
+        {
+            return false;
+        }
+
+        ActiveCombat = null;
+        return true;
+    }
+
     internal void NormalizeAfterLoad()
     {
         GameFacts ??= [];

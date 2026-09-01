@@ -9,7 +9,8 @@
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。状态以不可见的 `STS2PhilosophersRunState.V1_*` 保存标记写入本局存档，载入时先取出标记再交给游戏恢复原始事件历史；该标记没有本地化或资源，也不产生可见遗物。
-- Phase 2A 在 `ActBehaviorState` 中分开保存通用游戏事实、表达机会与行为印象。事实可在一场战斗内累计；同一表达机会和同一行为印象每场最多结算一次。`ActiveCombat` 支持战斗中途随局内状态往返，旧 Phase 1 存档缺少的新字段会恢复为空集合。当前尚未接入战斗回调，也不参与候选生成。
+- Phase 2A 在 `ActBehaviorState` 中分开保存通用游戏事实、表达机会与行为印象。事实可在一场战斗内累计；同一表达机会和同一行为印象每场最多结算一次。`ActiveCombat` 支持战斗中途随局内状态往返，旧 Phase 1 存档缺少的新字段会恢复为空集合。
+- `src/Patches/BehaviorObservationPatch.cs` 监听游戏全局战斗开始、出牌完成与战斗结束钩子，仅在单人局调用 `BehaviorObservationRecorder`。当前事实包括战斗开始/完成、出牌总数及攻击、技能、能力、状态、诅咒、任务等牌类型；事实不直接生成行为印象，也不参与候选。
 - `config/thinker_proposals.json` 是“人物 + 具体思想提案”的配置雏形，以嵌入资源进入 DLL。Phase 1 只登记六件现有根遗物；`qualification_rule_ids` 与 `resonance_tags` 保持为空，等待后续行为候选设计。
 - 六件根遗物分别保存第二层是否已经处理；12 件遗物的战斗状态保存在各自实例上。当前唯一显式跨遗物数据迁移是青玉佩的 `Virtue` 在替换时写入熊掌的 `InheritedVirtue`。
 - `tests/ModLogicChecks/Program.cs` 覆盖页面流、根遗物互斥、第二层过滤与替换、德继承、重复回调和本地化键。
@@ -33,7 +34,7 @@
 dotnet run --project .\tests\ModLogicChecks\ModLogicChecks.csproj -c Release
 ```
 
-当前覆盖木铎回合规则、青玉佩仁行与奖励策略、熊掌回合触发、绳墨序列、墨色竹简的相利状态、历物筹的共同格挡与首次破甲奖励、守城图与守城械的守御窗口、大瓠的保留与两次奖励、全生璧的能量保全与减伤，以及“诸子观照”三阶段页面流、第一层候选等概率与状态往返、行为事实累计、表达机会与印象单场去重、旧存档兼容、导航零副作用、根遗物互斥、二层过滤与替换、德继承、重复回调门控、插入防重和中英本地化键。
+当前覆盖木铎回合规则、青玉佩仁行与奖励策略、熊掌回合触发、绳墨序列、墨色竹简的相利状态、历物筹的共同格挡与首次破甲奖励、守城图与守城械的守御窗口、大瓠的保留与两次奖励、全生璧的能量保全与减伤，以及“诸子观照”三阶段页面流、第一层候选等概率与状态往返、行为事实累计、表达机会与印象单场去重、重复战斗开始、未完成战斗丢弃、旧存档兼容、导航零副作用、根遗物互斥、二层过滤与替换、德继承、重复回调门控、插入防重和中英本地化键。
 
 ## 构建 DLL
 

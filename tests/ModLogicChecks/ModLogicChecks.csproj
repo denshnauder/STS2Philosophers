@@ -33,6 +33,7 @@
     <Compile Include="..\..\src\Events\PhilosophersGazeResolutionPolicy.cs" Link="PhilosophersGazeResolutionPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunState.cs" Link="PhilosophyRunState.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunStateCodec.cs" Link="PhilosophyRunStateCodec.cs" />
+    <Compile Include="..\..\src\Philosophy\BehaviorObservationRecorder.cs" Link="BehaviorObservationRecorder.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>

@@ -919,6 +919,46 @@ Check(phaseOneBehaviorState.ActBehaviorStates[0].Impressions["RESTRAINT"] == 1
       && phaseOneBehaviorState.ActBehaviorStates[0].ExpressionOpportunities.Count == 0,
     "Phase 1 saves must load with empty Phase 2A fact and opportunity collections.");
 
+PhilosophyRunState observedRunState = new();
+Check(!BehaviorObservationRecorder.RecordCardPlayed(
+          observedRunState,
+          0,
+          BehaviorGameFactIds.AttackCardPlayed)
+      && !BehaviorObservationRecorder.CompleteCombat(observedRunState, 0)
+      && observedRunState.ActBehaviorStates.Count == 0,
+    "Callbacks outside an observed combat must not create empty act behavior state.");
+Check(BehaviorObservationRecorder.BeginCombat(observedRunState, 0, "101")
+      && !BehaviorObservationRecorder.BeginCombat(observedRunState, 0, "101"),
+    "A restored duplicate combat start must resume without counting another start fact.");
+Check(BehaviorObservationRecorder.RecordCardPlayed(
+          observedRunState,
+          0,
+          BehaviorGameFactIds.AttackCardPlayed)
+      && BehaviorObservationRecorder.RecordCardPlayed(
+          observedRunState,
+          0,
+          BehaviorGameFactIds.SkillCardPlayed)
+      && BehaviorObservationRecorder.CompleteCombat(observedRunState, 0),
+    "Neutral combat facts must be recorded and completed through the observation recorder.");
+ActBehaviorState observedActState = observedRunState.ActBehaviorStates[0];
+Check(observedActState.CompletedCombatCount == 1
+      && observedActState.GameFacts[BehaviorGameFactIds.CombatStarted] == 1
+      && observedActState.GameFacts[BehaviorGameFactIds.CombatCompleted] == 1
+      && observedActState.GameFacts[BehaviorGameFactIds.CardPlayed] == 2
+      && observedActState.GameFacts[BehaviorGameFactIds.AttackCardPlayed] == 1
+      && observedActState.GameFacts[BehaviorGameFactIds.SkillCardPlayed] == 1,
+    "The first neutral fact set must aggregate without creating behavior impressions.");
+Check(BehaviorObservationRecorder.BeginCombat(observedRunState, 0, "102")
+      && BehaviorObservationRecorder.RecordCardPlayed(
+          observedRunState,
+          0,
+          BehaviorGameFactIds.PowerCardPlayed)
+      && BehaviorObservationRecorder.BeginCombat(observedRunState, 0, "103")
+      && BehaviorObservationRecorder.CompleteCombat(observedRunState, 0)
+      && observedActState.CompletedCombatCount == 2
+      && observedActState.GameFacts.GetValueOrDefault(BehaviorGameFactIds.PowerCardPlayed) == 0,
+    "Starting a different combat must discard an unfinished observation instead of counting partial facts.");
+
 Console.WriteLine("Philosophy run state and act one candidate checks passed.");
 
 Check(PhilosophersGazeRelicGrantPolicy.CanGrant(new PhilosophersGazeRelicOwnership(
