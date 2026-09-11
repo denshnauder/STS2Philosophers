@@ -148,3 +148,7 @@ Windows 日志位置：
 - `tools`：内容包构建、校验和占位资源工具。
 
 新增或重命名内容前必须遵守 [NAMING.md](./NAMING.md)，仓库协作和验证规则见 [AGENTS.md](./AGENTS.md)。
+
+## 西哲W1基础
+
+config/western_routes.json与WesternRouteCatalog登记七问题六入口；WesternActOneCandidatePolicy使用独立WESTERN_ACT_ONE_THINKERS键生成并保存六选三候选，复用PhilosophyRunState编码，无新增公开ModelId。测试覆盖20种组合、既定映射、读档稳定、与东哲候选隔离和问题选择授权。目前尚未接入游戏事件或战斗机制，后续阶段见Obsidian的10西哲路线实现。

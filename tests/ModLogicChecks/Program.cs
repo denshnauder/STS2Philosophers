@@ -2,6 +2,8 @@ using STS2Philosophers;
 using System.Text;
 using System.Text.Json;
 
+WesternRouteChecks.Run();
+
 static void Check(bool condition, string message)
 {
     if (!condition)

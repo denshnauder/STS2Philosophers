@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\config\western_routes.json" LogicalName="STS2Philosophers.config.western_routes.json" />
+    <Compile Include="..\..\src\Philosophy\WesternRouteCatalog.cs" Link="WesternRouteCatalog.cs" />
+    <Compile Include="..\..\src\Philosophy\WesternActOneCandidatePolicy.cs" Link="WesternActOneCandidatePolicy.cs" />
     <Compile Include="..\..\src\Relics\Kongzi\KongziMuduoState.cs" Link="KongziMuduoState.cs" />
     <Compile Include="..\..\src\Relics\Kongzi\KongziMuduoConsoleText.cs" Link="KongziMuduoConsoleText.cs" />
     <Compile Include="..\..\src\Relics\Kongzi\KongziQingYuPeiState.cs" Link="KongziQingYuPeiState.cs" />

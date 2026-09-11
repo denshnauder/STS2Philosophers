@@ -1,0 +1,9 @@
+[
+  { "problem_id": "BEING_AND_CHANGE", "display_name": "存在与变化", "entry_thinker_id": "HERACLITUS" },
+  { "problem_id": "KNOWLEDGE_AND_DOUBT", "display_name": "知识与怀疑", "entry_thinker_id": "SOCRATES" },
+  { "problem_id": "VIRTUE_AND_HAPPINESS", "display_name": "德性与幸福", "entry_thinker_id": "SOCRATES" },
+  { "problem_id": "FREEDOM_AND_INSTITUTIONS", "display_name": "自由与制度", "entry_thinker_id": "PLATO" },
+  { "problem_id": "SELF_AND_OTHER", "display_name": "主体与他者", "entry_thinker_id": "DESCARTES" },
+  { "problem_id": "LANGUAGE_AND_MEANING", "display_name": "语言与意义", "entry_thinker_id": "ARISTOTLE" },
+  { "problem_id": "HISTORY_AND_POWER", "display_name": "历史与权力", "entry_thinker_id": "ROUSSEAU" }
+]
