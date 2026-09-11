@@ -7,7 +7,21 @@ $originalRoot = $env:DOTNET_ROOT
 $originalRollForward = $env:DOTNET_ROLL_FORWARD
 $originalPath = $env:PATH
 Push-Location $repository
+$outputDirectory = Join-Path $repository 'bin/Release/net9.0'
+$reportPath = Join-Path $outputDirectory 'verification.md'
+$stage = 'Configuration'
 try {
+    New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+    @('# Verification result', '', "Time: $(Get-Date -Format o)", 'Status: running; previous success is not valid for this attempt') |
+        Set-Content -LiteralPath $reportPath -Encoding UTF8
+    $commit = & git rev-parse HEAD
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the source commit.' }
+    $initialStatus = @(& git status --short)
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect the working tree.' }
+    # The deployed build includes working-tree changes, not only HEAD.
+    $diffOutputOption = '--output=' + (Join-Path $outputDirectory 'verification_changes.patch')
+    & git diff HEAD --binary $diffOutputOption
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot record the tracked source changes.' }
     [xml]$settings = Get-Content -LiteralPath (Join-Path $repository 'local.props') -Raw
     $dotNetRoot = [string]$settings.Project.PropertyGroup.DotNetRoot
     $godot = [string]$settings.Project.PropertyGroup.GodotExecutable
@@ -20,18 +34,22 @@ try {
     $env:DOTNET_ROLL_FORWARD = 'Major'
     $env:PATH = "$dotNetRoot;$originalPath"
 
+    $stage = 'Logic checks'
     & $dotnet run --project ./tests/ModLogicChecks/ModLogicChecks.csproj -c Release
     if ($LASTEXITCODE -ne 0) { throw "Logic checks failed: $LASTEXITCODE" }
+    $stage = 'Release build'
     & $dotnet build ./STS2Philosophers.csproj -c Release -p:DeployOnBuild=false
     if ($LASTEXITCODE -ne 0) { throw "Release build failed: $LASTEXITCODE" }
 
-    $outputDirectory = Join-Path $repository 'bin/Release/net9.0'
+    $stage = 'PCK export'
     $pck = Join-Path $outputDirectory 'STS2Philosophers.pck'
     & (Join-Path $PSScriptRoot 'BuildContentPck.ps1') -GodotExecutable $godot -DotNetRoot $dotNetRoot -ProjectDirectory (Join-Path $repository 'content') -OutputPath $pck
+    $stage = 'PCK verification'
     & $godot --headless --path (Join-Path $PSScriptRoot 'PckVerifier') --script (Join-Path $PSScriptRoot 'PckVerifier/VerifyContentPck.gd') -- $pck
     if ($LASTEXITCODE -ne 0) { throw "PCK verification failed: $LASTEXITCODE" }
 
     $sources = @((Join-Path $outputDirectory 'STS2Philosophers.dll'), $pck, (Join-Path $repository 'STS2Philosophers.json'))
+    $stage = 'Deployment'
     $deployment = 'Skipped by request'
     $hashes = @($sources | ForEach-Object { Get-FileHash -LiteralPath $_ -Algorithm SHA256 })
     if (-not $SkipDeploy) {
@@ -55,10 +73,15 @@ try {
             $deployment = 'Deployed; all three SHA256 hashes match'
         }
     }
-    $report = @('# Verification result', '', "Time: $(Get-Date -Format o)", "Commit: $(& git rev-parse HEAD)", '', 'Logic checks: passed', 'Release build: passed', 'PCK load and textures: passed', "Deployment: $deployment", '', 'In-game acceptance: not performed by this script', '', '## Working tree', '```', (& git status --short), '```', '', '## SHA256')
+    $stage = 'Report'
+    $report = @('# Verification result', '', "Time: $(Get-Date -Format o)", "Source base commit: $commit", 'Source: working tree; tracked changes recorded in verification_changes.patch; untracked contents are not archived', '', 'Logic checks: passed', 'Release build: passed', 'PCK load and textures: passed', "Deployment: $deployment", '', 'In-game acceptance: not performed by this script', '', '## Working tree before verification', '```', $initialStatus, '```', '', '## Working tree after verification', '```', (& git status --short), '```', '', '## SHA256')
     $report += $hashes | ForEach-Object { "$(Split-Path -Leaf $_.Path): $($_.Hash)" }
-    $report | Set-Content -LiteralPath (Join-Path $outputDirectory 'verification.md') -Encoding UTF8
+    $report | Set-Content -LiteralPath $reportPath -Encoding UTF8
     Write-Host "Verification passed. $deployment"
+} catch {
+    @('# Verification result', '', "Time: $(Get-Date -Format o)", 'Status: failed', "Stage: $stage", "Error: $($_.Exception.Message)", '', 'Deployment completion is not confirmed. Fix the failure and rerun before acceptance.') |
+        Set-Content -LiteralPath $reportPath -Encoding UTF8
+    throw
 } finally {
     Pop-Location
     $env:DOTNET_ROOT = $originalRoot

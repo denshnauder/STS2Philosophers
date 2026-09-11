@@ -2,7 +2,7 @@
   "id": "STS2Philosophers",
   "name": "STS2 Philosophers",
   "author": "Local Developer",
-  "description": "A Philosophers' Gaze route mod: choose a Confucian relic or Ink Bamboo Slips after Neow, with Confucian legacies before the Act 2 map.",
+  "description": "A single-player Philosophers' Gaze prototype with six behavioral relic paths offered by randomized thinkers after Neow, each with a fixed Act 2 continuation.",
   "version": "0.5.3",
   "min_game_version": "0.111.0",
   "has_pck": true,
