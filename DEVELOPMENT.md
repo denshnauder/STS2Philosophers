@@ -30,6 +30,16 @@
 
 ## 纯逻辑测试
 
+推荐从仓库根目录执行完整阶段检查：
+
+```powershell
+./tools/VerifyMod.ps1
+```
+
+该入口使用 `local.props` 中的 SDK，依次运行纯逻辑测试、禁止部署的 Release 构建、无界面的 PCK 打包及独立加载校验。全部通过且游戏未运行时才复制三个 MOD 文件并逐一核对 SHA256；游戏运行时保留校验结果并报告部署受阻。传入 `-SkipDeploy` 可明确只检查。任何测试、构建或内容包错误都会停止后续部署。
+
+本次成功结果与工作区状态写入 `bin/Release/net9.0/verification.md`，应结合时间和提交识别，不能代替游戏内验收。脚本不启动游戏、Steam 或 Godot 界面。
+
 以下检查不启动游戏：
 
 ```powershell

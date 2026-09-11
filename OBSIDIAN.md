@@ -4,6 +4,8 @@
 
 - Vault：`STS2mod`
 - 目录：`STS2mod` Vault 内的 `STS2 Mod 开发`
+- 本机真源绝对路径：`G:\我的云端硬盘\STS2mod\STS2 Mod 开发`。开始任务时直接读取这里的活动问题，不只根据同名 Vault 推断路径。
+- `S:\01_Workspace\Obsidian\STS2mod` 是较早的独立副本；其活动页仅作为指向真源的入口，不在该副本继续维护问题状态。不可把旧副本覆盖回 G 盘。
 - 入口：[在 Obsidian 中打开项目主页](obsidian://open?vault=STS2mod&file=STS2%20Mod%20%E5%BC%80%E5%8F%91%2F00%E9%A1%B9%E7%9B%AE%E4%B8%BB%E9%A1%B5)
 - 活动问题：[在 Obsidian 中打开问题与修改](obsidian://open?vault=STS2mod&file=STS2%20Mod%20%E5%BC%80%E5%8F%91%2F08%E9%97%AE%E9%A2%98%E9%97%AD%E7%8E%AF%2F08%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BF%AE%E6%94%B9)
 
