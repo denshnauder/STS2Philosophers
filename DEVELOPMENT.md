@@ -165,6 +165,8 @@ western_graph.json嵌入47节点42边和12条已可遍历的样例。WesternRout
 
 ## 西哲入口实践纯逻辑
 
+WesternBeingPracticePolicy另行实现8个存在与变化后继问题面的纯规则，覆盖不变重复、潜能现实顺序、原子组合、三类组合、成对表达、交替反思、少量异名与差异序列。WesternBeingChecks为每项检验正反例；这些规则尚未分配给游戏遗物或后继事件，不能当成已可玩内容。
+
 W4A由PhilosophersGazeWestern分部提供西哲候选、人物问题与结果页，NeowProceedPatch同时预保存西哲候选。WesternEntryPolicy检验幕位、事件结束、邀请、当前主说及遗物所有权，成功获得指定遗物后才写入共用主说/印记和WesternJourney。没有新事件ModelId；原东哲授予检查增加西哲占位，机制数值不变。全量检查与部署通过，正常入口已开放，三幕后继未接，尚待游戏验收。
 
 W3B新增七件入口遗物和WesternPracticeRelic共享战斗适配；保存字符串由WesternPracticeStateCodec校验，错误路线/空或损坏载荷不补发收益。BeforeSideTurnStart建立回合，AfterCardPlayed记录所属玩家事实，AfterSideTurnEnd结算，AfterPlayerTurnStartLate领取，AfterCombatEnd清空。模型已注册事件池、配套中英本地化及SVG/轮廓；PCK验证包含14张新增纹理。没有正常路线入口，未来W4接入，尚未进行游戏验收。
