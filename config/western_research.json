@@ -1,0 +1,1464 @@
+{
+  "schema_version": 1,
+  "scope": "Research and design baseline, not a playable graph or reward catalog.",
+  "source_hashes": [
+    {
+      "file": "14人物与流派索引.md",
+      "sha256": "4C6F52FF58AF88912A3D3786FD80F3DE9A3ABABAD3619372B2953F307DB409F5"
+    },
+    {
+      "file": "18游戏流程投影.md",
+      "sha256": "859C0C9E90AA1574AD14EFE678E0F6370750E9383FDEFE58FB345C3EDBF96CF7"
+    }
+  ],
+  "people": [
+    {
+      "display_name": "泰勒斯",
+      "international_name": "Thales",
+      "index_source": "14人物与流派索引.md:15",
+      "thinker_id": "THALES",
+      "primary_use": "研究",
+      "secondary_uses": [
+        "问号"
+      ],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "原始材料过少，暂并入米利都问题背景，不独立承担固定节点",
+      "projection_source": "18游戏流程投影.md:90",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿那克西曼德",
+      "international_name": "Anaximander",
+      "index_source": "14人物与流派索引.md:16",
+      "thinker_id": "ANAXIMANDER",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "研究",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "“无定者”可挑战单一本原，但原文与论证重建置信度不足",
+      "projection_source": "18游戏流程投影.md:91",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿那克西美尼",
+      "international_name": "Anaximenes",
+      "index_source": "14人物与流派索引.md:17",
+      "thinker_id": "ANAXIMENES",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "研究"
+      ],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "凝聚稀散有动作性，人物关系仍宜附属于米利都组",
+      "projection_source": "18游戏流程投影.md:92",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "赫拉克利特",
+      "international_name": "Heraclitus",
+      "index_source": "14人物与流派索引.md:18",
+      "thinker_id": "HERACLITUS",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "问号",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "六入口之一；以张力和尺度提出路线，不把“万物流变”当完整观点",
+      "projection_source": "18游戏流程投影.md:93",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "巴门尼德",
+      "international_name": "Parmenides",
+      "index_source": "14人物与流派索引.md:19",
+      "thinker_id": "PARMENIDES",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "问号",
+        "内批"
+      ],
+      "problem_and_stage": "存在与变化、知识与怀疑",
+      "design_assessment": "对生成可思性的高强度挑战；与赫拉克利特是同题构图，不是假造对谈",
+      "projection_source": "18游戏流程投影.md:94",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "恩培多克勒",
+      "international_name": "Empedocles",
+      "index_source": "14人物与流派索引.md:20",
+      "thinker_id": "EMPEDOCLES",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "实践",
+        "内批"
+      ],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "四根与爱争是爱利亚挑战后的多元回应，适合分支试验",
+      "projection_source": "18游戏流程投影.md:95",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿那克萨戈拉",
+      "international_name": "Anaxagoras",
+      "index_source": "14人物与流派索引.md:21",
+      "thinker_id": "ANAXAGORAS",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "研究",
+        "转线"
+      ],
+      "problem_and_stage": "存在与变化、知识与怀疑",
+      "design_assessment": "心灵与混合可转向秩序问题，但“心灵实际解释多少”有古代批评",
+      "projection_source": "18游戏流程投影.md:96",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "留基伯",
+      "international_name": "Leucippus",
+      "index_source": "14人物与流派索引.md:22",
+      "thinker_id": "LEUCIPPUS",
+      "primary_use": "研究",
+      "secondary_uses": [],
+      "problem_and_stage": "存在与变化",
+      "design_assessment": "生平与著作归属不清，不独立出场",
+      "projection_source": "18游戏流程投影.md:97",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "德谟克利特",
+      "international_name": "Democritus",
+      "index_source": "14人物与流派索引.md:23",
+      "thinker_id": "DEMOCRITUS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "实践"
+      ],
+      "problem_and_stage": "存在与变化、知识与怀疑",
+      "design_assessment": "以原子和虚空形成明确可玩结构；须同留基伯归属争议分开",
+      "projection_source": "18游戏流程投影.md:98",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "普罗泰戈拉",
+      "international_name": "Protagoras",
+      "index_source": "14人物与流派索引.md:24",
+      "thinker_id": "PROTAGORAS",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "知识与怀疑、语言与意义、自由与制度",
+      "design_assessment": "适合用相反论证挑战真理与公共尺度，不代表全部智者",
+      "projection_source": "18游戏流程投影.md:99",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "高尔吉亚",
+      "international_name": "Gorgias",
+      "index_source": "14人物与流派索引.md:25",
+      "thinker_id": "GORGIAS",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "研究",
+        "实践"
+      ],
+      "problem_and_stage": "语言与意义",
+      "design_assessment": "言辞力量适合一次性挑战；材料不足以稳定承接整条固定线",
+      "projection_source": "18游戏流程投影.md:100",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "苏格拉底",
+      "international_name": "Socrates",
+      "index_source": "14人物与流派索引.md:26",
+      "thinker_id": "SOCRATES",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "问号",
+        "实践"
+      ],
+      "problem_and_stage": "知识与怀疑、德性与幸福",
+      "design_assessment": "六入口之一；历史苏格拉底与柏拉图角色的边界必须保留",
+      "projection_source": "18游戏流程投影.md:101",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "柏拉图",
+      "international_name": "Plato",
+      "index_source": "14人物与流派索引.md:27",
+      "thinker_id": "PLATO",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、存在与变化、德性与幸福、自由与制度",
+      "design_assessment": "六入口之一；按当前问题选一个面，不把全部对话压成静态体系",
+      "projection_source": "18游戏流程投影.md:102",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "亚里士多德",
+      "international_name": "Aristotle",
+      "index_source": "14人物与流派索引.md:28",
+      "thinker_id": "ARISTOTLE",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "实践"
+      ],
+      "problem_and_stage": "存在与变化、德性与幸福、语言与意义、自由与制度",
+      "design_assessment": "六入口之一；四因、潜能现实与德性养成提供多个稳定出口",
+      "projection_source": "18游戏流程投影.md:103",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "第欧根尼",
+      "international_name": "Diogenes of Sinope",
+      "index_source": "14人物与流派索引.md:29",
+      "thinker_id": "DIOGENES_OF_SINOPE",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "问号",
+        "内批"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度",
+      "design_assessment": "以舍弃、直言和反习俗出现；轶事真实性不足时不用具体故事作规则",
+      "projection_source": "18游戏流程投影.md:104",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "伊壁鸠鲁",
+      "international_name": "Epicurus",
+      "index_source": "14人物与流派索引.md:30",
+      "thinker_id": "EPICURUS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "实践",
+        "内批"
+      ],
+      "problem_and_stage": "德性与幸福、存在与变化",
+      "design_assessment": "欲望分类和反恐惧可形成完整路线；与斯多亚不是同一种减欲",
+      "projection_source": "18游戏流程投影.md:105",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "芝诺",
+      "international_name": "Zeno of Citium",
+      "index_source": "14人物与流派索引.md:31",
+      "thinker_id": "ZENO_OF_CITIUM",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "实践",
+        "内批"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度、存在与变化",
+      "design_assessment": "斯多亚奠基与赫拉克利特回响均可玩，须同爱利亚的芝诺区分",
+      "projection_source": "18游戏流程投影.md:106",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "塞涅卡",
+      "international_name": "Seneca",
+      "index_source": "14人物与流派索引.md:32",
+      "thinker_id": "SENECA",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "回响"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度",
+      "design_assessment": "适合罗马处境中的日常操练，不与芝诺重复承担奠基位",
+      "projection_source": "18游戏流程投影.md:107",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "爱比克泰德",
+      "international_name": "Epictetus",
+      "index_source": "14人物与流派索引.md:33",
+      "thinker_id": "EPICTETUS",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "问号",
+        "回响"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度",
+      "design_assessment": "控制与同意最适合行为检验，不简化为“接受一切”",
+      "projection_source": "18游戏流程投影.md:108",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "马可奥勒留",
+      "international_name": "Marcus Aurelius",
+      "index_source": "14人物与流派索引.md:34",
+      "thinker_id": "MARCUS_AURELIUS",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "回响"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度",
+      "design_assessment": "适合作为帝国位置下的自我操练回响，不代表整个斯多亚体系",
+      "projection_source": "18游戏流程投影.md:109",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "皮浪",
+      "international_name": "Pyrrho",
+      "index_source": "14人物与流派索引.md:35",
+      "thinker_id": "PYRRHO",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "研究"
+      ],
+      "problem_and_stage": "知识与怀疑",
+      "design_assessment": "本人无著作，适合悬置事件，不独立承担长链奠基",
+      "projection_source": "18游戏流程投影.md:110",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "塞克斯都恩披里柯",
+      "international_name": "Sextus Empiricus",
+      "index_source": "14人物与流派索引.md:36",
+      "thinker_id": "SEXTUS_EMPIRICUS",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "回响",
+        "内批"
+      ],
+      "problem_and_stage": "知识与怀疑、语言与意义",
+      "design_assessment": "保存论证系统并影响近代怀疑，适合连接古代与笛卡尔前史",
+      "projection_source": "18游戏流程投影.md:111",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "普罗提诺",
+      "international_name": "Plotinus",
+      "index_source": "14人物与流派索引.md:37",
+      "thinker_id": "PLOTINUS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化、主体与他者、德性与幸福",
+      "design_assessment": "可承接柏拉图并通往奥古斯丁，但流溢不等于基督教创造",
+      "projection_source": "18游戏流程投影.md:112",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "奥古斯丁",
+      "international_name": "Augustine of Hippo",
+      "index_source": "14人物与流派索引.md:43",
+      "thinker_id": "AUGUSTINE_OF_HIPPO",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "主体与他者、德性与幸福、自由与制度",
+      "design_assessment": "可承接新柏拉图主义并转入意志、恩典和内在性；不等同笛卡尔主体",
+      "projection_source": "18游戏流程投影.md:118",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "安瑟尔谟",
+      "international_name": "Anselm of Canterbury",
+      "index_source": "14人物与流派索引.md:44",
+      "thinker_id": "ANSELM_OF_CANTERBURY",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "内批",
+        "实践"
+      ],
+      "problem_and_stage": "知识与怀疑",
+      "design_assessment": "“反对、区分、答辩”可做论证事件；本体论论证解释争议不宜当确定升级",
+      "projection_source": "18游戏流程投影.md:119",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿奎那",
+      "international_name": "Thomas Aquinas",
+      "index_source": "14人物与流派索引.md:45",
+      "thinker_id": "THOMAS_AQUINAS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "存在与变化、德性与幸福、自由与制度",
+      "design_assessment": "亚里士多德的中世纪重构足以承担主节点，但必须显式保留翻译与注释中介",
+      "projection_source": "18游戏流程投影.md:120",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "奥卡姆",
+      "international_name": "William of Ockham",
+      "index_source": "14人物与流派索引.md:46",
+      "thinker_id": "WILLIAM_OF_OCKHAM",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "固定",
+        "转线"
+      ],
+      "problem_and_stage": "语言与意义、知识与怀疑、存在与变化",
+      "design_assessment": "适合从共相、词项和简约转线；不得画成科学革命或宗教改革的单因起点",
+      "projection_source": "18游戏流程投影.md:121",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "马基雅维利",
+      "international_name": "Niccolò Machiavelli",
+      "index_source": "14人物与流派索引.md:47",
+      "thinker_id": "NICCOLO_MACHIAVELLI",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "历史与权力、自由与制度",
+      "design_assessment": "可把德性问题转为运势、制度与政治效果；解释路线仍有争议",
+      "projection_source": "18游戏流程投影.md:122",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "路德",
+      "international_name": "Martin Luther",
+      "index_source": "14人物与流派索引.md:48",
+      "thinker_id": "MARTIN_LUTHER",
+      "primary_use": "转线",
+      "secondary_uses": [
+        "实践",
+        "内批"
+      ],
+      "problem_and_stage": "自由与制度、主体与他者",
+      "design_assessment": "适合“拒绝中介与承担良心”的事件；宗教改革不等于自动获得个人自由",
+      "projection_source": "18游戏流程投影.md:123",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "培根",
+      "international_name": "Francis Bacon",
+      "index_source": "14人物与流派索引.md:49",
+      "thinker_id": "FRANCIS_BACON",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "实践",
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "知识与怀疑、历史与权力",
+      "design_assessment": "假象和协作归纳可形成研究制度节点；自然支配与殖民语境需伦理复核",
+      "projection_source": "18游戏流程投影.md:124",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "哥白尼",
+      "international_name": "Nicolaus Copernicus",
+      "index_source": "14人物与流派索引.md:50",
+      "thinker_id": "NICOLAUS_COPERNICUS",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "回响",
+        "研究"
+      ],
+      "problem_and_stage": "知识与怀疑、存在与变化",
+      "design_assessment": "适合模型重排事件；不单独代表统一的“科学方法”",
+      "projection_source": "18游戏流程投影.md:125",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "伽利略",
+      "international_name": "Galileo Galilei",
+      "index_source": "14人物与流派索引.md:51",
+      "thinker_id": "GALILEO_GALILEI",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "问号",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、存在与变化",
+      "design_assessment": "仪器、数学和观测冲突适合挑战，不把科学革命写成四人同一纲领",
+      "projection_source": "18游戏流程投影.md:126",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "牛顿",
+      "international_name": "Isaac Newton",
+      "index_source": "14人物与流派索引.md:52",
+      "thinker_id": "ISAAC_NEWTON",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "回响",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、存在与变化",
+      "design_assessment": "天地综合可承担主节点，并作为休谟与康德问题背景；不是哲学终点",
+      "projection_source": "18游戏流程投影.md:127",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "笛卡尔",
+      "international_name": "René Descartes",
+      "index_source": "14人物与流派索引.md:58",
+      "thinker_id": "DESCARTES",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、主体与他者、存在与变化",
+      "design_assessment": "六入口之一；方法怀疑与实体二元必须按当前问题拆开",
+      "projection_source": "18游戏流程投影.md:133",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "斯宾诺莎",
+      "international_name": "Baruch Spinoza",
+      "index_source": "14人物与流派索引.md:59",
+      "thinker_id": "BARUCH_SPINOZA",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化、自由与制度、主体与他者",
+      "design_assessment": "对笛卡尔术语的直接重构；可转向情感和主动自由",
+      "projection_source": "18游戏流程投影.md:134",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "莱布尼茨",
+      "international_name": "Gottfried Wilhelm Leibniz",
+      "index_source": "14人物与流派索引.md:60",
+      "thinker_id": "GOTTFRIED_WILHELM_LEIBNIZ",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "回响",
+        "转线"
+      ],
+      "problem_and_stage": "存在与变化、知识与怀疑、语言与意义",
+      "design_assessment": "与笛卡尔、斯宾诺莎、洛克有可证争论；“最佳世界”不可做无条件正收益",
+      "projection_source": "18游戏流程投影.md:135",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "霍布斯",
+      "international_name": "Thomas Hobbes",
+      "index_source": "14人物与流派索引.md:61",
+      "thinker_id": "THOMAS_HOBBES",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "自由与制度、历史与权力",
+      "design_assessment": "授权主权形成明确制度路线；机械论只是跨线条件，不吞并政治问题",
+      "projection_source": "18游戏流程投影.md:136",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "洛克",
+      "international_name": "John Locke",
+      "index_source": "14人物与流派索引.md:62",
+      "thinker_id": "JOHN_LOCKE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、主体与他者、自由与制度",
+      "design_assessment": "可从观念来源转到人格与权利；殖民、财产争议须独立标记",
+      "projection_source": "18游戏流程投影.md:137",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "贝克莱",
+      "international_name": "George Berkeley",
+      "index_source": "14人物与流派索引.md:63",
+      "thinker_id": "GEORGE_BERKELEY",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "问号",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、主体与他者",
+      "design_assessment": "对洛克物质支撑的明确推进，适合固定线中的挑战节点",
+      "projection_source": "18游戏流程投影.md:138",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "休谟",
+      "international_name": "David Hume",
+      "index_source": "14人物与流派索引.md:64",
+      "thinker_id": "DAVID_HUME",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、主体与他者、德性与幸福",
+      "design_assessment": "因果、自我与情感可形成多出口；不是“否认因果”",
+      "projection_source": "18游戏流程投影.md:139",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "孟德斯鸠",
+      "international_name": "Montesquieu",
+      "index_source": "14人物与流派索引.md:65",
+      "thinker_id": "MONTESQUIEU",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "实践"
+      ],
+      "problem_and_stage": "自由与制度、历史与权力",
+      "design_assessment": "制衡和社会条件可承担制度主节点；气候论需避免决定论化",
+      "projection_source": "18游戏流程投影.md:140",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "伏尔泰",
+      "international_name": "Voltaire",
+      "index_source": "14人物与流派索引.md:66",
+      "thinker_id": "VOLTAIRE",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "实践",
+        "内批"
+      ],
+      "problem_and_stage": "自由与制度、知识与怀疑",
+      "design_assessment": "适合公共批评、宽容和讽刺事件，不代表整个启蒙",
+      "projection_source": "18游戏流程投影.md:141",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "狄德罗",
+      "international_name": "Denis Diderot",
+      "index_source": "14人物与流派索引.md:67",
+      "thinker_id": "DENIS_DIDEROT",
+      "primary_use": "实践",
+      "secondary_uses": [
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "知识与怀疑、历史与权力、语言与意义",
+      "design_assessment": "知识传播和工艺网络适合跨线实践，不与伏尔泰合并为一个人物",
+      "projection_source": "18游戏流程投影.md:142",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "卢梭",
+      "international_name": "Jean Jacques Rousseau",
+      "index_source": "14人物与流派索引.md:68",
+      "thinker_id": "ROUSSEAU",
+      "primary_use": "固定入口",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "自由与制度、历史与权力、主体与他者",
+      "design_assessment": "六入口之一；文明批判与公意是不同当前问题面",
+      "projection_source": "18游戏流程投影.md:143",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "亚当斯密",
+      "international_name": "Adam Smith",
+      "index_source": "14人物与流派索引.md:69",
+      "thinker_id": "ADAM_SMITH",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "实践",
+        "转线"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度、历史与权力",
+      "design_assessment": "同感、旁观者与商业分工应共存，不简化为自利市场",
+      "projection_source": "18游戏流程投影.md:144",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "沃斯通克拉夫特",
+      "international_name": "Mary Wollstonecraft",
+      "index_source": "14人物与流派索引.md:70",
+      "thinker_id": "MARY_WOLLSTONECRAFT",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "固定",
+        "转线"
+      ],
+      "problem_and_stage": "自由与制度、主体与他者、历史与权力",
+      "design_assessment": "对卢梭性别教育的明确内部批判，足以在相关路线升级为主节点",
+      "projection_source": "18游戏流程投影.md:145",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "康德",
+      "international_name": "Immanuel Kant",
+      "index_source": "14人物与流派索引.md:76",
+      "thinker_id": "IMMANUEL_KANT",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批",
+        "回响"
+      ],
+      "problem_and_stage": "知识与怀疑、自由与制度、主体与他者",
+      "design_assessment": "多路线枢纽；每局只取一个当前问题面，种族、性别和历史论述必须补伦理说明",
+      "projection_source": "18游戏流程投影.md:151",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "费希特",
+      "international_name": "Johann Gottlieb Fichte",
+      "index_source": "14人物与流派索引.md:77",
+      "thinker_id": "JOHANN_GOTTLIEB_FICHTE",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "固定",
+        "转线"
+      ],
+      "problem_and_stage": "主体与他者、自由与制度",
+      "design_assessment": "对康德物自身与实践优先的内部推进；阶段多版本需限制节点概括",
+      "projection_source": "18游戏流程投影.md:152",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "谢林",
+      "international_name": "Friedrich Wilhelm Joseph Schelling",
+      "index_source": "14人物与流派索引.md:78",
+      "thinker_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化、主体与他者",
+      "design_assessment": "仅在前置明确时拆早期自然哲学与后期自由神话阶段",
+      "projection_source": "18游戏流程投影.md:153",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "黑格尔",
+      "international_name": "Georg Wilhelm Friedrich Hegel",
+      "index_source": "14人物与流派索引.md:79",
+      "thinker_id": "GEORG_WILHELM_FRIEDRICH_HEGEL",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "七线均可相交，主落主体、自由、历史、存在",
+      "design_assessment": "不能成为所有路线的万能必经点；只按承认、制度或历史等具体问题进入",
+      "projection_source": "18游戏流程投影.md:154",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "叔本华",
+      "international_name": "Arthur Schopenhauer",
+      "index_source": "14人物与流派索引.md:80",
+      "thinker_id": "ARTHUR_SCHOPENHAUER",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "问号",
+        "转线"
+      ],
+      "problem_and_stage": "主体与他者、德性与幸福、存在与变化",
+      "design_assessment": "对康德物自身的意志化与反黑格尔立场可玩；印度思想接受须标时代限制",
+      "projection_source": "18游戏流程投影.md:155",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "克尔凯郭尔",
+      "international_name": "Søren Kierkegaard",
+      "index_source": "14人物与流派索引.md:81",
+      "thinker_id": "SOREN_KIERKEGAARD",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "实践"
+      ],
+      "problem_and_stage": "主体与他者、德性与幸福",
+      "design_assessment": "适合把体系转为个体承担；笔名阶段不能直接当作者等级表",
+      "projection_source": "18游戏流程投影.md:156",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "马克思",
+      "international_name": "Karl Marx",
+      "index_source": "14人物与流派索引.md:82",
+      "thinker_id": "KARL_MARX",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "历史与权力、自由与制度、主体与他者",
+      "design_assessment": "黑格尔与费尔巴哈中介不可省略无标；早期异化与成熟政治经济学可候选阶段化",
+      "projection_source": "18游戏流程投影.md:157",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "尼采",
+      "international_name": "Friedrich Nietzsche",
+      "index_source": "14人物与流派索引.md:83",
+      "thinker_id": "FRIEDRICH_NIETZSCHE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "德性与幸福、历史与权力、主体与他者",
+      "design_assessment": "谱系和价值重估是强节点；早期叔本华影响与后期反转可阶段化，存在主义标签保留争议",
+      "projection_source": "18游戏流程投影.md:158",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "边沁",
+      "international_name": "Jeremy Bentham",
+      "index_source": "14人物与流派索引.md:84",
+      "thinker_id": "JEREMY_BENTHAM",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "实践"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度",
+      "design_assessment": "结果总账适合主节点，也必须可见少数牺牲问题",
+      "projection_source": "18游戏流程投影.md:159",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "密尔",
+      "international_name": "John Stuart Mill",
+      "index_source": "14人物与流派索引.md:85",
+      "thinker_id": "JOHN_STUART_MILL",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "德性与幸福、自由与制度、主体与他者",
+      "design_assessment": "可作为功利主义内部修正，而非边沁的简单强化",
+      "projection_source": "18游戏流程投影.md:160",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "孔德",
+      "international_name": "Auguste Comte",
+      "index_source": "14人物与流派索引.md:86",
+      "thinker_id": "AUGUSTE_COMTE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "问号",
+        "内批"
+      ],
+      "problem_and_stage": "知识与怀疑、历史与权力",
+      "design_assessment": "阶段模型可玩但欧洲中心和目的论风险高，必须给异常反例出口",
+      "projection_source": "18游戏流程投影.md:161",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "皮尔士",
+      "international_name": "Charles Sanders Peirce",
+      "index_source": "14人物与流派索引.md:87",
+      "thinker_id": "CHARLES_SANDERS_PEIRCE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "实践"
+      ],
+      "problem_and_stage": "知识与怀疑、语言与意义",
+      "design_assessment": "共同探究和可错性可承接科学与语言，反对“一次成功即真”",
+      "projection_source": "18游戏流程投影.md:162",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "詹姆斯",
+      "international_name": "William James",
+      "index_source": "14人物与流派索引.md:88",
+      "thinker_id": "WILLIAM_JAMES",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "实践",
+        "固定"
+      ],
+      "problem_and_stage": "知识与怀疑、德性与幸福",
+      "design_assessment": "活选项适合实践；与皮尔士差异应作为内部争论呈现",
+      "projection_source": "18游戏流程投影.md:163",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "杜威",
+      "international_name": "John Dewey",
+      "index_source": "14人物与流派索引.md:89",
+      "thinker_id": "JOHN_DEWEY",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "实践",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、自由与制度、历史与权力",
+      "design_assessment": "以问题情境、实验与民主把认识转成共同实践",
+      "projection_source": "18游戏流程投影.md:164",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "胡塞尔",
+      "international_name": "Edmund Husserl",
+      "index_source": "14人物与流派索引.md:95",
+      "thinker_id": "EDMUND_HUSSERL",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "主体与他者、知识与怀疑",
+      "design_assessment": "可拆早期反心理主义、先验构成、后期生活世界，但一局最多一次阶段推进",
+      "projection_source": "18游戏流程投影.md:170",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "海德格尔",
+      "international_name": "Martin Heidegger",
+      "index_source": "14人物与流派索引.md:96",
+      "thinker_id": "MARTIN_HEIDEGGER",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "主体与他者、存在与变化、语言与意义",
+      "design_assessment": "可拆早期此在与后期技术；任何入选都触发纳粹与反犹内容的伦理说明",
+      "projection_source": "18游戏流程投影.md:171",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "萨特",
+      "international_name": "Jean Paul Sartre",
+      "index_source": "14人物与流派索引.md:97",
+      "thinker_id": "JEAN_PAUL_SARTRE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "主体与他者、自由与制度",
+      "design_assessment": "可拆早期自由与后期集体实践；不把海德格尔影响写成同一存在主义纲领",
+      "projection_source": "18游戏流程投影.md:172",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "波伏瓦",
+      "international_name": "Simone de Beauvoir",
+      "index_source": "14人物与流派索引.md:98",
+      "thinker_id": "SIMONE_DE_BEAUVOIR",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "实践"
+      ],
+      "problem_and_stage": "主体与他者、自由与制度、德性与幸福",
+      "design_assessment": "不是萨特的附属节点；处境与互惠足以承担主线修正",
+      "projection_source": "18游戏流程投影.md:173",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "加缪",
+      "international_name": "Albert Camus",
+      "index_source": "14人物与流派索引.md:99",
+      "thinker_id": "ALBERT_CAMUS",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "内批",
+        "实践",
+        "回响"
+      ],
+      "problem_and_stage": "德性与幸福、历史与权力",
+      "design_assessment": "适合检验反抗是否越界；存在主义标签与阿尔及利亚处境须保留",
+      "projection_source": "18游戏流程投影.md:174",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "梅洛庞蒂",
+      "international_name": "Maurice Merleau Ponty",
+      "index_source": "14人物与流派索引.md:100",
+      "thinker_id": "MAURICE_MERLEAU_PONTY",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "实践"
+      ],
+      "problem_and_stage": "主体与他者、知识与怀疑",
+      "design_assessment": "具身知觉可跨到认知路线；与萨特分歧不是单纯阵营内升级",
+      "projection_source": "18游戏流程投影.md:175",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "弗雷格",
+      "international_name": "Gottlob Frege",
+      "index_source": "14人物与流派索引.md:101",
+      "thinker_id": "GOTTLOB_FREGE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "语言与意义、知识与怀疑",
+      "design_assessment": "逻辑语义奠基节点；罗素悖论必须能构成后继压力",
+      "projection_source": "18游戏流程投影.md:176",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "罗素",
+      "international_name": "Bertrand Russell",
+      "index_source": "14人物与流派索引.md:102",
+      "thinker_id": "BERTRAND_RUSSELL",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "语言与意义、知识与怀疑",
+      "design_assessment": "可承接弗雷格并通往维特根斯坦；本人多阶段变化首轮不重复出场",
+      "projection_source": "18游戏流程投影.md:177",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "维特根斯坦",
+      "international_name": "Ludwig Wittgenstein",
+      "index_source": "14人物与流派索引.md:103",
+      "thinker_id": "LUDWIG_WITTGENSTEIN",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "实践",
+        "回响"
+      ],
+      "problem_and_stage": "语言与意义、知识与怀疑",
+      "design_assessment": "早期图像论与后期语言游戏是最明确的同人阶段路线候选",
+      "projection_source": "18游戏流程投影.md:178",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "卡尔纳普",
+      "international_name": "Rudolf Carnap",
+      "index_source": "14人物与流派索引.md:104",
+      "thinker_id": "RUDOLF_CARNAP",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "问号",
+        "固定"
+      ],
+      "problem_and_stage": "语言与意义、知识与怀疑",
+      "design_assessment": "逻辑构造到语言框架有变化；验证原则不能写成学派唯一版本",
+      "projection_source": "18游戏流程投影.md:179",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "奥斯汀",
+      "international_name": "J. L. Austin",
+      "index_source": "14人物与流派索引.md:105",
+      "thinker_id": "J_L_AUSTIN",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "实践",
+        "转线"
+      ],
+      "problem_and_stage": "语言与意义、自由与制度",
+      "design_assessment": "以言行事适合实践事件，也可修正纯真值模型",
+      "projection_source": "18游戏流程投影.md:180",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "索绪尔",
+      "international_name": "Ferdinand de Saussure",
+      "index_source": "14人物与流派索引.md:106",
+      "thinker_id": "FERDINAND_DE_SAUSSURE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "语言与意义、主体与他者",
+      "design_assessment": "差异系统是结构路线主节点；《教程》编辑史必须标注",
+      "projection_source": "18游戏流程投影.md:181",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "列维斯特劳斯",
+      "international_name": "Claude Lévi Strauss",
+      "index_source": "14人物与流派索引.md:107",
+      "thinker_id": "CLAUDE_LEVI_STRAUSS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "语言与意义、历史与权力、主体与他者",
+      "design_assessment": "结构转换可玩；索绪尔到此处须保留雅各布森等中介，亲属交换接受女性主义批评",
+      "projection_source": "18游戏流程投影.md:182",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "福柯",
+      "international_name": "Michel Foucault",
+      "index_source": "14人物与流派索引.md:108",
+      "thinker_id": "MICHEL_FOUCAULT",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "历史与权力、主体与他者、知识与怀疑",
+      "design_assessment": "考古、谱系、自我技术三阶段可条件化；历史个案不经复核不做事实奖励",
+      "projection_source": "18游戏流程投影.md:183",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "德里达",
+      "international_name": "Jacques Derrida",
+      "index_source": "14人物与流派索引.md:109",
+      "thinker_id": "JACQUES_DERRIDA",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "语言与意义、主体与他者",
+      "design_assessment": "适合把结构中心、在场和排除痕迹做成规则自反；不把解构写成任意破坏",
+      "projection_source": "18游戏流程投影.md:184",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "德勒兹",
+      "international_name": "Gilles Deleuze",
+      "index_source": "14人物与流派索引.md:110",
+      "thinker_id": "GILLES_DELEUZE",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "存在与变化、主体与他者、历史与权力",
+      "design_assessment": "可作为赫拉克利特、斯宾诺莎、尼采等后世重释汇点，不冒充直接学派后继",
+      "projection_source": "18游戏流程投影.md:185",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "伽达默尔",
+      "international_name": "Hans Georg Gadamer",
+      "index_source": "14人物与流派索引.md:111",
+      "thinker_id": "HANS_GEORG_GADAMER",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "回响",
+        "转线"
+      ],
+      "problem_and_stage": "语言与意义、主体与他者",
+      "design_assessment": "解释循环和视域融合可闭合语言线，也应允许哈贝马斯与德里达挑战",
+      "projection_source": "18游戏流程投影.md:186",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "利科",
+      "international_name": "Paul Ricoeur",
+      "index_source": "14人物与流派索引.md:112",
+      "thinker_id": "PAUL_RICOEUR",
+      "primary_use": "回响",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "固定"
+      ],
+      "problem_and_stage": "语言与意义、主体与他者、历史与权力",
+      "design_assessment": "解释冲突与叙事自我适合第四幕；前置不足时不独立空降",
+      "projection_source": "18游戏流程投影.md:187",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "霍克海默",
+      "international_name": "Max Horkheimer",
+      "index_source": "14人物与流派索引.md:113",
+      "thinker_id": "MAX_HORKHEIMER",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批"
+      ],
+      "problem_and_stage": "历史与权力、自由与制度",
+      "design_assessment": "批判理论奠基可承担主节点；不代表法兰克福学派所有结论",
+      "projection_source": "18游戏流程投影.md:188",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿多诺",
+      "international_name": "Theodor W. Adorno",
+      "index_source": "14人物与流派索引.md:114",
+      "thinker_id": "THEODOR_W_ADORNO",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "回响"
+      ],
+      "problem_and_stage": "历史与权力、语言与意义",
+      "design_assessment": "否定辩证法可挑战体系封闭；与霍克海默共享项目但不可合并人物",
+      "projection_source": "18游戏流程投影.md:189",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "本雅明",
+      "international_name": "Walter Benjamin",
+      "index_source": "14人物与流派索引.md:115",
+      "thinker_id": "WALTER_BENJAMIN",
+      "primary_use": "问号",
+      "secondary_uses": [
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "历史与权力、语言与意义",
+      "design_assessment": "历史碎片和复制技术适合非线性重审，不强作学派纵向继任",
+      "projection_source": "18游戏流程投影.md:190",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "哈贝马斯",
+      "international_name": "Jürgen Habermas",
+      "index_source": "14人物与流派索引.md:116",
+      "thinker_id": "JURGEN_HABERMAS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "历史与权力、自由与制度、语言与意义",
+      "design_assessment": "对第一代批判理论及后现代路线的规范重建，适合第四幕对话检查",
+      "projection_source": "18游戏流程投影.md:191",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "弗洛伊德",
+      "international_name": "Sigmund Freud",
+      "index_source": "14人物与流派索引.md:117",
+      "thinker_id": "SIGMUND_FREUD",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "主体与他者、德性与幸福",
+      "design_assessment": "无意识使透明主体路线转向；与尼采的直接影响证据不足，不设普通继承边",
+      "projection_source": "18游戏流程投影.md:192",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "拉康",
+      "international_name": "Jacques Lacan",
+      "index_source": "14人物与流派索引.md:118",
+      "thinker_id": "JACQUES_LACAN",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "主体与他者、语言与意义",
+      "design_assessment": "对弗洛伊德的结构语言学重读可玩；索绪尔、黑格尔等中介必须显示",
+      "projection_source": "18游戏流程投影.md:193",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "波普尔",
+      "international_name": "Karl Popper",
+      "index_source": "14人物与流派索引.md:119",
+      "thinker_id": "KARL_POPPER",
+      "primary_use": "内批",
+      "secondary_uses": [
+        "问号",
+        "固定"
+      ],
+      "problem_and_stage": "知识与怀疑",
+      "design_assessment": "证伪适合作为科学路线挑战；与库恩不是前者被后者简单淘汰",
+      "projection_source": "18游戏流程投影.md:194",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "库恩",
+      "international_name": "Thomas Kuhn",
+      "index_source": "14人物与流派索引.md:120",
+      "thinker_id": "THOMAS_KUHN",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线"
+      ],
+      "problem_and_stage": "知识与怀疑、历史与权力、语言与意义",
+      "design_assessment": "异常与范式转换是强节点；共同体历史性不等于任意相对主义",
+      "projection_source": "18游戏流程投影.md:195",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "巴特勒",
+      "international_name": "Judith Butler",
+      "index_source": "14人物与流派索引.md:121",
+      "thinker_id": "JUDITH_BUTLER",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "内批",
+        "转线",
+        "回响"
+      ],
+      "problem_and_stage": "主体与他者、历史与权力、语言与意义",
+      "design_assessment": "可承接波伏瓦、福柯与言语行为资源，但不是单线混合结果",
+      "projection_source": "18游戏流程投影.md:196",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "罗尔斯",
+      "international_name": "John Rawls",
+      "index_source": "14人物与流派索引.md:122",
+      "thinker_id": "JOHN_RAWLS",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "回响",
+        "内批"
+      ],
+      "problem_and_stage": "自由与制度、德性与幸福",
+      "design_assessment": "契约论规范重建适合作为卢梭与康德的后世回响，不冒充直接传人",
+      "projection_source": "18游戏流程投影.md:197",
+      "implementation_status": "RESEARCH_ONLY"
+    },
+    {
+      "display_name": "阿伦特",
+      "international_name": "Hannah Arendt",
+      "index_source": "14人物与流派索引.md:123",
+      "thinker_id": "HANNAH_ARENDT",
+      "primary_use": "固定",
+      "secondary_uses": [
+        "转线",
+        "内批",
+        "回响"
+      ],
+      "problem_and_stage": "自由与制度、历史与权力、主体与他者",
+      "design_assessment": "公共行动和极权经验可独立成主节点，不只归入罗尔斯式分配正义",
+      "projection_source": "18游戏流程投影.md:198",
+      "implementation_status": "RESEARCH_ONLY"
+    }
+  ],
+  "sample_paths": [
+    {
+      "sample_id": "SAMPLE_01",
+      "entry_thinker_id": "HERACLITUS",
+      "title": "路径一：从变化难题到差异生成",
+      "source": "18游戏流程投影.md:291",
+      "original_sequence": "第一幕固定赫拉克利特〔存在与变化〕 → 问号巴门尼德〔转线；同题比较，中；直接影响未建立〕 → 第二幕固定亚里士多德〔改造；同题转向，中；压缩巴门尼德与柏拉图对变化问题的中介〕 → 问号黑格尔〔转线；后世重释，中〕 → 第三幕固定德勒兹〔批判与后世重释，高；反对以同一和否定统摄差异〕 → 第四幕福柯〔同层互释与转线，中；二人互有交流，但不排成单向师承；把生成问题转到主体化实践〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_02",
+      "entry_thinker_id": "HERACLITUS",
+      "title": "路径二：从变化与存在到原子组合",
+      "source": "18游戏流程投影.md:297",
+      "original_sequence": "第一幕固定赫拉克利特〔存在与变化〕 → 问号巴门尼德〔转线；同题比较，中；直接影响未建立〕 → 第二幕固定德谟克利特〔对爱利亚论证压力的回应，高；不是赫拉克利特弟子，与留基伯共同的原子论归属须标注〕 → 问号恩培多克勒〔坚持；另一条并行回应，高；体验四根与爱争后保留原子论主线〕 → 第三幕固定伊壁鸠鲁〔继承与批判，高；具体教学链可能经过瑙西法尼，待核；在原子论中加入偏斜、欲望与反恐惧〕 → 第四幕塞克斯都恩披里柯〔后世批判，高；以怀疑论证挑战伊壁鸠鲁的教条自然学，但不抹去伊壁鸠鲁实践结局〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_03",
+      "entry_thinker_id": "SOCRATES",
+      "title": "路径一：诘问、生活选择与德性养成",
+      "source": "18游戏流程投影.md:305",
+      "original_sequence": "第一幕固定苏格拉底〔德性与幸福〕 → 问号普罗泰戈拉〔坚持；同层争论，中；德性能否教授及公共成功问题主要经柏拉图竞争性文本重建〕 → 第二幕固定柏拉图〔直接影响与继承改造，高；把灵魂照料扩展为德性、教育与城邦秩序〕 → 问号第欧根尼〔转线；后世征用苏格拉底遗产，中；以公开生活实践挑战体系化，但犬儒见证多为后世轶事〕 → 第三幕固定芝诺〔继承与重构，高；游戏压缩第欧根尼传统、克拉特斯到季蒂昂的芝诺的教学链〕 → 第四幕爱比克泰德〔学派内部实践回响，高；压缩克里西波及早中期斯多亚体系发展〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_04",
+      "entry_thinker_id": "SOCRATES",
+      "title": "路径二：从自知无知到先验条件",
+      "source": "18游戏流程投影.md:311",
+      "original_sequence": "第一幕固定苏格拉底〔知识与怀疑〕 → 问号塞克斯都恩披里柯〔转线；后世征用与同题转向，中；保存皮浪主义论证，但不能替皮浪发言〕 → 第二幕固定笛卡尔〔后世重释与方法转向，中；强制显示塞克斯都文本再发现、蒙田及宗教争论中介，古代悬置和方法怀疑目的不同〕 → 问号休谟〔改造；批判与同题转向，中；压缩洛克、贝克莱〕 → 第三幕固定康德〔明确回应，高〕 → 第四幕皮尔士〔后世批判与转向，中；由一次奠基转为共同可错探究〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_05",
+      "entry_thinker_id": "PLATO",
+      "title": "路径一：城邦秩序、政治自然与人造主权",
+      "source": "18游戏流程投影.md:319",
+      "original_sequence": "第一幕固定柏拉图〔自由与制度〕 → 第二幕固定亚里士多德〔直接师承兼内部批判，高；由灵魂与理想城邦转到政体、实践智慧和具体共同体〕 → 问号马基雅维利〔坚持；后世同题转向，中；经罗马共和传统与文艺复兴政治语境检验制度效果，但不伪装成亚里士多德后继〕 → 第三幕固定霍布斯〔明确批判亚里士多德政治自然性并重建授权主权，高〕 → 第四幕罗尔斯〔后世契约论规范重建，中；不等同霍布斯式安全契约〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_06",
+      "entry_thinker_id": "PLATO",
+      "title": "路径二：从城邦秩序到内在自由和制度承认",
+      "source": "18游戏流程投影.md:325",
+      "original_sequence": "第一幕固定柏拉图〔自由与制度〕 → 问号芝诺〔坚持；后世同题转向，中；经苏格拉底与犬儒资源检验判断与自我治理，但主线仍从柏拉图主义继续〕 → 第二幕固定奥古斯丁〔继承兼神学改写，中；只能写“新柏拉图文本传统”，其所读柏拉图主义者之书的具体作者和拉丁链待核〕 → 问号卢梭〔转线；后世同题重开，低至中；把自由重新放入共同立法，不声称直接继承奥古斯丁〕 → 第三幕固定康德〔卢梭的明确影响与规范重构，高〕 → 第四幕黑格尔〔继承兼批判，高；自由必须在承认和制度中现实化〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_07",
+      "entry_thinker_id": "DESCARTES",
+      "title": "路径一：实体重构与差异哲学",
+      "source": "18游戏流程投影.md:333",
+      "original_sequence": "第一幕固定笛卡尔〔主体与他者〕 → 第二幕固定斯宾诺莎〔直接批判与重构，高；由独立心灵转向同一实体的属性表达，并在此处跨入存在与变化〕 → 问号莱布尼茨〔坚持；同层争论与替代重构，高；比较多单子方案后保留斯宾诺莎主线〕 → 第三幕固定黑格尔〔后世重释与批判，中；经康德和德国观念论问题转换〕 → 第四幕德勒兹〔后世重释与批判，高；重读斯宾诺莎、莱布尼茨和尼采〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_08",
+      "entry_thinker_id": "DESCARTES",
+      "title": "路径二：从思维主体到经验自我和先验统一",
+      "source": "18游戏流程投影.md:339",
+      "original_sequence": "第一幕固定笛卡尔〔主体与他者〕 → 问号洛克〔转线；同题转向与批判，高；以意识连续讨论人格同一〕 → 第二幕固定休谟〔继承与批判，高；把持续自我审查为知觉束，压缩贝克莱等中介〕 → 第三幕固定康德〔明确回应，高；统觉是经验统一条件而非经验中的灵魂实体〕 → 第四幕胡塞尔〔后世继承与重构，中；从笛卡尔反思和康德先验问题转向意向性与构成〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_09",
+      "entry_thinker_id": "ARISTOTLE",
+      "title": "路径一：从实体和共相到语言分析",
+      "source": "18游戏流程投影.md:347",
+      "original_sequence": "第一幕固定亚里士多德〔语言与意义〕 → 第二幕固定阿奎那〔继承与重构，高；经翻译注释网络，把范畴、类比与共相问题带入经院语境〕 → 问号奥卡姆〔改造；内部批判与同题转向，中；完成后才公开“中世纪逻辑到现代逻辑”的压缩中介〕 → 第三幕固定弗雷格〔条件性同题转向，中；仅因奥卡姆问号已经公开多位缺失中介才可进入，不声称直接继承〕 → 第四幕维特根斯坦后期〔继承兼内部批判，高；第四幕允许压缩弗雷格、罗素与早期维特根斯坦〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_10",
+      "entry_thinker_id": "ARISTOTLE",
+      "title": "路径二：从范畴判断到差异结构和解构",
+      "source": "18游戏流程投影.md:353",
+      "original_sequence": "第一幕固定亚里士多德〔语言与意义〕 → 问号索绪尔〔转线；同题转向，低至中；从范畴和词物关系转到符号差异系统，不主张直接继承〕 → 第二幕固定列维斯特劳斯〔继承与跨域转用，高；经雅各布森、莫斯和涂尔干等中介〕 → 问号普罗泰戈拉回看〔坚持；同题比较，中；检验判断尺度与语境，但不改写成结构主义先驱〕 → 第三幕固定德里达〔对索绪尔和列维斯特劳斯的明确重读与批判，高〕 → 第四幕巴特勒〔后世继承与转线，中；同时经福柯、奥斯汀和女性主义中介转向规范重复与主体生产〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_11",
+      "entry_thinker_id": "ROUSSEAU",
+      "title": "路径一：公意、自律、制度与实践",
+      "source": "18游戏流程投影.md:361",
+      "original_sequence": "第一幕固定卢梭〔历史与权力〕 → 第二幕固定康德〔直接影响与规范重构，高；由不平等历史和共同立法问题跨入自由与制度〕 → 问号费希特〔改造；内部批判与发展，高〕 → 第三幕固定黑格尔〔继承与批判，高；重新接回历史如何实现自由〕 → 问号马克思早期阶段〔转线；内部批判与实践转向，高〕 → 第四幕马克思成熟阶段〔只有第三幕问号接受早期实践批判后才允许；同人阶段转化〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    },
+    {
+      "sample_id": "SAMPLE_12",
+      "entry_thinker_id": "ROUSSEAU",
+      "title": "路径二：普遍权利的排除检查",
+      "source": "18游戏流程投影.md:367",
+      "original_sequence": "第一幕固定卢梭〔历史与权力〕 → 第二幕固定沃斯通克拉夫特〔明确内部批判，高；从不平等的历史形成追问所谓普遍自由排除了谁，并跨入自由与制度〕 → 问号密尔〔改造；同题继承与制度修正，中；压缩女性权利运动与哈丽特泰勒等中介〕 → 第三幕固定波伏瓦〔后世同题转向，中；转入主体与他者，不是直接单线继承〕 → 第四幕巴特勒〔继承、批判与后世重释，高；同时受福柯、言语行为和酷儿理论中介影响〕。",
+      "implementation_status": "REQUIRES_EDGE_REVIEW"
+    }
+  ]
+}

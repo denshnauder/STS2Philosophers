@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 
 WesternRouteChecks.Run();
+WesternResearchChecks.Run();
 
 static void Check(bool condition, string message)
 {

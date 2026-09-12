@@ -152,3 +152,7 @@ Windows 日志位置：
 ## 西哲W1基础
 
 config/western_routes.json与WesternRouteCatalog登记七问题六入口；WesternActOneCandidatePolicy使用独立WESTERN_ACT_ONE_THINKERS键生成并保存六选三候选，复用PhilosophyRunState编码，无新增公开ModelId。测试覆盖20种组合、既定映射、读档稳定、与东哲候选隔离和问题选择授权。目前尚未接入游戏事件或战斗机制，后续阶段见Obsidian的10西哲路线实现。
+
+## 西哲研究基线导入
+
+tools/ImportWesternResearch.ps1 -ResearchDirectory <西方哲学史笔记目录> 从14人物索引和18游戏流程投影导入config/western_research.json。固定核对89人和12样例，重复运行输出一致；原文哈希与出处保留。该文件不嵌入游戏，研究用途不直接决定可玩资格。WesternResearchChecks随纯逻辑入口检查覆盖与边界。
