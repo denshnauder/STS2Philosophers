@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Philosophy\WesternPracticeState.cs" Link="WesternPracticeState.cs" />
     <EmbeddedResource Include="..\..\config\western_routes.json" LogicalName="STS2Philosophers.config.western_routes.json" />
     <EmbeddedResource Include="..\..\config\western_graph.json" LogicalName="STS2Philosophers.config.western_graph.json" />
     <Compile Include="..\..\src\Philosophy\WesternRouteGraph.cs" Link="WesternRouteGraph.cs" />

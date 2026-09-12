@@ -160,3 +160,7 @@ tools/ImportWesternResearch.ps1 -ResearchDirectory <西方哲学史笔记目录>
 ## 西哲三幕图
 
 western_graph.json嵌入47节点42边和12条已可遍历的样例。WesternRouteGraph按当前节点、幕位、问号前置和一局人物去重过滤，最多展示三人并保存候选窗口；完整路径前瞻排除无法抵达结局的选项。WesternJourneyState现已接入PhilosophyRunState的可空字段，旧存档不自动生成旅程；游戏UI尚未接入。拒绝以幕号防重，未接受挑战不生成条件，允许后幕反思、延迟连续边和无新主说的保留结局。关系说明来自研究样例，不能将条件性同题关系改称历史师承。
+
+## 西哲入口实践纯逻辑
+
+WesternPracticeState将七问题映射为有限的回合实践，接收所属玩家的牌类型、模型ID、打出身份与自动标记；CloseTurn只结算一次，TakeReward只在次回合领取一次，EndCombat清空待发收益并保留统计。调用者负责战斗开始/结束与当前主说绑定，尚无游戏适配器。WesternPracticeChecks验证七组正反例、保存和重复回调及长连打收益上限。

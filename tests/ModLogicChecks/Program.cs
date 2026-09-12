@@ -5,6 +5,7 @@ using System.Text.Json;
 WesternRouteChecks.Run();
 WesternResearchChecks.Run();
 WesternGraphChecks.Run();
+WesternPracticeChecks.Run();
 
 static void Check(bool condition, string message)
 {
