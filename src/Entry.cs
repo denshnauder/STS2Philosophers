@@ -27,6 +27,13 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, ZhuangziDaHu>();
         ModHelper.AddModelToPool<EventRelicPool, YangzhuQuanShengBi>();
         ModHelper.AddModelToPool<EventRelicPool, HuishiLiWuChou>();
+        ModHelper.AddModelToPool<EventRelicPool, HeraclitusLyre>();
+        ModHelper.AddModelToPool<EventRelicPool, SocratesQuestionCup>();
+        ModHelper.AddModelToPool<EventRelicPool, SocratesBalanceWeight>();
+        ModHelper.AddModelToPool<EventRelicPool, PlatoCivicSeal>();
+        ModHelper.AddModelToPool<EventRelicPool, DescartesThinkingLens>();
+        ModHelper.AddModelToPool<EventRelicPool, AristotleCategoryTablet>();
+        ModHelper.AddModelToPool<EventRelicPool, RousseauUncarvedStone>();
 
         if (Interlocked.Exchange(ref _harmonyInitialized, 1) == 0)
         {

@@ -106,5 +106,33 @@ internal static class WesternPracticeChecks
             WesternPracticeReward reward = state.TakeReward(2);
             Check(reward.Energy <= 1 && reward.Draw <= 1 && reward.Block <= 6, "Even 400-card turns must respect reward caps.");
         }
+
+        WesternPracticeState saved = new() { ProblemId = "BEING_AND_CHANGE" };
+        saved.BeginTurn(1);
+        Play(saved, "ASA");
+        saved.CloseTurn(1);
+        string payload = WesternPracticeStateCodec.Encode(saved);
+        WesternPracticeState restored = WesternPracticeStateCodec.Restore(payload, saved.ProblemId);
+        restored.BeginTurn(2);
+        Check(restored.TakeReward(2).Energy == 1, "The relic payload must preserve pending practice.");
+        restored = WesternPracticeStateCodec.Restore(WesternPracticeStateCodec.Encode(restored), saved.ProblemId);
+        Check(restored.TakeReward(2) == default, "The relic payload must preserve claimed rewards.");
+        Check(WesternPracticeStateCodec.Restore(payload, "SELF_AND_OTHER").Turn == 0,
+            "A payload from another doctrine must not migrate pending benefits.");
+        foreach (string invalid in new[] { "", "null", "{", payload.Replace("\"Energy\":1", "\"Energy\":500"),
+            payload.Replace("\"PendingTurn\":2", "\"PendingTurn\":8"),
+            payload.Replace("\"Plays\":[", "\"Plays\":null,\"Ignored\":[") })
+        {
+            Check(WesternPracticeStateCodec.Restore(invalid, saved.ProblemId).Turn == 0,
+                "Invalid relic data must reset without a fabricated reward.");
+        }
+
+        // Nonstandard card types count as cards where the rule does not restrict types.
+        WesternPracticeState varied = new() { ProblemId = "KNOWLEDGE_AND_DOUBT" };
+        varied.BeginTurn(1);
+        Play(varied, "ASX");
+        varied.CloseTurn(1);
+        Check(varied.PendingReward.Draw == 1, "Knowledge tests model identity, not a hidden type restriction.");
+        Console.WriteLine("Western practice checks passed: seven exercises, repeat/save gates, reward caps and payload validation.");
     }
 }

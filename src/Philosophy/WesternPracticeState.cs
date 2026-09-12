@@ -85,11 +85,10 @@ internal sealed class WesternPracticeState
         int attacks = Plays.Count(play => play.Kind == WesternPracticeCardKind.Attack);
         int skills = Plays.Count(play => play.Kind == WesternPracticeCardKind.Skill);
         int powers = Plays.Count(play => play.Kind == WesternPracticeCardKind.Power);
-        bool usable = attacks + skills + powers == count;
-        if (!usable || count == 0) return default;
+        if (count == 0) return default;
         bool qualifies = ProblemId switch
         {
-            "BEING_AND_CHANGE" => count >= 3 && powers == 0
+            "BEING_AND_CHANGE" => count >= 3 && attacks + skills == count
                 && Plays.Zip(Plays.Skip(1), (a, b) => a.Kind != b.Kind).All(changed => changed),
             "KNOWLEDGE_AND_DOUBT" => count >= 3 && Plays.Select(play => play.CardModelId).Distinct(StringComparer.Ordinal).Count() == count,
             "VIRTUE_AND_HAPPINESS" => count == 4 && attacks == 2 && skills == 2,
@@ -101,7 +100,12 @@ internal sealed class WesternPracticeState
             _ => false,
         };
         if (!qualifies) return default;
-        return ProblemId switch
+        return RewardFor(ProblemId);
+    }
+
+    internal static WesternPracticeReward RewardFor(string problemId)
+    {
+        return problemId switch
         {
             "BEING_AND_CHANGE" or "HISTORY_AND_POWER" => new(Energy: 1),
             "KNOWLEDGE_AND_DOUBT" => new(Draw: 1),

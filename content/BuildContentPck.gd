@@ -39,6 +39,20 @@ func _initialize() -> void:
 			return
 
 	var texture_paths: Array[String] = [
+		"res://STS2Philosophers/images/heraclitus_lyre.svg",
+		"res://STS2Philosophers/images/heraclitus_lyre_outline.svg",
+		"res://STS2Philosophers/images/socrates_question_cup.svg",
+		"res://STS2Philosophers/images/socrates_question_cup_outline.svg",
+		"res://STS2Philosophers/images/socrates_balance_weight.svg",
+		"res://STS2Philosophers/images/socrates_balance_weight_outline.svg",
+		"res://STS2Philosophers/images/plato_civic_seal.svg",
+		"res://STS2Philosophers/images/plato_civic_seal_outline.svg",
+		"res://STS2Philosophers/images/descartes_thinking_lens.svg",
+		"res://STS2Philosophers/images/descartes_thinking_lens_outline.svg",
+		"res://STS2Philosophers/images/aristotle_category_tablet.svg",
+		"res://STS2Philosophers/images/aristotle_category_tablet_outline.svg",
+		"res://STS2Philosophers/images/rousseau_uncarved_stone.svg",
+		"res://STS2Philosophers/images/rousseau_uncarved_stone_outline.svg",
 		"res://images/events/philosophers_gaze.png",
 		"res://STS2Philosophers/images/kongzi_muduo.png",
 		"res://STS2Philosophers/images/kongzi_muduo_outline.png",
