@@ -6,11 +6,13 @@ internal sealed class PhilosophyRunState
     public List<ThoughtImprint> ThoughtImprints { get; set; } = [];
     public Dictionary<int, ActBehaviorState> ActBehaviorStates { get; set; } = [];
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
+    public WesternJourneyState? WesternJourney { get; set; }
 
     public bool HasData => CurrentDoctrine is not null
         || ThoughtImprints.Count > 0
         || ActBehaviorStates.Count > 0
-        || GeneratedCandidates.Count > 0;
+        || GeneratedCandidates.Count > 0
+        || WesternJourney is not null;
 
     public ActBehaviorState GetOrCreateActBehaviorState(int actIndex)
     {
@@ -62,6 +64,7 @@ internal sealed class PhilosophyRunState
         ThoughtImprints ??= [];
         ActBehaviorStates ??= [];
         GeneratedCandidates ??= [];
+        WesternJourney?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

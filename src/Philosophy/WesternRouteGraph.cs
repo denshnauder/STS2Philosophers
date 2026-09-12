@@ -39,6 +39,18 @@ internal sealed class WesternJourneyState
     public HashSet<string> CompletedEdgeIds { get; set; } = new(StringComparer.Ordinal);
     public HashSet<int> ResolvedQuestionActs { get; set; } = [];
     public Dictionary<string, List<string>> CandidateWindows { get; set; } = new(StringComparer.Ordinal);
+    public HashSet<int> DeclinedFixedActs { get; set; } = [];
+    public bool RetainedEnding { get; set; }
+
+    internal void NormalizeAfterLoad()
+    {
+        CurrentNodeId ??= string.Empty;
+        SeenThinkerIds ??= new(StringComparer.Ordinal);
+        CompletedEdgeIds ??= new(StringComparer.Ordinal);
+        ResolvedQuestionActs ??= [];
+        CandidateWindows ??= new(StringComparer.Ordinal);
+        DeclinedFixedActs ??= [];
+    }
 }
 
 internal sealed class WesternRouteGraph
@@ -104,19 +116,41 @@ internal sealed class WesternRouteGraph
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;
         state.CompletedEdgeIds.Add(edgeId);
         state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
-        if (edge.Slot == "Question") state.ResolvedQuestionActs.Add(edge.Act);
-        else state.LastFixedAct = edge.Act;
+        if (edge.Slot == "Question") state.ResolvedQuestionActs.Add(state.LastFixedAct);
+        else state.LastFixedAct++;
         if (edge.Outcome is "Adopt" or "Switch") state.CurrentNodeId = edge.ToNodeId;
         return true;
     }
 
     public bool IsComplete(WesternJourneyState state) => state.LastFixedAct == 3
-        && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node) && node.Terminal;
+        && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node) && (node.Terminal || state.RetainedEnding);
+
+    public bool TryDecline(WesternJourneyState state, string slot, int expectedAct)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3 || state.RetainedEnding) return false;
+        if (slot == "Question") return expectedAct == state.LastFixedAct && state.ResolvedQuestionActs.Add(state.LastFixedAct);
+        if (slot != "Fixed" || state.LastFixedAct >= 3 || expectedAct != state.LastFixedAct + 1) return false;
+        state.LastFixedAct++;
+        state.DeclinedFixedActs.Add(state.LastFixedAct);
+        return true;
+    }
+
+    public bool TryRetainEnding(WesternJourneyState state)
+    {
+        if (state.LastFixedAct != 3 || !_nodes.ContainsKey(state.CurrentNodeId) || IsComplete(state)) return false;
+        state.RetainedEnding = true;
+        return true;
+    }
+
+    private static string WindowKey(WesternJourneyState state, string slot) =>
+        $"{state.LastFixedAct}:{slot}:{state.CurrentNodeId}:{string.Join(',', state.CompletedEdgeIds.Order(StringComparer.Ordinal))}:{string.Join(',', state.ResolvedQuestionActs.Order())}:{state.RetainedEnding}";
 
     public IReadOnlyList<string> OfferCandidates(WesternJourneyState state, string slot, ulong randomValue)
     {
-        string key = $"{state.LastFixedAct}:{slot}:{state.CurrentNodeId}:{string.Join(',', state.CompletedEdgeIds.Order(StringComparer.Ordinal))}";
-        if (state.CandidateWindows.TryGetValue(key, out List<string>? saved)) return saved.AsReadOnly();
+        string key = WindowKey(state, slot);
+        if (state.CandidateWindows.TryGetValue(key, out List<string>? saved) && saved is not null
+            && saved.Count <= 3 && saved.Distinct(StringComparer.Ordinal).Count() == saved.Count
+            && saved.All(id => _edges.TryGetValue(id, out WesternGraphEdge? edge) && IsEligible(state, edge, slot))) return saved.AsReadOnly();
         List<WesternGraphEdge> choices = GetEligibleEdges(state, slot)
             .Where(edge => CanFinishAfter(state, edge.EdgeId))
             .GroupBy(edge => _nodes[edge.ToNodeId].ThinkerId, StringComparer.Ordinal)
@@ -146,9 +180,9 @@ internal sealed class WesternRouteGraph
 
     public bool TryAcceptOffered(WesternJourneyState state, string slot, string edgeId)
     {
-        string key = $"{state.LastFixedAct}:{slot}:{state.CurrentNodeId}:{string.Join(',', state.CompletedEdgeIds.Order(StringComparer.Ordinal))}";
+        string key = WindowKey(state, slot);
         return state.CandidateWindows.TryGetValue(key, out List<string>? offered)
-            && offered.Contains(edgeId, StringComparer.Ordinal)
+            && offered is not null && offered.Contains(edgeId, StringComparer.Ordinal)
             && _edges.TryGetValue(edgeId, out WesternGraphEdge? edge) && edge.Slot == slot
             && TryApply(state, edgeId);
     }
@@ -156,31 +190,40 @@ internal sealed class WesternRouteGraph
     public bool CanFinish(WesternJourneyState state)
     {
         if (IsComplete(state)) return true;
+        if (state.LastFixedAct == 3 && _nodes.ContainsKey(state.CurrentNodeId)) return true; // Explicit no-new-doctrine conclusion remains available.
         // Each branch consumes a fixed slot or the one question slot for that act; depth is bounded by three acts.
-        return GetEligibleEdges(state, "Fixed").Concat(GetEligibleEdges(state, "Question"))
-            .Any(edge => CanFinishAfter(state, edge.EdgeId));
+        if (GetEligibleEdges(state, "Fixed").Concat(GetEligibleEdges(state, "Question"))
+            .Any(edge => CanFinishAfter(state, edge.EdgeId))) return true;
+        WesternJourneyState declined = CopyState(state);
+        return TryDecline(declined, "Fixed", state.LastFixedAct + 1) && CanFinish(declined);
     }
 
     private bool CanFinishAfter(WesternJourneyState state, string edgeId)
     {
-        WesternJourneyState copy = new()
+        WesternJourneyState copy = CopyState(state);
+        return TryApply(copy, edgeId) && CanFinish(copy);
+    }
+
+    private static WesternJourneyState CopyState(WesternJourneyState state) => new()
         {
             CurrentNodeId = state.CurrentNodeId,
             LastFixedAct = state.LastFixedAct,
             SeenThinkerIds = new(state.SeenThinkerIds, StringComparer.Ordinal),
             CompletedEdgeIds = new(state.CompletedEdgeIds, StringComparer.Ordinal),
             ResolvedQuestionActs = new(state.ResolvedQuestionActs),
+            DeclinedFixedActs = new(state.DeclinedFixedActs),
+            RetainedEnding = state.RetainedEnding,
         };
-        return TryApply(copy, edgeId) && CanFinish(copy);
-    }
 
-    private bool IsEligible(WesternJourneyState state, WesternGraphEdge edge, string slot) => edge.Enabled
+    private bool IsEligible(WesternJourneyState state, WesternGraphEdge edge, string slot) => edge.Enabled && !state.RetainedEnding
         && edge.Slot == slot && edge.FromNodeId == state.CurrentNodeId
-        && edge.Act == (slot == "Fixed" ? state.LastFixedAct + 1 : state.LastFixedAct)
+        && state.LastFixedAct is >= 1 and <= 3
+        && (slot != "Fixed" || state.LastFixedAct < 3)
+        && edge.Act <= (slot == "Fixed" ? state.LastFixedAct + 1 : state.LastFixedAct)
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
         && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
-        && (slot != "Question" || !state.ResolvedQuestionActs.Contains(edge.Act))
+        && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
         && (slot != "Fixed" || edge.Confidence != "Low");
 
     private void Validate()
