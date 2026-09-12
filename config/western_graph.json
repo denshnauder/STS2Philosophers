@@ -1,0 +1,1095 @@
+{
+  "schema_version": 1,
+  "scope": "Three-act design graph from local reviewed sample sequences. Game mechanics are not enabled by this file.",
+  "nodes": [
+    {
+      "node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "thinker_id": "HERACLITUS",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "赫拉克利特",
+      "terminal": false
+    },
+    {
+      "node_id": "PARMENIDES__BEING_AND_CHANGE__CORE",
+      "thinker_id": "PARMENIDES",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "巴门尼德",
+      "terminal": false
+    },
+    {
+      "node_id": "ARISTOTLE__BEING_AND_CHANGE__CORE",
+      "thinker_id": "ARISTOTLE",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "亚里士多德",
+      "terminal": false
+    },
+    {
+      "node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE",
+      "thinker_id": "GEORG_WILHELM_FRIEDRICH_HEGEL",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "黑格尔",
+      "terminal": true
+    },
+    {
+      "node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
+      "thinker_id": "GILLES_DELEUZE",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "德勒兹",
+      "terminal": true
+    },
+    {
+      "node_id": "DEMOCRITUS__BEING_AND_CHANGE__CORE",
+      "thinker_id": "DEMOCRITUS",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "德谟克利特",
+      "terminal": false
+    },
+    {
+      "node_id": "EMPEDOCLES__BEING_AND_CHANGE__CORE",
+      "thinker_id": "EMPEDOCLES",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "恩培多克勒",
+      "terminal": false
+    },
+    {
+      "node_id": "EPICURUS__BEING_AND_CHANGE__CORE",
+      "thinker_id": "EPICURUS",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "伊壁鸠鲁",
+      "terminal": true
+    },
+    {
+      "node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "SOCRATES",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "苏格拉底",
+      "terminal": false
+    },
+    {
+      "node_id": "PROTAGORAS__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "PROTAGORAS",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "普罗泰戈拉",
+      "terminal": false
+    },
+    {
+      "node_id": "PLATO__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "PLATO",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "柏拉图",
+      "terminal": false
+    },
+    {
+      "node_id": "DIOGENES_OF_SINOPE__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "DIOGENES_OF_SINOPE",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "第欧根尼",
+      "terminal": false
+    },
+    {
+      "node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "ZENO_OF_CITIUM",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "芝诺",
+      "terminal": true
+    },
+    {
+      "node_id": "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "SOCRATES",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "苏格拉底",
+      "terminal": false
+    },
+    {
+      "node_id": "SEXTUS_EMPIRICUS__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "SEXTUS_EMPIRICUS",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "塞克斯都恩披里柯",
+      "terminal": false
+    },
+    {
+      "node_id": "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "DESCARTES",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "笛卡尔",
+      "terminal": false
+    },
+    {
+      "node_id": "DAVID_HUME__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "DAVID_HUME",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "休谟",
+      "terminal": false
+    },
+    {
+      "node_id": "IMMANUEL_KANT__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "IMMANUEL_KANT",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "康德",
+      "terminal": true
+    },
+    {
+      "node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "PLATO",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "柏拉图",
+      "terminal": false
+    },
+    {
+      "node_id": "ARISTOTLE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "ARISTOTLE",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "亚里士多德",
+      "terminal": false
+    },
+    {
+      "node_id": "NICCOLO_MACHIAVELLI__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "NICCOLO_MACHIAVELLI",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "马基雅维利",
+      "terminal": false
+    },
+    {
+      "node_id": "THOMAS_HOBBES__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "THOMAS_HOBBES",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "霍布斯",
+      "terminal": true
+    },
+    {
+      "node_id": "ZENO_OF_CITIUM__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "ZENO_OF_CITIUM",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "芝诺",
+      "terminal": false
+    },
+    {
+      "node_id": "AUGUSTINE_OF_HIPPO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "AUGUSTINE_OF_HIPPO",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "奥古斯丁",
+      "terminal": false
+    },
+    {
+      "node_id": "ROUSSEAU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "ROUSSEAU",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "卢梭",
+      "terminal": false
+    },
+    {
+      "node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "IMMANUEL_KANT",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "康德",
+      "terminal": true
+    },
+    {
+      "node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "thinker_id": "DESCARTES",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "笛卡尔",
+      "terminal": false
+    },
+    {
+      "node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "thinker_id": "BARUCH_SPINOZA",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "斯宾诺莎",
+      "terminal": false
+    },
+    {
+      "node_id": "GOTTFRIED_WILHELM_LEIBNIZ__BEING_AND_CHANGE__CORE",
+      "thinker_id": "GOTTFRIED_WILHELM_LEIBNIZ",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "莱布尼茨",
+      "terminal": false
+    },
+    {
+      "node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "thinker_id": "JOHN_LOCKE",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "洛克",
+      "terminal": false
+    },
+    {
+      "node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+      "thinker_id": "DAVID_HUME",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "休谟",
+      "terminal": false
+    },
+    {
+      "node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+      "thinker_id": "IMMANUEL_KANT",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "康德",
+      "terminal": true
+    },
+    {
+      "node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "ARISTOTLE",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "亚里士多德",
+      "terminal": false
+    },
+    {
+      "node_id": "THOMAS_AQUINAS__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "THOMAS_AQUINAS",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "阿奎那",
+      "terminal": false
+    },
+    {
+      "node_id": "WILLIAM_OF_OCKHAM__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "WILLIAM_OF_OCKHAM",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "奥卡姆",
+      "terminal": false
+    },
+    {
+      "node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "GOTTLOB_FREGE",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "弗雷格",
+      "terminal": true
+    },
+    {
+      "node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "FERDINAND_DE_SAUSSURE",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "索绪尔",
+      "terminal": false
+    },
+    {
+      "node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "CLAUDE_LEVI_STRAUSS",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "列维斯特劳斯",
+      "terminal": false
+    },
+    {
+      "node_id": "PROTAGORAS__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "PROTAGORAS",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "普罗泰戈拉",
+      "terminal": false
+    },
+    {
+      "node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "JACQUES_DERRIDA",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "德里达",
+      "terminal": true
+    },
+    {
+      "node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "thinker_id": "ROUSSEAU",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "卢梭",
+      "terminal": false
+    },
+    {
+      "node_id": "JOHANN_GOTTLIEB_FICHTE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "JOHANN_GOTTLIEB_FICHTE",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "费希特",
+      "terminal": false
+    },
+    {
+      "node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
+      "thinker_id": "GEORG_WILHELM_FRIEDRICH_HEGEL",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "黑格尔",
+      "terminal": true
+    },
+    {
+      "node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "thinker_id": "KARL_MARX",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "EARLY",
+      "display_name": "马克思",
+      "terminal": true
+    },
+    {
+      "node_id": "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "MARY_WOLLSTONECRAFT",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "沃斯通克拉夫特",
+      "terminal": false
+    },
+    {
+      "node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "JOHN_STUART_MILL",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "密尔",
+      "terminal": false
+    },
+    {
+      "node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "thinker_id": "SIMONE_DE_BEAUVOIR",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "波伏瓦",
+      "terminal": true
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "WESTERN_EDGE_001",
+      "from_node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "to_node_id": "PARMENIDES__BEING_AND_CHANGE__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Medium",
+      "relation_summary": "转线；同题比较，中；直接影响未建立",
+      "source": "18游戏流程投影.md:291",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_002",
+      "from_node_id": "PARMENIDES__BEING_AND_CHANGE__CORE",
+      "to_node_id": "ARISTOTLE__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "改造；同题转向，中；压缩巴门尼德与柏拉图对变化问题的中介",
+      "source": "18游戏流程投影.md:291",
+      "required_edge_ids": [
+        "WESTERN_EDGE_001"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_003",
+      "from_node_id": "ARISTOTLE__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Medium",
+      "relation_summary": "转线；后世重释，中",
+      "source": "18游戏流程投影.md:291",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_004",
+      "from_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "批判与后世重释，高；反对以同一和否定统摄差异",
+      "source": "18游戏流程投影.md:291",
+      "required_edge_ids": [
+        "WESTERN_EDGE_003"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_005",
+      "from_node_id": "PARMENIDES__BEING_AND_CHANGE__CORE",
+      "to_node_id": "DEMOCRITUS__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "对爱利亚论证压力的回应，高；不是赫拉克利特弟子，与留基伯共同的原子论归属须标注",
+      "source": "18游戏流程投影.md:297",
+      "required_edge_ids": [
+        "WESTERN_EDGE_001"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_006",
+      "from_node_id": "DEMOCRITUS__BEING_AND_CHANGE__CORE",
+      "to_node_id": "EMPEDOCLES__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "High",
+      "relation_summary": "坚持；另一条并行回应，高；体验四根与爱争后保留原子论主线",
+      "source": "18游戏流程投影.md:297",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_007",
+      "from_node_id": "DEMOCRITUS__BEING_AND_CHANGE__CORE",
+      "to_node_id": "EPICURUS__BEING_AND_CHANGE__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与批判，高；具体教学链可能经过瑙西法尼，待核；在原子论中加入偏斜、欲望与反恐惧",
+      "source": "18游戏流程投影.md:297",
+      "required_edge_ids": [
+        "WESTERN_EDGE_006"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_008",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "PROTAGORAS__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "Medium",
+      "relation_summary": "坚持；同层争论，中；德性能否教授及公共成功问题主要经柏拉图竞争性文本重建",
+      "source": "18游戏流程投影.md:305",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_009",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "PLATO__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "直接影响与继承改造，高；把灵魂照料扩展为德性、教育与城邦秩序",
+      "source": "18游戏流程投影.md:305",
+      "required_edge_ids": [
+        "WESTERN_EDGE_008"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_010",
+      "from_node_id": "PLATO__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "DIOGENES_OF_SINOPE__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Medium",
+      "relation_summary": "转线；后世征用苏格拉底遗产，中；以公开生活实践挑战体系化，但犬儒见证多为后世轶事",
+      "source": "18游戏流程投影.md:305",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_011",
+      "from_node_id": "DIOGENES_OF_SINOPE__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与重构，高；游戏压缩第欧根尼传统、克拉特斯到季蒂昂的芝诺的教学链",
+      "source": "18游戏流程投影.md:305",
+      "required_edge_ids": [
+        "WESTERN_EDGE_010"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_012",
+      "from_node_id": "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "SEXTUS_EMPIRICUS__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Medium",
+      "relation_summary": "转线；后世征用与同题转向，中；保存皮浪主义论证，但不能替皮浪发言",
+      "source": "18游戏流程投影.md:311",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_013",
+      "from_node_id": "SEXTUS_EMPIRICUS__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "后世重释与方法转向，中；强制显示塞克斯都文本再发现、蒙田及宗教争论中介，古代悬置和方法怀疑目的不同",
+      "source": "18游戏流程投影.md:311",
+      "required_edge_ids": [
+        "WESTERN_EDGE_012"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_014",
+      "from_node_id": "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "DAVID_HUME__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Revise",
+      "confidence": "Medium",
+      "relation_summary": "改造；批判与同题转向，中；压缩洛克、贝克莱",
+      "source": "18游戏流程投影.md:311",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_015",
+      "from_node_id": "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "IMMANUEL_KANT__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "明确回应，高",
+      "source": "18游戏流程投影.md:311",
+      "required_edge_ids": [
+        "WESTERN_EDGE_014"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_016",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "ARISTOTLE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "直接师承兼内部批判，高；由灵魂与理想城邦转到政体、实践智慧和具体共同体",
+      "source": "18游戏流程投影.md:319",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_017",
+      "from_node_id": "ARISTOTLE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "NICCOLO_MACHIAVELLI__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "Medium",
+      "relation_summary": "坚持；后世同题转向，中；经罗马共和传统与文艺复兴政治语境检验制度效果，但不伪装成亚里士多德后继",
+      "source": "18游戏流程投影.md:319",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_018",
+      "from_node_id": "ARISTOTLE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "THOMAS_HOBBES__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "明确批判亚里士多德政治自然性并重建授权主权，高",
+      "source": "18游戏流程投影.md:319",
+      "required_edge_ids": [
+        "WESTERN_EDGE_017"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_019",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "ZENO_OF_CITIUM__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "Medium",
+      "relation_summary": "坚持；后世同题转向，中；经苏格拉底与犬儒资源检验判断与自我治理，但主线仍从柏拉图主义继续",
+      "source": "18游戏流程投影.md:325",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_020",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "AUGUSTINE_OF_HIPPO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "继承兼神学改写，中；只能写“新柏拉图文本传统”，其所读柏拉图主义者之书的具体作者和拉丁链待核",
+      "source": "18游戏流程投影.md:325",
+      "required_edge_ids": [
+        "WESTERN_EDGE_019"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_021",
+      "from_node_id": "AUGUSTINE_OF_HIPPO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "ROUSSEAU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Low",
+      "relation_summary": "转线；后世同题重开，低至中；把自由重新放入共同立法，不声称直接继承奥古斯丁",
+      "source": "18游戏流程投影.md:325",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_022",
+      "from_node_id": "ROUSSEAU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "卢梭的明确影响与规范重构，高",
+      "source": "18游戏流程投影.md:325",
+      "required_edge_ids": [
+        "WESTERN_EDGE_021"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_023",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "直接批判与重构，高；由独立心灵转向同一实体的属性表达，并在此处跨入存在与变化",
+      "source": "18游戏流程投影.md:333",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_024",
+      "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GOTTFRIED_WILHELM_LEIBNIZ__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "High",
+      "relation_summary": "坚持；同层争论与替代重构，高；比较多单子方案后保留斯宾诺莎主线",
+      "source": "18游戏流程投影.md:333",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_025",
+      "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "后世重释与批判，中；经康德和德国观念论问题转换",
+      "source": "18游戏流程投影.md:333",
+      "required_edge_ids": [
+        "WESTERN_EDGE_024"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_026",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "转线；同题转向与批判，高；以意识连续讨论人格同一",
+      "source": "18游戏流程投影.md:339",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_027",
+      "from_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "to_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与批判，高；把持续自我审查为知觉束，压缩贝克莱等中介",
+      "source": "18游戏流程投影.md:339",
+      "required_edge_ids": [
+        "WESTERN_EDGE_026"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_028",
+      "from_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+      "to_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "明确回应，高；统觉是经验统一条件而非经验中的灵魂实体",
+      "source": "18游戏流程投影.md:339",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_029",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "THOMAS_AQUINAS__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与重构，高；经翻译注释网络，把范畴、类比与共相问题带入经院语境",
+      "source": "18游戏流程投影.md:347",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_030",
+      "from_node_id": "THOMAS_AQUINAS__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "WILLIAM_OF_OCKHAM__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Revise",
+      "confidence": "Medium",
+      "relation_summary": "改造；内部批判与同题转向，中；完成后才公开“中世纪逻辑到现代逻辑”的压缩中介",
+      "source": "18游戏流程投影.md:347",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_031",
+      "from_node_id": "THOMAS_AQUINAS__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "条件性同题转向，中；仅因奥卡姆问号已经公开多位缺失中介才可进入，不声称直接继承",
+      "source": "18游戏流程投影.md:347",
+      "required_edge_ids": [
+        "WESTERN_EDGE_030"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_032",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Low",
+      "relation_summary": "转线；同题转向，低至中；从范畴和词物关系转到符号差异系统，不主张直接继承",
+      "source": "18游戏流程投影.md:353",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_033",
+      "from_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与跨域转用，高；经雅各布森、莫斯和涂尔干等中介",
+      "source": "18游戏流程投影.md:353",
+      "required_edge_ids": [
+        "WESTERN_EDGE_032"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_034",
+      "from_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "PROTAGORAS__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Keep",
+      "confidence": "Medium",
+      "relation_summary": "坚持；同题比较，中；检验判断尺度与语境，但不改写成结构主义先驱",
+      "source": "18游戏流程投影.md:353",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_035",
+      "from_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "对索绪尔和列维斯特劳斯的明确重读与批判，高",
+      "source": "18游戏流程投影.md:353",
+      "required_edge_ids": [
+        "WESTERN_EDGE_034"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_036",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "直接影响与规范重构，高；由不平等历史和共同立法问题跨入自由与制度",
+      "source": "18游戏流程投影.md:361",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_037",
+      "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "JOHANN_GOTTLIEB_FICHTE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Revise",
+      "confidence": "High",
+      "relation_summary": "改造；内部批判与发展，高",
+      "source": "18游戏流程投影.md:361",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_038",
+      "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与批判，高；重新接回历史如何实现自由",
+      "source": "18游戏流程投影.md:361",
+      "required_edge_ids": [
+        "WESTERN_EDGE_037"
+      ],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_039",
+      "from_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
+      "to_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "转线；内部批判与实践转向，高",
+      "source": "18游戏流程投影.md:361",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_040",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "明确内部批判，高；从不平等的历史形成追问所谓普遍自由排除了谁，并跨入自由与制度",
+      "source": "18游戏流程投影.md:367",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_041",
+      "from_node_id": "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Revise",
+      "confidence": "Medium",
+      "relation_summary": "改造；同题继承与制度修正，中；压缩女性权利运动与哈丽特泰勒等中介",
+      "source": "18游戏流程投影.md:367",
+      "required_edge_ids": [],
+      "enabled": true
+    },
+    {
+      "edge_id": "WESTERN_EDGE_042",
+      "from_node_id": "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "后世同题转向，中；转入主体与他者，不是直接单线继承",
+      "source": "18游戏流程投影.md:367",
+      "required_edge_ids": [
+        "WESTERN_EDGE_041"
+      ],
+      "enabled": true
+    }
+  ],
+  "samples": [
+    {
+      "sample_id": "SAMPLE_01",
+      "entry_node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_001",
+        "WESTERN_EDGE_002",
+        "WESTERN_EDGE_003",
+        "WESTERN_EDGE_004"
+      ],
+      "terminal_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_02",
+      "entry_node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_001",
+        "WESTERN_EDGE_005",
+        "WESTERN_EDGE_006",
+        "WESTERN_EDGE_007"
+      ],
+      "terminal_node_id": "EPICURUS__BEING_AND_CHANGE__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_03",
+      "entry_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_008",
+        "WESTERN_EDGE_009",
+        "WESTERN_EDGE_010",
+        "WESTERN_EDGE_011"
+      ],
+      "terminal_node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_04",
+      "entry_node_id": "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_012",
+        "WESTERN_EDGE_013",
+        "WESTERN_EDGE_014",
+        "WESTERN_EDGE_015"
+      ],
+      "terminal_node_id": "IMMANUEL_KANT__KNOWLEDGE_AND_DOUBT__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_05",
+      "entry_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_016",
+        "WESTERN_EDGE_017",
+        "WESTERN_EDGE_018"
+      ],
+      "terminal_node_id": "THOMAS_HOBBES__FREEDOM_AND_INSTITUTIONS__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_06",
+      "entry_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_019",
+        "WESTERN_EDGE_020",
+        "WESTERN_EDGE_021",
+        "WESTERN_EDGE_022"
+      ],
+      "terminal_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_07",
+      "entry_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_023",
+        "WESTERN_EDGE_024",
+        "WESTERN_EDGE_025"
+      ],
+      "terminal_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_08",
+      "entry_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_026",
+        "WESTERN_EDGE_027",
+        "WESTERN_EDGE_028"
+      ],
+      "terminal_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_09",
+      "entry_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_029",
+        "WESTERN_EDGE_030",
+        "WESTERN_EDGE_031"
+      ],
+      "terminal_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_10",
+      "entry_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_032",
+        "WESTERN_EDGE_033",
+        "WESTERN_EDGE_034",
+        "WESTERN_EDGE_035"
+      ],
+      "terminal_node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE"
+    },
+    {
+      "sample_id": "SAMPLE_11",
+      "entry_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_036",
+        "WESTERN_EDGE_037",
+        "WESTERN_EDGE_038",
+        "WESTERN_EDGE_039"
+      ],
+      "terminal_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY"
+    },
+    {
+      "sample_id": "SAMPLE_12",
+      "entry_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_040",
+        "WESTERN_EDGE_041",
+        "WESTERN_EDGE_042"
+      ],
+      "terminal_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE"
+    }
+  ]
+}

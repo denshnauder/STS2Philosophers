@@ -156,3 +156,7 @@ config/western_routes.json与WesternRouteCatalog登记七问题六入口；Weste
 ## 西哲研究基线导入
 
 tools/ImportWesternResearch.ps1 -ResearchDirectory <西方哲学史笔记目录> 从14人物索引和18游戏流程投影导入config/western_research.json。固定核对89人和12样例，重复运行输出一致；原文哈希与出处保留。该文件不嵌入游戏，研究用途不直接决定可玩资格。WesternResearchChecks随纯逻辑入口检查覆盖与边界。
+
+## 西哲三幕图
+
+western_graph.json嵌入47节点42边和12条已可遍历的样例。WesternRouteGraph按当前节点、幕位、问号前置和一局人物去重过滤，最多展示三人并保存候选窗口；完整路径前瞻排除无法抵达结局的选项。WesternJourneyState目前是独立逻辑状态，尚未接入PhilosophyRunState和游戏UI。关系说明来自研究样例，不能将条件性同题关系改称历史师承。

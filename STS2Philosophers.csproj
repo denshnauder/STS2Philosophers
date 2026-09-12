@@ -22,6 +22,7 @@
 
     <EmbeddedResource Include="config\thinker_proposals.json" />
     <EmbeddedResource Include="config\western_routes.json" />
+    <EmbeddedResource Include="config\western_graph.json" />
 
     <Reference Include="sts2">
       <HintPath>$(GameManagedDirectory)\sts2.dll</HintPath>
