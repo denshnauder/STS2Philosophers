@@ -6,6 +6,7 @@ WesternRouteChecks.Run();
 WesternResearchChecks.Run();
 WesternGraphChecks.Run();
 WesternPracticeChecks.Run();
+WesternEntryChecks.Run();
 
 static void Check(bool condition, string message)
 {

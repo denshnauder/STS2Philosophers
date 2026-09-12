@@ -9,7 +9,7 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
-public sealed class PhilosophersGaze : EventModel
+public sealed partial class PhilosophersGaze : EventModel
 {
     private const string LocalizationPrefix = "PHILOSOPHERS_GAZE.pages";
     private readonly PhilosophersGazeResolutionGate _resolutionGate = new();
@@ -52,6 +52,7 @@ public sealed class PhilosophersGaze : EventModel
         }
 
         options.Add(Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline));
+        options.Insert(0, WesternOption(ShowWesternInvitations, "WESTERN_ENTRY"));
         return options;
     }
 
@@ -609,7 +610,7 @@ public sealed class PhilosophersGaze : EventModel
 
     private bool IsActOne()
     {
-        return Owner is { } owner && GetCurrentActIndex(owner) == 0;
+        return !IsFinished && Owner is { } owner && GetCurrentActIndex(owner) == 0;
     }
 
     private bool CanGrantActOneRelic(string thinkerId)
@@ -709,7 +710,8 @@ public sealed class PhilosophersGaze : EventModel
             owner?.GetRelicById(ModelDb.GetId<QinGuliShouChengXie>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<ZhuangziDaHu>()) is not null,
             owner?.GetRelicById(ModelDb.GetId<YangzhuQuanShengBi>()) is not null,
-            owner?.GetRelicById(ModelDb.GetId<HuishiLiWuChou>()) is not null);
+            owner?.GetRelicById(ModelDb.GetId<HuishiLiWuChou>()) is not null,
+            owner?.Relics.Any(relic => relic is WesternPracticeRelic) == true);
     }
 
     internal static bool HasContinuationBeenRecorded(Player? owner)

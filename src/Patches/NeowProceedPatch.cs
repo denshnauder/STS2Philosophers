@@ -85,6 +85,7 @@ internal static class NeowProceedPatch
     {
         neowRoom.MarkPreFinished();
         PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
+        WesternActOneCandidatePolicy.GetOrGenerate(PhilosophyRunStateService.GetOrCreate(runState), runState.Rng.Seed);
         if (runManager.ShouldSave)
         {
             await SaveManager.Instance.SaveRun(null);

@@ -12,13 +12,15 @@ internal readonly record struct PhilosophersGazeRelicOwnership(
     bool HasQinGuliShouChengXie = false,
     bool HasZhuangziDaHu = false,
     bool HasYangzhuQuanShengBi = false,
-    bool HasHuishiLiWuChou = false);
+    bool HasHuishiLiWuChou = false,
+    bool HasWesternPractice = false);
 
 internal static class PhilosophersGazeRelicGrantPolicy
 {
     public static bool CanGrant(PhilosophersGazeRelicOwnership ownership)
     {
-        return !ownership.HasKongziMuduo
+        return !ownership.HasWesternPractice
+            && !ownership.HasKongziMuduo
             && !ownership.HasKongziQingYuPei
             && !ownership.HasMengziXiongZhang
             && !ownership.HasXunziShengMo
