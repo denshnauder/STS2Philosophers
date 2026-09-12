@@ -72,7 +72,7 @@ internal static class WesternGraphChecks
             && graph.GetEligibleEdges(normalized.WesternJourney, "Fixed").Count == 0, "Missing collections must normalize without fabricating a valid journey.");
 
         string json = File.ReadAllText("config/western_graph.json");
-        foreach (string defect in new[] { "low", "missing_target", "cycle_requirement", "fourth_act" })
+        foreach (string defect in new[] { "low", "missing_target", "cycle_requirement", "fourth_act", "wrong_problem", "missing_context", "missing_mediator", "invented_behavior", "evidence_upgrade" })
         {
             JsonObject root = JsonNode.Parse(json)!.AsObject();
             JsonObject edge = root["edges"]!.AsArray().Select(node => node!.AsObject()).First(node => node["slot"]!.GetValue<string>() == "Fixed");
@@ -82,12 +82,26 @@ internal static class WesternGraphChecks
                 case "missing_target": edge["to_node_id"] = "ABSENT"; break;
                 case "cycle_requirement": edge["required_edge_ids"] = new JsonArray(edge["edge_id"]!.GetValue<string>()); break;
                 case "fourth_act": edge["act"] = 4; break;
+                case "wrong_problem": edge["context"]!["to_problem_id"] = "SELF_AND_OTHER"; break;
+                case "missing_context": edge.Remove("context"); break;
+                case "missing_mediator": edge["context"]!["compressed_mediators"] = ""; break;
+                case "invented_behavior": edge["context"]!["behavior_requirement"] = "UNIMPLEMENTED_REQUIREMENT"; break;
+                case "evidence_upgrade": edge["context"]!["evidence_status"] = "VerifiedHistoricalFact"; break;
             }
             bool rejected = false;
             try { WesternRouteGraph.ParseJson(root.ToJsonString()); }
             catch (InvalidDataException) { rejected = true; }
             Check(rejected, $"Invalid graph mutation must be rejected: {defect}");
         }
+        Check(graph.GetEdge("WESTERN_EDGE_013").Context.CompressedMediators.Contains("蒙田")
+            && graph.GetEdge("WESTERN_EDGE_031").Context.CompressedMediators.Contains("布尔"),
+            "Distant comparison paths must preserve their explicit transmission and logic intermediaries.");
+        JsonObject promotion = JsonNode.Parse(json)!.AsObject();
+        promotion["edges"]![0]!["context"]!["relation_types"] = new JsonArray("DirectInfluence");
+        bool refusedPromotion = false;
+        try { WesternRouteGraph.ParseJson(promotion.ToJsonString()); }
+        catch (InvalidDataException) { refusedPromotion = true; }
+        Check(refusedPromotion, "Heraclitus and Parmenides cannot be promoted to a claimed direct influence.");
         Console.WriteLine("Western graph checks passed: twelve three-act paths, prerequisites, question outcomes, repeat gates and save/restore.");
     }
 }

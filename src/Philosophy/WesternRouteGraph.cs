@@ -23,7 +23,19 @@ internal sealed record WesternGraphEdge(
     [property: JsonPropertyName("relation_summary")] string RelationSummary,
     [property: JsonPropertyName("source")] string Source,
     [property: JsonPropertyName("required_edge_ids")] string[] RequiredEdgeIds,
-    [property: JsonPropertyName("enabled")] bool Enabled);
+    [property: JsonPropertyName("enabled")] bool Enabled,
+    [property: JsonPropertyName("context")] WesternEdgeContext Context);
+
+internal sealed record WesternEdgeContext(
+    [property: JsonPropertyName("from_problem_id")] string FromProblemId,
+    [property: JsonPropertyName("to_problem_id")] string ToProblemId,
+    [property: JsonPropertyName("relation_types")] string[] RelationTypes,
+    [property: JsonPropertyName("compressed_mediators")] string CompressedMediators,
+    [property: JsonPropertyName("behavior_requirement")] string BehaviorRequirement,
+    [property: JsonPropertyName("ethical_boundary")] string EthicalBoundary,
+    [property: JsonPropertyName("interpretation_boundary")] string InterpretationBoundary,
+    [property: JsonPropertyName("evidence_status")] string EvidenceStatus,
+    [property: JsonPropertyName("evidence_sources")] string[] EvidenceSources);
 
 internal sealed record WesternGraphSample(
     [property: JsonPropertyName("sample_id")] string SampleId,
@@ -84,7 +96,7 @@ internal sealed class WesternRouteGraph
     {
         Payload data = JsonSerializer.Deserialize<Payload>(json)
             ?? throw new InvalidDataException("Western graph is empty.");
-        if (data.SchemaVersion != 1 || data.Nodes is null || data.Edges is null || data.Samples is null
+        if (data.SchemaVersion != 2 || data.Nodes is null || data.Edges is null || data.Samples is null
             || data.Nodes.Any(node => node is null) || data.Edges.Any(edge => edge is null) || data.Samples.Any(sample => sample is null))
             throw new InvalidDataException("Invalid western graph structure.");
         WesternRouteGraph graph;
@@ -243,6 +255,7 @@ internal sealed class WesternRouteGraph
                 || (edge.Slot == "Fixed" && (edge.Outcome != "Adopt" || edge.Confidence == "Low"))
                 || (edge.Slot == "Question" && edge.Outcome is not ("Keep" or "Revise" or "Switch")))
                 throw new InvalidDataException($"Invalid western edge: {edge.EdgeId}");
+            ValidateContext(edge);
         }
         HashSet<string> sampleIds = new(StringComparer.Ordinal);
         foreach (WesternGraphSample sample in Samples)
@@ -257,5 +270,31 @@ internal sealed class WesternRouteGraph
             if (!IsComplete(state) || state.CurrentNodeId != sample.TerminalNodeId)
                 throw new InvalidDataException($"Sample {sample.SampleId} has no legal third-act ending.");
         }
+    }
+
+    private void ValidateContext(WesternGraphEdge edge)
+    {
+        WesternEdgeContext? context = edge.Context;
+        string[] types = ["ParallelComparison", "ProblemShift", "LaterReinterpretation", "TextualCritique",
+            "TraditionResponse", "InheritanceAndRevision", "DirectInfluence"];
+        if (context is null || context.FromProblemId != _nodes[edge.FromNodeId].ProblemId
+            || context.ToProblemId != _nodes[edge.ToNodeId].ProblemId
+            || context.RelationTypes is not { Length: > 0 }
+            || context.RelationTypes.Any(type => !types.Contains(type, StringComparer.Ordinal))
+            || context.RelationTypes.Distinct(StringComparer.Ordinal).Count() != context.RelationTypes.Length
+            || context.CompressedMediators is null
+            || ((edge.RelationSummary.Contains("中介", StringComparison.Ordinal) || edge.RelationSummary.Contains("压缩", StringComparison.Ordinal))
+                && string.IsNullOrWhiteSpace(context.CompressedMediators))
+            || context.BehaviorRequirement != "NoAdditionalGate"
+            || string.IsNullOrWhiteSpace(context.EthicalBoundary) || string.IsNullOrWhiteSpace(context.InterpretationBoundary)
+            || context.EvidenceStatus != "LocalPlanning"
+            || context.EvidenceSources is not { Length: > 0 }
+            || context.EvidenceSources.Any(string.IsNullOrWhiteSpace)
+            || !context.EvidenceSources.Contains(edge.Source, StringComparer.Ordinal))
+            throw new InvalidDataException($"Invalid western edge context: {edge.EdgeId}");
+        // An explicit source caveat must not be silently upgraded to direct influence.
+        if (context.RelationTypes.Contains("DirectInfluence", StringComparer.Ordinal)
+            && new[] { "直接影响未建立", "不声称直接", "不主张直接" }.Any(edge.RelationSummary.Contains))
+            throw new InvalidDataException($"Direct influence contradicts the recorded source: {edge.EdgeId}");
     }
 }
