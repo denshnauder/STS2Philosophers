@@ -12,6 +12,10 @@
 
 ## 西哲纸面试玩
 
+当前西哲图配置为schema3：保留12条来源样例，8条为Executable、4条为SourceOnly；后者保留旧序列与撤回理由，不参与可执行路径校验。5条已撤边继续保留ID和来源，enabled=false禁止新生成及旧候选接受。局内存档格式未改；“可执行样例”只指图状态检查，不代表完整可玩路线。
+
+未完成载体草稿仍在主目录时，本次图修订在独立工作树`S:/01_Workspace/Projects/SlayTheSpire2Verification`验证，输入为186fe2c加本阶段图配置、解析及测试文件，排除6个草稿。该目录`bin/Release/net9.0/verification.md`保存本次部署证据；不要把主目录旧报告当作最新，也不要直接在含草稿的工作区构建部署。
+
 `docs/design/socrates_commitment.html`是苏格拉底候选设计的交互片段，设计真源为G盘`02想法与机制/14苏格拉底有限承诺.md`。只推演虚构单轮输入，奖励仅计数；不是游戏引擎、完整战斗、存档或平衡验收。它不进入PCK，不替换诘问杯。
 
 模型检查：`node tools/design/SocratesCommitmentChecks.cjs`。覆盖12固定样本的123条合法行动前缀，以及冻结、修订、死亡、防重复等边界。

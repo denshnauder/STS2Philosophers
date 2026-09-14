@@ -24,7 +24,8 @@ internal sealed record WesternGraphEdge(
     [property: JsonPropertyName("source")] string Source,
     [property: JsonPropertyName("required_edge_ids")] string[] RequiredEdgeIds,
     [property: JsonPropertyName("enabled")] bool Enabled,
-    [property: JsonPropertyName("context")] WesternEdgeContext Context);
+    [property: JsonPropertyName("context")] WesternEdgeContext Context,
+    [property: JsonPropertyName("retirement_reason")] string? RetirementReason = null);
 
 internal sealed record WesternEdgeContext(
     [property: JsonPropertyName("from_problem_id")] string FromProblemId,
@@ -41,7 +42,9 @@ internal sealed record WesternGraphSample(
     [property: JsonPropertyName("sample_id")] string SampleId,
     [property: JsonPropertyName("entry_node_id")] string EntryNodeId,
     [property: JsonPropertyName("edge_ids")] string[] EdgeIds,
-    [property: JsonPropertyName("terminal_node_id")] string TerminalNodeId);
+    [property: JsonPropertyName("terminal_node_id")] string TerminalNodeId,
+    [property: JsonPropertyName("disposition")] string Disposition,
+    [property: JsonPropertyName("review_note")] string ReviewNote);
 
 internal sealed class WesternJourneyState
 {
@@ -76,6 +79,7 @@ internal sealed class WesternRouteGraph
     private readonly IReadOnlyDictionary<string, WesternGraphNode> _nodes;
     private readonly IReadOnlyDictionary<string, WesternGraphEdge> _edges;
     public IReadOnlyList<WesternGraphSample> Samples { get; }
+    public IEnumerable<WesternGraphSample> ExecutableSamples => Samples.Where(sample => sample.Disposition == "Executable");
     public IEnumerable<WesternGraphNode> Nodes => _nodes.Values;
 
     private WesternRouteGraph(Payload data)
@@ -97,7 +101,7 @@ internal sealed class WesternRouteGraph
     {
         Payload data = JsonSerializer.Deserialize<Payload>(json)
             ?? throw new InvalidDataException("Western graph is empty.");
-        if (data.SchemaVersion != 2 || data.Nodes is null || data.Edges is null || data.Samples is null
+        if (data.SchemaVersion != 3 || data.Nodes is null || data.Edges is null || data.Samples is null
             || data.Nodes.Any(node => node is null) || data.Edges.Any(edge => edge is null) || data.Samples.Any(sample => sample is null))
             throw new InvalidDataException("Invalid western graph structure.");
         WesternRouteGraph graph;
@@ -252,6 +256,7 @@ internal sealed class WesternRouteGraph
                 || edge.Act is < 1 or > 3 || edge.Slot is not ("Fixed" or "Question")
                 || edge.Confidence is not ("High" or "Medium" or "Low")
                 || string.IsNullOrWhiteSpace(edge.Source) || string.IsNullOrWhiteSpace(edge.RelationSummary)
+                || (edge.Enabled ? !string.IsNullOrEmpty(edge.RetirementReason) : string.IsNullOrWhiteSpace(edge.RetirementReason))
                 || edge.RequiredEdgeIds is null || edge.RequiredEdgeIds.Any(id => !_edges.ContainsKey(id) || id == edge.EdgeId)
                 || (edge.Slot == "Fixed" && (edge.Outcome != "Adopt" || edge.Confidence == "Low"))
                 || (edge.Slot == "Question" && edge.Outcome is not ("Keep" or "Revise" or "Switch")))
@@ -261,11 +266,28 @@ internal sealed class WesternRouteGraph
         HashSet<string> sampleIds = new(StringComparer.Ordinal);
         foreach (WesternGraphSample sample in Samples)
         {
-            if (string.IsNullOrWhiteSpace(sample.SampleId) || !sampleIds.Add(sample.SampleId) || sample.EdgeIds is null)
+            if (string.IsNullOrWhiteSpace(sample.SampleId) || !sampleIds.Add(sample.SampleId) || sample.EdgeIds is null
+                || sample.Disposition is not ("Executable" or "SourceOnly") || sample.ReviewNote is null
+                || (sample.Disposition == "SourceOnly" && string.IsNullOrWhiteSpace(sample.ReviewNote)))
                 throw new InvalidDataException("Invalid sample path.");
             WesternJourneyState state;
             try { state = Start(sample.EntryNodeId); }
             catch (InvalidOperationException exception) { throw new InvalidDataException("Invalid sample entry.", exception); }
+            if (sample.Disposition == "SourceOnly")
+            {
+                // Keep the original projection auditable without granting it execution authority.
+                bool containsRetiredEdge = false;
+                foreach (string id in sample.EdgeIds)
+                {
+                    if (!_edges.TryGetValue(id, out WesternGraphEdge? historical) || historical.FromNodeId != state.CurrentNodeId)
+                        throw new InvalidDataException($"Invalid source sample sequence: {sample.SampleId}");
+                    containsRetiredEdge |= !historical.Enabled;
+                    if (historical.Outcome is "Adopt" or "Switch") state.CurrentNodeId = historical.ToNodeId;
+                }
+                if (!containsRetiredEdge || state.CurrentNodeId != sample.TerminalNodeId)
+                    throw new InvalidDataException($"Source sample must retain its original endpoint and a retired edge: {sample.SampleId}");
+                continue;
+            }
             foreach (string id in sample.EdgeIds)
                 if (!TryApply(state, id)) throw new InvalidDataException($"Sample {sample.SampleId} has an unreachable or repeated edge: {id}");
             if (!IsComplete(state) || state.CurrentNodeId != sample.TerminalNodeId)

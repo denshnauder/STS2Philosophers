@@ -11,8 +11,9 @@ internal static class WesternGraphChecks
             if (!condition) throw new InvalidOperationException(message);
         }
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        Check(graph.Samples.Count == 12, "All twelve sample sequences must be traversable.");
-        foreach (WesternGraphSample sample in graph.Samples)
+        Check(graph.Samples.Count == 12 && graph.ExecutableSamples.Count() == 8,
+            "Preserve twelve source sequences, but execute only the eight not withdrawn by design review.");
+        foreach (WesternGraphSample sample in graph.ExecutableSamples)
         {
             WesternJourneyState state = graph.Start(sample.EntryNodeId);
             Check(graph.CanFinish(state), "Every entry problem must have a complete three-act path.");
@@ -30,7 +31,7 @@ internal static class WesternGraphChecks
             Check(graph.IsComplete(state), "Each sequence must reach a legitimate third-act conclusion after save/restore at every step.");
             Check(graph.GetEligibleEdges(state, "Fixed").Count == 0, "Fourth-act echoes must remain unavailable.");
         }
-        WesternGraphSample first = graph.Samples[0];
+        WesternGraphSample first = graph.ExecutableSamples.First();
         WesternJourneyState unchallenged = graph.Start(first.EntryNodeId);
         Check(!graph.TryApply(unchallenged, first.EdgeIds[1]), "An intervening challenge cannot be erased into a direct succession edge.");
         Check(!graph.TryApply(unchallenged, "NONEXISTENT"), "Unknown edge IDs must not change state.");
@@ -102,6 +103,6 @@ internal static class WesternGraphChecks
         try { WesternRouteGraph.ParseJson(promotion.ToJsonString()); }
         catch (InvalidDataException) { refusedPromotion = true; }
         Check(refusedPromotion, "Heraclitus and Parmenides cannot be promoted to a claimed direct influence.");
-        Console.WriteLine("Western graph checks passed: twelve three-act paths, prerequisites, question outcomes, repeat gates and save/restore.");
+        Console.WriteLine("Western graph checks passed: eight executable paths, twelve preserved source sequences, prerequisites and save/restore.");
     }
 }

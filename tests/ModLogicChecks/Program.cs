@@ -5,6 +5,7 @@ using System.Text.Json;
 WesternRouteChecks.Run();
 WesternResearchChecks.Run();
 WesternGraphChecks.Run();
+WesternGraphRevisionChecks.Run();
 WesternPracticeChecks.Run();
 WesternEntryChecks.Run();
 WesternBeingChecks.Run();

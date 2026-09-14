@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "scope": "Three-act design graph from local reviewed sample sequences. Game mechanics are not enabled by this file.",
   "nodes": [
     {
@@ -423,7 +423,7 @@
       "required_edge_ids": [
         "WESTERN_EDGE_001"
       ],
-      "enabled": true,
+      "enabled": false,
       "context": {
         "from_problem_id": "BEING_AND_CHANGE",
         "to_problem_id": "BEING_AND_CHANGE",
@@ -440,7 +440,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "ISSUE009；13西哲路径修订第1项及19十二样例最低修订：撤下巴门尼德挑战后的亚里士多德连续固定承接。"
     },
     {
       "edge_id": "WESTERN_EDGE_003",
@@ -485,7 +486,7 @@
       "required_edge_ids": [
         "WESTERN_EDGE_003"
       ],
-      "enabled": true,
+      "enabled": false,
       "context": {
         "from_problem_id": "BEING_AND_CHANGE",
         "to_problem_id": "BEING_AND_CHANGE",
@@ -503,7 +504,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "ISSUE009；13西哲路径修订第2项及19判决69：撤下普通固定承接；后世批判须独立第三幕问号设计，尚未接入。"
     },
     {
       "edge_id": "WESTERN_EDGE_005",
@@ -1329,7 +1331,7 @@
       "required_edge_ids": [
         "WESTERN_EDGE_030"
       ],
-      "enabled": true,
+      "enabled": false,
       "context": {
         "from_problem_id": "LANGUAGE_AND_MEANING",
         "to_problem_id": "LANGUAGE_AND_MEANING",
@@ -1346,7 +1348,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "ISSUE009；13西哲路径修订第3项及19判决67：中介说明不构成固定承接许可；现代逻辑同题重开尚未接入。"
     },
     {
       "edge_id": "WESTERN_EDGE_032",
@@ -1359,7 +1362,7 @@
       "relation_summary": "转线；同题转向，低至中；从范畴和词物关系转到符号差异系统，不主张直接继承",
       "source": "18游戏流程投影.md:353",
       "required_edge_ids": [],
-      "enabled": true,
+      "enabled": false,
       "context": {
         "from_problem_id": "LANGUAGE_AND_MEANING",
         "to_problem_id": "LANGUAGE_AND_MEANING",
@@ -1376,7 +1379,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "ISSUE009；13西哲路径修订第4项及19判决63/64：取消亚里士多德普通邻接；索绪尔独立问题入口尚未接入。"
     },
     {
       "edge_id": "WESTERN_EDGE_033",
@@ -1484,7 +1488,7 @@
       "relation_summary": "直接影响与规范重构，高；由不平等历史和共同立法问题跨入自由与制度",
       "source": "18游戏流程投影.md:361",
       "required_edge_ids": [],
-      "enabled": true,
+      "enabled": false,
       "context": {
         "from_problem_id": "HISTORY_AND_POWER",
         "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -1502,7 +1506,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "ISSUE009；13西哲路径修订第5项及19判决68：撤下跨问题固定捷径；须先显式完成卢梭共同立法问题转向。"
     },
     {
       "edge_id": "WESTERN_EDGE_037",
@@ -1702,7 +1707,9 @@
         "WESTERN_EDGE_003",
         "WESTERN_EDGE_004"
       ],
-      "terminal_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE"
+      "terminal_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
+      "disposition": "SourceOnly",
+      "review_note": "18旧样例保留原序列；13西哲路径修订及19二轮审查已撤下WESTERN_EDGE_002、WESTERN_EDGE_004，不得作为当前可执行路线。"
     },
     {
       "sample_id": "SAMPLE_02",
@@ -1713,7 +1720,9 @@
         "WESTERN_EDGE_006",
         "WESTERN_EDGE_007"
       ],
-      "terminal_node_id": "EPICURUS__BEING_AND_CHANGE__CORE"
+      "terminal_node_id": "EPICURUS__BEING_AND_CHANGE__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_03",
@@ -1724,7 +1733,9 @@
         "WESTERN_EDGE_010",
         "WESTERN_EDGE_011"
       ],
-      "terminal_node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE"
+      "terminal_node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_04",
@@ -1735,7 +1746,9 @@
         "WESTERN_EDGE_014",
         "WESTERN_EDGE_015"
       ],
-      "terminal_node_id": "IMMANUEL_KANT__KNOWLEDGE_AND_DOUBT__CORE"
+      "terminal_node_id": "IMMANUEL_KANT__KNOWLEDGE_AND_DOUBT__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_05",
@@ -1745,7 +1758,9 @@
         "WESTERN_EDGE_017",
         "WESTERN_EDGE_018"
       ],
-      "terminal_node_id": "THOMAS_HOBBES__FREEDOM_AND_INSTITUTIONS__CORE"
+      "terminal_node_id": "THOMAS_HOBBES__FREEDOM_AND_INSTITUTIONS__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_06",
@@ -1756,7 +1771,9 @@
         "WESTERN_EDGE_021",
         "WESTERN_EDGE_022"
       ],
-      "terminal_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE"
+      "terminal_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_07",
@@ -1766,7 +1783,9 @@
         "WESTERN_EDGE_024",
         "WESTERN_EDGE_025"
       ],
-      "terminal_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE"
+      "terminal_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_08",
@@ -1776,7 +1795,9 @@
         "WESTERN_EDGE_027",
         "WESTERN_EDGE_028"
       ],
-      "terminal_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE"
+      "terminal_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     },
     {
       "sample_id": "SAMPLE_09",
@@ -1786,7 +1807,9 @@
         "WESTERN_EDGE_030",
         "WESTERN_EDGE_031"
       ],
-      "terminal_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE"
+      "terminal_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "disposition": "SourceOnly",
+      "review_note": "18旧样例保留原序列；13西哲路径修订及19二轮审查已撤下WESTERN_EDGE_031，不得作为当前可执行路线。"
     },
     {
       "sample_id": "SAMPLE_10",
@@ -1797,7 +1820,9 @@
         "WESTERN_EDGE_034",
         "WESTERN_EDGE_035"
       ],
-      "terminal_node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE"
+      "terminal_node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE",
+      "disposition": "SourceOnly",
+      "review_note": "18旧样例保留原序列；13西哲路径修订及19二轮审查已撤下WESTERN_EDGE_032，不得作为当前可执行路线。"
     },
     {
       "sample_id": "SAMPLE_11",
@@ -1808,7 +1833,9 @@
         "WESTERN_EDGE_038",
         "WESTERN_EDGE_039"
       ],
-      "terminal_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY"
+      "terminal_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "disposition": "SourceOnly",
+      "review_note": "18旧样例保留原序列；13西哲路径修订及19二轮审查已撤下WESTERN_EDGE_036，不得作为当前可执行路线。"
     },
     {
       "sample_id": "SAMPLE_12",
@@ -1818,7 +1845,9 @@
         "WESTERN_EDGE_041",
         "WESTERN_EDGE_042"
       ],
-      "terminal_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE"
+      "terminal_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "disposition": "Executable",
+      "review_note": ""
     }
   ]
 }
