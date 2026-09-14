@@ -2,6 +2,7 @@
   <div class="viz-row"><strong>有限承诺 · 纸面试玩</strong><span class="text-small">虚构牌局 · 只推演当前回合</span></div>
   <div class="viz-controls">
     <label class="form-label">局面<select class="form-select" data-case aria-label="纸面局面"></select></label>
+    <label class="form-label">对照规则<select class="form-select" data-variant aria-label="纸面对照规则"><option value="C1">C1 全额防护／单体解围</option><option value="C2">C2 半额防护／集合解围</option></select></label>
     <button class="btn" type="button" data-retry>重试本例</button>
   </div>
   <div class="viz-row tabular-nums" aria-live="polite" data-state></div>
@@ -9,7 +10,7 @@
   <hr>
   <div data-criterion class="text-small"></div>
   <div class="viz-controls">
-    <label class="form-label">解围目标<select class="form-select" data-target aria-label="行动前的解围目标"></select></label>
+    <div data-single-target><label class="form-label">解围目标<select class="form-select" data-target aria-label="行动前的解围目标"></select></label></div>
     <button class="btn" type="button" data-choose="guard">试行防护</button>
     <button class="btn" type="button" data-choose="clear">试行解围</button>
     <button class="btn btn-ghost" type="button" data-choose="skip">本轮放弃收益</button>
@@ -509,22 +510,26 @@ const SocratesPaper = (() => {
     ]
   }
 ];
-  function create(id) {
+  function create(id, variant = "C1") {
     const c = fixtures.find(x => x.id === id);
     if (!c) throw new Error("Unknown paper case");
+    if (!["C1","C2"].includes(variant)) throw new Error("Unknown paper variant");
+    const incoming = c.enemies.reduce((n,e) => n + e.attack, 0);
+    const threshold = variant === "C2" ? Math.ceil(incoming/2) : incoming;
     return {
-      caseId: id, energy: c.energy, block: c.initialBlock || 0, playerHp: 40,
+      caseId: id, variant, energy: c.energy, block: c.initialBlock || 0, playerHp: 40,
       enemies: c.enemies.map(e => ({...e})), cards: c.cards.map(a => [...a]),
       used: [], history: [], committed: false, mode: null, ended: false,
       inherited: c.inherited || null, revised: false, target: c.target || 0,
-      threshold: c.enemies.reduce((n,e) => n + e.attack, 0),
-      guardEligible: c.enemies.reduce((n,e) => n + e.attack, 0) > (c.initialBlock || 0)
+      threshold, frozenAttackers: c.enemies.filter(e=>e.hp>0 && e.attack>0).map(e=>e.id),
+      guardEligible: threshold > (c.initialBlock || 0)
     };
   }
   function canChoose(s, mode, target) {
     if (s.committed || s.ended) return false;
     if (mode === "skip") return true;
     if (mode === "guard") return s.guardEligible && s.threshold > 0;
+    if (mode === "clear" && s.variant === "C2") return s.frozenAttackers.length > 0;
     return mode === "clear" && Number.isInteger(target) &&
       !!s.enemies[target] && s.enemies[target].hp > 0 && s.enemies[target].attack > 0;
   }
@@ -558,7 +563,8 @@ const SocratesPaper = (() => {
     const loss = Math.min(s.playerHp,unblockedDamage), survived = unblockedDamage < s.playerHp;
     const guardMet = s.guardEligible && s.threshold > 0 && s.block >= s.threshold;
     const e = s.enemies[s.target];
-    const clearMet = !!e && e.attack > 0 && e.hp <= 0;
+    const clearMet = s.variant === "C2" ?
+      s.enemies.some(e=>s.frozenAttackers.includes(e.id) && e.hp<=0) : !!e && e.attack > 0 && e.hp <= 0;
     const canReceive = !won && survived;
     const guardDraw = canReceive && guardMet ? 1 : 0;
     const clearDraw = canReceive && clearMet ? 2 : 0;
@@ -571,8 +577,8 @@ const SocratesPaper = (() => {
     s.result = outcome(s); s.ended = true; s.history.push(s.result.won ? "战斗结束" : "结束回合");
     return true;
   }
-  function enumerate(id) {
-    const start = create(id), rows = [];
+  function enumerate(id, variant = "C1") {
+    const start = create(id, variant), rows = [];
     commit(start,"skip");
     function visit(s) {
       rows.push({...outcome(s), steps:s.history.join(" / ")});
@@ -594,7 +600,7 @@ const SocratesPaper = (() => {
 (() => {
   const root = document.getElementById("socrates-paper");
   const $ = selector => root.querySelector(selector);
-  const caseSelect = $("[data-case]"), targetSelect = $("[data-target]"), attackSelect = $("[data-attack]");
+  const caseSelect = $("[data-case]"), targetSelect = $("[data-target]"), attackSelect = $("[data-attack]"), variantSelect = $("[data-variant]");
   const label = mode => mode === "guard" ? "防护" : mode === "clear" ? "解围" : "未选择";
   for (const c of SocratesPaper.fixtures) {
     const o = document.createElement("option"); o.value=c.id; o.textContent=c.id+" "+c.label; caseSelect.append(o);
@@ -606,7 +612,7 @@ const SocratesPaper = (() => {
     b.disabled=disabled; b.addEventListener("click",action); return b;
   }
   function reset() {
-    state=SocratesPaper.create(caseSelect.value);
+    state=SocratesPaper.create(caseSelect.value, variantSelect.value);
     targetSelect.replaceChildren(); attackSelect.replaceChildren();
     state.enemies.forEach((e,i)=>{
       for (const select of [targetSelect,attackSelect]) {
@@ -620,16 +626,20 @@ const SocratesPaper = (() => {
     $("[data-state]").textContent="能量 "+s.energy+" · 格挡 "+s.block+" · 初始生命 "+s.playerHp;
     $("[data-enemies]").textContent=s.enemies.map(e=>e.id+"：生命 "+e.hp+" / "+
       (e.hp<=0?"已击败":"攻击 "+(s.ended?(e.actualAttack??e.attack):e.attack))).join("　");
-    $("[data-criterion]").textContent="本轮冻结目标："+s.threshold+" 格挡；防护达标下轮抽1，指定目标死亡下轮抽2。"+
+    const clearScope=s.variant==="C2"?"集合中任一敌人":"指定目标";
+    const targetLabel=s.variant==="C2"?s.frozenAttackers.join("、"):s.enemies[s.target]?.id;
+    $("[data-criterion]").textContent=s.variant+" 本轮冻结目标："+s.threshold+" 格挡；防护达标下轮抽1，"+clearScope+"死亡下轮抽2；战斗结束无奖励。"+
       (s.inherited?"当前准则为"+label(s.inherited)+"；本轮修订则不产生新奖励。":"先定准则，再行动。");
+    $("[data-single-target]").hidden=s.variant==="C2";
     targetSelect.disabled=s.committed||s.ended;
     root.querySelectorAll("[data-choose]").forEach(b=>{
       b.disabled=!SocratesPaper.canChoose(s,b.dataset.choose,Number(targetSelect.value));
     });
     $("[data-goal]").textContent=s.committed?
       (s.mode==="skip"?"本轮主动放弃收益":
-        "已冻结："+label(s.mode)+(s.mode==="clear"?"，目标"+s.enemies[s.target].id:"，目标"+s.threshold+"格挡")+
+        "已冻结："+label(s.mode)+(s.mode==="clear"?"，目标"+targetLabel:"，目标"+s.threshold+"格挡")+
         (s.revised?"；修订回合无新增奖励":"")):
+      (s.variant==="C2"?"行动前威胁集合："+(targetLabel||"无")+"。":"")+
       (!s.guardEligible?"防护无新增要求；不把已有格挡算作一次主动达标。":"");
     const hand=$("[data-hand]"); hand.replaceChildren();
     if(s.enemies[Number(attackSelect.value)]?.hp <= 0 && s.enemies.some(e=>e.hp>0))
@@ -655,6 +665,7 @@ const SocratesPaper = (() => {
     $("[data-history]").textContent=s.history.join(" → ");
   }
   caseSelect.addEventListener("change",reset);
+  variantSelect.addEventListener("change",reset);
   $("[data-retry]").addEventListener("click",reset);
   targetSelect.addEventListener("change",render);
   attackSelect.addEventListener("change",render);

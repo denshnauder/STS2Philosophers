@@ -95,5 +95,58 @@ check('All 123 legal action prefixes across 12 fixed fixtures', () => {
   assert.equal(result[0].maxGuardDraw,1); assert.equal(result[0].maxClearDraw,0);
   assert.equal(result[1].maxGuardDraw,0); assert.equal(result[1].maxClearDraw,2);
 });
+check('C2 half threshold rounds up and still allows harm', () => {
+  const s=p.create('C03','C2'); assert.equal(s.threshold,6);
+  p.commit(s,'guard'); p.play(s,0,0); p.play(s,1,0); p.finish(s);
+  assert.equal(s.result.guardMet,true); assert.equal(s.result.loss,2); assert.equal(s.result.draw,1);
+  const covered=p.create('C07','C2'); assert.equal(p.commit(covered,'guard'),false);
+  const none=p.create('C06','C2'); assert.equal(p.commit(none,'clear'),false);
+});
+check('C2 permits either predeclared attacker, not retroactive expansion', () => {
+  const s=p.create('C10','C2'); p.commit(s,'clear'); p.play(s,0,1); p.finish(s);
+  assert.equal(s.result.clearMet,true); assert.equal(s.result.draw,2);
+  const later=p.create('C10','C2'); p.commit(later,'clear');
+  later.enemies.push({id:'新召唤',hp:0,attack:4});
+  assert.equal(p.outcome(later).clearMet,false);
+  later.enemies[1]={id:'乙的替身',hp:0,attack:4};
+  assert.equal(p.outcome(later).clearMet,false);
+  later.enemies[1]={id:'乙',hp:0,attack:0};
+  assert.equal(p.outcome(later).clearMet,true,'Original scope stays frozen when intent changes');
+  assert.equal(p.commit(later,'guard'),false);
+});
+check('C2 new attacker cannot join the original scope', () => {
+  p.fixtures.push({id:'ScopeCheck',energy:1,enemies:[{id:'甲',hp:30,attack:4},{id:'乙',hp:6,attack:0}],cards:[['攻',1,6,0]]});
+  const s=p.create('ScopeCheck','C2'); p.commit(s,'clear');
+  s.enemies[1].attack=4; p.play(s,0,1); p.finish(s);
+  assert.equal(s.result.clearMet,false); assert.equal(s.result.draw,0);
+  p.fixtures.pop();
+});
+check('C2 preserves reward deadline, revision cost and once-only settlement', () => {
+  const win=p.create('C05','C2'); p.commit(win,'clear'); p.play(win,0,0);
+  assert.equal(win.result.clearMet,true); assert.equal(win.result.draw,0);
+  const revised=p.create('C13','C2'); p.commit(revised,'clear'); p.play(revised,0,0); p.finish(revised);
+  assert.equal(revised.result.clearDraw,2); assert.equal(revised.result.draw,0);
+  const s=p.create('C10','C2'); p.commit(s,'clear');
+  s.enemies[0].hp=0; s.enemies[1].hp=0; s.enemies.push({id:'增援',hp:20,attack:0});
+  p.finish(s); assert.equal(s.result.draw,2);
+  const saved=JSON.stringify(s); assert.equal(p.finish(s),false); assert.equal(JSON.stringify(s),saved);
+});
+check('Identical action spaces compare C1 and C2 without a utility score', () => {
+  let count=0;
+  result.forEach((row,i)=>{
+    const old=p.enumerate(row.case), next=p.enumerate(row.case,'C2');
+    assert.equal(next.length,expected[i]); count+=next.length;
+    next.forEach((r,j)=>{
+      assert.equal(r.loss,old[j].loss); assert.equal(r.enemyHp,old[j].enemyHp); assert.equal(r.steps,old[j].steps);
+    });
+    row.c2GuardDraw=Math.max(...next.map(r=>r.guardDraw));
+    row.c2ClearDraw=Math.max(...next.map(r=>r.clearDraw));
+    row.c1GuardPrefixes=old.filter(r=>r.guardDraw>0).length;
+    row.c2GuardPrefixes=next.filter(r=>r.guardDraw>0).length;
+  });
+  assert.equal(count,123); assert.equal(result[1].c2GuardDraw,1);
+  assert.equal(result[9].c2ClearDraw,2); assert.equal(result[8].c2GuardDraw,0);
+  assert.throws(()=>p.create('C01','bad'));
+});
 console.table(result);
 console.log(`${checks} paper model checks passed. No game build, balance, or playtest claim.`);
