@@ -13,10 +13,13 @@ internal static class WesternPracticeStateCodec
         try
         {
             WesternPracticeState? state = JsonSerializer.Deserialize<WesternPracticeState>(payload);
-            if (state is null || state.ProblemId != problemId || state.Plays is null
+            if (state is null || state.ProblemId != problemId || state.Plays is null || state.PreviousKinds is null
                 || state.Turn < 0 || state.PreviousCards < 0 || state.PendingTurn < 0
                 || state.LastClaimedTurn < 0 || state.LastClaimedTurn > state.Turn
                 || state.SuccessfulTurns < 0 || state.BrokenTurns < 0
+                || state.PreviousKinds.Any(kind => !Enum.IsDefined(kind))
+                // Old saves have no sequence: absence is allowed, fabricated facts are not.
+                || (state.PreviousKinds.Count > 0 && (state.Turn <= 1 || state.PreviousKinds.Count != state.PreviousCards))
                 || state.Plays.Any(play => play is null || string.IsNullOrWhiteSpace(play.PlayId)
                     || string.IsNullOrWhiteSpace(play.CardModelId) || !Enum.IsDefined(play.Kind))
                 || state.Plays.Select(play => play.PlayId).Distinct(StringComparer.Ordinal).Count() != state.Plays.Count)

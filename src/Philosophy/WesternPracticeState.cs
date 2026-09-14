@@ -12,6 +12,7 @@ internal sealed class WesternPracticeState
     public int Turn { get; set; }
     public bool Closed { get; set; }
     public int PreviousCards { get; set; }
+    public List<WesternPracticeCardKind> PreviousKinds { get; set; } = [];
     public List<WesternPracticePlay> Plays { get; set; } = [];
     public int PendingTurn { get; set; }
     public WesternPracticeReward PendingReward { get; set; }
@@ -24,6 +25,7 @@ internal sealed class WesternPracticeState
         if (turn <= 0 || turn <= Turn) return false;
         // A missing close or skipped turn is not evidence of a completed practice.
         PreviousCards = Closed && turn == Turn + 1 ? Plays.Count : 0;
+        PreviousKinds = Closed && turn == Turn + 1 ? Plays.Select(play => play.Kind).ToList() : [];
         Plays = [];
         Turn = turn;
         Closed = false;
@@ -73,6 +75,7 @@ internal sealed class WesternPracticeState
         Turn = 0;
         Closed = false;
         PreviousCards = 0;
+        PreviousKinds = [];
         Plays = [];
         LastClaimedTurn = 0;
         ClearPending();
