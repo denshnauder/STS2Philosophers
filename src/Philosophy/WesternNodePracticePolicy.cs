@@ -5,6 +5,8 @@ internal static class WesternNodePracticePolicy
     private static readonly IReadOnlyDictionary<string, WesternGraphNode> Nodes = WesternRouteGraph.LoadEmbedded()
         .Nodes.ToDictionary(node => node.NodeId, StringComparer.Ordinal);
 
+    public static string ProblemFor(string nodeId) => Nodes.TryGetValue(nodeId, out var node) ? node.ProblemId : string.Empty;
+
     public static WesternPracticeReward Evaluate(string nodeId, IReadOnlyList<WesternPracticePlay> plays,
         IReadOnlyList<WesternPracticeCardKind> previousKinds, int previousCards)
     {

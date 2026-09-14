@@ -71,6 +71,25 @@ internal static class WesternNodePracticeChecks
             Check(WesternNodePracticePolicy.Evaluate(id, Plays(c.Bad, c.BadNames), previous, 3) == default, $"Node violation: {id}");
             Check(WesternNodePracticePolicy.Evaluate(id, [], previous, 3) == default, $"Empty turn: {id}");
             Check(WesternNodePracticePolicy.Evaluate(id + "_FUTURE", Plays(c.Good, c.Names), previous, 3) == default, "Unimplemented stage must not inherit another stage.");
+            // Exercise the real shared turn lifecycle, including a save on either side of the reward window.
+            WesternPracticeState state = new();
+            Check(state.TryBindNode(id), "Known node binds outside combat.");
+            state.BeginTurn(1);
+            foreach (var play in Plays("ASP", "xyz")) state.RecordPlay(1, play.PlayId, play.CardModelId, play.Kind);
+            state.CloseTurn(1); state.BeginTurn(2); state.TakeReward(2);
+            Check(!state.TryBindNode(id), "Rebinding in combat must not reset or farm a practice.");
+            foreach (var play in Plays(c.Good, c.Names)) state.RecordPlay(2, play.PlayId, play.CardModelId, play.Kind);
+            state.CloseTurn(2);
+            state = WesternPracticeStateCodec.RestoreNode(WesternPracticeStateCodec.Encode(state));
+            Check(state.NodeId == id && state.PendingReward == c.Reward, $"Closed-turn payload: {id}");
+            state.BeginTurn(3);
+            state = WesternPracticeStateCodec.RestoreNode(WesternPracticeStateCodec.Encode(state));
+            Check(state.TakeReward(3) == c.Reward && state.TakeReward(3) == default, $"Saved node reward delivered once: {id}");
+            state = WesternPracticeStateCodec.RestoreNode(WesternPracticeStateCodec.Encode(state));
+            Check(state.TakeReward(3) == default, "Saving after claim must not restore a claimed reward.");
+            state.EndCombat();
+            Check(state.TryBindNode("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE") && state.PreviousKinds.Count == 0
+                && state.PendingReward == default && state.SuccessfulTurns == 0, "Changing doctrine clears earlier practice state.");
         }
         Check(covered.Count == 47 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit positive and violation case, with no fabricated node.");
@@ -90,6 +109,20 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(entry, invalid, [], 0) == default, "Duplicate callbacks are not distinct actions.");
         Check(WesternNodePracticePolicy.Evaluate("DESCARTES__VIRTUE_AND_HAPPINESS__CORE", Plays("SAA", "abb"), [], 0) == default,
             "Thinker existence must not grant undeclared problem faces.");
+        WesternPracticeState payloadState = new(); payloadState.TryBindNode(entry); payloadState.BeginTurn(1);
+        foreach (var play in Plays("ASA", "abc")) payloadState.RecordPlay(1, play.PlayId, play.CardModelId, play.Kind);
+        payloadState.CloseTurn(1);
+        string payload = WesternPracticeStateCodec.Encode(payloadState);
+        foreach (string damaged in new[]
+        {
+            payload.Replace("\"Energy\":1", "\"Energy\":99", StringComparison.Ordinal),
+            payload.Replace("\"Kind\":2", "\"Kind\":1", StringComparison.Ordinal),
+            payload.Replace("\"PendingEvidence\":", "\"LostEvidence\":", StringComparison.Ordinal),
+        }) Check(WesternPracticeStateCodec.RestoreNode(damaged).PendingReward == default, "Invalid reward or evidence cannot grant a benefit.");
+        Check(WesternPracticeStateCodec.Restore(payload, being, "PARMENIDES__BEING_AND_CHANGE__CORE").PendingReward == default,
+            "Same-problem node payloads cannot transfer rewards.");
+        foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
+            Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
         Console.WriteLine("Western node practice checks passed: all 47 nodes, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

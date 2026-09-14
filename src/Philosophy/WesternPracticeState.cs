@@ -9,6 +9,7 @@ internal readonly record struct WesternPracticeReward(int Energy = 0, int Draw =
 internal sealed class WesternPracticeState
 {
     public string ProblemId { get; set; } = string.Empty;
+    public string NodeId { get; set; } = string.Empty;
     public int Turn { get; set; }
     public bool Closed { get; set; }
     public int PreviousCards { get; set; }
@@ -16,9 +17,22 @@ internal sealed class WesternPracticeState
     public List<WesternPracticePlay> Plays { get; set; } = [];
     public int PendingTurn { get; set; }
     public WesternPracticeReward PendingReward { get; set; }
+    public WesternPracticeEvidence? PendingEvidence { get; set; }
     public int LastClaimedTurn { get; set; }
     public int SuccessfulTurns { get; set; }
     public int BrokenTurns { get; set; }
+
+    public bool TryBindNode(string nodeId)
+    {
+        string problemId = WesternNodePracticePolicy.ProblemFor(nodeId);
+        if (Turn != 0 || string.IsNullOrEmpty(problemId)) return false;
+        EndCombat();
+        NodeId = nodeId;
+        ProblemId = problemId;
+        SuccessfulTurns = 0;
+        BrokenTurns = 0;
+        return true;
+    }
 
     public bool BeginTurn(int turn)
     {
@@ -52,6 +66,7 @@ internal sealed class WesternPracticeState
         {
             PendingTurn = Turn + 1;
             PendingReward = reward;
+            if (NodeId.Length > 0) PendingEvidence = new(Plays.ToList(), PreviousKinds.ToList(), PreviousCards);
             SuccessfulTurns++;
         }
         else if (WesternRouteCatalog.Problems.Any(problem => problem.ProblemId == ProblemId))
@@ -84,6 +99,9 @@ internal sealed class WesternPracticeState
 
     internal WesternPracticeReward Evaluate()
     {
+        if (NodeId.Length > 0)
+            return WesternNodePracticePolicy.ProblemFor(NodeId) == ProblemId
+                ? WesternNodePracticePolicy.Evaluate(NodeId, Plays, PreviousKinds, PreviousCards) : default;
         int count = Plays.Count;
         int attacks = Plays.Count(play => play.Kind == WesternPracticeCardKind.Attack);
         int skills = Plays.Count(play => play.Kind == WesternPracticeCardKind.Skill);
@@ -124,7 +142,10 @@ internal sealed class WesternPracticeState
     {
         PendingTurn = 0;
         PendingReward = default;
+        PendingEvidence = null;
     }
 }
 
 internal sealed record WesternPracticePlay(string PlayId, string CardModelId, WesternPracticeCardKind Kind, bool Automatic);
+
+internal sealed record WesternPracticeEvidence(List<WesternPracticePlay> Plays, List<WesternPracticeCardKind> PreviousKinds, int PreviousCards);
