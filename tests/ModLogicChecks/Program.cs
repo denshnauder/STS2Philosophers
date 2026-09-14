@@ -9,6 +9,7 @@ WesternPracticeChecks.Run();
 WesternEntryChecks.Run();
 WesternBeingChecks.Run();
 WesternKnowledgeChecks.Run();
+WesternNodePracticeChecks.Run();
 
 static void Check(bool condition, string message)
 {

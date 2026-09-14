@@ -82,7 +82,7 @@ internal sealed class WesternPracticeState
         // Aggregate practice history can inform later candidates; it is not a buff.
     }
 
-    private WesternPracticeReward Evaluate()
+    internal WesternPracticeReward Evaluate()
     {
         int count = Plays.Count;
         int attacks = Plays.Count(play => play.Kind == WesternPracticeCardKind.Attack);

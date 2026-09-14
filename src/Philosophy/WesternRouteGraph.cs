@@ -76,6 +76,7 @@ internal sealed class WesternRouteGraph
     private readonly IReadOnlyDictionary<string, WesternGraphNode> _nodes;
     private readonly IReadOnlyDictionary<string, WesternGraphEdge> _edges;
     public IReadOnlyList<WesternGraphSample> Samples { get; }
+    public IEnumerable<WesternGraphNode> Nodes => _nodes.Values;
 
     private WesternRouteGraph(Payload data)
     {

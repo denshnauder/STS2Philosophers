@@ -16,6 +16,7 @@ internal static class WesternBeingPracticePolicy
         return thinkerId switch
         {
             "PARMENIDES" when n == 3 && names == 1 => new(Block: 6),
+            "GOTTFRIED_WILHELM_LEIBNIZ" when n == 3 && names == 3 && kinds.Distinct().Count() == 3 => new(Block: 6),
             "ARISTOTLE" when kinds.SequenceEqual([s, s, a]) => new(Energy: 1, Block: 3),
             "DEMOCRITUS" when n == 4 && names == 2 && plays.GroupBy(p => p.CardModelId).All(g => g.Count() == 2) => new(Draw: 1, Block: 3),
             "EMPEDOCLES" when n == 4 && kinds.Distinct().Count() == 3 => new(Block: 6),
