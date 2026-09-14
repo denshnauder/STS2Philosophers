@@ -1,0 +1,667 @@
+<div id="socrates-paper">
+  <div class="viz-row"><strong>有限承诺 · 纸面试玩</strong><span class="text-small">虚构牌局 · 只推演当前回合</span></div>
+  <div class="viz-controls">
+    <label class="form-label">局面<select class="form-select" data-case aria-label="纸面局面"></select></label>
+    <button class="btn" type="button" data-retry>重试本例</button>
+  </div>
+  <div class="viz-row tabular-nums" aria-live="polite" data-state></div>
+  <div data-enemies class="viz-row"></div>
+  <hr>
+  <div data-criterion class="text-small"></div>
+  <div class="viz-controls">
+    <label class="form-label">解围目标<select class="form-select" data-target aria-label="行动前的解围目标"></select></label>
+    <button class="btn" type="button" data-choose="guard">试行防护</button>
+    <button class="btn" type="button" data-choose="clear">试行解围</button>
+    <button class="btn btn-ghost" type="button" data-choose="skip">本轮放弃收益</button>
+  </div>
+  <div data-goal aria-live="polite"></div>
+  <hr>
+  <div data-hand class="viz-row" aria-label="手牌"></div>
+  <div class="viz-row">
+    <label class="form-label">攻击目标<select class="form-select" data-attack aria-label="本次出牌的攻击目标"></select></label>
+    <button class="btn btn-primary" type="button" data-end>结束回合</button>
+  </div>
+  <div data-result aria-live="polite"></div>
+  <div data-history class="text-small"></div>
+  <div class="text-small">奖励只计数，未抽取下一回合手牌；不代表完整战斗或游戏验收。</div>
+</div>
+<style>
+#socrates-paper { display: grid; gap: 12px; }
+#socrates-paper [data-result] { white-space: pre-line; }
+#socrates-paper [data-history] { overflow-wrap: anywhere; }
+</style>
+<script>
+// BEGIN PAPER MODEL
+const SocratesPaper = (() => {
+  const fixtures = [
+  {
+    "id": "C01",
+    "label": "防护可达，无法击杀",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防一",
+        1,
+        0,
+        5
+      ],
+      [
+        "防二",
+        1,
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "id": "C02",
+    "label": "解围替代部分防护",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 4
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 4
+      }
+    ],
+    "cards": [
+      [
+        "攻一",
+        1,
+        6,
+        0
+      ],
+      [
+        "攻二",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "id": "C03",
+    "label": "少受伤与较多待发抽牌",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 3
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防一",
+        1,
+        0,
+        6
+      ],
+      [
+        "防二",
+        1,
+        0,
+        6
+      ]
+    ]
+  },
+  {
+    "id": "C04",
+    "label": "同一行动同时满足两指标",
+    "energy": 3,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 4
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 4
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防一",
+        1,
+        0,
+        5
+      ],
+      [
+        "防二",
+        1,
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "id": "C05",
+    "label": "结束战斗与拖延奖励",
+    "energy": 1,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C06",
+    "label": "无攻击意图",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 30,
+        "attack": 0
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C07",
+    "label": "已有格挡已足",
+    "energy": 1,
+    "initialBlock": 8,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 4
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 4
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C08",
+    "label": "复合效果与牌型无关",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 4
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 4
+      }
+    ],
+    "cards": [
+      [
+        "攻防一",
+        1,
+        3,
+        4
+      ],
+      [
+        "攻防二",
+        1,
+        3,
+        4
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C09",
+    "label": "两指标皆不可达",
+    "energy": 1,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        3,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "id": "C10",
+    "label": "目标须事先指定",
+    "energy": 2,
+    "target": 0,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 12,
+        "attack": 4
+      },
+      {
+        "id": "乙",
+        "hp": 6,
+        "attack": 4
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "id": "C11",
+    "label": "指标达成却仍受伤",
+    "energy": 1,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8,
+        "actualAttack": 16
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C12",
+    "label": "冻结指标失去原用途",
+    "energy": 1,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8,
+        "actualAttack": 0
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  },
+  {
+    "id": "C13",
+    "label": "从防护修订为解围",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 6,
+        "attack": 3
+      },
+      {
+        "id": "乙",
+        "hp": 30,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防一",
+        1,
+        0,
+        6
+      ],
+      [
+        "防二",
+        1,
+        0,
+        6
+      ]
+    ],
+    "inherited": "guard"
+  },
+  {
+    "id": "C14",
+    "label": "从解围修订为防护",
+    "energy": 2,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防一",
+        1,
+        0,
+        5
+      ],
+      [
+        "防二",
+        1,
+        0,
+        5
+      ]
+    ],
+    "inherited": "clear"
+  },
+  {
+    "id": "C15",
+    "label": "达标但未存活",
+    "energy": 1,
+    "enemies": [
+      {
+        "id": "甲",
+        "hp": 40,
+        "attack": 8,
+        "actualAttack": 60
+      }
+    ],
+    "cards": [
+      [
+        "攻",
+        1,
+        6,
+        0
+      ],
+      [
+        "防",
+        1,
+        0,
+        8
+      ]
+    ]
+  }
+];
+  function create(id) {
+    const c = fixtures.find(x => x.id === id);
+    if (!c) throw new Error("Unknown paper case");
+    return {
+      caseId: id, energy: c.energy, block: c.initialBlock || 0, playerHp: 40,
+      enemies: c.enemies.map(e => ({...e})), cards: c.cards.map(a => [...a]),
+      used: [], history: [], committed: false, mode: null, ended: false,
+      inherited: c.inherited || null, revised: false, target: c.target || 0,
+      threshold: c.enemies.reduce((n,e) => n + e.attack, 0),
+      guardEligible: c.enemies.reduce((n,e) => n + e.attack, 0) > (c.initialBlock || 0)
+    };
+  }
+  function canChoose(s, mode, target) {
+    if (s.committed || s.ended) return false;
+    if (mode === "skip") return true;
+    if (mode === "guard") return s.guardEligible && s.threshold > 0;
+    return mode === "clear" && Number.isInteger(target) &&
+      !!s.enemies[target] && s.enemies[target].hp > 0 && s.enemies[target].attack > 0;
+  }
+  function commit(s, mode, target = s.target) {
+    if (!canChoose(s,mode,target)) return false;
+    s.revised = mode !== "skip" && !!s.inherited && mode !== s.inherited;
+    s.committed = true; s.mode = mode; s.target = target;
+    s.history.push(mode === "skip" ? "放弃本轮收益" :
+      (s.revised ? "修订为" : "试行") + (mode === "guard" ? "防护" : "解围"));
+    return true;
+  }
+  function canPlay(s, i, target) {
+    const card = s.cards[i];
+    return s.committed && !s.ended && s.enemies.some(e => e.hp > 0) &&
+      Number.isInteger(i) && !!card && !s.used.includes(i) && card[1] <= s.energy &&
+      (card[2] === 0 || (Number.isInteger(target) && !!s.enemies[target] && s.enemies[target].hp > 0));
+  }
+  function play(s, i, target = 0) {
+    if (!canPlay(s,i,target)) return false;
+    const [name,cost,damage,shield] = s.cards[i];
+    s.energy -= cost; s.block += shield; s.used.push(i);
+    if (damage) s.enemies[target].hp = Math.max(0,s.enemies[target].hp - damage);
+    s.history.push(name + (damage ? "→" + s.enemies[target].id : ""));
+    if (s.enemies.every(e => e.hp === 0)) finish(s);
+    return true;
+  }
+  function outcome(s) {
+    const won = s.enemies.every(e => e.hp <= 0);
+    const incoming = s.enemies.reduce((n,e) => n + (e.hp > 0 ? (e.actualAttack ?? e.attack) : 0),0);
+    const unblockedDamage = Math.max(0,incoming-s.block);
+    const loss = Math.min(s.playerHp,unblockedDamage), survived = unblockedDamage < s.playerHp;
+    const guardMet = s.guardEligible && s.threshold > 0 && s.block >= s.threshold;
+    const e = s.enemies[s.target];
+    const clearMet = !!e && e.attack > 0 && e.hp <= 0;
+    const canReceive = !won && survived;
+    const guardDraw = canReceive && guardMet ? 1 : 0;
+    const clearDraw = canReceive && clearMet ? 2 : 0;
+    const draw = s.revised ? 0 : s.mode === "guard" ? guardDraw : s.mode === "clear" ? clearDraw : 0;
+    return {won, incoming, loss, survived, guardMet, clearMet, guardDraw, clearDraw, draw,
+      enemyHp: s.enemies.reduce((n,e) => n+e.hp,0)};
+  }
+  function finish(s) {
+    if (s.ended || !s.committed) return false;
+    s.result = outcome(s); s.ended = true; s.history.push(s.result.won ? "战斗结束" : "结束回合");
+    return true;
+  }
+  function enumerate(id) {
+    const start = create(id), rows = [];
+    commit(start,"skip");
+    function visit(s) {
+      rows.push({...outcome(s), steps:s.history.join(" / ")});
+      if (s.ended) return;
+      for (let i=0;i<s.cards.length;i++) {
+        const targets = s.cards[i][2] ? s.enemies.map((e,j)=>j) : [0];
+        for (const target of targets) {
+          if (!canPlay(s,i,target)) continue;
+          const next = JSON.parse(JSON.stringify(s));
+          play(next,i,target); visit(next);
+        }
+      }
+    }
+    visit(start); return rows;
+  }
+  return {fixtures,create,canChoose,commit,canPlay,play,outcome,finish,enumerate};
+})();
+// END PAPER MODEL
+(() => {
+  const root = document.getElementById("socrates-paper");
+  const $ = selector => root.querySelector(selector);
+  const caseSelect = $("[data-case]"), targetSelect = $("[data-target]"), attackSelect = $("[data-attack]");
+  const label = mode => mode === "guard" ? "防护" : mode === "clear" ? "解围" : "未选择";
+  for (const c of SocratesPaper.fixtures) {
+    const o = document.createElement("option"); o.value=c.id; o.textContent=c.id+" "+c.label; caseSelect.append(o);
+  }
+  caseSelect.value="C03";
+  let state;
+  function makeButton(text, action, disabled) {
+    const b=document.createElement("button"); b.type="button"; b.className="btn"; b.textContent=text;
+    b.disabled=disabled; b.addEventListener("click",action); return b;
+  }
+  function reset() {
+    state=SocratesPaper.create(caseSelect.value);
+    targetSelect.replaceChildren(); attackSelect.replaceChildren();
+    state.enemies.forEach((e,i)=>{
+      for (const select of [targetSelect,attackSelect]) {
+        const o=document.createElement("option");o.value=String(i);o.textContent=e.id;select.append(o);
+      }
+    });
+    targetSelect.value=String(state.target); render();
+  }
+  function render() {
+    const s=state;
+    $("[data-state]").textContent="能量 "+s.energy+" · 格挡 "+s.block+" · 初始生命 "+s.playerHp;
+    $("[data-enemies]").textContent=s.enemies.map(e=>e.id+"：生命 "+e.hp+" / "+
+      (e.hp<=0?"已击败":"攻击 "+(s.ended?(e.actualAttack??e.attack):e.attack))).join("　");
+    $("[data-criterion]").textContent="本轮冻结目标："+s.threshold+" 格挡；防护达标下轮抽1，指定目标死亡下轮抽2。"+
+      (s.inherited?"当前准则为"+label(s.inherited)+"；本轮修订则不产生新奖励。":"先定准则，再行动。");
+    targetSelect.disabled=s.committed||s.ended;
+    root.querySelectorAll("[data-choose]").forEach(b=>{
+      b.disabled=!SocratesPaper.canChoose(s,b.dataset.choose,Number(targetSelect.value));
+    });
+    $("[data-goal]").textContent=s.committed?
+      (s.mode==="skip"?"本轮主动放弃收益":
+        "已冻结："+label(s.mode)+(s.mode==="clear"?"，目标"+s.enemies[s.target].id:"，目标"+s.threshold+"格挡")+
+        (s.revised?"；修订回合无新增奖励":"")):
+      (!s.guardEligible?"防护无新增要求；不把已有格挡算作一次主动达标。":"");
+    const hand=$("[data-hand]"); hand.replaceChildren();
+    if(s.enemies[Number(attackSelect.value)]?.hp <= 0 && s.enemies.some(e=>e.hp>0))
+      attackSelect.value=String(s.enemies.findIndex(e=>e.hp>0));
+    s.cards.forEach(([name,cost,damage,shield],i)=>{
+      hand.append(makeButton(name+" · "+cost+"费"+(damage?" / "+damage+"伤害":"")+(shield?" / "+shield+"格挡":""),
+        ()=>{SocratesPaper.play(s,i,Number(attackSelect.value));render();},
+        !SocratesPaper.canPlay(s,i,Number(attackSelect.value))));
+    });
+    Array.from(attackSelect.options).forEach((o,i)=>o.disabled=s.enemies[i].hp<=0);
+    attackSelect.disabled=s.ended;
+    $("[data-end]").disabled=!s.committed||s.ended;
+    const result=$("[data-result]");
+    if(s.ended){
+      const r=s.result;
+      const metric=s.mode==="skip"?"本轮未试行":(s.mode==="guard"?r.guardMet:r.clearMet)?"所选指标达成":"所选指标未达成";
+      result.textContent=metric+" · 本轮生命损失 "+r.loss+" · 次回合可领抽牌 "+r.draw+
+        "\n"+(r.won?"战斗已结束，没有次回合奖励。":!r.survived?"角色未存活，没有次回合奖励。":
+          s.revised?"修订代价已计入；本页不推演下一回合。":
+          s.enemies.some(e=>e.hp>0&&e.actualAttack!==undefined)?"本例在结束回合后改变攻击量；冻结指标不保证无伤。":
+          "只核对这一轮，不判定整场最优或哲学立场正确。");
+    } else result.textContent="待结算";
+    $("[data-history]").textContent=s.history.join(" → ");
+  }
+  caseSelect.addEventListener("change",reset);
+  $("[data-retry]").addEventListener("click",reset);
+  targetSelect.addEventListener("change",render);
+  attackSelect.addEventListener("change",render);
+  root.querySelectorAll("[data-choose]").forEach(b=>b.addEventListener("click",()=>{
+    SocratesPaper.commit(state,b.dataset.choose,Number(targetSelect.value)); render();
+  }));
+  $("[data-end]").addEventListener("click",()=>{SocratesPaper.finish(state);render();});
+  reset();
+})();
+</script>
