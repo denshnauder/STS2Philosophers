@@ -8,7 +8,7 @@ ISSUE007：按既有规划完成七问题、六入口、89人用途基线；西�
 
 已推送：3112533七入口战斗载体，3540394正常六选三入口，0ec7b04候选关系边界，075c635存在与变化8种后继纯策略，0109686知识与怀疑设计。上述代码阶段均已通过自动检查和部署，未进游戏验收；后继策略尚未接入事件，七路线未完整可玩。
 
-D6五旧边停用已通过独立VerifyMod：全部纯逻辑、Release零警告零错误、PCK加载及三文件部署SHA256一致；游戏未运行、未人工验收。保留12来源样例（8可执行、4SourceOnly）、47节点及89人基线，替代问号/独立入口未开放。验证目录S:/01_Workspace/Projects/SlayTheSpire2Verification，报告bin/Release/net9.0/verification.md，输入186fe2c加本阶段5文件；6个W3D2草稿未入产物。无运行中验证命令。下一动作：提交推送D6，然后回到14知识入口处理单敌奖励空窗与修订期限，不把内部图修订当七路线可玩完成。
+D6图修订cab16c1已推送并从独立目录验证部署；验证目录已对齐cab16c1且Git干净，主目录只保留6个W3D2草稿。D7在14页比较单敌奖励空窗的四种处理：保留局部期限，不用跨战斗积存、借贷或固定补偿掩盖限制；核对1至4个可兑现轮次的修订成本，未把它当多轮游戏模拟。下一步读取本机真实角色开局卡牌与资源事实，检验首次表达机会，再决定知识入口最小试玩。无运行操作，不重复构建部署；图替代入口与后继玩法仍未完成。
 
 W3D2未提交草稿保留：src/Entry.cs、src/Relics/Western/WesternPracticeRelic.cs、src/Relics/Western/WesternDoctrineManuscript.cs、tools/PckVerifier/VerifyContentPck.gd、content/STS2Philosophers/images/western_doctrine_manuscript.svg及_outline.svg，共6文件，均归本任务；文本未完成、未验证、未部署。它们不进入主目录整工作区部署；本次D6使用独立验证目录，生产输入为已提交基线加已核对的5个图修订文件，排除这6个草稿。
 
