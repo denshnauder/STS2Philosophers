@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "kind": "LocalAssemblyReadOnly",
+    "assembly": "sts2.dll",
+    "sha256": "0861BFA1DF347538D932F22D580E75420F08082792EB914E53B4882764ACDBE9",
+    "fileVersion": "0.1.0.0",
+    "productVersion": null,
+    "extractedOn": "2026-09-15",
+    "members": [
+      "Characters.*.StartingDeck/StartingHp/StartingRelics",
+      "CharacterModel.MaxEnergy",
+      "CombatManager.baseHandDrawCount and player turn start",
+      "Cards.* constructors, CanonicalVars and OnPlay",
+      "Starting relic hooks"
+    ],
+    "rawSourceLocation": "bin/design/native (ignored; not distributed)"
+  },
+  "scope": "Unmodified, unupgraded starting decks, before ascension-added cards, Neow changes, enchantments, potions or additional relic/mod effects. Native starter relics are included only as explicitly recorded. Not a full battle simulation.",
+  "baseEnergy": 3,
+  "baseHandDraw": 5,
+  "characters": [
+    {
+      "id": "Ironclad",
+      "name": "铁甲战士",
+      "hp": 80,
+      "draw": 5,
+      "deck": {
+        "StrikeIronclad": 5,
+        "DefendIronclad": 4,
+        "Bash": 1
+      },
+      "relic": "BurningBlood"
+    },
+    {
+      "id": "Silent",
+      "name": "静默猎手",
+      "hp": 70,
+      "draw": 7,
+      "deck": {
+        "StrikeSilent": 5,
+        "DefendSilent": 5,
+        "Neutralize": 1,
+        "Survivor": 1
+      },
+      "relic": "RingOfTheSnake"
+    },
+    {
+      "id": "Defect",
+      "name": "故障机器人",
+      "hp": 75,
+      "draw": 5,
+      "deck": {
+        "StrikeDefect": 4,
+        "DefendDefect": 4,
+        "Zap": 1,
+        "Dualcast": 1
+      },
+      "relic": "CrackedCore"
+    },
+    {
+      "id": "Regent",
+      "name": "储君",
+      "hp": 75,
+      "draw": 5,
+      "deck": {
+        "StrikeRegent": 4,
+        "DefendRegent": 4,
+        "FallingStar": 1,
+        "Venerate": 1
+      },
+      "relic": "DivineRight"
+    },
+    {
+      "id": "Necrobinder",
+      "name": "亡灵契约师",
+      "hp": 66,
+      "draw": 5,
+      "deck": {
+        "StrikeNecrobinder": 4,
+        "DefendNecrobinder": 4,
+        "Bodyguard": 1,
+        "Unleash": 1
+      },
+      "relic": "BoundPhylactery"
+    }
+  ],
+  "cards": {
+    "StrikeIronclad": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 6,
+      "directBlock": 0,
+      "otherEffects": []
+    },
+    "DefendIronclad": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 5,
+      "otherEffects": []
+    },
+    "StrikeSilent": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 6,
+      "directBlock": 0,
+      "otherEffects": []
+    },
+    "DefendSilent": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 5,
+      "otherEffects": []
+    },
+    "StrikeDefect": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 6,
+      "directBlock": 0,
+      "otherEffects": []
+    },
+    "DefendDefect": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 5,
+      "otherEffects": []
+    },
+    "StrikeRegent": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 6,
+      "directBlock": 0,
+      "otherEffects": []
+    },
+    "DefendRegent": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 5,
+      "otherEffects": []
+    },
+    "StrikeNecrobinder": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 6,
+      "directBlock": 0,
+      "otherEffects": []
+    },
+    "DefendNecrobinder": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 5,
+      "otherEffects": []
+    },
+    "Bash": {
+      "energyCost": 2,
+      "starCost": 0,
+      "directDamage": 8,
+      "directBlock": 0,
+      "otherEffects": [
+        "Apply Vulnerable 2 after damage"
+      ]
+    },
+    "Neutralize": {
+      "energyCost": 0,
+      "starCost": 0,
+      "directDamage": 3,
+      "directBlock": 0,
+      "otherEffects": [
+        "Apply Weak 1 after damage"
+      ]
+    },
+    "Survivor": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 8,
+      "otherEffects": [
+        "Select and discard 1 card after Block"
+      ]
+    },
+    "Zap": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 0,
+      "otherEffects": [
+        "Channel 1 Lightning orb"
+      ]
+    },
+    "Dualcast": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 0,
+      "otherEffects": [
+        "Evoke front orb twice; first evoke does not dequeue"
+      ]
+    },
+    "FallingStar": {
+      "energyCost": 0,
+      "starCost": 2,
+      "directDamage": 8,
+      "directBlock": 0,
+      "otherEffects": [
+        "Apply Weak 1 and Vulnerable 1 after damage"
+      ]
+    },
+    "Venerate": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 0,
+      "otherEffects": [
+        "Gain 2 Stars"
+      ]
+    },
+    "Bodyguard": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": 0,
+      "directBlock": 0,
+      "otherEffects": [
+        "Summon 5; not a BlockVar"
+      ]
+    },
+    "Unleash": {
+      "energyCost": 1,
+      "starCost": 0,
+      "directDamage": null,
+      "directBlock": 0,
+      "otherEffects": [
+        "Attack from Osty if present",
+        "CalculatedDamageVar: CalculationBase 6, ExtraDamage 1, multiplier reads living Osty.CurrentHp; not represented as a fixed damage value"
+      ]
+    }
+  },
+  "starterRelicFacts": {
+    "BurningBlood": {
+      "afterVictoryHeal": 6
+    },
+    "RingOfTheSnake": {
+      "extraHandDrawOnFirstTurn": 2
+    },
+    "CrackedCore": {
+      "firstPlayerTurnLightningChannels": 1
+    },
+    "DivineRight": {
+      "starsGainedOnCombatRoomEntered": 3
+    },
+    "BoundPhylactery": {
+      "beforeCombatSummon": 1,
+      "afterEnergyResetLateSummon": 1,
+      "excludesTurnOneFromLateSummon": true
+    }
+  }
+}
