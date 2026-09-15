@@ -8,7 +8,7 @@ ISSUE007：按既有规划完成七问题、六入口、89人用途基线；西�
 
 已推送：3112533七入口战斗载体，3540394正常六选三入口，0ec7b04候选关系边界，075c635存在与变化8种后继纯策略，0109686知识与怀疑设计。上述代码阶段均已通过自动检查和部署，未进游戏验收；后继策略尚未接入事件，七路线未完整可玩。
 
-D15 C3保存协议已通过全量纯检查、独立Release零警告零错误、PCK及部署三哈希一致，未游戏验收。13字段严格版本化，逐阶段恢复保留声明/修订/行动锁，已领取奖励不复活；缺失/额外/重复字段、错身份/版本/枚举及损坏关系失败且返回空。验证输入69967ca加5项文件，6旧草稿排除。下一步只读核对游戏保存事务、抽牌动作和稳定敌人身份，明确一致快照后才设计实际适配，不把Codec通过当实际读档验收。当前无运行命令，阶段待逐文件提交推送；报告在独立目录bin/Release/net9.0/verification.md，DLL为EACA4A1AF2C87BEACCCE5EC72BCA0BE570099238D6FC6E8DDBA27B59EFE1A68E。
+D16已核对原生保存/抽牌/身份链并修订首版接入边界，证据在03研究与资料/技术研究/01有限承诺接入。普通载荷保存Deck/Relics而非战斗牌堆；不把C3回合载荷单独挂到重新建立的战斗，首版沿用原生战斗边界，不额外每次选项保存。抽1仅发起一次原生请求，不因满手/禁抽补偿；整个战斗令牌与Creature.CombatId分开并复核live状态。下一步只读核对公开攻击意图与行动前选择窗口，再形成最小适配方案。D15 b78c844已推送部署，独立目录同提交且干净；本阶段仅研究/设计与记录，未构建部署。6草稿及另一任务tmp/pdfs/scholarship_policy保留，无运行命令。
 
 W3D2未提交草稿保留：src/Entry.cs、src/Relics/Western/WesternPracticeRelic.cs、src/Relics/Western/WesternDoctrineManuscript.cs、tools/PckVerifier/VerifyContentPck.gd、content/STS2Philosophers/images/western_doctrine_manuscript.svg及_outline.svg，共6文件，均归本任务；文本未完成、未验证、未部署。它们不进入主目录整工作区部署；本次D6使用独立验证目录，生产输入为已提交基线加已核对的5个图修订文件，排除这6个草稿。
 
