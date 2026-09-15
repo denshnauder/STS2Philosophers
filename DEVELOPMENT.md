@@ -26,9 +26,11 @@ D9保留C1全额防护/单体解围并加入C2半额防护/冻结攻击者集合
 
 未完成载体草稿仍在主目录时，本次图修订在独立工作树`S:/01_Workspace/Projects/SlayTheSpire2Verification`验证，输入为186fe2c加本阶段图配置、解析及测试文件，排除6个草稿。该目录`bin/Release/net9.0/verification.md`保存本次部署证据；不要把主目录旧报告当作最新，也不要直接在含草稿的工作区构建部署。
 
-`docs/design/socrates_commitment.html`是苏格拉底候选设计的交互片段，设计真源为G盘`02想法与机制/14苏格拉底有限承诺.md`。只推演虚构单轮输入，奖励仅计数；不是游戏引擎、完整战斗、存档或平衡验收。它不进入PCK，不替换诘问杯。
+`docs/design/socrates_commitment.html`是苏格拉底候选设计的交互片段，当前设计真源为G盘`02想法与机制/16有限承诺试玩规格.md`，14页保留设计沿革。默认C3推演固定手牌的六回合片段与三个边界情境，C1/C2单轮对照折叠保留。抽牌仅计请求，不生成真实牌堆的手牌；不是游戏引擎、完整战斗、存档或平衡验收。它不进入PCK，不替换诘问杯。
 
-模型检查：`node tools/design/SocratesCommitmentChecks.cjs`。覆盖12固定样本的123条合法行动前缀，以及冻结、修订、死亡、防重复等边界。
+C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持续保留、反复修订、领取时点、隐藏信息、身份和终局；对应浏览器检查为`SocratesC3BrowserChecks.cjs`，参数与下面一致。320/360/760像素及明暗主题已检查。
+
+历史模型检查：`node tools/design/SocratesCommitmentChecks.cjs`。覆盖12固定样本的123条合法行动前缀，以及冻结、修订、死亡、防重复等边界。
 
 浏览器检查：先用visualize技能的`scripts/render.py`将片段包装到被忽略的`bin/design/socrates_commitment_preview.html`，再运行`node tools/design/SocratesCommitmentBrowserChecks.cjs <预览路径> <Playwright包路径> msedge`。包路径由本机运行时确定；脚本只打开并关闭独立无界面浏览器，不操作已有窗口。截图在预览同目录，未提交。仅修改纸面试玩时运行其专用检查，不调用游戏构建。
 

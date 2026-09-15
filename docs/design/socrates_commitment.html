@@ -1,3 +1,31 @@
+<div id="socrates-c3">
+  <div class="viz-row"><strong>有限承诺 · C3 当前设计</strong><span class="text-small">固定手牌 · 抽牌仅计请求</span></div>
+  <div class="viz-controls">
+    <label class="form-label">情境<select class="form-select" data-c3-case aria-label="C3纸面情境">
+      <option value="revisions">六回合片段：保留与再次修订</option>
+      <option value="hidden">只有隐藏意图</option>
+      <option value="prepared">初始防护已足</option>
+      <option value="short">最后击杀</option>
+    </select></label>
+    <button class="btn" type="button" data-c3-retry>重新推演</button>
+  </div>
+  <div class="viz-row tabular-nums" data-c3-state></div>
+  <div class="viz-row" data-c3-enemies></div>
+  <hr>
+  <div data-c3-goal aria-live="polite"></div>
+  <div class="viz-row" data-c3-choices></div>
+  <hr>
+  <div class="viz-row" data-c3-hand aria-label="C3手牌"></div>
+  <div class="viz-controls">
+    <label class="form-label">攻击目标<select class="form-select" data-c3-target aria-label="C3攻击目标"></select></label>
+    <button class="btn btn-primary" type="button" data-c3-end>结束这一回合</button>
+    <button class="btn" type="button" data-c3-next>进入下一回合</button>
+  </div>
+  <div data-c3-result aria-live="polite"></div>
+  <div class="text-small" data-c3-history></div>
+</div>
+<details id="socrates-history">
+<summary>旧方案：C1 / C2 单轮对照</summary>
 <div id="socrates-paper">
   <div class="viz-row"><strong>有限承诺 · 纸面试玩</strong><span class="text-small">虚构牌局 · 只推演当前回合</span></div>
   <div class="viz-controls">
@@ -674,5 +702,166 @@ const SocratesPaper = (() => {
   }));
   $("[data-end]").addEventListener("click",()=>{SocratesPaper.finish(state);render();});
   reset();
+})();
+</script>
+</details>
+<style>
+#socrates-c3 { display: grid; gap: 12px; }
+#socrates-c3 [data-c3-result], #socrates-c3 [data-c3-goal] { white-space: pre-line; }
+#socrates-c3 [data-c3-history] { overflow-wrap: anywhere; }
+#socrates-history { margin-top: 20px; }
+</style>
+<script>
+// BEGIN C3 PAPER MODEL
+const SocratesC3Paper = (() => {
+  // Authored limited experiment, not native cards, enemy AI or a shuffled deck.
+  const attack = ["攻",1,6,0], defend = ["防一",1,0,6], defend2 = ["防二",1,0,6];
+  const fixtures = {
+    revisions: {
+      hp:40, enemies:[["甲",6],["乙",6],["丙",60]],
+      turns:[
+        {intents:[4,0,8],cards:[attack,defend,defend2]},
+        {intents:[0,0,16],cards:[attack,["防一",1,0,8],["防二",1,0,8]]},
+        {intents:[4,4,8],cards:[attack,["攻二",1,6,0],defend]},
+        {intents:[0,0,null],actual:[0,0,10],cards:[attack,defend,defend2]},
+        {intents:[0,4,8],cards:[attack,["攻二",1,6,0],defend]},
+        {intents:[4,0,12],cards:[attack,["防一",1,0,8],["防二",1,0,8]]}
+      ]
+    },
+    hidden: {hp:40,enemies:[["甲",30]],turns:[
+      {intents:[null],actual:[8],cards:[attack,defend]},
+      {intents:[8],cards:[attack,defend]}
+    ]},
+    prepared: {hp:40,enemies:[["甲",30]],turns:[
+      {intents:[8],block:4,cards:[attack,defend]},
+      {intents:[8],cards:[attack,defend]}
+    ]},
+    short: {hp:40,enemies:[["甲",6]],turns:[{intents:[8],cards:[attack,defend]}]}
+  };
+  function open(s) {
+    const turn = s.script[s.round-1];
+    s.received=s.pending; s.requests+=s.pending; s.pending=0;
+    s.energy=2; s.block=turn.block||0; s.initialBlock=s.block;
+    s.cards=turn.cards.map(c=>[...c]); s.used=[]; s.locked=false; s.changed=false; s.revised=false; s.closed=false;
+    s.enemies.forEach((e,i)=>{
+      e.publicDamage=turn.intents[i]; e.actualDamage=turn.actual?.[i] ?? turn.intents[i];
+      e.visibleAttack=e.hp>0 && typeof e.publicDamage==="number" && e.publicDamage>0;
+    });
+    const alive=s.enemies.filter(e=>e.hp>0);
+    s.incoming=alive.some(e=>e.publicDamage===null)?null:alive.reduce((n,e)=>n+e.publicDamage,0);
+    s.threshold=s.incoming===null?null:Math.ceil(s.incoming/2);
+    s.frozen=alive.filter(e=>e.visibleAttack).map(e=>e.id);
+  }
+  function create(id="revisions") {
+    const f=fixtures[id]; if(!f) throw new Error("Unknown C3 paper case");
+    const s={caseId:id,script:JSON.parse(JSON.stringify(f.turns)),round:1,hp:f.hp,
+      enemies:f.enemies.map(([id,hp])=>({id,hp})),mode:null,declined:false,pending:0,requests:0,terminal:false,history:[],result:null};
+    open(s); return s;
+  }
+  const invitation=s=>!s.mode && !s.declined && s.frozen.length>0;
+  function canSelect(s,mode) {
+    return !s.closed && !s.terminal && !s.locked && !s.changed && !s.declined &&
+      ["guard","clear"].includes(mode) && mode!==s.mode && (!!s.mode || invitation(s));
+  }
+  function select(s,mode) {
+    if(!canSelect(s,mode)) return false;
+    s.revised=!!s.mode; s.mode=mode; s.changed=true; return true;
+  }
+  function decline(s) {
+    if(s.closed || s.terminal || s.locked || s.changed || !invitation(s)) return false;
+    s.declined=s.changed=true; return true;
+  }
+  const canAct=s=>!s.closed && !s.terminal && !invitation(s);
+  function canPlay(s,i,target) {
+    const c=s.cards[i];
+    return canAct(s) && Number.isInteger(i) && !!c && !s.used.includes(i) && c[1]<=s.energy &&
+      (!c[2] || (Number.isInteger(target) && !!s.enemies[target] && s.enemies[target].hp>0));
+  }
+  function play(s,i,target=0) {
+    if(!canPlay(s,i,target)) return false;
+    const [,cost,damage,block]=s.cards[i];
+    s.locked=true; s.energy-=cost; s.block+=block; s.used.push(i);
+    if(damage) s.enemies[target].hp=Math.max(0,s.enemies[target].hp-damage);
+    if(s.enemies.every(e=>e.hp===0)) finish(s);
+    return true;
+  }
+  function observe(s) {
+    if(!s.mode) return "none";
+    if(s.mode==="guard") {
+      if(s.threshold===null) return "incomplete";
+      if(s.threshold<=s.initialBlock) return "no_condition";
+      return s.block>=s.threshold?"met":"unmet";
+    }
+    if(!s.frozen.length) return "no_condition";
+    return s.enemies.some(e=>s.frozen.includes(e.id)&&e.hp===0)?"met":"unmet";
+  }
+  function finish(s) {
+    if(!canAct(s)) return false;
+    s.locked=true; s.closed=true;
+    const metric=observe(s), won=s.enemies.every(e=>e.hp===0);
+    const damage=s.enemies.reduce((n,e)=>n+(e.hp>0?e.actualDamage:0),0);
+    const loss=Math.min(s.hp,Math.max(0,damage-s.block)); s.hp-=loss;
+    s.terminal=won||s.hp===0;
+    s.pending=!s.terminal && !s.revised && metric==="met"?1:0;
+    s.result={round:s.round,metric,loss,won,dead:s.hp===0,pending:s.pending,revised:s.revised};
+    s.history.push({...s.result,mode:s.mode,received:s.received}); return true;
+  }
+  function next(s) {
+    if(!s.closed || s.terminal || s.round>=s.script.length) return false;
+    s.round++; open(s); return true;
+  }
+  return {create,invitation,canSelect,select,decline,canAct,canPlay,play,observe,finish,next};
+})();
+// END C3 PAPER MODEL
+(() => {
+  const root=document.getElementById("socrates-c3"), $=q=>root.querySelector(q);
+  const picker=$("[data-c3-case]"), target=$("[data-c3-target]");
+  const names={guard:"防护",clear:"解围"};
+  const metrics={none:"未参与",incomplete:"记录不足",no_condition:"条件未出现",met:"指标达成",unmet:"指标未达成"};
+  let s;
+  function button(label,action,disabled=false) {
+    const b=document.createElement("button"); b.type="button"; b.className="btn"; b.textContent=label;
+    b.disabled=disabled; b.addEventListener("click",()=>{action();render();}); return b;
+  }
+  function reset(){s=SocratesC3Paper.create(picker.value);target.replaceChildren();
+    s.enemies.forEach((e,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=e.id;target.append(o);});render();}
+  function render() {
+    $("[data-c3-state]").textContent=`第${s.round}回合 · 生命 ${s.hp} · 能量 ${s.energy} · 格挡 ${s.block} · 本轮抽牌请求 ${s.received}`;
+    $("[data-c3-enemies]").textContent=s.enemies.map(e=>e.id+"："+(e.hp===0?"已击败":
+      `生命 ${e.hp} / `+(e.publicDamage===null?"意图不明":e.visibleAttack?`攻击 ${e.publicDamage}`:"不攻击"))).join("　");
+    const guard=s.threshold===null?"防护目标不明":`防护目标 ${s.threshold} 格挡`;
+    const scope="解围范围 "+(s.frozen.join("、")||"无");
+    const current=s.declined?"本战不参与":!s.mode?(SocratesC3Paper.invitation(s)?"首次选择 · 达成后下一正常回合抽1":"尚无公开攻击 · 正常行动"):
+      (s.revised?"已修订为":s.changed?"开始试行":"沿用")+names[s.mode]+
+      (s.revised?" · 本轮不产生新收益":s.locked?" · 本轮已锁定":" · 可直接行动，无需确认");
+    $("[data-c3-goal]").textContent=current+"\n"+guard+"；"+scope+
+      (s.threshold!==null&&s.threshold<=s.initialBlock?"；初始格挡已足，本轮防护无新增收益条件":"");
+    const choices=$("[data-c3-choices]");choices.replaceChildren();
+    if(!s.declined && (s.mode || SocratesC3Paper.invitation(s))) {
+      for(const mode of ["guard","clear"]) if(mode!==s.mode) choices.append(button(
+        (s.mode?"修订为":"试行")+names[mode]+(s.mode?"（本轮无新收益）":""),
+        ()=>SocratesC3Paper.select(s,mode),!SocratesC3Paper.canSelect(s,mode)));
+      if(!s.mode)choices.append(button("本战不参与",()=>SocratesC3Paper.decline(s),!SocratesC3Paper.invitation(s)));
+    }
+    if(s.enemies[Number(target.value)]?.hp===0 && s.enemies.some(e=>e.hp>0)) target.value=String(s.enemies.findIndex(e=>e.hp>0));
+    Array.from(target.options).forEach((o,i)=>o.disabled=s.enemies[i].hp===0); target.disabled=s.closed||s.terminal;
+    const hand=$("[data-c3-hand]");hand.replaceChildren();
+    s.cards.forEach(([name,cost,damage,block],i)=>hand.append(button(
+      `${name} · ${cost}费 / ${damage?damage+"伤害":block+"格挡"}`,
+      ()=>SocratesC3Paper.play(s,i,Number(target.value)),!SocratesC3Paper.canPlay(s,i,Number(target.value)))));
+    $("[data-c3-end]").disabled=!SocratesC3Paper.canAct(s);
+    $("[data-c3-next]").disabled=!s.closed||s.terminal||s.round>=s.script.length;
+    $("[data-c3-next]").hidden=!s.closed;
+    const r=s.result;
+    $("[data-c3-result]").textContent=r?`第${r.round}回合：${metrics[r.metric]} · 实际失血 ${r.loss} · 当时待发抽牌 ${r.pending}\n`+
+      (r.won?"战斗结束，未领收益清空":r.dead?"角色死亡，未领收益清空":s.closed&&s.round>=s.script.length?
+        `片段结束，战斗未结束；${s.pending} 次请求尚未领取`:s.closed?"下一回合先领取，再作新的判断":
+        `本轮已消费 ${s.received} 次请求；未生成额外手牌`):"等待本轮观察";
+    $("[data-c3-history]").textContent=s.history.map(h=>`第${h.round}轮 ${names[h.mode]||"未参与"}${h.revised?"（修订）":""}：${metrics[h.metric]}，失血${h.loss}`).join(" / ");
+  }
+  picker.addEventListener("change",reset);target.addEventListener("change",render);
+  $("[data-c3-retry]").addEventListener("click",reset);
+  $("[data-c3-end]").addEventListener("click",()=>{SocratesC3Paper.finish(s);render();});
+  $("[data-c3-next]").addEventListener("click",()=>{SocratesC3Paper.next(s);render();});reset();
 })();
 </script>

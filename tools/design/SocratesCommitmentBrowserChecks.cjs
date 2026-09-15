@@ -11,8 +11,9 @@ const preview=path.resolve(process.argv[2] || 'bin/design/socrates_commitment_pr
     const errors=[]; page.on('pageerror',error=>errors.push(error.message));
     await page.goto(pathToFileURL(preview).href);
     const f=page.frameLocator('iframe');
+    await f.locator('#socrates-history > summary').click();
     await f.getByText('有限承诺 · 纸面试玩',{exact:true}).waitFor();
-    const button=name=>f.getByRole('button',{name,exact:true});
+    const button=name=>f.locator('#socrates-paper').getByRole('button',{name,exact:true});
     const result=()=>f.locator('[data-result]').innerText();
     await button('试行防护').click();
     assert.equal(await button('试行解围').isDisabled(),true);
