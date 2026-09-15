@@ -6,7 +6,7 @@ internal enum SocratesCommitmentObservation { NotObserved, NoPractice, NoConditi
 
 // C3 in-memory protocol only. No engine hooks, save migration or philosophical score.
 // The adapter must provide a stable combat identity and increasing normal-turn identities.
-internal sealed class SocratesBoundedCommitmentState
+internal sealed partial class SocratesBoundedCommitmentState
 {
     private HashSet<string> _attackers = new(StringComparer.Ordinal);
     private int _pendingDraw;
