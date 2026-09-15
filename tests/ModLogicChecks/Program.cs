@@ -7,6 +7,7 @@ WesternResearchChecks.Run();
 WesternGraphChecks.Run();
 WesternGraphRevisionChecks.Run();
 WesternPracticeChecks.Run();
+SocratesBoundedCommitmentChecks.Run();
 WesternEntryChecks.Run();
 WesternBeingChecks.Run();
 WesternKnowledgeChecks.Run();
