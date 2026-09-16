@@ -2,6 +2,8 @@ using STS2Philosophers;
 using System.Text;
 using System.Text.Json;
 
+SocratesKnowledgeRouteChecks.Run();
+
 WesternRouteChecks.Run();
 WesternResearchChecks.Run();
 WesternGraphChecks.Run();

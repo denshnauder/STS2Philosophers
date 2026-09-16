@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecord.cs" Link="SocratesKnowledgeRouteRecord.cs" />
+    <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecordCodec.cs" Link="SocratesKnowledgeRouteRecordCodec.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesBoundedCommitmentState.cs" Link="SocratesBoundedCommitmentState.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesBoundedCommitmentStateCodec.cs" Link="SocratesBoundedCommitmentStateCodec.cs" />
     <Compile Include="..\..\src\Philosophy\WesternNodePracticePolicy.cs" Link="WesternNodePracticePolicy.cs" />
