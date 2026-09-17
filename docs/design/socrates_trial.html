@@ -143,7 +143,15 @@ const SocratesTrialPaper=(()=>{
     const m=r.material,facts=[m.drawn?'该次副本实际抽到。':'该次副本未抽到，不能推出无用。',m.used?'该次副本实际使用。':'该次副本没有使用。'];
     if(m.hits.length)facts.push(`实际${m.hits.length}次命中，涉及${new Set(m.hits.map(h=>h.target)).size}个目标；不外推未检验场合。`);
     if(m.blockGranted)facts.push(`该副本提供${m.blockGranted}格挡；回合总抵消不能全归于它。`);
-    return Object.freeze({key,act:r.act,model:r.model,decision:r.decision,originalReason:r.originalReason,currentReason:r.currentReason,fixture:m.fixture,facts:Object.freeze(facts),question:questions[key]});
+    const object=r.currentReason===null?'若要提出一个新问题，什么材料还需要检查？':'这项观察与你当前句的哪一部分有关，还有什么未检查？';
+    let materialQuestion;
+    if(!m.drawn)materialQuestion='这副本未抽到，还没有它的使用材料。'+object;
+    else if(!m.used)materialQuestion='这副本抽到却未使用；为什么没用不能由程序代答。'+object;
+    else if(m.blockGranted)materialQuestion=`该副本给了${m.blockGranted}格挡，整回合抵消由全部格挡共同形成，不能独归这张牌。`+object;
+    else if(r.model==='twin')materialQuestion=`连击实际${m.hits.length}次命中，只涉及${new Set(m.hits.map(h=>h.target)).size}个目标；效果文本不等于实际处理了两个目标。`+object;
+    else materialQuestion=`本次实际命中${new Set(m.hits.map(h=>h.target)).size}个目标，记录伤害${m.hits.reduce((n,h)=>n+h.damage,0)}；一场结果没有给出长期比较。`+object;
+    const handling={notProposed:'此前没有提出断言。',introduced:'此前无原句，现已明确提出新句。',withdrawn:'原句已撤回；收入牌不会重新肯定它。',rewritten:'已明确替换原句；程序没有认证它是合理限定。',kept:'原句明确保留。',deferred:'明确暂不回应；未答不等于同意。',unanswered:'处置牌时没有回应；牌去留不表示接受或撤回句子。'}[key];
+    return Object.freeze({key,act:r.act,model:r.model,decision:r.decision,originalReason:r.originalReason,currentReason:r.currentReason,fixture:m.fixture,facts:Object.freeze(facts),question:questions[key],materialQuestion,handling});
   }
   return Object.freeze({definitions,create,canTry,accept,skip,trial,start,play,endTurn,reply,resolve,nextReward,nextAct,inquiry});
 })();
@@ -159,7 +167,7 @@ const SocratesTrialPaper=(()=>{
     $('deck').replaceChildren();for(const c of s.deck){const x=document.createElement('span');x.className='chip';x.textContent=p.definitions[c.model].name+(c.id===s.pending?' · 待定':'');$('deck').append(x);}
     show('reward',s.phase==='reward');show('awaiting',s.phase==='awaiting');show('combat',s.phase==='combat');show('review',s.phase==='review');show('outcome',['outcome','dead'].includes(s.phase));
     const prior=p.inquiry(s);show('continuity',prior!==null&&s.phase!=='dead');
-    if(prior){$('priorContext').textContent=`来自第${prior.act}幕固定片段的${p.definitions[prior.model].name}，该副本${prior.decision==='keep'?'已收入':'已放弃'}。${s.fixture==='sequence'?'连续片段只是一组固定反例，不是已完成的游戏三幕。':''}`;$('priorOriginal').textContent=prior.originalReason??'没有提出原话。';$('priorCurrent').textContent=prior.currentReason??'目前没有留下肯定句。';$('priorFacts').replaceChildren();for(const fact of prior.facts)item($('priorFacts'),fact);$('priorQuestion').textContent=prior.question;}
+    if(prior){$('priorContext').textContent=`来自第${prior.act}幕固定片段的${p.definitions[prior.model].name}，该副本${prior.decision==='keep'?'已收入':'已放弃'}。${s.fixture==='sequence'?'连续片段只是一组固定反例，不是已完成的游戏三幕。':''}`;$('priorOriginal').textContent=prior.originalReason??'没有提出原话。';$('priorCurrent').textContent=prior.currentReason??'目前没有留下肯定句。';$('priorFacts').replaceChildren();for(const fact of prior.facts)item($('priorFacts'),fact);$('priorQuestion').textContent=prior.handling+' '+prior.materialQuestion;}
     if(s.phase==='reward'){
       $('choices').replaceChildren();s.reward.forEach((c,i)=>{const d=p.definitions[c.model],label=document.createElement('label');label.className='choice';const input=document.createElement('input');input.type='radio';input.name='reward';input.value=String(i);input.checked=i===selection;input.addEventListener('change',()=>selection=i);label.append(input,document.createTextNode(' '+d.name));const effect=document.createElement('p');effect.textContent=`${d.cost}费 · ${d.hits?`${d.hits}次攻击，每次${d.damage}伤害，同一目标`:`${d.block}格挡`}`;label.append(effect);$('choices').append(label);});
       $('tryReason').disabled=!p.canTry(s);$('trySilent').disabled=!p.canTry(s);$('offerNote').textContent=p.canTry(s)?'普通收入或跳过会保留机会；试授消费本幕唯一机会。':'本幕已试授过。仍可普通收入或跳过，但不能再试授。';

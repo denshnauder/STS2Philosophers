@@ -114,4 +114,22 @@ check('Continuous authored fragments change relevant facts, not claims or card d
 check('Fixed sequence cannot advance with a pending copy or mint questions from ordinary choices',()=>{
   const s=p.create('sequence');p.accept(s,0);p.start(s);p.play(s,s.focus,'foe:0');assert.equal(p.inquiry(s),null);p.nextAct(s);p.trial(s,0,'第二段');unchanged(s,()=>p.nextAct(s));p.start(s);assert.equal(s.enemies.length,2);unchanged(s,()=>p.nextAct(s));
 });
+check('Material questions separate no draw from no use without inventing a reason',()=>{
+  const questions=[];
+  for(const fixture of ['one','absent']){const {s}=open(fixture);victoryWithoutTrial(s);p.resolve(s,'keep');const before=snapshot(s),q=p.inquiry(s);assert.equal(snapshot(s),before);questions.push(q.materialQuestion);assert.equal(q.key,'unanswered');assert.match(q.materialQuestion,/当前句/);}
+  assert.match(questions[0],/抽到却未使用.*不能由程序代答/);assert.match(questions[1],/未抽到.*没有它的使用材料/);assert.notEqual(questions[0],questions[1]);
+});
+check('Actual target questions never promote printed two hits into two observed targets',()=>{
+  for(const fixture of ['one','two']){const {s,id}=open(fixture,0,'只问这次对一个目标');p.play(s,id,'foe:0');if(s.phase==='combat')p.play(s,'base:strike','foe:1');p.reply(s,'keep');p.resolve(s,'reject');const q=p.inquiry(s);assert.match(q.materialQuestion,new RegExp(`实际${fixture==='one'?2:1}次命中，只涉及1个目标`));assert.match(q.materialQuestion,/不等于实际处理了两个目标/);assert.equal(q.currentReason,'只问这次对一个目标');}
+});
+check('No current assertion is not silently reintroduced by a concrete material question',()=>{
+  for(const mode of ['silent','withdraw']){const {s,id}=open('one',0,mode==='silent'?null:'原句');p.play(s,id,'foe:0');if(mode==='withdraw')p.reply(s,'withdraw');p.resolve(s,'keep');const q=p.inquiry(s);assert.equal(q.currentReason,null);assert.match(q.materialQuestion,/若要提出一个新问题/);assert.doesNotMatch(q.materialQuestion,/当前句|你仍认为/);}
+});
+check('Block and attack observations keep aggregate causality and long-term comparisons open',()=>{
+  const guard=open('one',1);p.play(guard.s,guard.id);victoryWithoutTrial(guard.s);p.resolve(guard.s,'keep');assert.match(p.inquiry(guard.s).materialQuestion,/给了8格挡.*不能独归/);
+  const heavy=open('one',2);p.play(heavy.s,heavy.id,'foe:0');p.resolve(heavy.s,'keep');assert.match(p.inquiry(heavy.s).materialQuestion,/命中1个目标，记录伤害8.*没有给出长期比较/);
+});
+check('Material questions derive from the completed copy and cannot mutate its historical facts',()=>{
+  const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'keep');const before=snapshot(s.trialHistory),view=snapshot(p.inquiry(s));s.material.hits.length=0;s.material.drawn=false;assert.equal(snapshot(p.inquiry(s)),view);p.nextReward(s);p.accept(s,1);p.start(s);victoryWithoutTrial(s);assert.equal(snapshot(p.inquiry(s)),view);assert.equal(snapshot(s.trialHistory),before);assert.equal(Object.isFrozen(p.inquiry(s)),true);
+});
 console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);
