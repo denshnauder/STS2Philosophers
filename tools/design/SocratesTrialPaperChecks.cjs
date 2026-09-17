@@ -1,0 +1,74 @@
+// Authored paper loop; does not test native card identity, saves, draw odds or balance.
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const html=fs.readFileSync(path.resolve(__dirname,'../../docs/design/socrates_trial.html'),'utf8');
+for(const match of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+const code=html.match(/\/\/ BEGIN SOCRATES TRIAL PAPER MODEL([\s\S]*?)\/\/ END SOCRATES TRIAL PAPER MODEL/)[1];
+const context={};vm.runInNewContext(code+'\nglobalThis.paper=SocratesTrialPaper;',context);
+const p=context.paper;
+let total=0;
+const check=(name,run)=>{run();total++;console.log('PASS '+name);};
+const snapshot=s=>JSON.stringify(s);
+function unchanged(s,run){const before=snapshot(s);assert.equal(run(),false);assert.equal(snapshot(s),before);}
+function open(fixture='one',index=0,reason='只检查这场的局部用途'){
+  const s=p.create(fixture);assert.equal(p.trial(s,index,reason),true);const id=s.pending;assert.equal(p.start(s),true);return {s,id};
+}
+function victoryWithoutTrial(s){
+  let count=0;while(s.phase==='combat'){
+    const alive=s.enemies.find(e=>e.hp>0);assert.equal(p.play(s,'base:strike',alive.id),true);
+    if(s.phase==='combat'){assert.equal(p.play(s,'base:defend'),true);assert.equal(p.endTurn(s),true);}
+    assert.ok(++count<10);
+  }assert.equal(s.phase,'review');
+}
+check('Ordinary accept and skip preserve unused opportunity; card reward settles once',()=>{
+  for(const choice of ['accept','skip']){const s=p.create();assert.equal(choice==='accept'?p.accept(s,1):p.skip(s),true);assert.equal(s.spent.length,0);assert.equal(s.deck.length,choice==='accept'?3:2);unchanged(s,()=>p.skip(s));assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),true);}
+});
+check('Invalid reward, reason and premature actions leave the whole loop unchanged',()=>{
+  const s=p.create();for(const index of [-1,3,0.5,'0'])unchanged(s,()=>p.trial(s,index));
+  for(const reason of ['',42,'x'.repeat(301)])unchanged(s,()=>p.trial(s,0,reason));
+  unchanged(s,()=>p.start(s));unchanged(s,()=>p.resolve(s,'keep'));unchanged(s,()=>p.nextAct(s));
+});
+check('Trial locks one copy and reward; no second pending trial or favourable battle swap',()=>{
+  const s=p.create();assert.equal(p.trial(s,0,null),true);assert.equal(s.reason,null);assert.equal(s.deck.length,3);assert.equal(s.reward.length,0);assert.equal(s.spent.join(','),'1');
+  unchanged(s,()=>p.trial(s,1));unchanged(s,()=>p.accept(s,1));unchanged(s,()=>p.nextReward(s));unchanged(s,()=>p.nextAct(s));assert.equal(p.start(s),true);unchanged(s,()=>p.start(s));
+});
+check('Actual use on one target supports only a local observed example',()=>{
+  const {s,id}=open();assert.equal(p.play(s,id,'foe:0'),true);assert.equal(s.phase,'review');assert.equal(s.material.drawn,true);assert.equal(s.material.used,true);assert.equal(s.material.hits.length,2);assert.equal(s.material.hits.reduce((n,h)=>n+h.damage,0),8);assert.equal(s.currentReason,s.reason);
+  assert.equal('knowledgeScore' in s,false);assert.equal('refuted' in s.material,false);
+});
+check('Two hit effect is not two enemies or two actual hits on an already dead foe',()=>{
+  const {s,id}=open('two');assert.equal(p.play(s,id,'foe:0'),true);assert.equal(s.phase,'combat');assert.equal(s.material.hits.length,1);assert.equal(s.enemies[1].hp,4);unchanged(s,()=>p.play(s,id,'foe:1'));assert.equal(p.play(s,'base:strike','foe:1'),true);assert.equal(s.phase,'review');
+});
+check('Drawn but unused and never drawn remain distinct, without automatic refutation',()=>{
+  for(const fixture of ['one','absent']){const {s}=open(fixture);victoryWithoutTrial(s);assert.equal(s.material.drawn,fixture==='one');assert.equal(s.material.used,false);assert.equal(s.material.hits.length,0);assert.equal(s.currentReason,s.reason);assert.equal(s.response,null);}
+});
+check('Defence evidence records grant and aggregate damage without claiming unique causality',()=>{
+  const {s,id}=open('one',1);assert.equal(p.play(s,id),true);assert.equal(p.play(s,'base:defend'),true);assert.equal(p.endTurn(s),true);assert.equal(s.material.blockGranted,8);assert.equal(s.material.turns[0].blocked,6);assert.equal(s.hp,20);assert.equal('damagePreventedByTrial' in s.material,false);victoryWithoutTrial(s);
+});
+check('All explicit replies, no assertion and no reply have identical card decision rights',()=>{
+  for(const reason of [null,'只检查这场'])for(const type of [null,'keep','limit','withdraw','unanswered'])for(const decision of ['keep','reject']){
+    const {s,id}=open('one',0,reason);p.play(s,id,'foe:0');if(type!==null)assert.equal(p.reply(s,type,'限定为这一个已见局面'),true);const original=s.deck.find(c=>c.id===id);
+    assert.equal(p.resolve(s,decision),true);assert.equal(s.pending,null);assert.equal(s.deck.length,decision==='keep'?3:2);assert.equal(s.spent.join(','),'1');assert.equal(s.trialHistory[0].response===null,type===null);if(decision==='keep')assert.equal(s.deck.find(c=>c.id===id),original);
+  }
+});
+check('Reply is explicit, bounded and cannot revise history by repeated callbacks',()=>{
+  const {s,id}=open();p.play(s,id,'foe:0');unchanged(s,()=>p.reply(s,'other'));unchanged(s,()=>p.reply(s,'limit',''));assert.equal(p.reply(s,'withdraw'),true);assert.equal(s.currentReason,null);assert.notEqual(s.reason,null);unchanged(s,()=>p.reply(s,'keep'));p.resolve(s,'reject');unchanged(s,()=>p.resolve(s,'keep'));unchanged(s,()=>p.resolve(s,'reject'));
+});
+check('Reject removes the exact simulated copy, preserves an identical extra copy, no alternatives',()=>{
+  const {s,id}=open();s.deck.push({id:'extra:twin',model:'twin'});p.play(s,id,'foe:0');assert.equal(p.resolve(s,'reject'),true);assert.ok(s.deck.some(c=>c.id==='extra:twin'));assert.equal(s.deck.some(c=>c.id===id),false);assert.equal(s.deck.some(c=>['guard','heavy'].includes(c.model)),false);
+});
+check('Missing or ambiguous pending identity refuses auto settlement; no similar substitute',()=>{
+  for(const corruption of ['missing','duplicate']){const {s,id}=open();p.play(s,id,'foe:0');s.deck.push({id:'extra:twin',model:'twin'});if(corruption==='missing')s.deck=s.deck.filter(c=>c.id!==id);else s.deck.push({...s.deck.find(c=>c.id===id)});for(const decision of ['keep','reject'])unchanged(s,()=>p.resolve(s,decision));}
+});
+check('Invalid, duplicate and costly combat actions do not mint evidence or spend energy',()=>{
+  const {s,id}=open('two',2);unchanged(s,()=>p.play(s,id,'missing'));assert.equal(p.play(s,'base:defend'),true);assert.equal(p.play(s,'base:strike','foe:0'),true);unchanged(s,()=>p.play(s,id,'foe:0'));unchanged(s,()=>p.play(s,id,'foe:1'));unchanged(s,()=>p.play(s,'base:strike','foe:1'));assert.equal(s.material.used,false);
+});
+check('Normal later rewards do not refund spent inquiry; only next act renews access',()=>{
+  const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'reject');assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),false);unchanged(s,()=>p.trial(s,0));p.accept(s,0);assert.match(s.result,/仍已用尽/);assert.equal(p.nextAct(s),true);assert.equal(s.act,2);assert.equal(p.canTry(s),true);assert.equal(s.trialHistory.length,1);assert.equal(p.trial(s,1,null),true);assert.equal(s.spent.join(','),'1,2');
+});
+check('Death denies review, rewards, advancing and resurrection; reset is a new simulation',()=>{
+  const {s}=open('two');assert.equal(p.endTurn(s),true);assert.equal(p.endTurn(s),true);assert.equal(s.phase,'dead');assert.equal(s.hp,0);for(const action of [()=>p.resolve(s,'keep'),()=>p.reply(s,'keep'),()=>p.nextReward(s),()=>p.nextAct(s),()=>p.start(s)])unchanged(s,action);assert.equal(s.trialHistory.length,0);assert.equal(p.create().pending,null);assert.equal(p.create().spent.length,0);
+});
+console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);
