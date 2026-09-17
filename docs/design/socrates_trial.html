@@ -15,11 +15,12 @@
 <p>先试一张不确定的牌，面对实际材料，再决定是否留下。一次合用，能说明多少？</p>
 <p class="muted">设计候选的纸面试玩。牌、敌人和数值均为虚构；不连接游戏，不证明平衡或真实存档安全。</p>
 <div class="row">
-<label>纸面条件 <select id="fixture" aria-label="纸面条件"><option value="one">一名敌人 · 试授牌在首手</option><option value="two">两名敌人 · 试授牌在首手</option><option value="absent">一名敌人 · 试授牌未抽到</option></select></label>
+<label>纸面条件 <select id="fixture" aria-label="纸面条件"><option value="one">一名敌人 · 试授牌在首手</option><option value="two">两名敌人 · 试授牌在首手</option><option value="absent">一名敌人 · 试授牌未抽到</option><option value="sequence">连续反例片段 · 同目标→两目标→未抽到</option></select></label>
 <button id="reset" type="button">重置整次推演</button>
 </div>
 <small>切换条件也会重置全部模拟记录。试授后不能换战斗；刷新不是游戏读档。</small>
 <section aria-label="当前记录"><div id="state" aria-live="polite"></div><div id="deck" class="row" aria-label="模拟牌组"></div></section>
+<section id="continuity" hidden><details id="continuityDetails"><summary>上一次试授留下了什么问题？</summary><p id="priorContext"></p><p class="step">那时的原话</p><p id="priorOriginal" class="reason"></p><p class="step">处理后留下的句子</p><p id="priorCurrent" class="reason"></p><ul id="priorFacts"></ul><p id="priorQuestion"></p><p class="muted">再次选择奖励时，它是另一副本。旧材料不会自动替新牌作证，也不会替你提交新理由；可以不打开回看，直接选择奖励。</p></details></section>
 <section id="reward">
 <h2>1. 这一份三选一卡奖励</h2>
 <div id="choices" class="grid"></div>
@@ -45,8 +46,8 @@
 <h2>4. 材料与原话并列</h2>
 <div class="facts"><p class="step">先前提交的原话</p><p id="oldReason" class="reason"></p><p class="step">这场实际发生的事</p><ul id="evidence"></ul><p id="limits"></p></div>
 <p>可以回应，也可以直接处理这张牌。任何回应都不会多给资源或改变收入、放弃的权限。</p>
-<label for="revision">若要限定或提出新的局部理由，请写出新句子</label><textarea id="revision" maxlength="300" placeholder="把范围缩到已经检查过的局面；没有旧句时，也可以明确提出新句。"></textarea>
-<div class="row"><button type="button" data-response="keep">保留原话</button><button type="button" data-response="limit">提交局部新句</button><button type="button" data-response="withdraw">撤回原话</button><button type="button" data-response="unanswered">暂不回应</button></div>
+<label for="revision">若要改写、限定或提出新理由，请写出新句子</label><textarea id="revision" maxlength="300" placeholder="可以说明范围或根据怎样改变；系统只记录新句，不认证它已经成为合理限定。"></textarea>
+<div class="row"><button type="button" data-response="keep">保留原话</button><button type="button" data-response="limit">提交新句</button><button type="button" data-response="withdraw">撤回原话</button><button type="button" data-response="unanswered">暂不回应</button></div>
 <p id="responseState" class="reason"></p>
 <div class="row"><button id="keepCard" type="button" class="primary">收入试授副本</button><button id="rejectCard" type="button">放弃试授副本</button></div>
 </section>
@@ -65,7 +66,8 @@ const SocratesTrialPaper=(()=>{
     guard:Object.freeze({name:'守势',cost:1,hits:0,damage:0,block:8}),
     heavy:Object.freeze({name:'重击',cost:2,hits:1,damage:9,block:0})
   });
-  const fixtures=['one','two','absent'];
+  const fixtures=['one','two','absent','sequence'];
+  const battleFixture=s=>s.fixture==='sequence'?['one','two','absent'][s.act-1]:s.fixture;
   const card=(id,model)=>({id,model});
   function offers(s){const n=++s.offer;return ['twin','guard','heavy'].map((m,i)=>card(`reward:${n}:${i}`,m));}
   function create(fixture='one'){
@@ -86,9 +88,10 @@ const SocratesTrialPaper=(()=>{
     if(s.phase!=='awaiting'||!['trial','ordinary'].includes(s.battleKind)||(s.focus!==null&&s.deck.filter(c=>c.id===s.focus).length!==1))return false;
     if(s.battleKind==='trial'&&(s.pending===null||s.pending!==s.focus))return false;
     if(s.battleKind==='ordinary'&&s.pending!==null)return false;
-    s.enemies=s.fixture==='two'?[{id:'foe:0',name:'敌人甲',hp:4,attack:6},{id:'foe:1',name:'敌人乙',hp:4,attack:6}]:[{id:'foe:0',name:'敌人',hp:8,attack:6}];
-    s.hand=['base:strike','base:defend'];if(s.focus!==null&&s.fixture!=='absent')s.hand.push(s.focus);
-    s.material={drawn:s.focus!==null&&s.fixture!=='absent',used:false,hits:[],blockGranted:0,turns:[]};s.turn=1;s.energy=3;s.block=0;s.phase='combat';s.history.push('进入下一场固定纸面战斗。');return true;
+    const fixture=battleFixture(s);
+    s.enemies=fixture==='two'?[{id:'foe:0',name:'敌人甲',hp:4,attack:6},{id:'foe:1',name:'敌人乙',hp:4,attack:6}]:[{id:'foe:0',name:'敌人',hp:8,attack:6}];
+    s.hand=['base:strike','base:defend'];if(s.focus!==null&&fixture!=='absent')s.hand.push(s.focus);
+    s.material={fixture,drawn:s.focus!==null&&fixture!=='absent',used:false,hits:[],blockGranted:0,turns:[]};s.turn=1;s.energy=3;s.block=0;s.phase='combat';s.history.push('进入下一场固定纸面战斗。');return true;
   }
   function play(s,id,targetId){
     if(s.phase!=='combat'||!s.hand.includes(id))return false;
@@ -120,7 +123,7 @@ const SocratesTrialPaper=(()=>{
     if(type==='limit'&&(typeof text!=='string'||!text.trim()||text.trim().length>300))return false;
     s.response={type,text:type==='limit'?text.trim():null};
     if(type==='limit')s.currentReason=text.trim();if(type==='withdraw')s.currentReason=null;
-    s.history.push(type==='limit'?`${s.reason===null?'提出新句':'提交局部新句'}：${text.trim()}`:type==='withdraw'?(s.reason===null?'没有旧断言可撤回；仍未提出。':'明确撤回原话。'):type==='keep'?(s.reason===null?'仍未提出断言。':'明确保留原话。'):'暂不回应；不记同意。');return true;
+    s.history.push(type==='limit'?`${s.reason===null?'提出新句':'提交替换句（未认证限定）'}：${text.trim()}`:type==='withdraw'?(s.reason===null?'没有旧断言可撤回；仍未提出。':'明确撤回原话。'):type==='keep'?(s.reason===null?'仍未提出断言。':'明确保留原话。'):'暂不回应；不记同意。');return true;
   }
   function resolve(s,decision){
     if(s.phase!=='review'||!['keep','reject'].includes(decision))return false;
@@ -132,7 +135,17 @@ const SocratesTrialPaper=(()=>{
   }
   function nextReward(s){if(s.phase!=='outcome'||s.pending!==null)return false;s.reward=offers(s);s.phase='reward';s.focus=null;s.battleKind=null;s.reason=null;s.currentReason=null;s.response=null;s.material=null;s.result=null;return true;}
   function nextAct(s){if(s.phase!=='outcome'||s.pending!==null||s.act>=3||s.hp<=0)return false;s.act++;return nextReward(s);}
-  return Object.freeze({definitions,create,canTry,accept,skip,trial,start,play,endTurn,reply,resolve,nextReward,nextAct});
+  function inquiry(s){
+    const r=s.trialHistory.at(-1);if(!r)return null;
+    const type=r.response?.type??null;
+    const key=r.originalReason===null?(r.currentReason===null?'notProposed':'introduced'):type==='withdraw'?'withdrawn':type==='limit'?'rewritten':type==='keep'?'kept':type==='unanswered'?'deferred':'unanswered';
+    const questions={notProposed:'没有提出过断言。下一次需要先提出什么可检查的问题？不表态仍可行动。',introduced:'此前没有原句，现在明确提出了新句。什么新材料会与它相关？',withdrawn:'原句已明确撤回。什么材料会使你愿意提出一个新判断？收入牌不会替你重新肯定原句。',rewritten:'原句和新句改变了什么：范围、根据，还是别的内容？程序没有认证它已是合理限定。',kept:'原句明确保留。它还准备说明什么尚未出现的局面？新材料是否属于同一范围？',deferred:'你明确选择暂不回应，原问题仍未处理。下一次材料与旧句的关系是什么？未答不等于同意。',unanswered:'处置牌时没有回应原句。原问题仍未处理，牌的去留不表示你接受或撤回它。'};
+    const m=r.material,facts=[m.drawn?'该次副本实际抽到。':'该次副本未抽到，不能推出无用。',m.used?'该次副本实际使用。':'该次副本没有使用。'];
+    if(m.hits.length)facts.push(`实际${m.hits.length}次命中，涉及${new Set(m.hits.map(h=>h.target)).size}个目标；不外推未检验场合。`);
+    if(m.blockGranted)facts.push(`该副本提供${m.blockGranted}格挡；回合总抵消不能全归于它。`);
+    return Object.freeze({key,act:r.act,model:r.model,decision:r.decision,originalReason:r.originalReason,currentReason:r.currentReason,fixture:m.fixture,facts:Object.freeze(facts),question:questions[key]});
+  }
+  return Object.freeze({definitions,create,canTry,accept,skip,trial,start,play,endTurn,reply,resolve,nextReward,nextAct,inquiry});
 })();
 // END SOCRATES TRIAL PAPER MODEL
 (()=>{
@@ -145,6 +158,8 @@ const SocratesTrialPaper=(()=>{
     $('state').textContent=`第 ${s.act} 幕 · 生命 ${s.hp}/20 · 本幕询问${s.spent.includes(s.act)?'已用尽':'尚未使用'} · ${s.pending?'有一张待定牌':'没有待定牌'}`;
     $('deck').replaceChildren();for(const c of s.deck){const x=document.createElement('span');x.className='chip';x.textContent=p.definitions[c.model].name+(c.id===s.pending?' · 待定':'');$('deck').append(x);}
     show('reward',s.phase==='reward');show('awaiting',s.phase==='awaiting');show('combat',s.phase==='combat');show('review',s.phase==='review');show('outcome',['outcome','dead'].includes(s.phase));
+    const prior=p.inquiry(s);show('continuity',prior!==null&&s.phase!=='dead');
+    if(prior){$('priorContext').textContent=`来自第${prior.act}幕固定片段的${p.definitions[prior.model].name}，该副本${prior.decision==='keep'?'已收入':'已放弃'}。${s.fixture==='sequence'?'连续片段只是一组固定反例，不是已完成的游戏三幕。':''}`;$('priorOriginal').textContent=prior.originalReason??'没有提出原话。';$('priorCurrent').textContent=prior.currentReason??'目前没有留下肯定句。';$('priorFacts').replaceChildren();for(const fact of prior.facts)item($('priorFacts'),fact);$('priorQuestion').textContent=prior.question;}
     if(s.phase==='reward'){
       $('choices').replaceChildren();s.reward.forEach((c,i)=>{const d=p.definitions[c.model],label=document.createElement('label');label.className='choice';const input=document.createElement('input');input.type='radio';input.name='reward';input.value=String(i);input.checked=i===selection;input.addEventListener('change',()=>selection=i);label.append(input,document.createTextNode(' '+d.name));const effect=document.createElement('p');effect.textContent=`${d.cost}费 · ${d.hits?`${d.hits}次攻击，每次${d.damage}伤害，同一目标`:`${d.block}格挡`}`;label.append(effect);$('choices').append(label);});
       $('tryReason').disabled=!p.canTry(s);$('trySilent').disabled=!p.canTry(s);$('offerNote').textContent=p.canTry(s)?'普通收入或跳过会保留机会；试授消费本幕唯一机会。':'本幕已试授过。仍可普通收入或跳过，但不能再试授。';
@@ -165,7 +180,7 @@ const SocratesTrialPaper=(()=>{
       if(m.blockGranted)item($('evidence'),`该副本提供${m.blockGranted}模拟格挡。回合总格挡抵消的伤害不能全归于这一张牌。`);
       for(const t of m.turns)item($('evidence'),`第${t.turn}回合：敌方总攻击${t.incoming}，总格挡抵消${t.blocked}，生命损失${t.loss}。`);
       $('limits').textContent='这些只是一场的材料，不证明长期最优、必要性或已经知道。两次攻击同一目标也不是处理两名敌人的证据。';
-      document.querySelectorAll('[data-response]').forEach(b=>b.disabled=s.response!==null);$('responseState').textContent=s.response===null?'尚未回应；可以直接收入或放弃。':s.response.type==='limit'?`${s.reason===null?'明确提出新句':'明确提交局部新句'}：${s.currentReason}`:s.response.type==='withdraw'?(s.reason===null?'此前无断言；仍未提出。':'已明确撤回原话。'):s.response.type==='keep'?(s.reason===null?'仍未提出断言。':'已明确保留原话。'):'已选择暂不回应；没有记为同意。';
+      document.querySelectorAll('[data-response]').forEach(b=>b.disabled=s.response!==null);$('responseState').textContent=s.response===null?'尚未回应；可以直接收入或放弃。':s.response.type==='limit'?`${s.reason===null?'明确提出新句':'明确提交替换句，未认证限定'}：${s.currentReason}`:s.response.type==='withdraw'?(s.reason===null?'此前无断言；仍未提出。':'已明确撤回原话。'):s.response.type==='keep'?(s.reason===null?'仍未提出断言。':'已明确保留原话。'):'已选择暂不回应；没有记为同意。';
     }
     if(['outcome','dead'].includes(s.phase)){
       $('result').textContent=s.result;$('ordinaryEvidence').replaceChildren();
@@ -174,7 +189,7 @@ const SocratesTrialPaper=(()=>{
         else item($('ordinaryEvidence'),'跳过奖励，没有加入新牌；基础手牌与敌人条件不变。');
         item($('ordinaryEvidence'),`本场实际损失${m.turns.reduce((n,t)=>n+t.loss,0)}生命；没有生成知识断言或试授回应。`);
       }
-      const last=s.trialHistory.at(-1);$('nextQuestion').textContent=s.phase==='dead'?'死亡不生成战后结论。':s.battleKind==='ordinary'?'普通收入对照：实际材料可能相同，但没有事后免费删除权；询问机会的原状态保留。':!last?'普通选择没有生成知识断言。':last.response===null||last.response.type==='unanswered'?'下一次可继续追问旧句；尚未回应不等于已经接受。':last.currentReason===null?'下一次可问：还需要哪些材料，才能提出一个新判断？':'下一次可问：这句话适用的范围，还有哪些没有检验？';$('nextReward').disabled=s.phase==='dead';$('nextAct').disabled=s.phase==='dead'||s.act>=3;
+      $('nextQuestion').textContent=s.phase==='dead'?'死亡不生成战后结论。':s.battleKind==='ordinary'?'普通收入对照：实际材料可能相同，但没有事后免费删除权；询问机会的原状态保留。':prior?.question??'普通选择没有生成知识断言。';$('nextReward').disabled=s.phase==='dead';$('nextAct').disabled=s.phase==='dead'||s.act>=3;
     }
     $('history').replaceChildren();for(const entry of s.history)item($('history'),entry);
   }

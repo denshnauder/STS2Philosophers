@@ -87,4 +87,31 @@ check('Skipped reward faces the same enemies and scripted basic hand without a n
 check('An ordinary missing copy cannot be replaced by a same model; explicit mode stays consistent',()=>{
   const s=p.create();p.accept(s,0);s.deck=s.deck.filter(c=>c.id!==s.focus);s.deck.push({id:'replacement:twin',model:'twin'});unchanged(s,()=>p.start(s));const t=p.create();p.trial(t,0,null);t.pending=null;unchanged(t,()=>p.start(t));
 });
+check('Follow-up questions distinguish explicit handling without certifying free-text content',()=>{
+  const keys=new Set();
+  for(const reason of [null,'原句'])for(const response of [null,'keep','limit','withdraw','unanswered'])for(const decision of ['keep','reject']){
+    const {s,id}=open('one',0,reason);p.play(s,id,'foe:0');if(response!==null)p.reply(s,response,'所有情况下都最好');p.resolve(s,decision);
+    const before=snapshot(s),q=p.inquiry(s);assert.equal(snapshot(s),before);keys.add(q.key);assert.equal(q.originalReason,reason);assert.equal(q.decision,decision);
+    const expected=reason===null?(response==='limit'?'introduced':'notProposed'):response==='withdraw'?'withdrawn':response==='limit'?'rewritten':response==='keep'?'kept':response==='unanswered'?'deferred':'unanswered';assert.equal(q.key,expected);
+    if(response==='limit'){assert.equal(q.currentReason,'所有情况下都最好');assert.match(q.question,/新材料|没有认证/);}
+  }assert.equal(keys.size,7);
+});
+check('Prior questions survive ordinary choices but never submit beliefs for a new copy',()=>{
+  const {s,id}=open('one',0,'只指这次局部事实');p.play(s,id,'foe:0');p.reply(s,'keep');p.resolve(s,'reject');const prior=snapshot(p.inquiry(s));p.nextReward(s);assert.equal(s.reason,null);p.accept(s,1);p.start(s);victoryWithoutTrial(s);assert.equal(snapshot(p.inquiry(s)),prior);p.nextAct(s);p.trial(s,0,null);assert.notEqual(s.pending,id);assert.equal(s.reason,null);assert.equal(s.currentReason,null);assert.equal(s.trialHistory[0].decision,'reject');
+});
+check('Follow-up view and later materials cannot rewrite a completed observation',()=>{
+  const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'keep');const original=snapshot(s.trialHistory[0]);s.material.hits[0].damage=99;assert.equal(snapshot(s.trialHistory[0]),original);const q=p.inquiry(s);assert.equal(Object.isFrozen(q),true);assert.equal(Object.isFrozen(q.facts),true);assert.throws(()=>q.facts.push('invented'));assert.equal(snapshot(s.trialHistory[0]),original);
+});
+check('Continuous authored fragments change relevant facts, not claims or card decision rights',()=>{
+  const s=p.create('sequence');const ids=[];
+  for(let act=1;act<=3;act++){
+    assert.equal(p.trial(s,0,act===1?'这张在该局面合用':null),true);ids.push(s.pending);assert.equal(p.start(s),true);assert.equal(s.material.fixture,['one','two','absent'][act-1]);
+    if(act<3){p.play(s,s.pending,'foe:0');if(s.phase==='combat')p.play(s,'base:strike','foe:1');}else victoryWithoutTrial(s);
+    assert.equal(s.phase,'review');assert.equal(s.material.hits.length,[2,1,0][act-1]);assert.equal(s.material.drawn,act<3);assert.equal('refuted' in s.material,false);assert.equal(s.reason,act===1?'这张在该局面合用':null);if(act===1)p.reply(s,'keep');assert.equal(p.resolve(s,'keep'),true);if(act<3)assert.equal(p.nextAct(s),true);
+  }
+  assert.equal(new Set(ids).size,3);assert.equal(s.trialHistory.map(r=>r.material.hits.length).join(','),'2,1,0');assert.equal(s.trialHistory[0].currentReason,'这张在该局面合用');assert.equal(s.spent.join(','),'1,2,3');unchanged(s,()=>p.nextAct(s));
+});
+check('Fixed sequence cannot advance with a pending copy or mint questions from ordinary choices',()=>{
+  const s=p.create('sequence');p.accept(s,0);p.start(s);p.play(s,s.focus,'foe:0');assert.equal(p.inquiry(s),null);p.nextAct(s);p.trial(s,0,'第二段');unchanged(s,()=>p.nextAct(s));p.start(s);assert.equal(s.enemies.length,2);unchanged(s,()=>p.nextAct(s));
+});
 console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);
