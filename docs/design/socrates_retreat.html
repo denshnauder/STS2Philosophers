@@ -24,7 +24,7 @@
 <div class="row"><button type="button" data-judgment="standardElse">保留标准，这次优先别的目的</button><button type="button" data-judgment="courageous">我认为这次行动也可以勇敢</button><button type="button" data-judgment="notJudged">先不判断是否勇敢</button><button type="button" data-judgment="unanswered">暂不回应</button></div>
 <p id="judgment"></p><label id="scopeLabel"><input id="scope" type="checkbox"> 我确认原“不退”必要条件也覆盖本次处境</label>
 <p id="question" class="statement" aria-live="polite"></p>
-<div id="adjustments" class="row" hidden><button type="button" data-adjust="dropNecessary">修订：行动形式不是通用必要条件</button><button type="button" data-adjust="withdrawJudgment">撤回本次勇敢判断</button><button type="button" data-adjust="leaveOpen">保留两句，承认仍有问题</button></div>
+<div id="adjustments" class="row" hidden><button type="button" data-adjust="dropNecessary">修订：不后退不是勇敢的通用必要条件</button><button type="button" data-adjust="withdrawJudgment">撤回本次勇敢判断</button><button type="button" data-adjust="leaveOpen">保留两句，承认仍有问题</button></div>
 <h2>沿合法地图继续</h2><div id="destinations" class="row"></div></section>
 <section id="map" hidden><h2>当前地图位置</h2><p id="mapState"></p><button type="button" id="enter" class="primary">进入此处固定战斗</button><div id="mapDestinations" class="row"></div><small>这是一小段固定虚构地图，不能任意跳节点或回到已处理节点。</small></section>
 <section id="dead" hidden><h2>本局死亡</h2><p>没有撤离、补偿、复活或死后作答；重置会开始新的模拟。</p></section>
@@ -35,16 +35,16 @@
 // BEGIN SOCRATES RETREAT PAPER MODEL
 const SocratesRetreatPaper=(()=>{
   const fixtures={winnable:{hp:20,enemy:10,attack:6,gold:0},danger:{hp:12,enemy:30,attack:20,gold:0},persistent:{hp:16,enemy:15,attack:9,gold:7},hidden:{hp:16,enemy:15,attack:9,gold:0},boss:{hp:20,enemy:10,attack:6,gold:0},last:{hp:12,enemy:30,attack:20,gold:0},harvest:{hp:16,enemy:15,attack:9,gold:0,side:true},harvestDanger:{hp:12,enemy:30,attack:20,gold:0,side:true}};
-  const definitions={necessary:'不后退是这种危险中勇敢的必要条件',purpose:'行动形式要结合目的说明',unstated:'没有提出通用说法',actionNotRequired:'行动形式不是通用必要条件'};
+  const definitions={necessary:'不后退是这种危险中勇敢的必要条件',purpose:'行动形式要结合目的说明',unstated:'没有提出通用说法',actionNotRequired:'不后退不是勇敢的通用必要条件'};
   function create(fixture='winnable',timing='turnStart'){
     if(!Object.hasOwn(fixtures,fixture)||!['turnStart','afterAction'].includes(timing))throw new Error('Unknown authored fixture or timing');const f=fixtures[fixture];
-    return {fixture,timing,act:1,node:'n1',kind:fixture==='boss'?'boss':'ordinary',phase:'setup',hp:f.hp,gold:f.gold,enemyHp:f.enemy,sideHp:f.side?5:0,persistentGained:0,gainHistory:[],retreatWindows:[],energy:2,block:0,played:[],turn:1,spent:[],processed:[],definition:null,originalDefinition:null,actionPurpose:null,judgment:null,scope:false,adjustment:null,action:null,request:null,requestSeq:0,epoch:0,victories:0,rewardStatus:null,history:[],encounters:[]};
+    return {fixture,timing,act:1,node:'n1',kind:fixture==='boss'?'boss':'ordinary',phase:'setup',hp:f.hp,gold:f.gold,enemyHp:f.enemy,sideHp:f.side?5:0,persistentGained:0,gainHistory:[],retreatWindows:[],energy:2,block:0,played:[],turn:1,spent:[],processed:[],definition:null,originalDefinition:null,actionPurpose:null,judgment:null,scope:false,scopeHandling:'unproposed',adjustment:null,action:null,request:null,requestSeq:0,epoch:0,victories:0,rewardStatus:null,history:[],encounters:[]};
   }
   function begin(s,definition){if(s.phase!=='setup'||!['necessary','purpose','unstated'].includes(definition))return false;s.definition=definition;s.originalDefinition=definition;s.phase='combat';recordWindow(s);s.history.push('明确记录：'+definitions[definition]);return true;}
   const allowedTiming=s=>s.timing==='afterAction'||s.played.length===0;
   const available=s=>s.phase==='combat'&&s.kind==='ordinary'&&s.hp>0&&!s.spent.includes(s.act)&&!s.processed.includes(s.node)&&allowedTiming(s);
   function recordWindow(s){const allowed=available(s);s.retreatWindows.push({node:s.node,turn:s.turn,allowed,reason:allowed?'available':s.kind==='boss'?'boss':s.spent.includes(s.act)?'spent':'ineligible'});}
-  function win(s){s.victories++;s.gold+=10;s.rewardStatus='earned';s.processed.push(s.node);s.action='continued';s.judgment=null;s.scope=false;s.adjustment=null;s.phase='review';s.history.push('正常胜利，获得10模拟金币；没有认证勇敢。');}
+  function win(s){s.victories++;s.gold+=10;s.rewardStatus='earned';s.processed.push(s.node);s.action='continued';s.judgment=null;s.scope=false;s.scopeHandling='unproposed';s.adjustment=null;s.phase='review';s.history.push('正常胜利，获得10模拟金币；没有认证勇敢。');}
   function recordPurpose(s,text){if(s.phase!=='combat'||typeof text!=='string'||!text.trim()||text.trim().length>300)return false;s.actionPurpose=text.trim();s.history.push(`第${s.turn}回合从现在起继续的理由：${text.trim()}`);return true;}
   function play(s,card){
     if(s.phase!=='combat'||!['attack','defend','harvest'].includes(card)||s.played.includes(card)||s.energy<1||s.hp<=0||(card==='harvest'&&s.sideHp<=0)||(card==='attack'&&s.enemyHp<=0))return false;
@@ -61,19 +61,19 @@ const SocratesRetreatPaper=(()=>{
   function cancel(s,id){if(!validRequest(s,id))return false;s.request=null;s.phase='combat';s.history.push('取消请求，输入未记为行动理由，机会不变。');return true;}
   function confirm(s,id,purpose=null){
     if(!validRequest(s,id)||(purpose!==null&&(typeof purpose!=='string'||!purpose.trim()||purpose.trim().length>300)))return false;
-    s.actionPurpose=purpose===null?null:purpose.trim();s.spent.push(s.act);s.processed.push(s.node);s.action='retreated';s.rewardStatus='lost';s.judgment=null;s.scope=false;s.adjustment=null;s.request=null;s.phase='review';s.epoch++;s.history.push(`撤离成功；保留生命${s.hp}与金币${s.gold}，失去整场胜利奖励。`);return true;
+    s.actionPurpose=purpose===null?null:purpose.trim();s.spent.push(s.act);s.processed.push(s.node);s.action='retreated';s.rewardStatus='lost';s.judgment=null;s.scope=false;s.scopeHandling='unproposed';s.adjustment=null;s.request=null;s.phase='review';s.epoch++;s.history.push(`撤离成功；保留生命${s.hp}与金币${s.gold}，失去整场胜利奖励。`);return true;
   }
   function judge(s,type){if(s.phase!=='review'||s.judgment!==null||!['standardElse','courageous','notJudged','unanswered'].includes(type))return false;s.judgment=type;s.history.push(type==='standardElse'?'保留标准，承认本次优先别的目的；没有自动评价勇敢。':type==='courageous'?'玩家明确认为本次行动也可以勇敢。':type==='notJudged'?'玩家明确暂不判断是否勇敢。':'暂不回应，不记同意。');return true;}
-  function setScope(s,value){if(s.phase!=='review'||typeof value!=='boolean'||s.definition!=='necessary'||s.judgment!=='courageous'||s.action!=='retreated')return false;if(s.scope!==value)s.history.push(value?'玩家明确认可旧必要条件覆盖本次处境。':'玩家明确撤回本次处境范围的认可。');s.scope=value;return true;}
+  function setScope(s,value){if(s.phase!=='review'||typeof value!=='boolean'||s.definition!=='necessary'||s.judgment!=='courageous'||s.action!=='retreated')return false;if(s.scope!==value){s.history.push(value?'玩家明确认可旧必要条件覆盖本次处境。':'玩家明确撤回本次处境范围的认可。');s.scopeHandling=value?'accepted':'withdrawn';}s.scope=value;return true;}
   const tension=s=>s.action==='retreated'&&s.definition==='necessary'&&s.judgment==='courageous'&&s.scope===true;
   function adjust(s,type){
     if(s.phase!=='review'||!tension(s)||s.adjustment!==null||!['dropNecessary','withdrawJudgment','leaveOpen'].includes(type))return false;s.adjustment=type;
-    if(type==='dropNecessary'){s.definition='actionNotRequired';s.history.push('明确修订：行动形式不是通用必要条件。');}
+    if(type==='dropNecessary'){s.definition='actionNotRequired';s.history.push('明确修订：不后退不是勇敢的通用必要条件。');}
     else if(type==='withdrawJudgment'){s.judgment='withdrawn';s.history.push('明确撤回本次勇敢判断，旧必要条件未改。');}
     else s.history.push('保留两句并承认问题未定；系统不裁判品德。');return true;
   }
   function destinations(s){if(s.phase!=='review'&&!(s.phase==='map'&&s.node==='n3'))return [];const edges=s.node==='n1'?(s.fixture==='boss'?['n5']:s.fixture==='last'?['n4']:['n2','n3']):s.node==='n2'||s.node==='n3'?['n4']:s.node==='n4'?['n5']:[];return edges.filter(id=>!s.processed.includes(id));}
-  const encounterRecord=s=>({node:s.node,originalDefinition:s.originalDefinition,definition:s.definition,action:s.action,purpose:s.actionPurpose,judgment:s.judgment,scope:s.scope,adjustment:s.adjustment,hp:s.hp,gold:s.gold,persistentGained:s.persistentGained,reward:s.rewardStatus,retreatWindows:s.retreatWindows.map(w=>({...w}))});
+  const encounterRecord=s=>({node:s.node,originalDefinition:s.originalDefinition,definition:s.definition,action:s.action,purpose:s.actionPurpose,judgment:s.judgment,scope:s.scope,scopeHandling:s.scopeHandling,adjustment:s.adjustment,hp:s.hp,gold:s.gold,persistentGained:s.persistentGained,reward:s.rewardStatus,retreatWindows:s.retreatWindows.map(w=>({...w}))});
   function proceed(s,node){
     if(!['review','map'].includes(s.phase)||s.hp<=0||!destinations(s).includes(node))return false;
     if(s.phase==='review')s.encounters.push(encounterRecord(s));
@@ -81,14 +81,14 @@ const SocratesRetreatPaper=(()=>{
     s.node=node;s.phase='map';s.request=null;s.epoch++;s.history.push('沿固定合法边来到'+node+'；此前理由和回应另存，不改写。');return true;
   }
   function enter(s){
-    if(s.phase!=='map'||!['n2','n4'].includes(s.node)||s.processed.includes(s.node)||s.hp<=0)return false;s.kind=s.node==='n4'?'boss':'ordinary';s.originalDefinition=s.definition;s.enemyHp=fixtures[s.fixture].enemy;s.sideHp=fixtures[s.fixture].side?5:0;s.persistentGained=0;s.energy=2;s.block=0;s.played=[];s.turn=1;s.action=null;s.actionPurpose=null;s.judgment=null;s.scope=false;s.adjustment=null;s.rewardStatus=null;s.retreatWindows=[];s.phase='combat';s.epoch++;recordWindow(s);s.history.push('进入'+s.node+'固定'+(s.kind==='boss'?'Boss':'普通')+'战斗；资源和机会不重置。');return true;
+    if(s.phase!=='map'||!['n2','n4'].includes(s.node)||s.processed.includes(s.node)||s.hp<=0)return false;s.kind=s.node==='n4'?'boss':'ordinary';s.originalDefinition=s.definition;s.enemyHp=fixtures[s.fixture].enemy;s.sideHp=fixtures[s.fixture].side?5:0;s.persistentGained=0;s.energy=2;s.block=0;s.played=[];s.turn=1;s.action=null;s.actionPurpose=null;s.judgment=null;s.scope=false;s.scopeHandling='unproposed';s.adjustment=null;s.rewardStatus=null;s.retreatWindows=[];s.phase='combat';s.epoch++;recordWindow(s);s.history.push('进入'+s.node+'固定'+(s.kind==='boss'?'Boss':'普通')+'战斗；资源和机会不重置。');return true;
   }
   function opportunity(r){const count=r.retreatWindows.filter(w=>w.allowed).length;return count?`此前有${count}个模拟回合开始时规则允许本能力撤离；不证明你看见、考虑或选择过。`:`此前没有本能力撤离资格（${r.retreatWindows.some(w=>w.reason==='boss')?'Boss':r.retreatWindows.some(w=>w.reason==='spent')?'本幕机会已用尽':'不符合资格'}）；不能据此说主动拒绝退出，也不等于完全没有行动选择。`;}
   function inquiry(s){
     const r=s.encounters.at(-1);if(!r)return null;const offered=r.retreatWindows.some(w=>w.allowed);
-    const key=r.adjustment==='dropNecessary'?'revisedStandard':r.adjustment==='withdrawJudgment'?'withdrawnJudgment':r.adjustment==='leaveOpen'?'openTension':r.action==='continued'&&!offered?'noRetreatOption':r.judgment==='standardElse'?'otherPurpose':r.judgment==='courageous'&&r.definition==='necessary'&&!r.scope?'scopePending':r.judgment==='notJudged'?'notJudged':r.judgment==='unanswered'?'deferred':r.judgment===null?'unanswered':'localJudgment';
-    const questions={revisedStandard:'你明确撤掉“不退”作为通用必要条件。下一次还依靠什么区分行动？不是把一次活下来当通用标准。',withdrawnJudgment:'你撤回了本次勇敢判断，原必要条件未改。下一处境中，这个标准还能说明哪些行动？',openTension:'你保留同范围两句并承认问题未定。下一次什么区别有助于继续检查，而不是先认定某句正确？',noRetreatOption:`那次没有本能力的退出选项。胜利不是主动拒绝撤离的证据；${r.judgment===null?'你没有留下自评':r.judgment==='unanswered'?'你明确暂不回应':r.judgment==='notJudged'?'你明确还不判断':'你的明确回应另行保留'}，下一次该怎样说明行动根据？`,otherPurpose:r.purpose===null?'你保留标准并承认优先别的目的，却没有明确具体目的。下一次需要说明的是什么？':'你保留标准却明确优先另一个目的。下一处境里，那个目的为什么仍值得，什么改变会让你重问？',scopePending:'你认为那次行动可以勇敢，但未认可原“不退”标准覆盖它。怎样说明适用范围，才是同一个问题？',notJudged:'你明确不判断那次是否勇敢。还需要什么说明，才能继续检查？成功与收益不替你判断。',deferred:'你明确暂不回应，原问题仍未处理。下一次哪些材料和原标准相关？未答不等于同意。',unanswered:'继续地图时没有回应原问题。资源处置不表示你已经接受、撤回或悬置某句。',localJudgment:'这是你明确提出的本次勇敢判断。什么根据支持它，哪些范围仍未说明？系统没有认证它。'};
-    return Object.freeze({key,originalDefinition:r.originalDefinition,definition:r.definition,action:r.action,purpose:r.purpose,judgment:r.judgment,hp:r.hp,gold:r.gold,opportunity:opportunity(r),question:questions[key]});
+    const key=r.adjustment==='dropNecessary'?'revisedStandard':r.adjustment==='withdrawJudgment'?'withdrawnJudgment':r.scopeHandling==='withdrawn'&&r.definition==='necessary'&&r.judgment==='courageous'?'scopeWithdrawn':r.adjustment==='leaveOpen'?'openTension':r.action==='continued'&&!offered?'noRetreatOption':r.judgment==='standardElse'?'otherPurpose':r.judgment==='courageous'&&r.definition==='necessary'&&!r.scope?'scopePending':r.judgment==='notJudged'?'notJudged':r.judgment==='unanswered'?'deferred':r.judgment===null?'unanswered':'localJudgment';
+    const questions={scopeWithdrawn:'你明确撤回了原句涵盖本次的范围认可，原标准与本次自评没有撤回。处境有什么区别？取消认可不证明已经完成合理限定。',revisedStandard:'你明确撤掉“不退”作为通用必要条件。下一次还依靠什么区分行动？不是把一次活下来当通用标准。',withdrawnJudgment:'你撤回了本次勇敢判断，原必要条件未改。下一处境中，这个标准还能说明哪些行动？',openTension:'你保留同范围两句并承认问题未定。下一次什么区别有助于继续检查，而不是先认定某句正确？',noRetreatOption:`那次没有本能力的退出选项。胜利不是主动拒绝撤离的证据；${r.judgment===null?'你没有留下自评':r.judgment==='unanswered'?'你明确暂不回应':r.judgment==='notJudged'?'你明确还不判断':'你的明确回应另行保留'}，下一次该怎样说明行动根据？`,otherPurpose:r.purpose===null?'你保留标准并承认优先别的目的，却没有明确具体目的。下一次需要说明的是什么？':'你保留标准却明确优先另一个目的。下一处境里，那个目的为什么仍值得，什么改变会让你重问？',scopePending:'你认为那次行动可以勇敢，但未认可原“不退”标准覆盖它。怎样说明适用范围，才是同一个问题？',notJudged:'你明确不判断那次是否勇敢。还需要什么说明，才能继续检查？成功与收益不替你判断。',deferred:'你明确暂不回应，原问题仍未处理。下一次哪些材料和原标准相关？未答不等于同意。',unanswered:'继续地图时没有回应原问题。资源处置不表示你已经接受、撤回或悬置某句。',localJudgment:'这是你明确提出的本次勇敢判断。什么根据支持它，哪些范围仍未说明？系统没有认证它。'};
+    return Object.freeze({key,originalDefinition:r.originalDefinition,definition:r.definition,action:r.action,purpose:r.purpose,judgment:r.judgment,scopeHandling:r.scopeHandling,hp:r.hp,gold:r.gold,opportunity:opportunity(r),question:questions[key]});
   }
   return Object.freeze({definitions,create,begin,available,recordPurpose,play,endTurn,request,cancel,confirm,judge,setScope,tension,adjust,destinations,proceed,enter,inquiry,opportunity});
 })();
