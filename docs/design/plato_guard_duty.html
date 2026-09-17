@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>柏拉图 · 守护轮值纸面实验</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f5ef;--panel:#fffdf7;--ink:#272e30;--muted:#546268;--line:#b4bfba;--accent:#315e55;--soft:#e6eee8}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif}main{max-width:820px;margin:auto;padding:24px clamp(12px,4vw,30px) 48px}h1{font-size:1.8rem;line-height:1.3}h2{font-size:1.2rem;margin-top:0}p{margin:.5rem 0 1rem}section,.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}.muted,small{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}button,input,select,textarea{font:inherit;max-width:100%;min-width:0}button,select{min-height:44px;border:1px solid var(--accent);border-radius:8px;padding:9px 12px;background:var(--panel);color:var(--ink)}button{cursor:pointer}button[aria-pressed=true],button.primary{background:var(--accent);color:#fff}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--panel);color:var(--ink)}label{display:block;margin-bottom:6px}select{width:100%;margin-bottom:12px}.value{font-size:1.2rem;font-weight:600}.state{padding:10px;background:var(--soft);border-radius:8px}details{margin:16px 0}summary{cursor:pointer;min-height:44px;padding:8px 0}.history{border-left:3px solid var(--line);padding:8px 12px;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}#forecast{border-left:4px solid var(--accent);padding:8px 12px;background:var(--soft);white-space:pre-wrap}#savedNote{white-space:pre-wrap;overflow-wrap:anywhere}[hidden]{display:none!important}footer{margin-top:24px}.actions{display:flex;gap:10px;flex-wrap:wrap}.actions button{flex:1 1 180px}@media(max-width:620px){.grid,.choices{grid-template-columns:1fr}section,.panel{padding:14px}main{padding-top:14px}h1{font-size:1.55rem}}@media(prefers-color-scheme:dark){:root{--bg:#161d20;--panel:#202a2d;--ink:#eef1ea;--muted:#b9c7c6;--line:#667b77;--accent:#406f64;--soft:#2a3c37}}
+</style>
+<main>
+<p class="muted">候选纸面 · 固定小牌，只比较风险安排</p>
+<h1>柏拉图 · 守护轮值</h1>
+<p>你已经学会改变一段攻击的目标。能力服务谁，还要由你来安排。</p>
+<section id="entry">
+ <h2>共同的人向你提出一个有限要求</h2>
+ <p id="invitation">维护者：“请尽量让这两位旅人到来时已有灯。紧急时你可让灯受损，我也不把你当随时该牺牲的工具。”</p>
+ <p>柏拉图：“能重新安排风险，尚未回答应该由谁承担。你也可以问，这份轮值凭什么要求你。”</p>
+ <small>以上是游戏对话，不是原典引文。拒绝或不表态不减少你的能力。起始你生命12/12、灯火9/9；选择后续固定输入用于比较。</small>
+ <label for="fixture">后续局面</label><select id="fixture"><option value="normal">正常第二场：17生命</option><option value="hard">第二场变难：26生命</option></select>
+ <label for="stance">你怎样回应这份要求</label><select id="stance"><option value="unspoken">暂不表态，先看风险</option><option value="attempt">愿意尝试这两次轮值</option><option value="refuse">不接受这份轮值要求</option></select>
+ <div class="actions"><button id="start" class="primary">开始固定处境</button><button id="skip">不进入这次实验</button></div>
+</section>
+<div id="active" hidden>
+ <div class="grid"><div class="state"><span>你</span><div id="playerStatus" class="value"></div></div><div class="state"><span>共用灯火</span><div id="siteStatus" class="value"></div><small id="siteUse"></small></div></div>
+ <p id="arrivals" aria-live="polite"></p>
+ <section id="battle" hidden>
+  <h2 id="battleTitle"></h2><p id="enemyStatus"></p><p id="intents"></p>
+  <p class="muted">本轮固定两张攻击（各费用1、伤害5），再打防御（费用1、格挡5）；先击倒时停止，不再执行敌方阶段。每轮3能量。</p>
+  <div id="choices" class="choices"><button data-choice="none">保持原目标</button><button data-choice="to-player">这段改向自己</button><button data-choice="to-site">这段改向灯火</button></div>
+  <p id="choiceLimit" class="muted"></p><div id="forecast" aria-live="polite"></div>
+  <button id="step" class="primary">执行固定牌序与本轮结算</button>
+ </section>
+ <section id="maintenance" hidden>
+  <h2>同一个维护时段</h2><p>灯还存活时，维护者自己修2；你扶稳底座可再修4。灯失去后需要两个人重装，协助可重建到6。你也可以休整回复4生命（上限12）。</p>
+  <p>工具只够这一个时段。没有协助时，维护者会联系稍后到来的邻居；他们还未到场。曾等待的旅人可在重建后通行，先前等待仍保留。</p>
+  <div class="grid"><div><p id="restForecast"></p><button id="rest" class="primary">同一时段休整</button></div><div><p id="assistForecast"></p><button id="assist">协助维修</button></div></div>
+ </section>
+ <section id="outcome" hidden>
+  <h2 id="endingTitle"></h2><p id="question"></p><p id="voices"></p>
+  <div id="reflection"><label for="note">你此时想保什么、怎样重新安排，可留空</label><textarea id="note" maxlength="400"></textarea><button id="finish">留下这次观察</button></div>
+  <p id="savedNote"></p>
+ </section>
+ <details id="history"><summary>回看实际发生的过程</summary><div id="records"></div></details>
+</div>
+<footer><p class="muted">未接入游戏，也不证明善、乐趣或正式战斗安全。灯存活与旅人等待都是此处境的事实，不是道德分。</p><button id="reset">重置纸面实验</button><small> 仅用于比较输入，不是游戏中的撤销。</small><details><summary>思想依据与设计边界</summary><p>《理想国》中的学习与共同职责启发这份冲突。灵魂部分不等于牌型；认识得更清楚，也不自动证明目的更好。</p><a href="PlatoVirtueResearch.md">原典定位与转译边界</a> · <a href="PlatoGuardDutyDesign.md">完整候选及反例</a></details></footer>
+</main>
+<script>
+// BEGIN PLATO GUARD DUTY PAPER MODEL
+const PlatoGuardDutyPaper=(()=>{
+ const clone=x=>JSON.parse(JSON.stringify(x));
+ const stances=['unspoken','attempt','refuse'];
+ function create(fixture='normal'){
+  if(!['normal','hard'].includes(fixture))throw new RangeError('Unsupported fixture');
+  return {fixture,phase:'entry',p:12,site:9,enemy:15,battle:1,turn:1,stance:null,records:[],travelers:[],ending:null,note:null};
+ }
+ function start(s,stance='unspoken'){if(s.phase!=='entry'||!stances.includes(stance))return false;s.stance=stance;s.phase='battle';return true;}
+ function options(s){if(s.phase!=='battle')return [];return s.enemy<=10||s.site<=0?['none']:['none','to-player','to-site'];}
+ function plans(s){return (s.battle===1?[['player',6],['site',6]]:[['player',8],['site',4]]).map(([target,damage])=>({original:target==='site'&&s.site<=0?'player':target,target:target==='site'&&s.site<=0?'player':target,damage}));}
+ function forecast(s,choice='none'){
+  if(!options(s).includes(choice))return null;
+  let p=s.p,site=s.site,enemy=s.enemy,block=0;const attacks=[],hits=[],plan=plans(s);
+  if(choice==='to-player')plan.find(x=>x.original==='site').target='player';
+  if(choice==='to-site')plan.find(x=>x.original==='player').target='site';
+  for(let i=0;i<2&&enemy>0;i++){const before=enemy;enemy=Math.max(0,enemy-5);attacks.push({hpBefore:before,hpAfter:enemy,loss:before-enemy});}
+  if(enemy>0){block=5;for(const hit of plan){
+   if(p<=0){hits.push({...hit,executed:false,reason:'player-dead'});continue;}
+   if(hit.target==='site'){
+    if(site<=0){hits.push({...hit,executed:false,reason:'site-lost'});continue;}
+    const before=site;site=Math.max(0,site-hit.damage);hits.push({...hit,executed:true,hpBefore:before,hpAfter:site,blocked:0,loss:before-site});
+   }else{const before=p,stopped=Math.min(block,hit.damage);block-=stopped;p=Math.max(0,p-hit.damage+stopped);hits.push({...hit,executed:true,hpBefore:before,hpAfter:p,blocked:stopped,loss:before-p});}
+  }}
+  return {kind:'turn',battle:s.battle,turn:s.turn,choice,before:{p:s.p,site:s.site,enemy:s.enemy},after:{p,site,enemy},attacks,plan,hits,blockGranted:enemy>0?5:0,blockUnused:block,victory:enemy===0,death:p===0};
+ }
+ function arrival(s,id){const traveler={id,status:s.site>0?'crossed':'waiting',waitPeriods:0};s.travelers.push(traveler);s.records.push({kind:'arrival',site:s.site,traveler:clone(traveler)});}
+ function step(s,choice='none'){
+  const record=forecast(s,choice);if(!record)return false;s.records.push(clone(record));s.p=record.after.p;s.site=record.after.site;s.enemy=record.after.enemy;
+  if(record.death){s.phase='dead';s.ending='death';return true;}
+  if(record.victory){if(s.battle===1){arrival(s,'甲');s.phase='maintenance';}else{
+    for(const t of s.travelers)if(t.status==='waiting')t.waitPeriods++;
+    arrival(s,'乙');s.phase='outcome';s.ending='victory';
+   }}else s.turn++;
+  return true;
+ }
+ function maintenanceOptions(s){return s.phase==='maintenance'?(s.site===0||s.site+2<9?['rest','assist']:['rest']):[];}
+ function maintenancePreview(s,choice){
+  if(!maintenanceOptions(s).includes(choice))return null;
+  let p=s.p,site=s.site;const before={p,site},ownWork=site>0?Math.min(2,9-site):0;site+=ownWork;
+  const helperWork=choice==='assist'?(site>0?Math.min(4,9-site):6):0;site+=helperWork;
+  const restAvailable=Math.min(4,12-p),restGain=choice==='rest'?restAvailable:0;p+=restGain;
+  const travelers=clone(s.travelers);for(const t of travelers)if(t.status==='waiting'){t.waitPeriods++;if(site>0)t.status='crossed';}
+  return {kind:'maintenance',choice,before,after:{p,site},ownWork,helperWork,restAvailable,restGain,restForgone:choice==='assist'?restAvailable:0,travelers};
+ }
+ function maintain(s,choice){const record=maintenancePreview(s,choice);if(!record)return false;s.records.push(clone(record));s.p=record.after.p;s.site=record.after.site;s.travelers=clone(record.travelers);s.battle=2;s.turn=1;s.enemy=s.fixture==='hard'?26:17;s.phase='battle';return true;}
+ function finish(s,note=''){if(!['outcome','dead'].includes(s.phase)||typeof note!=='string')return false;s.note=note.trim().slice(0,400)||null;s.phase='done';return true;}
+ function skip(s){if(s.phase!=='entry')return false;s.phase='done';s.ending='unstarted';return true;}
+ function question(s){if(s.ending==='unstarted')return '没有进入这次处境，没有观察到改向、轮值或通行结果。';
+  const response=s.stance==='refuse'?'你没有接受这份要求，实际帮助也不替你登记为赞同。':s.stance==='attempt'?'你表示愿意尝试，胜利或修复不能回写实际的等待。':'你未明确回应要求，实际安排不替你登记一个观点。';
+  return response+(s.ending==='death'?' 所见是你在第'+s.battle+'场死亡；后续计划到场未观测。':' 谁实际承担了风险，谁在何时通行？')+' 这些材料使你保留或改变什么？';}
+ return {create,start,options,plans,forecast,step,maintenanceOptions,maintenancePreview,maintain,finish,skip,question};
+})();
+// END PLATO GUARD DUTY PAPER MODEL
+let state=PlatoGuardDutyPaper.create(),selection='none';
+const $=id=>document.getElementById(id),text=(id,value)=>$(id).textContent=value;
+const name=x=>x==='player'?'你':'灯火';
+function travelText(t){return '旅人'+t.id+'：'+(t.status==='crossed'?(t.waitPeriods?'等待'+t.waitPeriods+'个观察时段后通行':'到来时立即通行'):'仍在等待（已观察'+t.waitPeriods+'个时段）');}
+function turnText(r,predicted=false){let lines=['第'+r.battle+'场 / 第'+r.turn+'轮：敌人生命'+r.before.enemy+'→'+r.after.enemy];
+ for(const a of r.attacks)lines.push('基础攻击实际命中 '+a.hpBefore+'→'+a.hpAfter+'（失去'+a.loss+'）');
+ if(r.victory)lines.push('先击倒，敌方阶段未执行；不记改向承担了损失。');
+ for(const h of r.hits)lines.push(h.executed?name(h.original)+'原目标 → '+name(h.target)+'实际目标：计划'+h.damage+'，格挡抵'+h.blocked+'，实际失'+h.loss+'，生命'+h.hpBefore+'→'+h.hpAfter:name(h.target)+'的计划'+h.damage+'未执行（'+(h.reason==='site-lost'?'目标已失去':'玩家已死亡')+'）');
+ lines.push('你'+r.before.p+'→'+r.after.p+'；灯'+r.before.site+'→'+r.after.site);if(r.death)lines.push('玩家死亡，之后操作与计划到场停止。');const result=lines.join('\n');return predicted?result.replaceAll('实际','预计').replaceAll('未执行','将不执行').replaceAll('玩家死亡','若玩家死亡'):result;}
+function render(){
+ const phase=state.phase;text('playerStatus','生命 '+state.p+'/12');text('siteStatus','生命 '+state.site+'/9');text('siteUse',state.site>0?'可以照亮通路，也是一个仍可改向的目标。':'不能照亮；未来帮助还未执行。');
+ $('entry').hidden=phase!=='entry';$('active').hidden=phase==='entry';$('battle').hidden=phase!=='battle';$('maintenance').hidden=phase!=='maintenance';$('outcome').hidden=!['outcome','dead','done'].includes(phase);
+ text('arrivals',state.travelers.length?state.travelers.map(travelText).join('；'):'旅人尚未到场，不能先记通行。');
+ if(phase==='battle'){
+  const wins=state.enemy<=10,opts=PlatoGuardDutyPaper.options(state);if(!opts.includes(selection))selection='none';
+  text('battleTitle','第'+state.battle+'场 · 第'+state.turn+'轮');text('enemyStatus','敌人剩余生命 '+state.enemy+'；本轮3能量。');text('intents',wins?'固定牌序会先击倒，敌方阶段不发生。':PlatoGuardDutyPaper.plans(state).map((x,i)=>'第'+(i+1)+'段：'+x.damage+'打'+name(x.original)).join('；'));
+  $('choices').hidden=wins;for(const b of document.querySelectorAll('[data-choice]')){b.disabled=!opts.includes(b.dataset.choice);b.setAttribute('aria-pressed',String(b.dataset.choice===selection));}
+  text('choiceLimit',wins?'不安排一次不会发生的改向。':state.site<=0?'灯已失去，本轮两段原本都打你，没有第二目标可改。':'本轮最多改向一段；另一段不交换。自己的5格挡只挡打自己的攻击。');
+  text('forecast','预测，尚未执行\n'+turnText(PlatoGuardDutyPaper.forecast(state,selection),true));text('step',wins?'按固定攻击击倒剩余敌人':'执行固定牌序与本轮结算');
+ }
+ if(phase==='maintenance'){
+  const rest=PlatoGuardDutyPaper.maintenancePreview(state,'rest'),assist=PlatoGuardDutyPaper.maintenancePreview(state,'assist');
+  text('restForecast','预计：你回复'+rest.restGain+'，生命'+rest.after.p+'；维护者维修实际'+rest.ownWork+'，灯生命'+rest.after.site+'。');
+  $('assist').disabled=!assist;text('assistForecast',assist?'预计：维护者自己修'+assist.ownWork+'，协助再修'+assist.helperWork+'，灯生命'+assist.after.site+'；你仍'+assist.after.p+'。放弃休整可回复'+assist.restForgone+'。':'维护者自己就可修满9，没有进一步协助工作；不提供假劳动。');
+ }
+ if(['outcome','dead','done'].includes(phase)){
+  text('endingTitle',state.ending==='unstarted'?'未进入处境':state.ending==='death'?'死亡后停止观察':'两场实际结果');text('question',PlatoGuardDutyPaper.question(state));
+  text('voices',state.ending==='unstarted'?'':state.site>0?'维护者：“灯仍在，但不能因此替你判定所有目的都合适。”':'维护者：“灯已失去；这里的人还会寻找后续帮助。我不同意把这段等待叫已经照料完毕。”');
+  $('reflection').hidden=phase==='done';text('savedNote',phase==='done'?(state.note?'你留下的句子：'+state.note:state.ending==='unstarted'?'没有进入实验，也没有留下观点。':'没有提交句子。实际材料仍保留。'):'');
+ }
+ $('records').replaceChildren();for(const r of state.records){const node=document.createElement('div');node.className='history';node.textContent=r.kind==='turn'?turnText(r):r.kind==='arrival'?'实际到场，灯生命'+r.site+'；'+travelText(r.traveler):'实际维护：维护者修'+r.ownWork+'，协助修'+r.helperWork+'；你回复'+r.restGain+'（可回复'+r.restAvailable+'），生命'+r.before.p+'→'+r.after.p+'；灯'+r.before.site+'→'+r.after.site+'\n'+r.travelers.map(travelText).join('；');$('records').append(node);}
+}
+for(const b of document.querySelectorAll('[data-choice]'))b.onclick=()=>{selection=b.dataset.choice;render();};
+$('start').onclick=()=>{PlatoGuardDutyPaper.start(state,$('stance').value);render();};$('skip').onclick=()=>{PlatoGuardDutyPaper.skip(state);render();};
+$('fixture').onchange=()=>{if(state.phase==='entry'){state=PlatoGuardDutyPaper.create($('fixture').value);selection='none';render();}};
+$('step').onclick=()=>{PlatoGuardDutyPaper.step(state,selection);selection='none';render();};$('rest').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'rest');render();};$('assist').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'assist');render();};
+$('finish').onclick=()=>{PlatoGuardDutyPaper.finish(state,$('note').value);render();};$('reset').onclick=()=>{state=PlatoGuardDutyPaper.create($('fixture').value);selection='none';$('note').value='';$('history').open=false;render();};render();
+</script>
+</html>
