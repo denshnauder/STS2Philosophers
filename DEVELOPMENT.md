@@ -236,3 +236,11 @@ D84将普通收入和跳过也接入同条件固定战斗，新增六组前缀�
 使用Node运行tools/design/SocratesRetreatPaperChecks.cjs，17项限定检查通过，含15种表达组合和取消/过期/死亡/Boss/后继边界。SocratesRetreatBrowserChecks.cjs接受Playwright模块路径，默认无界面msedge；浏览器流程、输入文字安全与860/360/320明暗响应通过。截图写bin/design，860/360已查看。它不证明真实战斗退出、保存、持久收益滥用或体验；本阶段不构建/PCK/部署，README核对生产未变。
 
 下一步限定核对知识已有主牌组对象和ToSerializable输出的只读诊断可行性，先确认控制台上下文与副作用；不写保存、不生成/删除卡、不预铺全局保存补丁。需真实游戏样本的验证单列等待，禁止自动启动游戏。
+
+## 试授卡记录限定诊断（D86）
+
+用户自行启动游戏后，可在静默猎手单人局、非战斗位置使用已经启用的开发控制台，手动执行`socratescardprobe`，无参数。未启用控制台时不要求修改配置。命令仅转换主牌组已有、无附魔的原生StrikeSilent/DefendSilent，拒绝SavedProperty getter及转换方法Harmony补丁；同一对象转换两次，按准确引用核对独立记录、模型/升级/加入层字段与主牌组引用不变。不会写保存、生成/删牌、调用FromSerializable或登记持久身份。
+
+OBSERVED只表示本次限定调用存在同字段多个对象且转换引用独立；INCONCLUSIVE表示没有支持牌或匹配副本；拒绝/异常不修牌。将完整结果交回后再判断必要实验。它不验证最终保存数组、真实读档、永久变形或试授安全，不能视为新能力。原生SavedProperties转换会调用getter，因此不扩展到任意卡。
+
+10项纯报告反例及全量逻辑、Release零警告零错误、PCK与部署三文件哈希通过，见bin/Release/net9.0/verification.md；部署输入为d185152加本阶段C#/测试文件。README核对玩家生产能力未变，游戏诊断未执行。两纸面原型仍待具体体验反馈，不能以自动通过完成苏格拉底或据此扩写下一人物。

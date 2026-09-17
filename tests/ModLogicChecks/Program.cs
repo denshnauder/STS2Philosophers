@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 
 SocratesKnowledgeRouteChecks.Run();
+SocratesCardProbeChecks.Run();
 
 WesternRouteChecks.Run();
 WesternResearchChecks.Run();
