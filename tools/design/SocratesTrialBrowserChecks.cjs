@@ -10,13 +10,14 @@ const output=path.resolve('bin/design');fs.mkdirSync(output,{recursive:true});
     const page=await browser.newPage({viewport:{width:860,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
     await page.goto(pathToFileURL(path.resolve('docs/design/socrates_trial.html')).href);
     const b=name=>page.getByRole('button',{name,exact:true});
+    await page.screenshot({path:path.join(output,'socrates_trial_reward.png'),fullPage:true});
     await b('说明并试授').click();assert.match(await page.locator('#error').innerText(),/没有改变/);assert.match(await page.locator('#state').innerText(),/尚未使用/);
     await page.getByLabel('你想在下一场检查什么？可留空').fill('我想看看两次命中这场是否合用。');await b('说明并试授').click();
     assert.match(await page.locator('#locked').innerText(),/两次命中/);assert.equal(await b('跳过奖励').isVisible(),false);
-    await b('进入下一场固定战斗').click();await b('使用连击（1费）').click();assert.match(await page.locator('#evidence').innerText(),/实际完成2次攻击/);
+    await b('进入下一场固定战斗').click();await page.screenshot({path:path.join(output,'socrates_trial_combat.png'),fullPage:true});await b('使用连击（1费）').click();assert.match(await page.locator('#evidence').innerText(),/实际完成2次攻击/);
     assert.equal(await b('收入试授副本').isEnabled(),true);assert.equal(await b('放弃试授副本').isEnabled(),true);
     await b('暂不回应').click();await b('放弃试授副本').click();assert.match(await page.locator('#result').innerText(),/不能换另两张或退机会/);assert.equal(await page.locator('#deck').getByText('连击',{exact:true}).count(),0);
-    await b('查看本幕下一份模拟奖励').click();assert.equal(await b('不表态，直接试授').isDisabled(),true);await b('普通收入所选牌').click();assert.match(await page.locator('#result').innerText(),/仍已用尽/);
+    await b('查看本幕下一份模拟奖励').click();assert.equal(await b('不表态，直接试授').isDisabled(),true);await b('普通收入所选牌').click();assert.match(await page.locator('#locked').innerText(),/仍已用尽/);await b('进入下一场固定战斗').click();await b('使用连击（1费）').click();assert.match(await page.locator('#result').innerText(),/普通收入没有战后反悔权/);assert.equal(await b('放弃试授副本').isVisible(),false);
     await b('推演下一幕').click();assert.equal(await b('不表态，直接试授').isEnabled(),true);
     await page.getByLabel('纸面条件').selectOption('absent');await b('不表态，直接试授').click();await b('进入下一场固定战斗').click();
     assert.equal(await b('使用连击（1费）').count(),0);await b('使用基础攻击（1费）').click();await b('使用基础防御（1费）').click();await b('结束回合').click();await b('使用基础攻击（1费）').click();
@@ -29,6 +30,8 @@ const output=path.resolve('bin/design');fs.mkdirSync(output,{recursive:true});
       await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});const size=await page.locator('body').evaluate(e=>({scroll:e.scrollWidth,client:e.clientWidth}));assert.ok(size.scroll<=size.client+1,JSON.stringify({width,...size}));await page.screenshot({path:path.join(output,`socrates_trial_${width}_${theme}.png`),fullPage:true});
     }
     await b('重置整次推演').click();await b('不表态，直接试授').click();await b('进入下一场固定战斗').click();await b('结束回合').click();await b('结束回合').click();assert.match(await page.locator('#result').innerText(),/本局死亡/);assert.equal(await b('推演下一幕').isDisabled(),true);
-    assert.deepEqual(errors,[]);console.log('PASS browser: reward lock, actual use, no draw, unused, neutral replies, exact rejection, spent opportunity, next act, death, safe text and responsive themes.');
+    await page.getByLabel('纸面条件').selectOption('one');await b('普通收入所选牌').click();await b('进入下一场固定战斗').click();await b('使用连击（1费）').click();assert.match(await page.locator('#ordinaryEvidence').innerText(),/实际抽到/);assert.match(await page.locator('#ordinaryEvidence').innerText(),/实际完成2次攻击/);assert.match(await page.locator('#state').innerText(),/尚未使用/);assert.equal(await page.locator('#review').isVisible(),false);
+    await page.getByLabel('纸面条件').selectOption('one');await b('跳过奖励').click();assert.match(await page.locator('#awaitingDetails').innerText(),/未加入新牌/);await b('进入下一场固定战斗').click();await b('使用基础攻击（1费）').click();await b('使用基础防御（1费）').click();await b('结束回合').click();await b('使用基础攻击（1费）').click();assert.match(await page.locator('#ordinaryEvidence').innerText(),/基础手牌与敌人条件不变/);
+    assert.deepEqual(errors,[]);console.log('PASS browser: ordinary combat baseline, skip baseline, reward lock, actual use, no draw, unused, neutral replies, exact rejection, spent opportunity, next act, death, safe text and responsive themes.');
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

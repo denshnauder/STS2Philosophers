@@ -20,10 +20,10 @@ function victoryWithoutTrial(s){
     const alive=s.enemies.find(e=>e.hp>0);assert.equal(p.play(s,'base:strike',alive.id),true);
     if(s.phase==='combat'){assert.equal(p.play(s,'base:defend'),true);assert.equal(p.endTurn(s),true);}
     assert.ok(++count<10);
-  }assert.equal(s.phase,'review');
+  }assert.equal(s.phase,s.battleKind==='trial'?'review':'outcome');
 }
 check('Ordinary accept and skip preserve unused opportunity; card reward settles once',()=>{
-  for(const choice of ['accept','skip']){const s=p.create();assert.equal(choice==='accept'?p.accept(s,1):p.skip(s),true);assert.equal(s.spent.length,0);assert.equal(s.deck.length,choice==='accept'?3:2);unchanged(s,()=>p.skip(s));assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),true);}
+  for(const choice of ['accept','skip']){const s=p.create();assert.equal(choice==='accept'?p.accept(s,1):p.skip(s),true);assert.equal(s.spent.length,0);assert.equal(s.deck.length,choice==='accept'?3:2);unchanged(s,()=>p.skip(s));unchanged(s,()=>p.nextReward(s));assert.equal(p.start(s),true);victoryWithoutTrial(s);assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),true);}
 });
 check('Invalid reward, reason and premature actions leave the whole loop unchanged',()=>{
   const s=p.create();for(const index of [-1,3,0.5,'0'])unchanged(s,()=>p.trial(s,index));
@@ -66,9 +66,25 @@ check('Invalid, duplicate and costly combat actions do not mint evidence or spen
   const {s,id}=open('two',2);unchanged(s,()=>p.play(s,id,'missing'));assert.equal(p.play(s,'base:defend'),true);assert.equal(p.play(s,'base:strike','foe:0'),true);unchanged(s,()=>p.play(s,id,'foe:0'));unchanged(s,()=>p.play(s,id,'foe:1'));unchanged(s,()=>p.play(s,'base:strike','foe:1'));assert.equal(s.material.used,false);
 });
 check('Normal later rewards do not refund spent inquiry; only next act renews access',()=>{
-  const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'reject');assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),false);unchanged(s,()=>p.trial(s,0));p.accept(s,0);assert.match(s.result,/仍已用尽/);assert.equal(p.nextAct(s),true);assert.equal(s.act,2);assert.equal(p.canTry(s),true);assert.equal(s.trialHistory.length,1);assert.equal(p.trial(s,1,null),true);assert.equal(s.spent.join(','),'1,2');
+  const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'reject');assert.equal(p.nextReward(s),true);assert.equal(p.canTry(s),false);unchanged(s,()=>p.trial(s,0));p.accept(s,0);assert.match(s.result,/仍已用尽/);assert.equal(p.start(s),true);assert.equal(p.play(s,s.focus,'foe:0'),true);assert.equal(p.nextAct(s),true);assert.equal(s.act,2);assert.equal(p.canTry(s),true);assert.equal(s.trialHistory.length,1);assert.equal(p.trial(s,1,null),true);assert.equal(s.spent.join(','),'1,2');
 });
 check('Death denies review, rewards, advancing and resurrection; reset is a new simulation',()=>{
   const {s}=open('two');assert.equal(p.endTurn(s),true);assert.equal(p.endTurn(s),true);assert.equal(s.phase,'dead');assert.equal(s.hp,0);for(const action of [()=>p.resolve(s,'keep'),()=>p.reply(s,'keep'),()=>p.nextReward(s),()=>p.nextAct(s),()=>p.start(s)])unchanged(s,action);assert.equal(s.trialHistory.length,0);assert.equal(p.create().pending,null);assert.equal(p.create().spent.length,0);
+});
+check('Matching ordinary and trial action prefixes give identical combat facts, not identical rights',()=>{
+  for(const fixture of ['one','two','absent'])for(const mode of ['use','unused']){
+    const ordinary=p.create(fixture),trial=p.create(fixture);p.accept(ordinary,0);p.trial(trial,0,null);
+    for(const s of [ordinary,trial]){p.start(s);if(mode==='use'&&fixture!=='absent')p.play(s,s.focus,'foe:0');if(s.phase==='combat')victoryWithoutTrial(s);}
+    assert.equal(ordinary.hp,trial.hp);assert.equal(ordinary.energy,trial.energy);assert.equal(snapshot(ordinary.enemies),snapshot(trial.enemies));assert.equal(snapshot(ordinary.material),snapshot(trial.material));assert.equal(ordinary.phase,'outcome');assert.equal(trial.phase,'review');assert.equal(ordinary.spent.length,0);assert.equal(trial.spent.join(','),'1');unchanged(ordinary,()=>p.resolve(ordinary,'reject'));unchanged(ordinary,()=>p.reply(ordinary,'withdraw'));assert.equal(p.resolve(trial,'keep'),true);assert.equal(snapshot(ordinary.deck),snapshot(trial.deck));
+  }
+});
+check('Reject is an extra option after the same battle, not proof or a choice of the original alternatives',()=>{
+  const ordinary=p.create(),trial=p.create();p.accept(ordinary,0);p.trial(trial,0,null);for(const s of [ordinary,trial]){p.start(s);p.play(s,s.focus,'foe:0');}assert.equal(ordinary.hp,trial.hp);p.resolve(trial,'reject');assert.equal(ordinary.deck.length,3);assert.equal(trial.deck.length,2);assert.equal(trial.reward.length,0);assert.equal(trial.trialHistory[0].response,null);
+});
+check('Skipped reward faces the same enemies and scripted basic hand without a new card',()=>{
+  const s=p.create('two');p.skip(s);p.start(s);assert.equal(s.hand.join(','),'base:strike,base:defend');assert.equal(s.material.drawn,false);assert.equal(s.pending,null);victoryWithoutTrial(s);assert.equal(s.spent.length,0);assert.equal(s.trialHistory.length,0);assert.equal(s.deck.length,2);
+});
+check('An ordinary missing copy cannot be replaced by a same model; explicit mode stays consistent',()=>{
+  const s=p.create();p.accept(s,0);s.deck=s.deck.filter(c=>c.id!==s.focus);s.deck.push({id:'replacement:twin',model:'twin'});unchanged(s,()=>p.start(s));const t=p.create();p.trial(t,0,null);t.pending=null;unchanged(t,()=>p.start(t));
 });
 console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);
