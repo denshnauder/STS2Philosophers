@@ -15,7 +15,7 @@
 <p>先试一张不确定的牌，面对实际材料，再决定是否留下。一次合用，能说明多少？</p>
 <p class="muted">设计候选的纸面试玩。牌、敌人和数值均为虚构；不连接游戏，不证明平衡或真实存档安全。</p>
 <div class="row">
-<label>纸面条件 <select id="fixture" aria-label="纸面条件"><option value="one">一名敌人 · 试授牌在首手</option><option value="two">两名敌人 · 试授牌在首手</option><option value="absent">一名敌人 · 试授牌未抽到</option><option value="sequence">连续反例片段 · 同目标→两目标→未抽到</option></select></label>
+<label>纸面条件 <select id="fixture" aria-label="纸面条件"><option value="one">一名敌人 · 试授牌在首手</option><option value="nine">9生命单目标 · 连击后仍需行动</option><option value="two">两名敌人 · 试授牌在首手</option><option value="absent">一名敌人 · 试授牌未抽到</option><option value="sequence">连续反例片段 · 同目标→两目标→未抽到</option></select></label>
 <button id="reset" type="button">重置整次推演</button>
 </div>
 <small>切换条件也会重置全部模拟记录。试授后不能换战斗；刷新不是游戏读档。</small>
@@ -66,7 +66,7 @@ const SocratesTrialPaper=(()=>{
     guard:Object.freeze({name:'守势',cost:1,hits:0,damage:0,block:8}),
     heavy:Object.freeze({name:'重击',cost:2,hits:1,damage:9,block:0})
   });
-  const fixtures=['one','two','absent','sequence'];
+  const fixtures=['one','two','absent','sequence','nine'];
   const battleFixture=s=>s.fixture==='sequence'?['one','two','absent'][s.act-1]:s.fixture;
   const card=(id,model)=>({id,model});
   function offers(s){const n=++s.offer;return ['twin','guard','heavy'].map((m,i)=>card(`reward:${n}:${i}`,m));}
@@ -89,7 +89,7 @@ const SocratesTrialPaper=(()=>{
     if(s.battleKind==='trial'&&(s.pending===null||s.pending!==s.focus))return false;
     if(s.battleKind==='ordinary'&&s.pending!==null)return false;
     const fixture=battleFixture(s);
-    s.enemies=fixture==='two'?[{id:'foe:0',name:'敌人甲',hp:4,attack:6},{id:'foe:1',name:'敌人乙',hp:4,attack:6}]:[{id:'foe:0',name:'敌人',hp:8,attack:6}];
+    s.enemies=fixture==='two'?[{id:'foe:0',name:'敌人甲',hp:4,attack:6},{id:'foe:1',name:'敌人乙',hp:4,attack:6}]:[{id:'foe:0',name:'敌人',hp:fixture==='nine'?9:8,attack:6}];
     s.hand=['base:strike','base:defend'];if(s.focus!==null&&fixture!=='absent')s.hand.push(s.focus);
     s.material={fixture,drawn:s.focus!==null&&fixture!=='absent',used:false,hits:[],blockGranted:0,turns:[]};s.turn=1;s.energy=3;s.block=0;s.phase='combat';s.history.push('进入下一场固定纸面战斗。');return true;
   }

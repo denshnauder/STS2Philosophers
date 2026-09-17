@@ -132,4 +132,7 @@ check('Block and attack observations keep aggregate causality and long-term comp
 check('Material questions derive from the completed copy and cannot mutate its historical facts',()=>{
   const {s,id}=open();p.play(s,id,'foe:0');p.resolve(s,'keep');const before=snapshot(s.trialHistory),view=snapshot(p.inquiry(s));s.material.hits.length=0;s.material.drawn=false;assert.equal(snapshot(p.inquiry(s)),view);p.nextReward(s);p.accept(s,1);p.start(s);victoryWithoutTrial(s);assert.equal(snapshot(p.inquiry(s)),view);assert.equal(snapshot(s.trialHistory),before);assert.equal(Object.isFrozen(p.inquiry(s)),true);
 });
+check('Same victory in nine HP fixture is not evidence of a single-card kill or refuted local claim',()=>{
+  for(const mode of ['ordinary','trial']){const s=p.create('nine');if(mode==='trial')p.trial(s,0,'仅原8生命条件合用');else p.accept(s,0);p.start(s);p.play(s,s.focus,'foe:0');assert.equal(s.enemies[0].hp,1);assert.equal(s.phase,'combat');assert.equal(s.material.hits.length,2);assert.equal(s.material.hits.reduce((n,h)=>n+h.damage,0),8);p.play(s,'base:strike','foe:0');assert.equal(s.hp,20);assert.equal(s.phase,mode==='trial'?'review':'outcome');if(mode==='trial'){p.reply(s,'keep');p.resolve(s,'keep');const q=p.inquiry(s);assert.equal(q.currentReason,'仅原8生命条件合用');assert.equal(q.fixture,'nine');assert.equal('refuted' in q,false);assert.equal('knows' in q,false);}else assert.equal(p.inquiry(s),null);}
+});
 console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);
