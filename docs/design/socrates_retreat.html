@@ -11,11 +11,12 @@
 <h1>苏格拉底 · 坚持与撤离</h1>
 <p>已经进入危险后，继续还是撤离？你先前给的理由，能否说明这次行动？</p>
 <p class="muted">德性分支的纸面候选。数值、牌局和地图均为虚构，不连接游戏；模拟退出不证明真实非胜利事务安全。</p>
-<div class="row"><label>纸面处境 <select id="fixture" aria-label="纸面处境"><option value="winnable">可以争取胜利与奖励</option><option value="danger">生命12 · 公开攻击20</option><option value="persistent">已有7金币持久变化</option><option value="hidden">未知意图</option><option value="boss">Boss · 不开放撤离</option><option value="last">本幕最后普通战斗</option></select></label><button type="button" id="reset">重置整次推演</button></div>
+<div class="row"><label>纸面处境 <select id="fixture" aria-label="纸面处境"><option value="winnable">可以争取胜利与奖励</option><option value="danger">生命12 · 公开攻击20</option><option value="persistent">已有7金币持久变化</option><option value="hidden">未知意图</option><option value="boss">Boss · 不开放撤离</option><option value="last">本幕最后普通战斗</option><option value="harvest">行动中得持久金币 · 主目标仍存活</option><option value="harvestDanger">持久收益前缀 · 敌方结算可能致死</option></select></label><button type="button" id="reset">重置整次推演</button></div>
 <small>切换处境会清空模拟。刷新不等于游戏读档；未知意图不补成风险预报。</small>
 <section id="state" aria-live="polite"></section>
 <section id="setup"><h2>1. 一个暂定说法，也可以没有</h2><p>这些是游戏中的候选句子，不是勇敢的正确答案。</p><div class="row"><button type="button" data-definition="necessary">不后退是勇敢的必要条件</button><button type="button" data-definition="purpose">行动形式要结合目的说明</button><button type="button" data-definition="unstated">不提出通用说法</button></div></section>
-<section id="combat" hidden><h2>2. 危险中的实际选择</h2><div id="battle"></div><p id="liveDefinition"></p><div class="row"><button type="button" id="attack">基础攻击：1费，5伤害</button><button type="button" id="defend">基础防御：1费，5格挡</button><button type="button" id="end">结束回合</button><button type="button" id="request" class="primary">请求撤离</button></div><p id="availability"></p><label for="continuingPurpose">从现在起，继续为了什么？可不填写</label><textarea id="continuingPurpose" maxlength="300" placeholder="例如：我想争取本场战斗奖励。"></textarea><button type="button" id="recordPurpose">记录继续的理由</button><small>只记录这次明确提交的理由，不改写此前行动；不填写仍可正常战斗或撤离。</small></section>
+<details><summary>旧候选反例对照</summary><label><input id="legacyTiming" type="checkbox">允许本回合行动后立即撤离（旧候选）</label><small>仅供同条件反例比较；切换会清空整次模拟，不能在战斗中更换规则。</small></details>
+<section id="combat" hidden><h2>2. 危险中的实际选择</h2><div id="battle"></div><p id="liveDefinition"></p><p>当前候选只在回合开始、第一次实质行动前开放撤离。开始行动后，要承担敌方结算；若下一回合仍活着，才可再次请求。</p><div class="row"><button type="button" id="attack">基础攻击：1费，5伤害</button><button type="button" id="defend">基础防御：1费，5格挡</button><button type="button" id="harvest" hidden>收割攻击：1费，5伤害，击倒附属目标得3金币</button><button type="button" id="end">结束回合</button><button type="button" id="request" class="primary">请求撤离</button></div><p id="availability"></p><label for="continuingPurpose">从现在起，继续为了什么？可不填写</label><textarea id="continuingPurpose" maxlength="300" placeholder="例如：我想争取本场战斗奖励。"></textarea><button type="button" id="recordPurpose">记录继续的理由</button><small>只记录这次明确提交的理由，不改写此前行动；不填写仍可正常战斗或撤离。</small></section>
 <section id="confirm" hidden><h2>确认这次代价</h2><p>消费本幕唯一撤离机会；失去当前整场胜利奖励；本节点处理一次，不能重打。既有生命损耗和合法持久变化保留。</p><label for="purpose">这一次为了什么撤离？可留空</label><textarea id="purpose" maxlength="300" placeholder="例如：这次先保留继续旅程的机会。"></textarea><div class="row"><button type="button" id="confirmExit" class="primary">确认撤离</button><button type="button" id="cancel">取消，回到战斗</button></div><small>取消不消费机会；此前输入不自动成为行动理由。</small></section>
 <section id="review" hidden><h2>3. 把三类材料分开</h2><div class="facts"><p><strong>先前的勇敢说法：</strong><span id="definition"></span></p><p><strong>实际行动：</strong><span id="actual"></span></p><p><strong>此次行动理由：</strong><span id="actionPurpose" class="statement"></span></p><p id="resourceResult"></p></div>
 <p>活着不证明勇敢；胜利也不认证勇敢。可以回应，也可以直接继续地图。</p>
@@ -32,26 +33,29 @@
 <script>
 // BEGIN SOCRATES RETREAT PAPER MODEL
 const SocratesRetreatPaper=(()=>{
-  const fixtures={winnable:{hp:20,enemy:10,attack:6,gold:0},danger:{hp:12,enemy:30,attack:20,gold:0},persistent:{hp:16,enemy:15,attack:9,gold:7},hidden:{hp:16,enemy:15,attack:9,gold:0},boss:{hp:20,enemy:10,attack:6,gold:0},last:{hp:12,enemy:30,attack:20,gold:0}};
+  const fixtures={winnable:{hp:20,enemy:10,attack:6,gold:0},danger:{hp:12,enemy:30,attack:20,gold:0},persistent:{hp:16,enemy:15,attack:9,gold:7},hidden:{hp:16,enemy:15,attack:9,gold:0},boss:{hp:20,enemy:10,attack:6,gold:0},last:{hp:12,enemy:30,attack:20,gold:0},harvest:{hp:16,enemy:15,attack:9,gold:0,side:true},harvestDanger:{hp:12,enemy:30,attack:20,gold:0,side:true}};
   const definitions={necessary:'不后退是这种危险中勇敢的必要条件',purpose:'行动形式要结合目的说明',unstated:'没有提出通用说法',actionNotRequired:'行动形式不是通用必要条件'};
-  function create(fixture='winnable'){
-    if(!Object.hasOwn(fixtures,fixture))throw new Error('Unknown authored fixture');const f=fixtures[fixture];
-    return {fixture,act:1,node:'n1',kind:fixture==='boss'?'boss':'ordinary',phase:'setup',hp:f.hp,gold:f.gold,enemyHp:f.enemy,energy:2,block:0,played:[],turn:1,spent:[],processed:[],definition:null,originalDefinition:null,actionPurpose:null,judgment:null,scope:false,adjustment:null,action:null,request:null,requestSeq:0,epoch:0,victories:0,rewardStatus:null,history:[],encounters:[]};
+  function create(fixture='winnable',timing='turnStart'){
+    if(!Object.hasOwn(fixtures,fixture)||!['turnStart','afterAction'].includes(timing))throw new Error('Unknown authored fixture or timing');const f=fixtures[fixture];
+    return {fixture,timing,act:1,node:'n1',kind:fixture==='boss'?'boss':'ordinary',phase:'setup',hp:f.hp,gold:f.gold,enemyHp:f.enemy,sideHp:f.side?5:0,persistentGained:0,gainHistory:[],energy:2,block:0,played:[],turn:1,spent:[],processed:[],definition:null,originalDefinition:null,actionPurpose:null,judgment:null,scope:false,adjustment:null,action:null,request:null,requestSeq:0,epoch:0,victories:0,rewardStatus:null,history:[],encounters:[]};
   }
   function begin(s,definition){if(s.phase!=='setup'||!['necessary','purpose','unstated'].includes(definition))return false;s.definition=definition;s.originalDefinition=definition;s.phase='combat';s.history.push('明确记录：'+definitions[definition]);return true;}
-  const available=s=>s.phase==='combat'&&s.kind==='ordinary'&&s.hp>0&&!s.spent.includes(s.act)&&!s.processed.includes(s.node);
+  const allowedTiming=s=>s.timing==='afterAction'||s.played.length===0;
+  const available=s=>s.phase==='combat'&&s.kind==='ordinary'&&s.hp>0&&!s.spent.includes(s.act)&&!s.processed.includes(s.node)&&allowedTiming(s);
   function win(s){s.victories++;s.gold+=10;s.rewardStatus='earned';s.processed.push(s.node);s.action='continued';s.judgment=null;s.scope=false;s.adjustment=null;s.phase='review';s.history.push('正常胜利，获得10模拟金币；没有认证勇敢。');}
   function recordPurpose(s,text){if(s.phase!=='combat'||typeof text!=='string'||!text.trim()||text.trim().length>300)return false;s.actionPurpose=text.trim();s.history.push(`第${s.turn}回合从现在起继续的理由：${text.trim()}`);return true;}
   function play(s,card){
-    if(s.phase!=='combat'||!['attack','defend'].includes(card)||s.played.includes(card)||s.energy<1||s.hp<=0)return false;
-    s.played.push(card);s.energy--;s.epoch++;if(card==='attack')s.enemyHp=Math.max(0,s.enemyHp-5);else s.block+=5;s.history.push(`第${s.turn}回合使用基础${card==='attack'?'攻击':'防御'}。`);if(s.enemyHp===0)win(s);return true;
+    if(s.phase!=='combat'||!['attack','defend','harvest'].includes(card)||s.played.includes(card)||s.energy<1||s.hp<=0||(card==='harvest'&&s.sideHp<=0)||(card==='attack'&&s.enemyHp<=0))return false;
+    s.played.push(card);s.energy--;s.epoch++;
+    if(card==='attack')s.enemyHp=Math.max(0,s.enemyHp-5);else if(card==='defend')s.block+=5;else{s.sideHp=Math.max(0,s.sideHp-5);if(s.sideHp===0){s.gold+=3;s.persistentGained+=3;s.gainHistory.push({node:s.node,turn:s.turn,amount:3});s.history.push('收割攻击实际击倒附属目标，直接获得3模拟金币，整场战斗尚未胜利。');}}
+    s.history.push(`第${s.turn}回合使用${card==='harvest'?'收割攻击':card==='attack'?'基础攻击':'基础防御'}。`);if(s.enemyHp===0&&s.sideHp===0)win(s);return true;
   }
   function endTurn(s){
-    if(s.phase!=='combat'||s.hp<=0)return false;const damage=fixtures[s.fixture].attack,loss=Math.min(s.hp,Math.max(0,damage-s.block));s.hp-=loss;s.epoch++;s.history.push(`回合结束，实际攻击${damage}，生命损失${loss}。`);
+    if(s.phase!=='combat'||s.hp<=0)return false;const damage=(s.enemyHp>0?fixtures[s.fixture].attack:0)+(s.sideHp>0?3:0),loss=Math.min(s.hp,Math.max(0,damage-s.block));s.hp-=loss;s.epoch++;s.history.push(`回合结束，实际攻击${damage}，生命损失${loss}。`);
     if(s.hp===0){s.phase='dead';s.request=null;s.history.push('本局死亡；没有胜利或德性判断。');return true;}s.turn++;s.energy=2;s.block=0;s.played=[];return true;
   }
   function request(s){if(!available(s))return false;s.request={id:++s.requestSeq,node:s.node,epoch:s.epoch};s.phase='confirm';s.history.push('请求撤离，尚未成功或消费机会。');return true;}
-  const validRequest=(s,id)=>s.phase==='confirm'&&s.request!==null&&s.request.id===id&&s.request.node===s.node&&s.request.epoch===s.epoch&&s.kind==='ordinary'&&s.hp>0&&!s.spent.includes(s.act)&&!s.processed.includes(s.node);
+  const validRequest=(s,id)=>s.phase==='confirm'&&s.request!==null&&s.request.id===id&&s.request.node===s.node&&s.request.epoch===s.epoch&&s.kind==='ordinary'&&s.hp>0&&!s.spent.includes(s.act)&&!s.processed.includes(s.node)&&allowedTiming(s);
   function cancel(s,id){if(!validRequest(s,id))return false;s.request=null;s.phase='combat';s.history.push('取消请求，输入未记为行动理由，机会不变。');return true;}
   function confirm(s,id,purpose=null){
     if(!validRequest(s,id)||(purpose!==null&&(typeof purpose!=='string'||!purpose.trim()||purpose.trim().length>300)))return false;
@@ -69,12 +73,12 @@ const SocratesRetreatPaper=(()=>{
   function destinations(s){if(s.phase!=='review'&&!(s.phase==='map'&&s.node==='n3'))return [];const edges=s.node==='n1'?(s.fixture==='boss'?['n5']:s.fixture==='last'?['n4']:['n2','n3']):s.node==='n2'||s.node==='n3'?['n4']:s.node==='n4'?['n5']:[];return edges.filter(id=>!s.processed.includes(id));}
   function proceed(s,node){
     if(!['review','map'].includes(s.phase)||s.hp<=0||!destinations(s).includes(node))return false;
-    if(s.phase==='review')s.encounters.push({node:s.node,originalDefinition:s.originalDefinition,definition:s.definition,action:s.action,purpose:s.actionPurpose,judgment:s.judgment,scope:s.scope,adjustment:s.adjustment,hp:s.hp,gold:s.gold,reward:s.rewardStatus});
+    if(s.phase==='review')s.encounters.push({node:s.node,originalDefinition:s.originalDefinition,definition:s.definition,action:s.action,purpose:s.actionPurpose,judgment:s.judgment,scope:s.scope,adjustment:s.adjustment,hp:s.hp,gold:s.gold,persistentGained:s.persistentGained,reward:s.rewardStatus});
     else s.processed.push(s.node);
     s.node=node;s.phase='map';s.request=null;s.epoch++;s.history.push('沿固定合法边来到'+node+'；此前理由和回应另存，不改写。');return true;
   }
   function enter(s){
-    if(s.phase!=='map'||!['n2','n4'].includes(s.node)||s.processed.includes(s.node)||s.hp<=0)return false;s.kind=s.node==='n4'?'boss':'ordinary';s.originalDefinition=s.definition;s.enemyHp=fixtures[s.fixture].enemy;s.energy=2;s.block=0;s.played=[];s.turn=1;s.action=null;s.actionPurpose=null;s.judgment=null;s.scope=false;s.adjustment=null;s.rewardStatus=null;s.phase='combat';s.epoch++;s.history.push('进入'+s.node+'固定'+(s.kind==='boss'?'Boss':'普通')+'战斗；资源和机会不重置。');return true;
+    if(s.phase!=='map'||!['n2','n4'].includes(s.node)||s.processed.includes(s.node)||s.hp<=0)return false;s.kind=s.node==='n4'?'boss':'ordinary';s.originalDefinition=s.definition;s.enemyHp=fixtures[s.fixture].enemy;s.sideHp=fixtures[s.fixture].side?5:0;s.persistentGained=0;s.energy=2;s.block=0;s.played=[];s.turn=1;s.action=null;s.actionPurpose=null;s.judgment=null;s.scope=false;s.adjustment=null;s.rewardStatus=null;s.phase='combat';s.epoch++;s.history.push('进入'+s.node+'固定'+(s.kind==='boss'?'Boss':'普通')+'战斗；资源和机会不重置。');return true;
   }
   return Object.freeze({definitions,create,begin,available,recordPurpose,play,endTurn,request,cancel,confirm,judge,setScope,tension,adjust,destinations,proceed,enter});
 })();
@@ -83,18 +87,19 @@ const SocratesRetreatPaper=(()=>{
   'use strict';const p=SocratesRetreatPaper,$=id=>document.getElementById(id),names={n1:'当前战斗',n2:'下一普通战斗',n3:'休息处（仅位置，不模拟恢复）',n4:'Boss',n5:'片段出口'};let s=p.create();
   const show=(id,on)=>$(id).hidden=!on;
   function action(fn){$('error').textContent=fn()?'':'当前请求不可用；没有改变资源、机会或说法。';render();}
-  function reset(){s=p.create($('fixture').value);$('purpose').value='';$('continuingPurpose').value='';$('error').textContent='';render();}
+  function reset(){s=p.create($('fixture').value,$('legacyTiming').checked?'afterAction':'turnStart');$('purpose').value='';$('continuingPurpose').value='';$('error').textContent='';render();}
   function render(){
-    $('state').textContent=`第${s.act}幕 · 生命${s.hp} · 金币${s.gold} · 撤离机会${s.spent.includes(s.act)?'已用尽':'尚未使用'} · 位置：${names[s.node]}`;
+    $('state').textContent=`第${s.act}幕 · 生命${s.hp} · 金币${s.gold} · 撤离机会${s.spent.includes(s.act)?'已用尽':'尚未使用'} · 位置：${names[s.node]} · ${s.timing==='afterAction'?'旧候选时点（行动后可用）':'候选时点（本回合行动前）'}`;
     show('setup',s.phase==='setup');show('combat',s.phase==='combat');show('confirm',s.phase==='confirm');show('review',s.phase==='review');show('map',s.phase==='map');show('dead',s.phase==='dead');
     if(s.phase==='combat'){
-      $('battle').textContent=`${s.kind==='boss'?'Boss':'普通战斗'} · 第${s.turn}回合 · 敌人生命${s.enemyHp} · ${s.fixture==='hidden'?'意图未知':`公开攻击${({winnable:6,danger:20,persistent:9,boss:6,last:20})[s.fixture]}`} · 能量${s.energy} · 格挡${s.block}`;
+      const attack=({winnable:6,danger:20,persistent:9,boss:6,last:20,harvest:9,harvestDanger:20})[s.fixture];
+      $('battle').textContent=`${s.kind==='boss'?'Boss':'普通战斗'} · 第${s.turn}回合 · 主目标生命${s.enemyHp}${['harvest','harvestDanger'].includes(s.fixture)?` · 附属目标生命${s.sideHp}`:''} · ${s.fixture==='hidden'?'意图未知':`公开总攻击${(s.enemyHp>0?attack:0)+(s.sideHp>0?3:0)}`} · 能量${s.energy} · 格挡${s.block}`;
       $('liveDefinition').textContent='当前说法：'+p.definitions[s.definition]+'；继续理由：'+(s.actionPurpose??'未提交');
-      $('attack').disabled=s.energy<1||s.played.includes('attack');$('defend').disabled=s.energy<1||s.played.includes('defend');$('request').disabled=!p.available(s);$('availability').textContent=s.kind==='boss'?'Boss不可撤离。':s.spent.includes(s.act)?'本幕机会已用尽，后续普通战斗也不刷新。':'请求可以取消；只有实际确认成功才消费机会。';
+      $('attack').disabled=s.energy<1||s.played.includes('attack')||s.enemyHp===0;$('defend').disabled=s.energy<1||s.played.includes('defend');show('harvest',['harvest','harvestDanger'].includes(s.fixture));$('harvest').disabled=s.energy<1||s.played.includes('harvest')||s.sideHp===0;$('request').disabled=!p.available(s);$('availability').textContent=s.kind==='boss'?'Boss不可撤离。':s.spent.includes(s.act)?'本幕机会已用尽，后续普通战斗也不刷新。':s.timing==='turnStart'&&s.played.length?'本回合已开始行动，撤离已关闭；必须先承担敌方结算，下一回合仍活着才可再请求。':'请求可以取消；只有实际确认成功才消费机会。';
     }
     if(s.phase==='review'){
       $('definition').textContent=s.originalDefinition===s.definition?p.definitions[s.definition]+'（尚未修订）':'原句：'+p.definitions[s.originalDefinition]+'；当前记录：'+p.definitions[s.definition];$('actual').textContent=s.action==='retreated'?'真实模拟行动是撤离；没有胜利。':'正常坚持并获得胜利；不是勇敢的认证。';$('actionPurpose').textContent=s.actionPurpose===null?'没有提出本次行动理由；系统不补写。':s.actionPurpose;
-      $('resourceResult').textContent=`当前生命${s.hp}、金币${s.gold}；${s.rewardStatus==='lost'?'整场胜利奖励放弃，已有资源未回滚':'获得正常10金币胜利奖励，撤离机会未因胜利消费'}。`;
+      $('resourceResult').textContent=`当前生命${s.hp}、金币${s.gold}；${s.rewardStatus==='lost'?'整场胜利奖励放弃，已有资源未回滚':'获得正常10金币胜利奖励，撤离机会未因胜利消费'}。${s.persistentGained?`本场在出牌时已直接获得${s.persistentGained}金币，它不属于胜利奖励。`:''}`;
       document.querySelectorAll('[data-judgment]').forEach(b=>b.disabled=s.judgment!==null);$('judgment').textContent=s.judgment===null?'尚未回应，可直接继续地图。':s.judgment==='standardElse'?'保留旧标准，本次优先别的目的；这两件事不自动矛盾。':s.judgment==='courageous'?'这是你对本次行动的判断，系统没有认证它。':s.judgment==='notJudged'?'明确暂不判断勇敢，原标准未自动撤回。':s.judgment==='withdrawn'?'本次勇敢判断已明确撤回。':'暂不回应，不记同意。';
       show('scopeLabel',s.definition==='necessary'&&s.judgment==='courageous'&&s.action==='retreated');$('scope').checked=s.scope;
       $('question').textContent=p.tension(s)?'你认可旧“不退”必要条件覆盖本次，也认可本次撤离可以勇敢：这两句在同一范围如何相容？不指定哪句该真，也不评你的品德。':s.definition==='necessary'&&s.judgment==='courageous'&&s.action==='retreated'?'先检查旧句是否覆盖这次处境，不因一次撤离就自动判定义错误。':'标准、行动和自我判断分开保存；动作本身没有独立的德性真值。';show('adjustments',p.tension(s)&&s.adjustment===null);
@@ -104,7 +109,7 @@ const SocratesRetreatPaper=(()=>{
     $('history').replaceChildren();for(const text of s.history){const li=document.createElement('li');li.textContent=text;$('history').append(li);}
   }
   document.querySelectorAll('[data-definition]').forEach(b=>b.addEventListener('click',()=>action(()=>p.begin(s,b.dataset.definition))));
-  $('fixture').addEventListener('change',reset);$('reset').addEventListener('click',reset);$('attack').addEventListener('click',()=>action(()=>p.play(s,'attack')));$('defend').addEventListener('click',()=>action(()=>p.play(s,'defend')));$('end').addEventListener('click',()=>action(()=>p.endTurn(s)));$('request').addEventListener('click',()=>action(()=>{const ok=p.request(s);if(ok)$('purpose').value='';return ok;}));$('recordPurpose').addEventListener('click',()=>action(()=>p.recordPurpose(s,$('continuingPurpose').value)));
+  $('fixture').addEventListener('change',reset);$('legacyTiming').addEventListener('change',reset);$('reset').addEventListener('click',reset);$('attack').addEventListener('click',()=>action(()=>p.play(s,'attack')));$('defend').addEventListener('click',()=>action(()=>p.play(s,'defend')));$('harvest').addEventListener('click',()=>action(()=>p.play(s,'harvest')));$('end').addEventListener('click',()=>action(()=>p.endTurn(s)));$('request').addEventListener('click',()=>action(()=>{const ok=p.request(s);if(ok)$('purpose').value='';return ok;}));$('recordPurpose').addEventListener('click',()=>action(()=>p.recordPurpose(s,$('continuingPurpose').value)));
   $('cancel').addEventListener('click',()=>action(()=>p.cancel(s,s.request?.id)));$('confirmExit').addEventListener('click',()=>action(()=>p.confirm(s,s.request?.id,$('purpose').value.trim()||null)));
   document.querySelectorAll('[data-judgment]').forEach(b=>b.addEventListener('click',()=>action(()=>p.judge(s,b.dataset.judgment))));$('scope').addEventListener('change',()=>action(()=>p.setScope(s,$('scope').checked)));
   document.querySelectorAll('[data-adjust]').forEach(b=>b.addEventListener('click',()=>action(()=>p.adjust(s,b.dataset.adjust))));$('enter').addEventListener('click',()=>action(()=>{const ok=p.enter(s);if(ok)$('continuingPurpose').value='';return ok;}));render();
