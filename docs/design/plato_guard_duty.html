@@ -25,8 +25,9 @@
  <section id="battle" hidden>
   <h2 id="battleTitle"></h2><p id="enemyStatus"></p><p id="intents"></p>
   <p class="muted">本轮固定两张攻击（各费用1、伤害5），再打防御（费用1、格挡5）；先击倒时停止，不再执行敌方阶段。每轮3能量。</p>
-  <div id="choices" class="choices"><button data-choice="none">保持原目标</button><button data-choice="to-player">这段改向自己</button><button data-choice="to-site">这段改向灯火</button></div>
+  <div id="choices" class="choices"><button data-choice="none">保持原目标</button><button data-choice="to-player">让打灯火的那一段打自己</button><button data-choice="to-site">把打自己的那一段转给灯火</button></div>
   <p id="choiceLimit" class="muted"></p><div id="forecast" aria-live="polite"></div>
+  <details id="calculation"><summary>查看完整逐段计算</summary><div id="calculationText" class="history"></div></details>
   <button id="step" class="primary">执行固定牌序与本轮结算</button>
  </section>
  <section id="maintenance" hidden>
@@ -107,6 +108,16 @@ function turnText(r,predicted=false){let lines=['第'+r.battle+'场 / 第'+r.tur
  if(r.victory)lines.push('先击倒，敌方阶段未执行；不记改向承担了损失。');
  for(const h of r.hits)lines.push(h.executed?name(h.original)+'原目标 → '+name(h.target)+'实际目标：计划'+h.damage+'，格挡抵'+h.blocked+'，实际失'+h.loss+'，生命'+h.hpBefore+'→'+h.hpAfter:name(h.target)+'的计划'+h.damage+'未执行（'+(h.reason==='site-lost'?'目标已失去':'玩家已死亡')+'）');
  lines.push('你'+r.before.p+'→'+r.after.p+'；灯'+r.before.site+'→'+r.after.site);if(r.death)lines.push('玩家死亡，之后操作与计划到场停止。');const result=lines.join('\n');return predicted?result.replaceAll('实际','预计').replaceAll('未执行','将不执行').replaceAll('玩家死亡','若玩家死亡'):result;}
+function forecastSummary(r){
+ let lines=['预测，尚未执行 · 本轮敌人预计剩'+r.after.enemy];const changed=r.plan.findIndex(x=>x.original!==x.target);
+ lines.push(r.victory?'预计先击倒，敌方阶段不会发生。':changed<0?'保持两段原目标。':'第'+(changed+1)+'段从'+name(r.plan[changed].original)+'改向'+name(r.plan[changed].target)+'；另外一段照原表。');
+ lines.push('你预计失'+(r.before.p-r.after.p)+'，生命'+r.before.p+'→'+r.after.p+'；灯预计失'+(r.before.site-r.after.site)+'，生命'+r.before.site+'→'+r.after.site+'。');
+ if(!r.victory)lines.push('你的5格挡预计用'+(r.blockGranted-r.blockUnused)+'，余'+r.blockUnused+'；不能转给灯。');
+ if(r.death)lines.push('预计你死亡，后续动作与到场停止观察。');
+ else if(r.after.site<=0)lines.push('预计灯火失去照明与作为第二目标的条件。');
+ const skipped=r.hits.filter(h=>!h.executed);if(skipped.length)lines.push('本轮预计有'+skipped.length+'段在目标失去或玩家死亡后停止。');
+ return lines.join('\n');
+}
 function render(){
  const phase=state.phase;text('playerStatus','生命 '+state.p+'/12');text('siteStatus','生命 '+state.site+'/9');text('siteUse',state.site>0?'可以照亮通路，也是一个仍可改向的目标。':'不能照亮；未来帮助还未执行。');
  $('entry').hidden=phase!=='entry';$('active').hidden=phase==='entry';$('battle').hidden=phase!=='battle';$('maintenance').hidden=phase!=='maintenance';$('outcome').hidden=!['outcome','dead','done'].includes(phase);
@@ -116,7 +127,7 @@ function render(){
   text('battleTitle','第'+state.battle+'场 · 第'+state.turn+'轮');text('enemyStatus','敌人剩余生命 '+state.enemy+'；本轮3能量。');text('intents',wins?'固定牌序会先击倒，敌方阶段不发生。':PlatoGuardDutyPaper.plans(state).map((x,i)=>'第'+(i+1)+'段：'+x.damage+'打'+name(x.original)).join('；'));
   $('choices').hidden=wins;for(const b of document.querySelectorAll('[data-choice]')){b.disabled=!opts.includes(b.dataset.choice);b.setAttribute('aria-pressed',String(b.dataset.choice===selection));}
   text('choiceLimit',wins?'不安排一次不会发生的改向。':state.site<=0?'灯已失去，本轮两段原本都打你，没有第二目标可改。':'本轮最多改向一段；另一段不交换。自己的5格挡只挡打自己的攻击。');
-  text('forecast','预测，尚未执行\n'+turnText(PlatoGuardDutyPaper.forecast(state,selection),true));text('step',wins?'按固定攻击击倒剩余敌人':'执行固定牌序与本轮结算');
+  const prediction=PlatoGuardDutyPaper.forecast(state,selection);text('forecast',forecastSummary(prediction));text('calculationText',turnText(prediction,true));text('step',wins?'按固定攻击击倒剩余敌人':'执行固定牌序与本轮结算');
  }
  if(phase==='maintenance'){
   const rest=PlatoGuardDutyPaper.maintenancePreview(state,'rest'),assist=PlatoGuardDutyPaper.maintenancePreview(state,'assist');
@@ -133,7 +144,7 @@ function render(){
 for(const b of document.querySelectorAll('[data-choice]'))b.onclick=()=>{selection=b.dataset.choice;render();};
 $('start').onclick=()=>{PlatoGuardDutyPaper.start(state,$('stance').value);render();};$('skip').onclick=()=>{PlatoGuardDutyPaper.skip(state);render();};
 $('fixture').onchange=()=>{if(state.phase==='entry'){state=PlatoGuardDutyPaper.create($('fixture').value);selection='none';render();}};
-$('step').onclick=()=>{PlatoGuardDutyPaper.step(state,selection);selection='none';render();};$('rest').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'rest');render();};$('assist').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'assist');render();};
-$('finish').onclick=()=>{PlatoGuardDutyPaper.finish(state,$('note').value);render();};$('reset').onclick=()=>{state=PlatoGuardDutyPaper.create($('fixture').value);selection='none';$('note').value='';$('history').open=false;render();};render();
+$('step').onclick=()=>{PlatoGuardDutyPaper.step(state,selection);selection='none';$('calculation').open=false;render();};$('rest').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'rest');render();};$('assist').onclick=()=>{PlatoGuardDutyPaper.maintain(state,'assist');render();};
+$('finish').onclick=()=>{PlatoGuardDutyPaper.finish(state,$('note').value);render();};$('reset').onclick=()=>{state=PlatoGuardDutyPaper.create($('fixture').value);selection='none';$('note').value='';$('history').open=false;$('calculation').open=false;render();};render();
 </script>
 </html>

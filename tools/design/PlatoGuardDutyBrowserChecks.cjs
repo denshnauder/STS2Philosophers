@@ -10,7 +10,7 @@ const output=path.resolve('bin/design');fs.mkdirSync(output,{recursive:true});
   assert.match(await page.locator('#invitation').innerText(),/维护者.*旅人/);assert.match(await page.locator('#entry').innerText(),/不是原典引文/);
   await page.locator('#stance').selectOption('refuse');await click('start');
   assert.match(await page.locator('#playerStatus').innerText(),/12\/12/);assert.equal(await historyText(),'');
-  await choice('to-player');assert.match(await page.locator('#forecast').innerText(),/预测，尚未执行/);assert.equal((await page.locator('#forecast').innerText()).includes('实际'),false);assert.match(await page.locator('#playerStatus').innerText(),/12\/12/);
+  await choice('to-player');assert.match(await page.locator('#forecast').innerText(),/预测，尚未执行/);assert.match(await page.locator('#forecast').innerText(),/第2段从灯火改向你/);assert.equal((await page.locator('#forecast').innerText()).includes('实际'),false);assert.match(await page.locator('#playerStatus').innerText(),/12\/12/);assert.equal(await page.locator('#calculation').evaluate(x=>x.open),false);await page.locator('#calculation summary').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#calculation').evaluate(x=>x.open),true);assert.match(await page.locator('#calculationText').innerText(),/基础攻击预计命中/);
   await step();assert.match(await page.locator('#playerStatus').innerText(),/5\/12/);assert.match(await page.locator('#siteStatus').innerText(),/9\/9/);await page.locator('#history summary').click();assert.match(await page.locator('#records').innerText(),/实际失6/);assert.equal(await page.locator('#choices').isVisible(),false);
   await step();assert.equal(await page.locator('#assist').isDisabled(),true);assert.match(await page.locator('#assistForecast').innerText(),/没有进一步协助/);
   await click('rest');await step();await step();assert.match(await page.locator('#question').innerText(),/没有接受这份要求/);assert.match(await page.locator('#arrivals').innerText(),/旅人乙.*立即通行/);await click('finish');assert.match(await page.locator('#savedNote').innerText(),/没有提交句子/);
@@ -29,6 +29,7 @@ const output=path.resolve('bin/design');fs.mkdirSync(output,{recursive:true});
     if(phase==='outcome'){await click('assist');await step();await step();await page.locator('#note').fill('重复观察'.repeat(100));await click('finish');}
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`${width}/${theme}/${phase} overflow`);
     await page.screenshot({path:path.join(output,`plato_guard_duty_${phase}_${width}_${theme}.png`),fullPage:true});
+    if(phase==='battle'){assert.equal(await page.locator('#calculation').evaluate(x=>x.open),false);await page.locator('#calculation summary').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#calculation').evaluate(x=>x.open),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`${width}/${theme}/calculation overflow`);}
     if(phase!=='entry'){await page.locator('#history summary').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#history').evaluate(x=>x.open),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`${width}/${theme}/history overflow`);}
    }
   }
