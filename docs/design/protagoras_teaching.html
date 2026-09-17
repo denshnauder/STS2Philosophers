@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>普罗泰戈拉 · 把补给交给下一位</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#f7f4ed,#191d20);--panel:light-dark(#fffdf8,#242a2d);--ink:light-dark(#252d31,#e8ece9);--muted:light-dark(#566268,#afbbbf);--line:light-dark(#c6c9c3,#526167);--accent:light-dark(#285d5c,#9accc0)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,sans-serif}main{max-width:960px;margin:auto;padding:28px}h1{font-size:1.7rem;line-height:1.4}h2{font-size:1.2rem}h3{font-size:1rem}section{border:1px solid var(--line);border-radius:9px;padding:18px;margin:20px 0;background:var(--panel)}p{margin:10px 0}.muted,small{color:var(--muted)}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);border-radius:7px;padding:14px;min-width:0}button,select,textarea{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 12px}button{cursor:pointer;white-space:normal}button:hover{border-color:var(--accent)}.card button{width:100%}textarea{display:block;resize:vertical;width:100%;min-height:95px;margin:10px 0}.facts{white-space:pre-wrap;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}ul{padding-left:24px}label{display:inline-block}details{margin-top:16px}summary{cursor:pointer}#error{color:light-dark(#932d2d,#ffb6b6);min-height:1.6em}footer{margin:25px 0;border-top:1px solid var(--line);padding-top:16px}@media(max-width:620px){main{padding:16px}.grid{grid-template-columns:1fr}section{padding:14px}}
+</style></head>
+<body><main>
+<h1>普罗泰戈拉 · 把补给交给下一位</h1>
+<p>你能亲自分一次补给。下一次交给同行者：教他照做，还是教他一个办法？</p>
+<p class="muted">虚构的纸面设计候选，不连接游戏。它不认证谁更有德性，也不证明现实中的学习。</p>
+<div class="row"><label>换场条件 <select id="fixture" aria-label="换场条件"><option value="newcomer">伤重新来者 · 贡献变为2/1/0</option><option value="rotation">伤重新来者 · 贡献轮换为0/2/1</option></select></label><button id="reset" type="button">重置整次推演</button></div>
+<p id="status" aria-live="polite"></p>
+<section id="initial"><h2>1. 三份补给，先由你分</h2>
+<p>每份回复2生命，上限10。当前贡献份数：玩家2、伤者0、同行者1；补给共用，可以另议分法。</p>
+<p id="party1" class="facts"></p>
+<p>之后玩家固定损失4生命、同行者损失2；伤者带着所得离队。新来者生命1/10。下一轮还有3份补给，贡献按上方条件变化。</p>
+<div id="firstChoices" class="grid"></div>
+<div class="row"><button id="baseline" type="button">对照：各用自己的份数</button><button id="skip" type="button">不参与，直接离开</button></div>
+<small>自用对照经历相同旅途与休整，两轮按各自贡献份数使用。不参与则没有补给、旅途或休整，保留当前生命。</small></section>
+<section id="teaching" hidden><h2>2. 同行者问：下一次怎么分？</h2><p id="firstResult" class="facts"></p><p>“记住本次份数”，只交给他一个席位示例；“再按这个办法算”，让他使用刚才选的分法。这些指令不等于你认定它就是正义。</p><div class="row"><button id="sample" type="button">记住本次份数</button><button id="method" type="button">再按这个办法算</button></div></section>
+<section id="second" hidden><h2>3. 他提出了下一轮分配</h2><p id="party2" class="facts"></p><p id="instruction" class="facts"></p><div class="card"><p id="proposal" class="facts"></p><button id="delegate" type="button">交给他执行，然后休整</button></div><p>也可以亲自改分。你会放弃休整回复（至多2生命；满生命时实际为0）。提案尚未消耗补给；选下方任一项就确认执行，随后不能回滚。</p><div id="overrideChoices" class="grid"></div></section>
+<section id="outcome" hidden><h2>这次实际发生了什么</h2><div id="records"></div><p id="question"></p><label for="note">你留下的看法，可留空</label><textarea id="note" maxlength="300" placeholder="可以说明教会了什么、尚未知道什么；不写也能离开。"></textarea><button id="finish" type="button">离开这次共同实践</button></section>
+<section id="done" hidden><h2>本次结束</h2><p id="ending" class="facts"></p><p id="savedNote" class="facts"></p><p>苏格拉底主说保留。没有第二能力、额外撤离次数或品德奖励。</p></section>
+<p id="error" role="alert"></p>
+<footer><details><summary>候选的边界与分法</summary><p>三种分法是游戏实验，不是普罗泰戈拉的三条正义学说。生命优先每次给当前生命最低者，平生命时按屏幕席位次序；不是唯一公平答案。贡献总份数在本片段始终为3，未设计其他补给数量。</p><p>相同结果不证明用同一理由；按方法执行也不证明方法值得遵守。亲自重分不能算同行者学会了你的新安排。</p><p>他人生命没有隐藏好感、未来报恩或品德分。若这个情境只剩挑最大回血，候选需要换处境；不靠增加必填感想修补。重置清空全部模拟记录，不是游戏读档或获取补给。</p></details></footer>
+</main>
+<script>
+// BEGIN PROTAGORAS TEACHING PAPER MODEL
+const ProtagorasTeachingPaper=(()=>{
+  const rules=Object.freeze({contribution:'按贡献份数',equal:'每人一份',lowest:'每次给生命最低者'});
+  const clone=x=>JSON.parse(JSON.stringify(x));
+  const validParty=p=>Array.isArray(p)&&p.length===3&&new Set(p.map(x=>x?.id)).size===3&&p.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&Number.isInteger(x.hp)&&x.hp>0&&x.hp<=10&&Number.isInteger(x.contribution)&&x.contribution>=0&&x.contribution<=3)&&p.reduce((n,x)=>n+x.contribution,0)===3;
+  const validAllocation=a=>Array.isArray(a)&&a.length===3&&a.every(x=>Number.isInteger(x)&&x>=0)&&a.reduce((n,x)=>n+x,0)===3;
+  function allocation(p,key){
+    if(!validParty(p)||!Object.hasOwn(rules,key))return null;
+    if(key==='contribution')return p.map(x=>x.contribution);
+    if(key==='equal')return [1,1,1];
+    const hp=p.map(x=>x.hp),a=[0,0,0];
+    for(let n=0;n<3;n++){const j=hp.indexOf(Math.min(...hp));a[j]++;hp[j]=Math.min(10,hp[j]+2);}return a;
+  }
+  function distribute(p,a){
+    if(!validParty(p)||!validAllocation(a))return null;
+    const before=clone(p),after=clone(p);after.forEach((x,i)=>x.hp=Math.min(10,x.hp+2*a[i]));
+    return {before,allocation:[...a],after,healed:after.map((x,i)=>x.hp-before[i].hp),wasted:after.map((x,i)=>2*a[i]-(x.hp-before[i].hp))};
+  }
+  function create(fixture='newcomer'){
+    if(!['newcomer','rotation'].includes(fixture))throw new RangeError('未知纸面条件');
+    return {fixture,phase:'initial',mode:null,party:[{id:'player',name:'玩家',hp:6,contribution:2},{id:'wounded',name:'伤者',hp:2,contribution:0},{id:'learner',name:'同行者',hp:4,contribution:1}],firstRule:null,teaching:null,records:[],travel:null,note:null};
+  }
+  function nextParty(s){
+    if(!validParty(s.party)||!['newcomer','rotation'].includes(s.fixture))return null;
+    const result=[{id:'player',name:'玩家',hp:s.party[0].hp-4,contribution:s.fixture==='newcomer'?2:0},{id:'arrival',name:'新来者',hp:1,contribution:s.fixture==='newcomer'?1:2},{id:'learner',name:'同行者',hp:s.party[2].hp-2,contribution:s.fixture==='newcomer'?0:1}];
+    return validParty(result)?result:null;
+  }
+  function first(s,key){
+    if(s.phase!=='initial')return false;const result=distribute(s.party,allocation(s.party,key));if(!result)return false;
+    s.mode='teaching';s.firstRule=key;s.records.push({...result,round:1,actor:'player',rule:key});s.party=clone(result.after);s.phase='teaching';return true;
+  }
+  function teach(s,kind){
+    if(s.phase!=='teaching'||!['sample','method'].includes(kind)||!Object.hasOwn(rules,s.firstRule)||s.records.length!==1||!validAllocation(s.records[0].allocation))return false;
+    const next=nextParty(s);if(!next)return false;
+    s.teaching={kind,rule:s.firstRule,allocation:[...s.records[0].allocation]};s.travel={playerLoss:4,learnerLoss:2,departed:clone(s.party[1])};s.party=next;s.phase='second';return true;
+  }
+  function preview(s,override=null){
+    if(s.phase!=='second'||!s.teaching||!['sample','method'].includes(s.teaching.kind)||!Object.hasOwn(rules,s.teaching.rule))return null;
+    const a=override===null?(s.teaching.kind==='sample'?s.teaching.allocation:allocation(s.party,s.teaching.rule)):allocation(s.party,override);
+    const result=distribute(s.party,a);if(!result)return null;
+    const possibleRest=Math.min(2,10-result.after[0].hp),restGain=override===null?possibleRest:0;
+    return {...result,round:2,actor:override===null?'learner':'player',rule:override,restGain,restForgone:override===null?0:possibleRest,finalHp:result.after[0].hp+restGain};
+  }
+  function execute(s,override=null){
+    const result=preview(s,override);if(!result)return false;
+    s.records.push(clone(result));s.party=clone(result.after);s.party[0].hp=result.finalHp;s.phase='outcome';return true;
+  }
+  function baseline(s){
+    if(s.phase!=='initial')return false;
+    const firstResult=distribute(s.party,allocation(s.party,'contribution'));if(!firstResult)return false;
+    const staged={...s,party:firstResult.after},next=nextParty(staged);if(!next)return false;
+    const secondResult=distribute(next,allocation(next,'contribution'));if(!secondResult)return false;
+    const restGain=Math.min(2,10-secondResult.after[0].hp),finalHp=secondResult.after[0].hp+restGain;
+    s.mode='self';s.records=[{...firstResult,round:1,actor:'each',rule:'contribution'},{...secondResult,round:2,actor:'each',rule:'contribution',restGain,restForgone:0,finalHp}];s.travel={playerLoss:4,learnerLoss:2,departed:clone(firstResult.after[1])};s.party=clone(secondResult.after);s.party[0].hp=finalHp;s.phase='outcome';return true;
+  }
+  function skip(s){if(s.phase!=='initial'||!validParty(s.party))return false;s.mode='skipped';s.phase='done';return true;}
+  function finish(s,note=''){if(s.phase!=='outcome'||typeof note!=='string'||note.length>300)return false;s.note=note.trim()||null;s.phase='done';return true;}
+  function question(s){
+    if(!['outcome','done'].includes(s.phase)||s.mode==='skipped')return '';
+    if(s.mode==='self')return '这里没有教学材料。相同资源结果，是否就表示做了同一种共同实践？';
+    if(s.records[1]?.actor==='player')return '第二轮由你接回决定。所见是你自己的分配；还不知道同行者能否自行采用这个新办法。';
+    return s.teaching.kind==='sample'?'他按示例分了。这个变化后的情境里，你愿意沿用同样份数吗？':'他按所教办法分了。能实施这个办法，是否就足以判断它值得遵守？';
+  }
+  return {rules,create,allocation,distribute,first,teach,preview,execute,baseline,skip,finish,question};
+})();
+// END PROTAGORAS TEACHING PAPER MODEL
+(()=>{
+  const p=ProtagorasTeachingPaper,$=id=>document.getElementById(id);let s=p.create();
+  const partyText=party=>party.map(x=>`${x.name}：生命${x.hp}/10，贡献${x.contribution}份`).join('\n');
+  const resultText=r=>r.before.map((x,i)=>`${x.name}：${r.allocation[i]}份，生命${x.hp}→${r.after[i].hp}（实际回复${r.healed[i]}，溢出${r.wasted[i]}）`).join('\n');
+  function action(fn){if(!fn()){$('error').textContent='该操作不允许，记录没有改变。';return;}$('error').textContent='';render();}
+  function choices(root,second=false){
+    root.replaceChildren();for(const [key,name] of Object.entries(p.rules)){
+      const r=second?p.preview(s,key):p.distribute(s.party,p.allocation(s.party,key));if(!r)continue;
+      const card=document.createElement('div');card.className='card';const h=document.createElement('h3');h.textContent=name;card.append(h);const text=document.createElement('p');text.className='facts';text.textContent=resultText(r)+(second?`\n亲自执行后玩家${r.finalHp}/10；放弃的实际休整回复${r.restForgone}`:'');card.append(text);
+      const b=document.createElement('button');b.type='button';b.textContent=second?'亲自改分：'+name:'这次采用：'+name;b.addEventListener('click',()=>action(()=>second?p.execute(s,key):p.first(s,key)));card.append(b);root.append(card);
+    }
+  }
+  function render(){
+    for(const phase of ['initial','teaching','second','outcome','done'])$(phase).hidden=s.phase!==phase;
+    const titles={initial:'尚未分配',teaching:'第一轮已执行，尚未教下一轮',second:'教学指令已明确，第二轮尚未执行',outcome:'两轮已执行，尚未离开',done:'已结束'};
+    $('status').textContent=`${titles[s.phase]} · 玩家生命${s.party[0].hp}/10 · 主说保留`;
+    if(s.phase==='initial'){$('party1').textContent=partyText(s.party);choices($('firstChoices'));}
+    if(s.phase==='teaching')$('firstResult').textContent='这次采用：'+p.rules[s.firstRule]+'\n'+resultText(s.records[0]);
+    if(s.phase==='second'){
+      $('party2').textContent=partyText(s.party)+`\n已付旅途生命：玩家${s.travel.playerLoss}、同行者${s.travel.learnerLoss}；原伤者离队时生命${s.travel.departed.hp}/10。`;
+      $('instruction').textContent=s.teaching.kind==='sample'?`所教示例：按席位分${s.teaching.allocation.join('/')}份。`:'所教办法：'+p.rules[s.teaching.rule];
+      const proposal=p.preview(s);$('proposal').textContent=resultText(proposal)+`\n交给他执行后休整实际回复${proposal.restGain}，玩家最终${proposal.finalHp}/10。`;choices($('overrideChoices'),true);
+    }
+    if(s.phase==='outcome'){
+      $('records').replaceChildren();const taught=document.createElement('p');taught.className='facts';taught.textContent=s.mode==='self'?'自用对照：没有教学指令。':`首次采用：${p.rules[s.firstRule]}\n所教${s.teaching.kind==='sample'?'示例：席位份数'+s.teaching.allocation.join('/'):'办法：'+p.rules[s.teaching.rule]}`;$('records').append(taught);for(const r of s.records){const h=document.createElement('h3');h.textContent=`第${r.round}轮 · ${r.actor==='learner'?'同行者执行':r.actor==='each'?'各自使用':'玩家执行'}`;const text=document.createElement('p');text.className='facts';text.textContent=resultText(r)+(r.round===2?`\n休整实际回复${r.restGain}，玩家最终${r.finalHp}/10。`:'');$('records').append(h,text);}
+      const history=document.createElement('p');history.textContent=`旅途：玩家失去${s.travel.playerLoss}生命，同行者失去${s.travel.learnerLoss}；原伤者离队时生命${s.travel.departed.hp}/10。`; $('records').append(history);$('question').textContent=p.question(s);
+    }
+    if(s.phase==='done'){$('ending').textContent=s.mode==='skipped'?'没有参与、没有教学材料；玩家生命仍6/10。':`玩家最终${s.party[0].hp}/10。已执行结果不会因看法而改变。\n`+p.question(s);$('savedNote').textContent=s.note===null?'没有提交看法；不替你生成信念。':'你明确留下的句子：'+s.note;}
+  }
+  function reset(){s=p.create($('fixture').value);$('note').value='';$('error').textContent='';render();}
+  $('fixture').addEventListener('change',reset);$('reset').addEventListener('click',reset);$('baseline').addEventListener('click',()=>action(()=>p.baseline(s)));$('skip').addEventListener('click',()=>action(()=>p.skip(s)));
+  $('sample').addEventListener('click',()=>action(()=>p.teach(s,'sample')));$('method').addEventListener('click',()=>action(()=>p.teach(s,'method')));$('delegate').addEventListener('click',()=>action(()=>p.execute(s)));$('finish').addEventListener('click',()=>action(()=>p.finish(s,$('note').value)));render();
+})();
+</script></body></html>

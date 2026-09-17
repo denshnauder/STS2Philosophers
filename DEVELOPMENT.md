@@ -298,3 +298,6 @@ D96已在59汇集苏格拉底两条完整设计候选：核心问题/独特动�
 ## 普罗泰戈拉教学候选（D97）
 
 设计先行摘要docs/design/ProtagorasTeachingDesign.md，G68维护真源，原典研究见G研究21。当前完整循环候选未有可操作原型，Question/Keep不加第二主说。下一仅低保真资源分配/教学迁移/有代价接回决定与自用对照，不注册游戏模型或新增生产内容；资源公平不是思想正确性分数。
+
+
+D98纸面文件docs/design/protagoras_teaching.html；bundled Node执行tools/design/ProtagorasTeachingPaperChecks.cjs和ProtagorasTeachingBrowserChecks.cjs（传bundled Playwright路径），12项/48条组合与浏览器明暗窄屏通过。只验证模拟指令、资源守恒、机会成本和一次结算，不证明真实学习/德性/乐趣/生产安全。没有C#/游戏资源改动，无VerifyMod/部署；README生产未变。下一D99先审NPC参与与实际玩家价值，G68维护。
