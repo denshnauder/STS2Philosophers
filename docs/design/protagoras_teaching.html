@@ -6,6 +6,8 @@
 <style>
 :root{color-scheme:light dark;--bg:light-dark(#f7f4ed,#191d20);--panel:light-dark(#fffdf8,#242a2d);--ink:light-dark(#252d31,#e8ece9);--muted:light-dark(#566268,#afbbbf);--line:light-dark(#c6c9c3,#526167);--accent:light-dark(#285d5c,#9accc0)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,sans-serif}main{max-width:960px;margin:auto;padding:28px}h1{font-size:1.7rem;line-height:1.4}h2{font-size:1.2rem}h3{font-size:1rem}section{border:1px solid var(--line);border-radius:9px;padding:18px;margin:20px 0;background:var(--panel)}p{margin:10px 0}.muted,small{color:var(--muted)}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);border-radius:7px;padding:14px;min-width:0}button,select,textarea{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 12px}button{cursor:pointer;white-space:normal}button:hover{border-color:var(--accent)}.card button{width:100%}textarea{display:block;resize:vertical;width:100%;min-height:95px;margin:10px 0}.facts{white-space:pre-wrap;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}ul{padding-left:24px}label{display:inline-block}details{margin-top:16px}summary{cursor:pointer}#error{color:light-dark(#932d2d,#ffb6b6);min-height:1.6em}footer{margin:25px 0;border-top:1px solid var(--line);padding-top:16px}@media(max-width:620px){main{padding:16px}.grid{grid-template-columns:1fr}section{padding:14px}}
+.branches{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:620px){.branches{grid-template-columns:1fr}}
+button:disabled{opacity:.6;cursor:not-allowed}
 </style></head>
 <body><main>
 <h1>普罗泰戈拉 · 把补给交给下一位</h1>
@@ -22,7 +24,16 @@
 <div class="row"><button id="baseline" type="button">对照：各用自己的份数</button><button id="skip" type="button">不参与，直接离开</button></div>
 <small>自用对照经历相同旅途与休整，两轮按各自贡献份数使用。不参与则没有补给、旅途或休整，保留当前生命。</small></section>
 <section id="teaching" hidden><h2>2. 同行者问：下一次怎么分？</h2><p id="firstResult" class="facts"></p><p>“记住本次份数”，只交给他一个席位示例；“再按这个办法算”，让他使用刚才选的分法。这些指令不等于你认定它就是正义。</p><div class="row"><button id="sample" type="button">记住本次份数</button><button id="method" type="button">再按这个办法算</button></div></section>
-<section id="second" hidden><h2>3. 他会算，也有自己的意见</h2><p id="party2" class="facts"></p><p id="instruction" class="facts"></p><div class="card"><h3>按原指令算出的提案</h3><p id="proposal" class="facts"></p><p id="willingness"></p><button id="delegate" type="button">交给他按原指令执行</button></div><div class="card"><h3>同行者提出的本次替案</h3><p id="opinions" class="facts"></p><p id="counterproposal" class="facts"></p><button id="adopt" type="button">这次采用他的替案，由他执行</button></div><p>也可以亲自改分。你会放弃休整回复（至多2生命；满生命时实际为0）。提案尚未消耗补给；选下方任一项就确认执行，随后不能回滚。新来者同意将本次安排交给旅行者，不等于认可你的伦理原则。</p><div id="overrideChoices" class="grid"></div><p>不愿继续共用，也可各按本轮贡献份数使用，享相同休整。第一轮和旅途不会重做。</p><button id="endShared" type="button">结束共用，各用本轮自己的份数</button></section>
+<section id="second" hidden><h2>3. 他会算，也有自己的意见</h2>
+<p id="party2" class="facts"></p><p id="instruction" class="facts"></p><p id="opinions" class="facts"></p>
+<div class="grid branches">
+<div class="card"><h3>按原指令委托</h3><p id="proposal" class="facts"></p><p id="willingness"></p><button id="delegate" type="button">交给他按原指令执行</button></div>
+<div class="card"><h3>采用同行者本次替案</h3><p id="counterproposal" class="facts"></p><button id="adopt" type="button">这次采用他的替案，由他执行</button></div>
+</div>
+<p>提案尚未消耗补给。以下选择确认后不能回滚；新来者同意本次操作安排，不等于认同你的伦理原则。</p>
+<details id="personalChoices"><summary>亲自分配（放弃休整，至多2生命）</summary><p>亲自承担可以采用任何一种分法，放弃的实际休整回复按上限显示。同行者不愿代办，也不限制你亲自分配。</p><div id="overrideChoices" class="grid"></div></details>
+<h3>结束共用，各自使用</h3><p>按本轮贡献份数使用，享相同休整。第一轮与旅途保留。</p><p id="selfProposal" class="facts"></p><button id="endShared" type="button">结束共用，各用本轮自己的份数</button>
+</section>
 <section id="outcome" hidden><h2>这次实际发生了什么</h2><div id="records"></div><p id="question"></p><label for="note">你留下的看法，可留空</label><textarea id="note" maxlength="300" placeholder="可以说明教会了什么、尚未知道什么；不写也能离开。"></textarea><button id="finish" type="button">离开这次共同实践</button></section>
 <section id="done" hidden><h2>本次结束</h2><p id="ending" class="facts"></p><p id="savedNote" class="facts"></p><p>苏格拉底主说保留。没有第二能力、额外撤离次数或品德奖励。</p></section>
 <p id="error" role="alert"></p>
@@ -132,6 +143,7 @@ const ProtagorasTeachingPaper=(()=>{
       $('instruction').textContent=s.teaching.kind==='sample'?`所教示例：按席位分${s.teaching.allocation.join('/')}份。`:'所教办法：'+p.rules[s.teaching.rule];
       const proposal=p.preview(s);$('proposal').textContent=resultText(proposal,true)+(proposal.available?`\n若由他执行，休整实际回复${proposal.restGain}，玩家最终${proposal.finalHp}/10。`:'\n只是算出的提案，尚未执行；不能把这里的回复登记为实际所得。');$('delegate').disabled=!proposal.available;$('willingness').textContent=proposal.available?'他愿意代执行这个原提案。':'他会算这个原提案，但不愿代执行；你仍可亲自分或结束共用。';
       $('opinions').textContent='新来者：“'+s.discussion.arrival+'”\n同行者：“'+s.discussion.learner+'”';const candidate=p.alternative(s);$('counterproposal').textContent=resultText(candidate,true)+`\n由他执行并休整后，玩家最终${candidate.finalHp}/10。只采用本次安排，不改写原指令或自动认定它就是正义。`;choices($('overrideChoices'),true);
+      const own=p.alternative(s,true);$('selfProposal').textContent=resultText(own,true)+`\n休整预计回复${own.restGain}，玩家最终${own.finalHp}/10。`;
     }
     if(s.phase==='outcome'){
       $('records').replaceChildren();const taught=document.createElement('p');taught.className='facts';taught.textContent=s.mode==='self'?'自用对照：没有教学指令。':`首次采用：${p.rules[s.firstRule]}\n所教${s.teaching.kind==='sample'?'示例：席位份数'+s.teaching.allocation.join('/'):'办法：'+p.rules[s.teaching.rule]}`;$('records').append(taught);for(const r of s.records){const h=document.createElement('h3');h.textContent=`第${r.round}轮 · ${r.actor==='learner'?'同行者执行':r.actor==='each'?'各自使用':'玩家执行'}`;const text=document.createElement('p');text.className='facts';text.textContent=resultText(r)+(r.round===2?`\n休整实际回复${r.restGain}，玩家最终${r.finalHp}/10。`:'');$('records').append(h,text);}
@@ -140,7 +152,7 @@ const ProtagorasTeachingPaper=(()=>{
     }
     if(s.phase==='done'){$('ending').textContent=s.mode==='skipped'?'没有参与、没有教学材料；玩家生命仍6/10。':`玩家最终${s.party[0].hp}/10。已执行结果不会因看法而改变。\n`+p.question(s);$('savedNote').textContent=s.note===null?'没有提交看法；不替你生成信念。':'你明确留下的句子：'+s.note;}
   }
-  function reset(){s=p.create($('fixture').value);$('note').value='';$('error').textContent='';render();}
+  function reset(){s=p.create($('fixture').value);$('note').value='';$('error').textContent='';$('personalChoices').open=false;render();}
   $('fixture').addEventListener('change',reset);$('reset').addEventListener('click',reset);$('baseline').addEventListener('click',()=>action(()=>p.baseline(s)));$('skip').addEventListener('click',()=>action(()=>p.skip(s)));
   $('sample').addEventListener('click',()=>action(()=>p.teach(s,'sample')));$('method').addEventListener('click',()=>action(()=>p.teach(s,'method')));$('delegate').addEventListener('click',()=>action(()=>p.execute(s)));$('finish').addEventListener('click',()=>action(()=>p.finish(s,$('note').value)));render();
   $('adopt').addEventListener('click',()=>action(()=>p.adopt(s)));$('endShared').addEventListener('click',()=>action(()=>p.endShared(s)));
