@@ -301,3 +301,6 @@ D96已在59汇集苏格拉底两条完整设计候选：核心问题/独特动�
 
 
 D98纸面文件docs/design/protagoras_teaching.html；bundled Node执行tools/design/ProtagorasTeachingPaperChecks.cjs和ProtagorasTeachingBrowserChecks.cjs（传bundled Playwright路径），12项/48条组合与浏览器明暗窄屏通过。只验证模拟指令、资源守恒、机会成本和一次结算，不证明真实学习/德性/乐趣/生产安全。没有C#/游戏资源改动，无VerifyMod/部署；README生产未变。下一D99先审NPC参与与实际玩家价值，G68维护。
+
+
+D99设计复审：当前D98 HTML通过12项/浏览器仅证明按指令分配，受教者自主判断不足，暂不接德性问号生产。G68/ProtagorasTeachingDesign.md最新方案为明确意见、知道但拒绝代办、有限替案、亲自承担或结束共用；尚未接HTML，下一D100最小实现。无生产构建部署或新的游戏验收。
