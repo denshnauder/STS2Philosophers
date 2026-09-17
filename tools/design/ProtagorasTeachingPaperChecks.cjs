@@ -25,8 +25,8 @@ check('Equal shares have identical material with distinct explicit instructions'
 check('Rotating contributors changes method, not a remembered seat example',()=>{
   const a=open('contribution','sample','rotation'),b=open('contribution','method','rotation');assert.equal(json(p.preview(a).allocation),json([2,0,1]));assert.equal(json(p.preview(b).allocation),json([0,2,1]));assert.equal(p.preview(a).after[0].hp,10);assert.equal(p.preview(a).finalHp,null);unchanged(a,()=>p.execute(a));assert.equal(p.preview(b).finalHp,8);assert.equal(p.execute(b),true);
 });
-check('Self use compares identical inputs, travel and rest without teaching or moral rewards',()=>{
-  for(const fixture of ['newcomer','rotation']){const a=p.create(fixture),b=open('contribution','method',fixture);assert.equal(p.baseline(a),true);assert.equal(p.execute(b,p.preview(b).available?null:'contribution'),true);assert.equal(json(a.party),json(b.party));assert.equal(a.teaching,null);assert.equal(json(a.travel),json(b.travel));assert.match(p.question(a),/没有教学材料/);assert.equal('virtueScore' in a,false);assert.equal('learnedVirtue' in a,false);}
+check('Self use compares identical inputs, travel and rest without recorded instructions or moral rewards',()=>{
+  for(const fixture of ['newcomer','rotation']){const a=p.create(fixture),b=open('contribution','method',fixture);assert.equal(p.baseline(a),true);assert.equal(p.execute(b,p.preview(b).available?null:'contribution'),true);assert.equal(json(a.party),json(b.party));assert.equal(a.teaching,null);assert.equal(json(a.travel),json(b.travel));assert.match(p.question(a),/没有指定后续操作指令/);assert.equal('virtueScore' in a,false);assert.equal('learnedVirtue' in a,false);}
 });
 check('First party remains a snapshot; newcomer cannot overwrite departed participant facts',()=>{
   const s=p.create();p.first(s,'lowest');const first=json(s.records[0]);p.teach(s,'method');assert.equal(s.travel.departed.id,'wounded');assert.equal(s.travel.departed.hp,6);assert.equal(s.party[1].id,'arrival');assert.equal(s.party[1].hp,1);p.execute(s);assert.equal(json(s.records[0]),first);s.party[1].hp=10;assert.equal(s.records[1].after[1].hp,5);assert.equal(s.travel.departed.hp,6);
@@ -42,9 +42,12 @@ check('Unsupported parties and allocations do not swallow supplies or fabricate 
   for(const bad of [0,-1,11,2.5]){const s=p.create();s.party[0].hp=bad;unchanged(s,()=>p.first(s,'equal'));unchanged(s,()=>p.baseline(s));}
   const s=p.create();s.party[0].contribution=3;unchanged(s,()=>p.first(s,'equal'));
 });
-check('Leaving is not teaching; blank or expressed notes do not affect settled resources',()=>{
+check('Leaving records no explicit trial; blank or expressed notes do not affect settled resources',()=>{
   const a=p.create();assert.equal(p.skip(a),true);assert.equal(a.party[0].hp,6);assert.equal(a.records.length,0);assert.equal(p.question(a),'');unchanged(a,()=>p.baseline(a));
   const b=open(),c=open();p.execute(b);p.execute(c);assert.equal(p.finish(b),true);assert.equal(p.finish(c,'<script>未执行</script>'),true);assert.equal(b.note,null);assert.equal(c.note,'<script>未执行</script>');assert.equal(json(b.party),json(c.party));assert.equal(json(b.records),json(c.records));
+});
+check('No explicit instruction is not a claim that everyday education is absent',()=>{
+  const s=p.create();p.baseline(s);assert.match(p.question(s),/没有指定后续操作指令/);assert.match(p.question(s),/日常相处仍可能有教育/);assert.match(p.question(s),/没追踪那些过程/);assert.equal(s.teaching,null);assert.equal('everydayLearning' in s,false);assert.equal('virtueImproved' in s,false);
 });
 check('All fixture/instruction/control paths spend six supplies once and retain valid life',()=>{
   for(const fixture of ['newcomer','rotation'])for(const key of Object.keys(p.rules))for(const kind of ['sample','method'])for(const override of [null,...Object.keys(p.rules)]){

@@ -11,7 +11,8 @@ button:disabled{opacity:.6;cursor:not-allowed}
 </style></head>
 <body><main>
 <h1>普罗泰戈拉 · 把补给交给下一位</h1>
-<p>你能亲自分一次补给。下一次交给同行者：教他照做，还是教他一个办法？</p>
+<p id="invitation">普罗泰戈拉：“我想让你在与人共同处理事务时变得更好。旁人也会教你。先分这一次，再让同行者接手。”</p>
+<small>这段与下方追问都是游戏对话的改写，不是原典引文。本候选属于德性问号，保留苏格拉底主说。</small>
 <p class="muted">虚构的纸面设计候选，不连接游戏。它不认证谁更有德性，也不证明现实中的学习。</p>
 <div class="row"><label>换场条件 <select id="fixture" aria-label="换场条件"><option value="newcomer">伤重新来者 · 贡献变为2/1/0</option><option value="rotation">伤重新来者 · 贡献轮换为0/2/1</option></select></label><button id="reset" type="button">重置整次推演</button></div>
 <p id="status" aria-live="polite"></p>
@@ -34,7 +35,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 <details id="personalChoices"><summary>亲自分配（放弃休整，至多2生命）</summary><p>亲自承担可以采用任何一种分法，放弃的实际休整回复按上限显示。同行者不愿代办，也不限制你亲自分配。</p><div id="overrideChoices" class="grid"></div></details>
 <h3>结束共用，各自使用</h3><p>按本轮贡献份数使用，享相同休整。第一轮与旅途保留。</p><p id="selfProposal" class="facts"></p><button id="endShared" type="button">结束共用，各用本轮自己的份数</button>
 </section>
-<section id="outcome" hidden><h2>这次实际发生了什么</h2><div id="records"></div><p id="question"></p><label for="note">你留下的看法，可留空</label><textarea id="note" maxlength="300" placeholder="可以说明教会了什么、尚未知道什么；不写也能离开。"></textarea><button id="finish" type="button">离开这次共同实践</button></section>
+<section id="outcome" hidden><h2>这次实际发生了什么</h2><div id="records"></div><p id="questionAttribution" class="muted">普罗泰戈拉的追问（游戏对话）</p><p id="question"></p><label for="note">你留下的看法，可留空</label><textarea id="note" maxlength="300" placeholder="可以说明教会了什么、尚未知道什么；不写也能离开。"></textarea><button id="finish" type="button">离开这次共同实践</button></section>
 <section id="done" hidden><h2>本次结束</h2><p id="ending" class="facts"></p><p id="savedNote" class="facts"></p><p>苏格拉底主说保留。没有第二能力、额外撤离次数或品德奖励。</p></section>
 <p id="error" role="alert"></p>
 <footer><details><summary>候选的边界与分法</summary><p>三种分法是游戏实验，不是普罗泰戈拉的三条正义学说。生命优先每次给当前生命最低者，平生命时按屏幕席位次序；不是唯一公平答案。贡献总份数在本片段始终为3，未设计其他补给数量。</p><p>相同结果不证明用同一理由；按方法执行也不证明方法值得遵守。亲自重分不能算同行者学会了你的新安排。</p><p>他人生命没有隐藏好感、未来报恩或品德分。若这个情境只剩挑最大回血，候选需要换处境；不靠增加必填感想修补。重置清空全部模拟记录，不是游戏读档或获取补给。</p></details></footer>
@@ -111,7 +112,7 @@ const ProtagorasTeachingPaper=(()=>{
   function finish(s,note=''){if(s.phase!=='outcome'||typeof note!=='string'||note.length>300)return false;s.note=note.trim()||null;s.phase='done';return true;}
   function question(s){
     if(!['outcome','done'].includes(s.phase)||s.mode==='skipped')return '';
-    if(s.mode==='self')return '这里没有教学材料。相同资源结果，是否就表示做了同一种共同实践？';
+    if(s.mode==='self')return '这里没有指定后续操作指令，也没有委托代执行。日常相处仍可能有教育；我们这一次没追踪那些过程。';
     if(s.records[1]?.selection==='self-use')return '第二轮结束共用，各自使用补给。原教学指令还在，但这里没有新的委托执行；这次没达成共同安排，不等于没人能学会。';
     if(s.records[1]?.actor==='player')return '第二轮由你接回决定。所见是你自己的分配，不能据此替同行者记新学习或赞同；会算原指令与是否愿意代办须分别看。';
     if(s.records[1]?.selection==='counterproposal')return '你采纳了同行者的本次替案。原教学指令没有被改写；能算原办法、愿意承担本次安排、认同伦理原则，是同一件事吗？';
@@ -150,7 +151,7 @@ const ProtagorasTeachingPaper=(()=>{
       const history=document.createElement('p');history.textContent=`旅途：玩家失去${s.travel.playerLoss}生命，同行者失去${s.travel.learnerLoss}；原伤者离队时生命${s.travel.departed.hp}/10。`; $('records').append(history);$('question').textContent=p.question(s);
       if(s.records[1].discussion){const d=s.records[1].discussion,voices=document.createElement('p');voices.className='facts';voices.textContent='明确意见\n新来者：“'+d.arrival+'”\n同行者：“'+d.learner+'”\n原指令提案：'+d.originalAllocation.join('/')+'；'+(d.originalWilling?'同行者愿意代办。':'同行者拒绝代办。')+'\n本次处理：'+({original:'按原指令委托',personal:'玩家亲自承担',counterproposal:'采用同行者本次替案','self-use':'结束共用，各自使用'}[s.records[1].selection]);$('records').append(voices);}
     }
-    if(s.phase==='done'){$('ending').textContent=s.mode==='skipped'?'没有参与、没有教学材料；玩家生命仍6/10。':`玩家最终${s.party[0].hp}/10。已执行结果不会因看法而改变。\n`+p.question(s);$('savedNote').textContent=s.note===null?'没有提交看法；不替你生成信念。':'你明确留下的句子：'+s.note;}
+    if(s.phase==='done'){$('ending').textContent=s.mode==='skipped'?'没有进入这次补给实践，未检验本次操作指令；玩家生命仍6/10。日常教育效果未观测。':`玩家最终${s.party[0].hp}/10。已执行结果不会因看法而改变。\n`+p.question(s);$('savedNote').textContent=s.note===null?'没有提交看法；不替你生成信念。':'你明确留下的句子：'+s.note;}
   }
   function reset(){s=p.create($('fixture').value);$('note').value='';$('error').textContent='';$('personalChoices').open=false;render();}
   $('fixture').addEventListener('change',reset);$('reset').addEventListener('click',reset);$('baseline').addEventListener('click',()=>action(()=>p.baseline(s)));$('skip').addEventListener('click',()=>action(()=>p.skip(s)));
