@@ -135,4 +135,17 @@ check('Material questions derive from the completed copy and cannot mutate its h
 check('Same victory in nine HP fixture is not evidence of a single-card kill or refuted local claim',()=>{
   for(const mode of ['ordinary','trial']){const s=p.create('nine');if(mode==='trial')p.trial(s,0,'仅原8生命条件合用');else p.accept(s,0);p.start(s);p.play(s,s.focus,'foe:0');assert.equal(s.enemies[0].hp,1);assert.equal(s.phase,'combat');assert.equal(s.material.hits.length,2);assert.equal(s.material.hits.reduce((n,h)=>n+h.damage,0),8);p.play(s,'base:strike','foe:0');assert.equal(s.hp,20);assert.equal(s.phase,mode==='trial'?'review':'outcome');if(mode==='trial'){p.reply(s,'keep');p.resolve(s,'keep');const q=p.inquiry(s);assert.equal(q.currentReason,'仅原8生命条件合用');assert.equal(q.fixture,'nine');assert.equal('refuted' in q,false);assert.equal('knows' in q,false);}else assert.equal(p.inquiry(s),null);}
 });
+check('Hit observations separate eight, nine and four HP targets despite later whole-combat victory',()=>{
+  for(const [fixture,expected] of [['one','8>4,4>0'],['nine','9>5,5>1'],['two','4>0']]){const {s,id}=open(fixture);p.play(s,id,'foe:0');assert.equal(s.material.hits.map(h=>`${h.hpBefore}>${h.hpAfter}`).join(','),expected);for(const h of s.material.hits){assert.equal(h.hpBefore-h.hpAfter,h.damage);assert.equal(h.target,'foe:0');}if(s.phase==='combat')p.play(s,'base:strike',fixture==='two'?'foe:1':'foe:0');p.resolve(s,'keep');assert.match(p.inquiry(s).facts.join(' '),fixture==='nine'?/最后一次实际命中：生命5→1/:/最后一次实际命中.*→0/);}
+});
+check('Prior basic attack and an identical extra copy do not fabricate focus observations',()=>{
+  const {s,id}=open('one');s.deck.push({id:'extra:twin',model:'twin'});s.hand.push('extra:twin');p.play(s,'base:strike','foe:0');p.play(s,id,'foe:0');assert.equal(s.material.hits.length,1);assert.equal(s.material.hits[0].hpBefore,3);assert.equal(s.material.hits[0].hpAfter,0);
+  const other=open('two');other.s.deck.push({id:'extra:twin',model:'twin'});other.s.hand.push('extra:twin');p.play(other.s,'extra:twin','foe:1');assert.equal(other.s.material.hits.length,0);p.play(other.s,other.id,'foe:0');assert.equal(other.s.material.hits[0].target,'foe:0');assert.equal(other.s.material.hits[0].hpBefore,4);assert.equal(other.s.material.hits.length,1);
+});
+check('No draw, no use and block-only actions never mint target-life observations',()=>{
+  for(const [fixture,index,use] of [['absent',0,false],['one',0,false],['one',1,true]]){const {s,id}=open(fixture,index);if(use)p.play(s,id);victoryWithoutTrial(s);p.resolve(s,'keep');assert.equal(s.trialHistory[0].material.hits.length,0);assert.doesNotMatch(p.inquiry(s).facts.join(' '),/最后一次实际命中/);}
+});
+check('Completed target-life observations remain unchanged after live material and enemies change',()=>{
+  const {s,id}=open('nine');p.play(s,id,'foe:0');p.play(s,'base:strike','foe:0');p.resolve(s,'keep');const before=snapshot(s.trialHistory[0]),q=snapshot(p.inquiry(s));s.material.hits[1].hpAfter=0;s.material.hits[0].hpBefore=99;s.enemies[0].hp=99;assert.equal(snapshot(s.trialHistory[0]),before);assert.equal(snapshot(p.inquiry(s)),q);assert.equal(s.trialHistory[0].material.hits[1].hpAfter,1);assert.match(p.inquiry(s).facts.join(' '),/不.*必要性的证明/);
+});
 console.log(`PASS ${total} authored paper checks; native save/identity and gameplay acceptance not exercised.`);

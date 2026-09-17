@@ -101,8 +101,8 @@ const SocratesTrialPaper=(()=>{
     s.hand=s.hand.filter(x=>x!==id);s.energy-=d.cost;s.block+=d.block;
     if(id===s.focus){s.material.used=true;s.material.blockGranted+=d.block;}
     for(let n=0;n<d.hits&&target.hp>0;n++){
-      const damage=Math.min(d.damage,target.hp);target.hp-=damage;
-      if(id===s.focus)s.material.hits.push({target:target.id,damage,turn:s.turn});
+      const hpBefore=target.hp,damage=Math.min(d.damage,hpBefore);target.hp-=damage;
+      if(id===s.focus)s.material.hits.push({target:target.id,damage,turn:s.turn,hpBefore,hpAfter:target.hp});
     }
     s.history.push(`第${s.turn}回合使用${d.name}${d.hits?'，目标'+target.name:''}。`);
     if(s.enemies.every(e=>e.hp===0)){
@@ -142,6 +142,7 @@ const SocratesTrialPaper=(()=>{
     const questions={notProposed:'没有提出过断言。下一次需要先提出什么可检查的问题？不表态仍可行动。',introduced:'此前没有原句，现在明确提出了新句。什么新材料会与它相关？',withdrawn:'原句已明确撤回。什么材料会使你愿意提出一个新判断？收入牌不会替你重新肯定原句。',rewritten:'原句和新句改变了什么：范围、根据，还是别的内容？程序没有认证它已是合理限定。',kept:'原句明确保留。它还准备说明什么尚未出现的局面？新材料是否属于同一范围？',deferred:'你明确选择暂不回应，原问题仍未处理。下一次材料与旧句的关系是什么？未答不等于同意。',unanswered:'处置牌时没有回应原句。原问题仍未处理，牌的去留不表示你接受或撤回它。'};
     const m=r.material,facts=[m.drawn?'该次副本实际抽到。':'该次副本未抽到，不能推出无用。',m.used?'该次副本实际使用。':'该次副本没有使用。'];
     if(m.hits.length)facts.push(`实际${m.hits.length}次命中，涉及${new Set(m.hits.map(h=>h.target)).size}个目标；不外推未检验场合。`);
+    for(const [target,h] of new Map(m.hits.map(h=>[h.target,h])))facts.push(`对${target==='foe:0'?'目标1':'目标2'}最后一次实际命中：生命${h.hpBefore}→${h.hpAfter}；这是该次命中后的观察，不是整场胜利或必要性的证明。`);
     if(m.blockGranted)facts.push(`该副本提供${m.blockGranted}格挡；回合总抵消不能全归于它。`);
     const object=r.currentReason===null?'若要提出一个新问题，什么材料还需要检查？':'这项观察与你当前句的哪一部分有关，还有什么未检查？';
     let materialQuestion;
@@ -185,6 +186,7 @@ const SocratesTrialPaper=(()=>{
       $('oldReason').textContent=s.reason===null?'没有提交过原话；系统不会补写信念。':s.reason;$('evidence').replaceChildren();const m=s.material;
       item($('evidence'),m.drawn?'试授副本实际出现在首手。':'试授副本本场未抽到；未使用不能推出无用。');item($('evidence'),m.used?'实际使用了试授副本。':'没有使用试授副本；不是自动反驳。');
       if(m.hits.length){const repeated=m.hits.some((h,i)=>m.hits.some((other,j)=>i!==j&&h.target===other.target&&h.turn===other.turn));item($('evidence'),`该副本实际完成${m.hits.length}次攻击，累计造成${m.hits.reduce((n,h)=>n+h.damage,0)}模拟伤害；${repeated?'同一回合确有对同一目标多次命中':'没有对一个存活目标多次命中的材料'}。`);}
+      for(const h of m.hits)item($('evidence'),`第${h.turn}回合对${h.target==='foe:0'?'目标1':'目标2'}实际命中：生命${h.hpBefore}→${h.hpAfter}。后续其他牌的击倒不改写这次观察。`);
       if(m.blockGranted)item($('evidence'),`该副本提供${m.blockGranted}模拟格挡。回合总格挡抵消的伤害不能全归于这一张牌。`);
       for(const t of m.turns)item($('evidence'),`第${t.turn}回合：敌方总攻击${t.incoming}，总格挡抵消${t.blocked}，生命损失${t.loss}。`);
       $('limits').textContent='这些只是一场的材料，不证明长期最优、必要性或已经知道。两次攻击同一目标也不是处理两名敌人的证据。';
