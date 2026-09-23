@@ -9,9 +9,9 @@ G94为用户当前设计入口，本文件保存芝诺德性路线的详细设�
 - **制作上限：** 第欧根尼与芝诺各复用一个标准事件时点，芝诺只需一张1600×900事件静态图；无新地图节点、主说图标、NPC、敌人或动画。
 - **已经停止：** 首行动标记、同回合延迟、跨回合预付。它们分别退化成点击手续、减费/复制补偿或储能/保留工具。
 - **已经锁定：** 两个终点各消费一个完整内容额度；Switch不叠加第二份结局，不替换或增强当前战斗能力，也不占普通随机事件或其他人物槽；Switch后的预约、普通安全领取、Boss前与离幕兜底、死亡和并发顺序最多打开一个芝诺事件。
-- **尚未形成：** 生产命名、短文案、资源、代码和游戏验收。第欧根尼去留页、芝诺终点页、持久状态、保存与恢复以及旧档与损坏载荷策略均已锁定。
+- **尚未形成：** 短文案、资源、代码和游戏验收。第欧根尼去留页、芝诺终点页、持久状态、保存与恢复、旧档与损坏载荷策略以及生产命名均已锁定。
 
-**准确下一步：** Linear `ENC-36`只确定芝诺事件、路线状态、事件模型、本地化键和静态图资源的中文显示名与内部命名矩阵；不写短文案、素材或代码。
+**准确下一步：** 为`ZENO_ASSENT_BOUNDARY`编写正常材料与NoMaterial共用的中英短文案矩阵，只填已锁定键并核对知识边界、字数与提交边界；不画素材、不写代码。
 
 以下D147—D152是被当前方案引用的设计证据与反例，不是任务状态或研究原稿。任务状态只以Linear为准，当前设计结论以本地Obsidian的`94芝诺人物设计`为准。
 
@@ -80,6 +80,14 @@ Stay、Switch预约、后续房间完成、开场领取、事件建立、芝诺�
 已知旧路线版本只能沿登记的逐版本纯数据迁移链前进；未知更高版本逐字节透传，禁止降级覆盖。多个标记仅在原始字节完全相同且校验通过时去重，内容不同就全部保留并隔离。当前版本缺必需字段、重复JSON属性、未知枚举、非法阶段或摘要不符都不能默认成未开始、Stay或NoMaterial。
 
 可独立识别的坏芝诺子载荷只停芝诺，其他有效哲学状态继续；整个共享标记无法解析或版本未知时，原标记不透明保留，并停止会覆盖它的Mod保存。原生流程有唯一出口时可继续，否则显示安全阻断。详细迁移表、严格校验、两层隔离和十三项反例只在Obsidian当前入口维护。
+
+## ENC-36 生产命名摘要
+
+玩家事件标题锁定为“芝诺：同意的边界”／“Zeno: The Bounds of Assent”。唯一事件模型为`ZenoAssentBoundary`，公开`ModelId`为`ZENO_ASSENT_BOUNDARY`；路线聚合为`ZenoRouteState`，阶段为`ZenoRouteStage`，材料、结局、触发、目的地与准备事务分别使用`ZenoAssentMaterialSnapshot`、`ZenoAssentOutcome`、`ZenoOpeningTrigger`、`ZenoResumeDestination`和`ZenoRoutePendingOperation`。既有`ZENO_OF_CITIUM`、核心节点与`WESTERN_EDGE_011`保持不变，芝诺不新增遗物`ModelId`。
+
+本地化统一置于`ZENO_ASSENT_BOUNDARY.title`与`ZENO_ASSENT_BOUNDARY.pages.<PAGE>`。页面键固定为`MATERIAL_REVIEW`、`ORIGIN_REVIEW`、`ASSENT_SCOPE`、五种`CONFIRM_*`及五种`RESULT_*`；处理键固定为`KEEP`、`NARROW`、`WITHDRAW`、`NO_REASSENT`和`NO_ASSENT`。NoMaterial仍复用同一事件和页面树，只允许材料回看正文有受控变体，不另建事件、图片或`ModelId`。
+
+唯一静态图固定为`content/images/events/zeno_assent_boundary.png`，PCK路径为`res://images/events/zeno_assent_boundary.png`，规格1600×900 PNG。详细类型、枚举、序列化属性、完整页面键、资源边界和命名反例只在Obsidian当前入口维护；本阶段没有写文案、素材或代码。
 
 ## D147 芝诺目标问题与制作边界草案
 
