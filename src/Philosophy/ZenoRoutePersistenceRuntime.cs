@@ -134,6 +134,95 @@ internal sealed class ZenoRoutePersistenceRuntime
         }
     }
 
+    public async Task<ZenoRouteRecoveryExecutionResult> RecoverAsync(
+        IZenoRouteRecoverySceneProbe sceneProbe,
+        IZenoRouteRecoveryActionExecutor actionExecutor,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sceneProbe);
+        ArgumentNullException.ThrowIfNull(actionExecutor);
+
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            ZenoRouteRecoveryScene scene;
+            try
+            {
+                scene = await sceneProbe.ReadAsync(_coordinator.CurrentState, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return new ZenoRouteRecoveryExecutionResult(
+                    ZenoRouteRecoveryExecutionStatus.SceneUnavailable,
+                    null);
+            }
+
+            ZenoRouteRecoveryPlan plan = ZenoRouteRecoveryPlanner.CreatePlan(
+                _coordinator.CurrentState,
+                scene,
+                _catalog);
+            if (plan.Action == ZenoRouteRecoveryAction.Isolate)
+            {
+                return new ZenoRouteRecoveryExecutionResult(
+                    ZenoRouteRecoveryExecutionStatus.Isolated,
+                    plan);
+            }
+
+            if (plan.Action == ZenoRouteRecoveryAction.CompleteClosing)
+            {
+                return new ZenoRouteRecoveryExecutionResult(
+                    ZenoRouteRecoveryExecutionStatus.ExternalEffectBlocked,
+                    plan);
+            }
+
+            if (plan.Action == ZenoRouteRecoveryAction.RetryPendingTransaction)
+            {
+                ZenoRoutePersistenceCoordinationResult persistence;
+                try
+                {
+                    persistence = await _coordinator.RetryAsync(_adapter, cancellationToken);
+                }
+                finally
+                {
+                    SynchronizeSharedState(_coordinator.CurrentState);
+                }
+
+                return new ZenoRouteRecoveryExecutionResult(
+                    MapPersistenceStatus(persistence.Status),
+                    plan,
+                    persistence);
+            }
+
+            try
+            {
+                bool executed = await actionExecutor.ExecuteAsync(plan, cancellationToken);
+                return new ZenoRouteRecoveryExecutionResult(
+                    executed
+                        ? ZenoRouteRecoveryExecutionStatus.Completed
+                        : ZenoRouteRecoveryExecutionStatus.ActionFailed,
+                    plan);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return new ZenoRouteRecoveryExecutionResult(
+                    ZenoRouteRecoveryExecutionStatus.ActionFailed,
+                    plan);
+            }
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     internal bool Owns(
         PhilosophyRunState sharedState,
         ZenoRouteValidationCatalog catalog)
@@ -146,4 +235,17 @@ internal sealed class ZenoRoutePersistenceRuntime
     {
         _sharedState.SetCurrentZenoRouteState(state, _catalog);
     }
+
+    private static ZenoRouteRecoveryExecutionStatus MapPersistenceStatus(
+        ZenoRoutePersistenceCoordinationStatus status) =>
+        status switch
+        {
+            ZenoRoutePersistenceCoordinationStatus.Completed =>
+                ZenoRouteRecoveryExecutionStatus.Completed,
+            ZenoRoutePersistenceCoordinationStatus.Frozen =>
+                ZenoRouteRecoveryExecutionStatus.Frozen,
+            ZenoRoutePersistenceCoordinationStatus.PreparationReleased =>
+                ZenoRouteRecoveryExecutionStatus.PreparationReleased,
+            _ => ZenoRouteRecoveryExecutionStatus.PersistenceRejected,
+        };
 }
