@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace STS2Philosophers;
 
 internal sealed class PhilosophyRunState
@@ -8,11 +10,39 @@ internal sealed class PhilosophyRunState
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
     public WesternJourneyState? WesternJourney { get; set; }
 
+    [JsonIgnore]
+    public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
+        ZenoRoutePayloadClassification.PreFeatureLegacy,
+        null,
+        null);
+
+    [JsonIgnore]
+    public string? ZenoRouteOriginalEncodedState { get; private set; }
+
     public bool HasData => CurrentDoctrine is not null
         || ThoughtImprints.Count > 0
         || ActBehaviorStates.Count > 0
         || GeneratedCandidates.Count > 0
-        || WesternJourney is not null;
+        || WesternJourney is not null
+        || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy;
+
+    internal void SetCurrentZenoRouteState(ZenoRouteFeatureState state)
+    {
+        ZenoRoutePayload = new ZenoRouteDecodeResult(
+            ZenoRoutePayloadClassification.Current,
+            state,
+            null);
+        ZenoRouteOriginalEncodedState = null;
+    }
+
+    internal void RestoreZenoRoutePayload(ZenoRouteDecodeResult result, string? originalEncodedState)
+    {
+        ZenoRoutePayload = result;
+        ZenoRouteOriginalEncodedState = result.Classification is
+            ZenoRoutePayloadClassification.Current or ZenoRoutePayloadClassification.PreFeatureLegacy
+            ? null
+            : originalEncodedState;
+    }
 
     public ActBehaviorState GetOrCreateActBehaviorState(int actIndex)
     {
