@@ -22,7 +22,7 @@ internal static class PhilosophyRunStateCodec
 
     public static string Encode(PhilosophyRunState state)
     {
-        return Encode(state, EmptyZenoCatalog);
+        return Encode(state, state.ZenoRouteValidationCatalog);
     }
 
     internal static string Encode(PhilosophyRunState state, ZenoRouteValidationCatalog zenoCatalog)
@@ -65,6 +65,7 @@ internal static class PhilosophyRunStateCodec
         PhilosophyRunState state = JsonSerializer.Deserialize<PhilosophyRunState>(bytes, JsonOptions)
             ?? throw new InvalidDataException("The philosophy run state payload was empty.");
         state.NormalizeAfterLoad();
+        state.SetZenoRouteValidationCatalog(zenoCatalog);
 
         string? zenoPayload = ExtractZenoPayload(document.RootElement);
         ZenoRouteDecodeResult zenoResult = ZenoRouteStateCodec.Decode(zenoPayload, zenoCatalog);

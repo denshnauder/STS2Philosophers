@@ -16,6 +16,7 @@ ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRoutePersistenceConfirmationChecks.Run();
 ZenoRoutePersistenceCoordinatorChecks.Run();
+ZenoRoutePersistenceAdapterChecks.Run();
 PhilosophyRunStateZenoCodecChecks.Run();
 PhilosophyRunStateMarkerCarrierChecks.Run();
 WesternEntryChecks.Run();

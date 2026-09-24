@@ -97,7 +97,7 @@ internal static class PhilosophyRunStateMarkerCarrier
 
     public static IReadOnlyList<string> GetEntriesForSave(PhilosophyRunState state)
     {
-        return GetEntriesForSave(state, EmptyZenoCatalog);
+        return GetEntriesForSave(state, state.ZenoRouteValidationCatalog);
     }
 
     internal static IReadOnlyList<string> GetEntriesForSave(
