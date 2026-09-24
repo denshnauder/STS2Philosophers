@@ -19,6 +19,7 @@ internal static class PhilosophyRunStateService
 
     public static void Restore(RunState runState, PhilosophyRunState state)
     {
+        ZenoRouteRuntimeService.Remove(runState);
         States.Remove(runState);
         States.Add(runState, state);
     }

@@ -30,9 +30,7 @@ internal sealed class ZenoRoutePersistenceCoordinator
         ZenoRouteFeatureState initialState,
         ZenoRouteValidationCatalog catalog)
     {
-        if (!ZenoRouteStateCodec.IsValidFeature(initialState, catalog) ||
-            initialState.Route is null ||
-            initialState.PendingOperation is not null)
+        if (!IsValidBase(initialState, catalog) || initialState.PendingOperation is not null)
         {
             throw new ArgumentException(
                 "The coordinator requires a valid route without an unresolved write-ahead record.",
@@ -43,7 +41,68 @@ internal sealed class ZenoRoutePersistenceCoordinator
         _catalog = catalog;
     }
 
+    private ZenoRoutePersistenceCoordinator(
+        ZenoRouteFeatureState restoredState,
+        ZenoRouteValidationCatalog catalog,
+        ZenoRoutePersistenceRequest restoredRequest,
+        ZenoRouteFeatureState sourceState)
+    {
+        _state = restoredState;
+        _catalog = catalog;
+        _frozen = new FrozenRequest(
+            restoredRequest,
+            restoredState,
+            sourceState,
+            ZenoRoutePersistenceStatus.Unknown);
+    }
+
+    public static ZenoRoutePersistenceCoordinator Restore(
+        ZenoRouteFeatureState state,
+        ZenoRouteValidationCatalog catalog)
+    {
+        if (!IsValidBase(state, catalog))
+        {
+            throw new ArgumentException(
+                "The restored coordinator state must contain a valid route.",
+                nameof(state));
+        }
+
+        if (state.PendingOperation is null)
+        {
+            return new ZenoRoutePersistenceCoordinator(state, catalog);
+        }
+
+        if (!ZenoRoutePersistenceConfirmation.TryCreatePreparedRequest(
+                state,
+                catalog,
+                out ZenoRoutePersistenceRequest? request) ||
+            request is null)
+        {
+            throw new ArgumentException(
+                "The restored write-ahead record could not produce its persistence request.",
+                nameof(state));
+        }
+
+        ZenoRouteFeatureState sourceState = state with { PendingOperation = null };
+        if (!IsValidBase(sourceState, catalog))
+        {
+            throw new ArgumentException(
+                "The restored write-ahead record did not retain a valid source state.",
+                nameof(state));
+        }
+
+        return new ZenoRoutePersistenceCoordinator(
+            state,
+            catalog,
+            request,
+            sourceState);
+    }
+
     public ZenoRouteFeatureState CurrentState => _state;
+
+    public string? PendingRequestId => _frozen?.Request.RequestId;
+
+    public ZenoRoutePersistenceCheckpoint? PendingCheckpoint => _frozen?.Request.Checkpoint;
 
     public async Task<ZenoRoutePersistenceCoordinationResult> ExecuteAsync(
         ZenoRouteTransitionResult preparedTransition,
@@ -243,6 +302,13 @@ internal sealed class ZenoRoutePersistenceCoordinator
         }
 
         return ZenoRouteStateCodec.IsValidFeature(transition.State, _catalog);
+    }
+
+    private static bool IsValidBase(
+        ZenoRouteFeatureState state,
+        ZenoRouteValidationCatalog catalog)
+    {
+        return state.Route is not null && ZenoRouteStateCodec.IsValidFeature(state, catalog);
     }
 
     private ZenoRoutePersistenceCoordinationResult FrozenResult(

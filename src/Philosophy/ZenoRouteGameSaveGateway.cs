@@ -10,10 +10,11 @@ internal sealed class ZenoRouteGamePersistenceAdapter : IZenoRoutePersistenceCon
 
     public ZenoRouteGamePersistenceAdapter(
         RunState runState,
+        PhilosophyRunState sharedState,
         ZenoRouteValidationCatalog catalog)
     {
         _inner = new ZenoRoutePersistenceAdapter(
-            new ZenoRouteGameSaveGateway(runState, catalog),
+            new ZenoRouteGameSaveGateway(runState, sharedState, catalog),
             catalog);
     }
 
@@ -29,13 +30,16 @@ internal sealed class ZenoRouteGamePersistenceAdapter : IZenoRoutePersistenceCon
 internal sealed class ZenoRouteGameSaveGateway : IZenoRouteSaveGateway
 {
     private readonly RunState _runState;
+    private readonly PhilosophyRunState _sharedState;
     private readonly ZenoRouteValidationCatalog _catalog;
 
     public ZenoRouteGameSaveGateway(
         RunState runState,
+        PhilosophyRunState sharedState,
         ZenoRouteValidationCatalog catalog)
     {
         _runState = runState;
+        _sharedState = sharedState;
         _catalog = catalog;
     }
 
@@ -44,13 +48,14 @@ internal sealed class ZenoRouteGameSaveGateway : IZenoRouteSaveGateway
         RunManager runManager = RunManager.Instance;
         if (!runManager.ShouldSave ||
             runManager.NetService.Type != NetGameType.Singleplayer ||
-            !ReferenceEquals(runManager.DebugOnlyGetState(), _runState))
+            !ReferenceEquals(runManager.DebugOnlyGetState(), _runState) ||
+            !PhilosophyRunStateService.TryGet(_runState, out PhilosophyRunState? currentSharedState) ||
+            !ReferenceEquals(currentSharedState, _sharedState))
         {
             return false;
         }
 
-        PhilosophyRunStateService.GetOrCreate(_runState)
-            .SetCurrentZenoRouteState(state, _catalog);
+        _sharedState.SetCurrentZenoRouteState(state, _catalog);
         return true;
     }
 
