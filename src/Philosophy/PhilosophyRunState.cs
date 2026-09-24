@@ -19,12 +19,16 @@ internal sealed class PhilosophyRunState
     [JsonIgnore]
     public string? ZenoRouteOriginalEncodedState { get; private set; }
 
+    [JsonIgnore]
+    public IReadOnlyList<string> PreservedSaveMarkerEntries { get; private set; } = [];
+
     public bool HasData => CurrentDoctrine is not null
         || ThoughtImprints.Count > 0
         || ActBehaviorStates.Count > 0
         || GeneratedCandidates.Count > 0
         || WesternJourney is not null
-        || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy;
+        || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
+        || PreservedSaveMarkerEntries.Count > 0;
 
     internal void SetCurrentZenoRouteState(ZenoRouteFeatureState state)
     {
@@ -42,6 +46,11 @@ internal sealed class PhilosophyRunState
             ZenoRoutePayloadClassification.Current or ZenoRoutePayloadClassification.PreFeatureLegacy
             ? null
             : originalEncodedState;
+    }
+
+    internal void PreserveSaveMarkerEntries(IEnumerable<string> entries)
+    {
+        PreservedSaveMarkerEntries = entries.ToArray();
     }
 
     public ActBehaviorState GetOrCreateActBehaviorState(int actIndex)

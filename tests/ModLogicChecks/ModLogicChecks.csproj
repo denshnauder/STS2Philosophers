@@ -50,6 +50,7 @@
     <Compile Include="..\..\src\Events\PhilosophersGazeResolutionPolicy.cs" Link="PhilosophersGazeResolutionPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunState.cs" Link="PhilosophyRunState.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophyRunStateCodec.cs" Link="PhilosophyRunStateCodec.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunStateMarkerCarrier.cs" Link="PhilosophyRunStateMarkerCarrier.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteState.cs" Link="ZenoRouteState.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteStateCodec.cs" Link="ZenoRouteStateCodec.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteStateService.cs" Link="ZenoRouteStateService.cs" />
