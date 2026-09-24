@@ -56,7 +56,42 @@ internal enum ZenoRoutePayloadClassification
     Invalid,
 }
 
-internal sealed record ZenoRouteFeatureState(int FeatureGeneration, ZenoRouteState? Route);
+internal enum ZenoRouteOperationKind
+{
+    Stay,
+    Switch,
+    IntervalCompleted,
+    OpeningClaimed,
+    EventEstablished,
+    OutcomeCommitted,
+    EventClosed,
+}
+
+internal enum ZenoRouteTransitionStatus
+{
+    Prepared,
+    PendingReused,
+    Committed,
+    CommitReused,
+    Rejected,
+}
+
+internal enum ZenoRouteTransitionFailure
+{
+    None,
+    InvalidFeature,
+    RouteMissing,
+    StaleRevision,
+    InvalidSourceStage,
+    PendingConflict,
+    OperationMismatch,
+    InvalidCandidate,
+}
+
+internal sealed record ZenoRouteFeatureState(
+    int FeatureGeneration,
+    ZenoRouteState? Route,
+    ZenoRoutePendingOperation? PendingOperation = null);
 
 internal sealed record ZenoRouteState(
     int Version,
@@ -112,6 +147,23 @@ internal sealed class ZenoAssentMaterialSnapshot
     public string? NarrowStatementId { get; }
     public string? LaterOutcomeId { get; }
     public string Digest { get; }
+}
+
+internal sealed record ZenoRoutePendingOperation(
+    long OperationId,
+    ZenoRouteOperationKind Kind,
+    long SourceRevision,
+    ZenoRouteStage SourceStage,
+    ZenoRouteStage TargetStage,
+    ZenoRouteState Candidate,
+    string CandidateDigest);
+
+internal sealed record ZenoRouteTransitionResult(
+    ZenoRouteTransitionStatus Status,
+    ZenoRouteTransitionFailure Failure,
+    ZenoRouteFeatureState State)
+{
+    public bool IsAccepted => Status != ZenoRouteTransitionStatus.Rejected;
 }
 
 internal sealed class ZenoRouteValidationCatalog

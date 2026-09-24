@@ -103,6 +103,10 @@ internal static class ZenoRouteStateChecks
         missingRoute.Remove("zenoRoute");
         AssertInvalid(missingRoute.ToJsonString(), "Required route property should not be inferred.");
 
+        JsonObject missingPending = ParseRoot(valid);
+        missingPending.Remove("zenoRoutePendingOperation");
+        AssertInvalid(missingPending.ToJsonString(), "Required pending-operation property should not be inferred.");
+
         JsonObject integerEnum = ParseRoot(valid);
         integerEnum["zenoRoute"]!["stage"] = 0;
         AssertInvalid(integerEnum.ToJsonString(), "Integer enum values should be rejected.");

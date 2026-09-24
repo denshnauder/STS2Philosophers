@@ -49,13 +49,33 @@ internal static class ZenoRouteStateCodec
 
     public static string Encode(ZenoRouteFeatureState state, ZenoRouteValidationCatalog catalog)
     {
-        if (state.FeatureGeneration != ZenoRouteFeatureGeneration.Current || !ValidateRoute(state.Route, catalog))
+        if (!IsValidFeature(state, catalog))
         {
             throw new InvalidDataException("Zeno route state is not valid for the current feature generation.");
         }
 
-        FeaturePayload payload = new(state.FeatureGeneration, state.Route is null ? null : ToPayload(state.Route));
+        FeaturePayload payload = new(
+            state.FeatureGeneration,
+            state.Route is null ? null : ToPayload(state.Route),
+            state.PendingOperation is null ? null : ToPayload(state.PendingOperation));
         return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    internal static bool IsValidFeature(ZenoRouteFeatureState state, ZenoRouteValidationCatalog catalog)
+    {
+        if (state.FeatureGeneration != ZenoRouteFeatureGeneration.Current || !ValidateRoute(state.Route, catalog))
+        {
+            return false;
+        }
+
+        return state.PendingOperation is null ||
+               (state.Route is not null && ValidatePendingOperation(state.Route, state.PendingOperation, catalog));
+    }
+
+    internal static string ComputeCandidateDigest(ZenoRouteState candidate)
+    {
+        byte[] json = JsonSerializer.SerializeToUtf8Bytes(ToPayload(candidate), JsonOptions);
+        return Convert.ToHexString(SHA256.HashData(json));
     }
 
     public static ZenoRouteDecodeResult Decode(string? payload, ZenoRouteValidationCatalog catalog)
@@ -97,20 +117,26 @@ internal static class ZenoRouteStateCodec
                 return Invalid(payload);
             }
 
-            if (decoded.Route?.Material is { PublicHistoryIds: null })
+            if (decoded.Route?.Material is { PublicHistoryIds: null } ||
+                decoded.PendingOperation is { Candidate: null } ||
+                decoded.PendingOperation?.Candidate?.Material is { PublicHistoryIds: null })
             {
                 return Invalid(payload);
             }
 
             ZenoRouteState? route = decoded.Route is null ? null : FromPayload(decoded.Route);
-            if (!ValidateRoute(route, catalog))
+            ZenoRoutePendingOperation? pending = decoded.PendingOperation is null
+                ? null
+                : FromPayload(decoded.PendingOperation);
+            ZenoRouteFeatureState state = new(decoded.FeatureGeneration, route, pending);
+            if (!IsValidFeature(state, catalog))
             {
                 return Invalid(payload);
             }
 
             return new ZenoRouteDecodeResult(
                 ZenoRoutePayloadClassification.Current,
-                new ZenoRouteFeatureState(decoded.FeatureGeneration, route),
+                state,
                 null);
         }
         catch (Exception exception) when (
@@ -189,6 +215,139 @@ internal static class ZenoRouteStateCodec
                 route.Outcome is null && route.CurrentStatementAfterId is null,
             _ => false,
         };
+    }
+
+    private static bool ValidatePendingOperation(
+        ZenoRouteState route,
+        ZenoRoutePendingOperation pending,
+        ZenoRouteValidationCatalog catalog)
+    {
+        ZenoRouteState candidate = pending.Candidate;
+        if (!Enum.IsDefined(pending.Kind) ||
+            !Enum.IsDefined(pending.SourceStage) ||
+            !Enum.IsDefined(pending.TargetStage) ||
+            pending.OperationId <= 0 ||
+            route.LastCommittedOperationId == long.MaxValue ||
+            route.Revision == long.MaxValue ||
+            pending.OperationId != route.LastCommittedOperationId + 1 ||
+            pending.SourceRevision != route.Revision ||
+            pending.SourceStage != route.Stage ||
+            pending.TargetStage != candidate.Stage ||
+            candidate.Revision != route.Revision + 1 ||
+            candidate.LastCommittedOperationId != pending.OperationId ||
+            !HasSameIdentity(route, candidate) ||
+            !ValidateRoute(candidate, catalog) ||
+            !string.Equals(
+                pending.CandidateDigest,
+                ComputeCandidateDigest(candidate),
+                StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return pending.Kind switch
+        {
+            ZenoRouteOperationKind.Stay =>
+                pending.SourceStage == ZenoRouteStage.Unresolved &&
+                pending.TargetStage == ZenoRouteStage.DiogenesClosed &&
+                HasSameOperationalData(route, candidate),
+            ZenoRouteOperationKind.Switch =>
+                pending.SourceStage == ZenoRouteStage.Unresolved &&
+                pending.TargetStage == ZenoRouteStage.WaitingInterval &&
+                route.Material is null &&
+                candidate.Material is not null &&
+                HasSameDataExceptMaterial(route, candidate),
+            ZenoRouteOperationKind.IntervalCompleted =>
+                pending.SourceStage == ZenoRouteStage.WaitingInterval &&
+                pending.TargetStage == ZenoRouteStage.ReadyToClaim &&
+                candidate.CompletedRoomReceiptId is not null &&
+                HasSameDataExceptReceipt(route, candidate),
+            ZenoRouteOperationKind.OpeningClaimed =>
+                pending.SourceStage is ZenoRouteStage.WaitingInterval or ZenoRouteStage.ReadyToClaim &&
+                pending.TargetStage == ZenoRouteStage.OpeningClaimed &&
+                HasSameDataExceptScheduling(route, candidate),
+            ZenoRouteOperationKind.EventEstablished =>
+                pending.SourceStage == ZenoRouteStage.OpeningClaimed &&
+                pending.TargetStage == ZenoRouteStage.EventActive &&
+                HasSameOperationalData(route, candidate),
+            ZenoRouteOperationKind.OutcomeCommitted =>
+                pending.SourceStage == ZenoRouteStage.EventActive &&
+                pending.TargetStage == ZenoRouteStage.OutcomeCommitted &&
+                HasSameDataExceptOutcome(route, candidate),
+            ZenoRouteOperationKind.EventClosed =>
+                pending.SourceStage == ZenoRouteStage.OutcomeCommitted &&
+                pending.TargetStage == ZenoRouteStage.ZenoClosed &&
+                HasSameOperationalData(route, candidate),
+            _ => false,
+        };
+    }
+
+    private static bool HasSameIdentity(ZenoRouteState left, ZenoRouteState right)
+    {
+        return left.Version == right.Version &&
+               string.Equals(left.RunId, right.RunId, StringComparison.Ordinal) &&
+               left.ActIndex == right.ActIndex &&
+               string.Equals(left.RouteEdgeId, right.RouteEdgeId, StringComparison.Ordinal) &&
+               string.Equals(left.TerminalNodeId, right.TerminalNodeId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameOperationalData(ZenoRouteState left, ZenoRouteState right)
+    {
+        return HasSameMaterial(left.Material, right.Material) &&
+               string.Equals(left.CompletedRoomReceiptId, right.CompletedRoomReceiptId, StringComparison.Ordinal) &&
+               left.OpeningTrigger == right.OpeningTrigger &&
+               left.ResumeDestination == right.ResumeDestination &&
+               string.Equals(left.ResumeDestinationId, right.ResumeDestinationId, StringComparison.Ordinal) &&
+               string.Equals(left.EventInstanceId, right.EventInstanceId, StringComparison.Ordinal) &&
+               left.Outcome == right.Outcome &&
+               string.Equals(left.CurrentStatementAfterId, right.CurrentStatementAfterId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameDataExceptMaterial(ZenoRouteState left, ZenoRouteState right)
+    {
+        return string.Equals(left.CompletedRoomReceiptId, right.CompletedRoomReceiptId, StringComparison.Ordinal) &&
+               left.OpeningTrigger == right.OpeningTrigger &&
+               left.ResumeDestination == right.ResumeDestination &&
+               string.Equals(left.ResumeDestinationId, right.ResumeDestinationId, StringComparison.Ordinal) &&
+               string.Equals(left.EventInstanceId, right.EventInstanceId, StringComparison.Ordinal) &&
+               left.Outcome == right.Outcome &&
+               string.Equals(left.CurrentStatementAfterId, right.CurrentStatementAfterId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameDataExceptReceipt(ZenoRouteState left, ZenoRouteState right)
+    {
+        return HasSameMaterial(left.Material, right.Material) &&
+               left.OpeningTrigger == right.OpeningTrigger &&
+               left.ResumeDestination == right.ResumeDestination &&
+               string.Equals(left.ResumeDestinationId, right.ResumeDestinationId, StringComparison.Ordinal) &&
+               string.Equals(left.EventInstanceId, right.EventInstanceId, StringComparison.Ordinal) &&
+               left.Outcome == right.Outcome &&
+               string.Equals(left.CurrentStatementAfterId, right.CurrentStatementAfterId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameDataExceptScheduling(ZenoRouteState left, ZenoRouteState right)
+    {
+        return HasSameMaterial(left.Material, right.Material) &&
+               string.Equals(left.CompletedRoomReceiptId, right.CompletedRoomReceiptId, StringComparison.Ordinal) &&
+               left.Outcome == right.Outcome &&
+               string.Equals(left.CurrentStatementAfterId, right.CurrentStatementAfterId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameDataExceptOutcome(ZenoRouteState left, ZenoRouteState right)
+    {
+        return HasSameMaterial(left.Material, right.Material) &&
+               string.Equals(left.CompletedRoomReceiptId, right.CompletedRoomReceiptId, StringComparison.Ordinal) &&
+               left.OpeningTrigger == right.OpeningTrigger &&
+               left.ResumeDestination == right.ResumeDestination &&
+               string.Equals(left.ResumeDestinationId, right.ResumeDestinationId, StringComparison.Ordinal) &&
+               string.Equals(left.EventInstanceId, right.EventInstanceId, StringComparison.Ordinal);
+    }
+
+    private static bool HasSameMaterial(ZenoAssentMaterialSnapshot? left, ZenoAssentMaterialSnapshot? right)
+    {
+        return left is null
+            ? right is null
+            : right is not null && string.Equals(left.Digest, right.Digest, StringComparison.Ordinal);
     }
 
     private static bool ValidateMaterial(ZenoAssentMaterialSnapshot material, ZenoRouteValidationCatalog catalog)
@@ -336,6 +495,16 @@ internal static class ZenoRouteStateCodec
             material.LaterOutcomeId,
             material.Digest);
 
+    private static PendingOperationPayload ToPayload(ZenoRoutePendingOperation pending) =>
+        new(
+            pending.OperationId,
+            pending.Kind,
+            pending.SourceRevision,
+            pending.SourceStage,
+            pending.TargetStage,
+            ToPayload(pending.Candidate),
+            pending.CandidateDigest);
+
     private static ZenoRouteState FromPayload(RoutePayload route) =>
         new(
             route.Version,
@@ -367,9 +536,30 @@ internal static class ZenoRouteStateCodec
             material.LaterOutcomeId,
             material.Digest);
 
+    private static ZenoRoutePendingOperation FromPayload(PendingOperationPayload pending) =>
+        new(
+            pending.OperationId,
+            pending.Kind,
+            pending.SourceRevision,
+            pending.SourceStage,
+            pending.TargetStage,
+            FromPayload(pending.Candidate!),
+            pending.CandidateDigest);
+
     private sealed record FeaturePayload(
         [property: JsonRequired, JsonPropertyName("zenoRouteFeatureGeneration")] int FeatureGeneration,
-        [property: JsonRequired, JsonPropertyName("zenoRoute")] RoutePayload? Route);
+        [property: JsonRequired, JsonPropertyName("zenoRoute")] RoutePayload? Route,
+        [property: JsonRequired, JsonPropertyName("zenoRoutePendingOperation")]
+        PendingOperationPayload? PendingOperation);
+
+    private sealed record PendingOperationPayload(
+        [property: JsonRequired] long OperationId,
+        [property: JsonRequired] ZenoRouteOperationKind Kind,
+        [property: JsonRequired] long SourceRevision,
+        [property: JsonRequired] ZenoRouteStage SourceStage,
+        [property: JsonRequired] ZenoRouteStage TargetStage,
+        [property: JsonRequired] RoutePayload? Candidate,
+        [property: JsonRequired] string CandidateDigest);
 
     private sealed record RoutePayload(
         [property: JsonRequired] int Version,
