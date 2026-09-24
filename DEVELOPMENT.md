@@ -44,6 +44,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。状态以不可见的 `STS2PhilosophersRunState.V1_*` 保存标记写入本局存档，载入时先取出标记再交给游戏恢复原始事件历史；完全相同且可验证的当前标记会归一为一个，版本未知、结构损坏或互相冲突的标记则按原顺序原样保留并禁止替代重写。该标记没有本地化或资源，也不产生可见遗物。
+- 芝诺持久确认通过`IZenoRoutePersistenceConfirmationAdapter`边界返回已确认、明确失败或结果未知。只有单个当前标记写后读取到相同局、检查点、操作序号、阶段、修订和候选摘要才算已确认；单纯等待`SaveRun`返回、重复标记、读回不一致、读取失败或无法证明未落盘的错误都保持结果未知。同一未知操作按确定性请求身份重试，不产生第二个选择。
 - Phase 2A 在 `ActBehaviorState` 中分开保存通用游戏事实、表达机会与行为印象。事实可在一场战斗内累计；同一表达机会和同一行为印象每场最多结算一次。`ActiveCombat` 支持战斗中途随局内状态往返，旧 Phase 1 存档缺少的新字段会恢复为空集合。
 - `src/Patches/BehaviorObservationPatch.cs` 监听游戏全局战斗开始、出牌完成与战斗结束钩子，仅在单人局调用 `BehaviorObservationRecorder`。当前事实包括战斗开始/完成、出牌总数及攻击、技能、能力、状态、诅咒、任务等牌类型；事实不直接生成行为印象，也不参与候选。
 - 每场被记录的单人战斗结束后，日志会输出 `[STS2Philosophers] Behavior observation:` 摘要；字段按固定顺序排列，事实键按代码序排序，可用于核对跨战斗累计与读档恢复。
