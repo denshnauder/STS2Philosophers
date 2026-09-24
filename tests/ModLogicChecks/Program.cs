@@ -15,6 +15,7 @@ SocratesBoundedCommitmentSaveChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRoutePersistenceConfirmationChecks.Run();
+ZenoRoutePersistenceCoordinatorChecks.Run();
 PhilosophyRunStateZenoCodecChecks.Run();
 PhilosophyRunStateMarkerCarrierChecks.Run();
 WesternEntryChecks.Run();

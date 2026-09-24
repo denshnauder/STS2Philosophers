@@ -35,6 +35,7 @@ internal interface IZenoRoutePersistenceConfirmationAdapter
 {
     Task<ZenoRoutePersistenceResult> PersistAsync(
         ZenoRoutePersistenceRequest request,
+        ZenoRouteFeatureState state,
         CancellationToken cancellationToken = default);
 }
 
