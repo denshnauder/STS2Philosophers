@@ -4,13 +4,6 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace STS2Philosophers;
 
-internal interface IZenoAssentBoundaryStateHost
-{
-    ZenoRouteFeatureState CurrentState { get; }
-
-    Task<bool> CommitOutcomeAsync(ZenoAssentOutcome outcome);
-}
-
 public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentity
 {
     private const string LocalizationRoot = "ZENO_ASSENT_BOUNDARY";
