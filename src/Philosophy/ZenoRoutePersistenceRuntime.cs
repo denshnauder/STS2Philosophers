@@ -223,6 +223,26 @@ internal sealed class ZenoRoutePersistenceRuntime
         }
     }
 
+    internal async Task<TResult> ExecuteExclusiveAsync<TResult>(
+        Func<ZenoRouteFeatureState, string?, CancellationToken, Task<TResult>> action,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            return await action(
+                _coordinator.CurrentState,
+                _coordinator.PendingRequestId,
+                cancellationToken);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     internal bool Owns(
         PhilosophyRunState sharedState,
         ZenoRouteValidationCatalog catalog)

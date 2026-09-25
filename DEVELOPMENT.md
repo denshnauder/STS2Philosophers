@@ -717,3 +717,9 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 `ZenoAssentBoundaryEstablishment`把已缓存实例与既有`PrepareEventEstablished`、每局`ZenoRoutePersistenceRuntime`串成单一门。只有准备与提交检查点都由适配器确认，且最终状态是相同事件身份的稳定`EventActive`、没有写前操作或冻结请求时，结果才携带可进入房间的实例。
 
 准备明确失败会释放回`OpeningClaimed`并保留缓存对象供显式重试；准备或提交结果未知只返回`Frozen`，不暴露对象且重复调用不自动重试。完成后的重复回调返回同一对象而不再保存。该层仍不调用游戏房间API，也不执行地图、Boss、离幕、关闭或恢复目的地效果。
+
+## 芝诺标准事件房间进入
+
+`ZenoAssentBoundaryRoomEntry`在同一每局持久运行时锁内重新检查稳定`EventActive`、事件实例身份、无写前操作、无冻结保存请求和真实房间栈。只有基础房间仍是已冻结目的地、当前没有其他模态房间时，才允许调用一次原生`EnterRoomWithoutExitingCurrentRoom`；当前已经是同身份芝诺事件时直接返回既有成功，不重复压栈。
+
+游戏的`EventSynchronizer.BeginEvent`会从传入模型克隆本地事件，因此`ZenoAssentBoundaryRoomEntryAdapter`通过`EventRoom.OnStart`把克隆模型重新绑定到同一事件实例身份、每局运行时、校验目录和页面状态主机。错误身份、非`EventActive`、其他事件、异常房间层数、错误目的地、入口抛错或进入后现场不匹配均不改路线事实；关闭事件、恢复目的地及地图、Boss、离幕触发仍留给后续阶段。

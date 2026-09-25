@@ -24,22 +24,31 @@ internal sealed class ZenoRouteRunSceneProbe(
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(ZenoRouteRecoverySceneClassifier.Classify(
+            state,
+            ReadSnapshot()));
+    }
+
+    internal ZenoRouteRoomStackSnapshot ReadSnapshot()
+    {
         AbstractRoom? currentRoom = runState.CurrentRoom;
         AbstractRoom? baseRoom = runState.BaseRoom;
         if (currentRoom is null || baseRoom is null)
         {
-            return Task.FromResult(new ZenoRouteRecoveryScene(
-                ZenoRouteEventPresence.Conflicting,
-                ZenoRouteDestinationPresence.Conflicting));
+            return new ZenoRouteRoomStackSnapshot(
+                runState.IsGameOver,
+                0,
+                new ZenoRouteObservedRoom(ZenoRouteObservedEventKind.None),
+                new ZenoRouteObservedRoom(ZenoRouteObservedEventKind.None),
+                false);
         }
 
-        ZenoRouteRoomStackSnapshot snapshot = new(
+        return new ZenoRouteRoomStackSnapshot(
             runState.IsGameOver,
             runState.CurrentRoomCount,
             Observe(currentRoom),
             Observe(baseRoom),
             ReferenceEquals(currentRoom, baseRoom));
-        return Task.FromResult(ZenoRouteRecoverySceneClassifier.Classify(state, snapshot));
     }
 
     private ZenoRouteObservedRoom Observe(AbstractRoom room)
