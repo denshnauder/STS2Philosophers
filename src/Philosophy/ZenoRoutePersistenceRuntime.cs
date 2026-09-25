@@ -231,6 +231,9 @@ internal sealed class ZenoRoutePersistenceRuntime
                ReferenceEquals(_catalog, catalog);
     }
 
+    internal bool Owns(ZenoRouteValidationCatalog catalog) =>
+        ReferenceEquals(_catalog, catalog);
+
     private void SynchronizeSharedState(ZenoRouteFeatureState state)
     {
         _sharedState.SetCurrentZenoRouteState(state, _catalog);

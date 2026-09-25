@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Remove="tests\**\*.cs" />
+    <Compile Remove="tmp\**\*.cs" />
 
     <EmbeddedResource Include="config\thinker_proposals.json" />
     <EmbeddedResource Include="config\western_routes.json" />
