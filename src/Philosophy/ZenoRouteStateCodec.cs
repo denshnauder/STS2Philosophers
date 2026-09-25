@@ -278,6 +278,10 @@ internal static class ZenoRouteStateCodec
                 pending.SourceStage == ZenoRouteStage.OutcomeCommitted &&
                 pending.TargetStage == ZenoRouteStage.ZenoClosed &&
                 HasSameOperationalData(route, candidate),
+            ZenoRouteOperationKind.RunTerminated =>
+                pending.SourceStage is ZenoRouteStage.WaitingInterval or ZenoRouteStage.ReadyToClaim &&
+                pending.TargetStage == ZenoRouteStage.RunTerminated &&
+                HasSameOperationalData(route, candidate),
             _ => false,
         };
     }

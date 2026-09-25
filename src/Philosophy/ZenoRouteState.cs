@@ -65,6 +65,7 @@ internal enum ZenoRouteOperationKind
     EventEstablished,
     OutcomeCommitted,
     EventClosed,
+    RunTerminated,
 }
 
 internal enum ZenoRouteTransitionStatus

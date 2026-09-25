@@ -108,6 +108,28 @@ internal static class ZenoRouteStateService
             catalog);
     }
 
+    public static ZenoRouteTransitionResult PrepareRunTermination(
+        ZenoRouteFeatureState state,
+        long expectedRevision,
+        ZenoRouteValidationCatalog catalog)
+    {
+        if (state.Route?.Stage is not (ZenoRouteStage.WaitingInterval or ZenoRouteStage.ReadyToClaim))
+        {
+            return Reject(state, state.Route is null
+                ? ZenoRouteTransitionFailure.RouteMissing
+                : ZenoRouteTransitionFailure.InvalidSourceStage);
+        }
+
+        return Prepare(
+            state,
+            expectedRevision,
+            ZenoRouteOperationKind.RunTerminated,
+            state.Route.Stage,
+            ZenoRouteStage.RunTerminated,
+            route => Advance(route, ZenoRouteStage.RunTerminated),
+            catalog);
+    }
+
     public static ZenoRouteTransitionResult PrepareOutcome(
         ZenoRouteFeatureState state,
         long expectedRevision,

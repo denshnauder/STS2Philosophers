@@ -723,3 +723,9 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 `ZenoAssentBoundaryRoomEntry`在同一每局持久运行时锁内重新检查稳定`EventActive`、事件实例身份、无写前操作、无冻结保存请求和真实房间栈。只有基础房间仍是已冻结目的地、当前没有其他模态房间时，才允许调用一次原生`EnterRoomWithoutExitingCurrentRoom`；当前已经是同身份芝诺事件时直接返回既有成功，不重复压栈。
 
 游戏的`EventSynchronizer.BeginEvent`会从传入模型克隆本地事件，因此`ZenoAssentBoundaryRoomEntryAdapter`通过`EventRoom.OnStart`把克隆模型重新绑定到同一事件实例身份、每局运行时、校验目录和页面状态主机。错误身份、非`EventActive`、其他事件、异常房间层数、错误目的地、入口抛错或进入后现场不匹配均不改路线事实；关闭事件、恢复目的地及地图、Boss、离幕触发仍留给后续阶段。
+
+## 芝诺保证事件纯调度
+
+`ZenoRouteSchedulingPolicy`把同一过渡现场中的局终、离幕、Boss和普通安全信号压成一个确定计划，优先级固定为局终、离幕、Boss、普通安全点。普通路径只有拿到后续非路线房间回执后才会从`WaitingInterval`进入`ReadyToClaim`并领取；只有地图目的地而没有回执时保持等待，避免Switch退出后立即连播。Boss和离幕兜底可直接从等待态领取，不伪造普通房间回执。
+
+同一局的事件实例身份只从局、路线边和终点身份确定性派生，所有入口共享；一旦`OpeningClaimed`或更后阶段存在，后来回调只读取原赢家，不再保存或改写触发来源。`ZenoRouteSchedulingRuntime`串行执行计划，并复用既有写前状态服务与持久运行时；普通路径依次确认间隔完成和开场领取，局终则持久进入`RunTerminated`且不创建事件身份。原生房间、Boss和离幕回调仍由后续阶段接入。
