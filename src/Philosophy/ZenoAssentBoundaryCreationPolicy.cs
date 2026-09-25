@@ -29,6 +29,17 @@ internal sealed class ZenoAssentBoundaryCreationCache<TEvent>
     private string? _eventInstanceId;
     private TEvent? _event;
 
+    public bool TryGet(string eventInstanceId, out TEvent? routeEvent)
+    {
+        routeEvent = _event is not null && string.Equals(
+                _eventInstanceId,
+                eventInstanceId,
+                StringComparison.Ordinal)
+            ? _event
+            : null;
+        return routeEvent is not null;
+    }
+
     public bool TryGetOrCreate(
         ZenoAssentBoundaryCreationPlan plan,
         Func<TEvent> create,

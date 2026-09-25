@@ -27,6 +27,15 @@ internal sealed class ZenoAssentBoundaryFactory(
             out routeEvent);
     }
 
+    public Task<ZenoAssentBoundaryEstablishmentResult<ZenoAssentBoundary>> EstablishAsync(
+        CancellationToken cancellationToken = default) =>
+        ZenoAssentBoundaryEstablishment.ExecuteAsync(
+            runtime,
+            catalog,
+            _cache,
+            CreateConfiguredEvent,
+            cancellationToken);
+
     private ZenoAssentBoundary CreateConfiguredEvent(ZenoAssentBoundaryCreationPlan plan)
     {
         ZenoAssentBoundary routeEvent =

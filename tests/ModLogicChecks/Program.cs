@@ -24,6 +24,7 @@ ZenoRouteRecoverySceneClassifierChecks.Run();
 ZenoAssentPageFlowChecks.Run();
 ZenoAssentBoundaryStateHostChecks.Run();
 ZenoAssentBoundaryCreationPolicyChecks.Run();
+ZenoAssentBoundaryEstablishmentChecks.Run();
 PhilosophyRunStateZenoCodecChecks.Run();
 PhilosophyRunStateMarkerCarrierChecks.Run();
 WesternEntryChecks.Run();

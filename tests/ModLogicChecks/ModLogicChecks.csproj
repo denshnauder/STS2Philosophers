@@ -64,6 +64,7 @@
     <Compile Include="..\..\src\Philosophy\ZenoAssentPageFlow.cs" Link="ZenoAssentPageFlow.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryStateHost.cs" Link="ZenoAssentBoundaryStateHost.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryCreationPolicy.cs" Link="ZenoAssentBoundaryCreationPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryEstablishment.cs" Link="ZenoAssentBoundaryEstablishment.cs" />
     <Compile Include="..\..\src\Philosophy\BehaviorObservationRecorder.cs" Link="BehaviorObservationRecorder.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />

@@ -711,3 +711,9 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 `ZenoAssentBoundaryFactory`只在同一每局运行时仍持有严格有效、无待处理操作的`OpeningClaimed`时构造事件。构造计划沿用路线中冻结的事件实例身份；实例缓存保证同一工厂的重复回调返回同一可变模型，竞争身份不能覆盖或并列创建。
 
 工厂把事件绑定到原运行时、原`ZenoRouteValidationCatalog`及`ZenoAssentBoundaryStateHost`。该边界只准备模型，不调用`PrepareEventEstablished`、不进入事件房间，也不执行地图、Boss、离幕、关闭或目的地恢复效果。项目显式排除`tmp/**/*.cs`，避免本地API探针生成的源码被SDK默认编译进生产程序集；探针内容本身不归本阶段修改。
+
+## 芝诺事件建立持久事务
+
+`ZenoAssentBoundaryEstablishment`把已缓存实例与既有`PrepareEventEstablished`、每局`ZenoRoutePersistenceRuntime`串成单一门。只有准备与提交检查点都由适配器确认，且最终状态是相同事件身份的稳定`EventActive`、没有写前操作或冻结请求时，结果才携带可进入房间的实例。
+
+准备明确失败会释放回`OpeningClaimed`并保留缓存对象供显式重试；准备或提交结果未知只返回`Frozen`，不暴露对象且重复调用不自动重试。完成后的重复回调返回同一对象而不再保存。该层仍不调用游戏房间API，也不执行地图、Boss、离幕、关闭或恢复目的地效果。
