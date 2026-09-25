@@ -61,6 +61,7 @@
     <Compile Include="..\..\src\Philosophy\ZenoRouteRecoveryPlanner.cs" Link="ZenoRouteRecoveryPlanner.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteRecoveryExecution.cs" Link="ZenoRouteRecoveryExecution.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteRecoverySceneClassifier.cs" Link="ZenoRouteRecoverySceneClassifier.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoAssentPageFlow.cs" Link="ZenoAssentPageFlow.cs" />
     <Compile Include="..\..\src\Philosophy\BehaviorObservationRecorder.cs" Link="BehaviorObservationRecorder.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
