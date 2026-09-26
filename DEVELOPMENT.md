@@ -765,3 +765,11 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 同一日志中的`Unknown ModelId ... during serialization, writing NONE`来自把共享状态标记放进`EventsSeen`，它是需要后续迁移的网络／包序列化风险，但不是本次Continue异常堆栈；磁盘JSON仍保留完整标记，`RunState.FromSerializable`前缀也会在原版事件历史恢复前移除它。本次不改写用户存档或以删除marker绕过故障。
 
 早期读档使用空芝诺校验目录会隔离合法开发测试路线。固定、代码自有的`DEVELOPMENT_TEST_ENTRY`现登记到读档期内建目录，使开发版NoMaterial路线在原生触发恢复之前就能严格校验；动态正式材料仍必须等待其生产者提供权威目录，不能因本修复放宽为接受任意ID。自动逻辑、Release构建和PCK装载通过不等于真实SL；验收仍须在启用Mod后完成新局保存、回主菜单加载并连续再SL至少两次。
+
+## ENC68 RitsuLib局内保存探针
+
+项目现以RitsuLib 0.6.2作为唯一主框架，并在清单中声明运行时依赖；BaseLib、PckPacker和RitsuLib Analyzer不属于本原型阶段。`PhilosophyRunState`、芝诺状态转换、事务、幂等和恢复规则均未迁移，现有`EventsSeen` marker与Harmony存档补丁也暂时保留，避免在基础链路得到游戏内证据前扩大改动面。
+
+独立槽`ENC68_RUN_PERSISTENCE_PROBE`使用`GetRunSavedDataStore`保存固定token、schema和递增写入次数。开发控制台命令`ritsurunprobe write`写入或递增槽，`ritsurunprobe read`只读取并严格检查三项数据。它不读取、写入或转换任何哲学路线状态。
+
+人工验收必须使用新测试局并完成两轮：先执行`ritsurunprobe write`得到`writes=1`，正常保存并回主菜单，Load后执行`ritsurunprobe read`确认`writes=1`；再执行一次`write`得到`writes=2`，再次保存、回主菜单和Load，最后`read`确认`writes=2`。任何自动测试、构建、PCK校验或部署成功都不能代替这两轮真实SL。只有验收通过后，才允许另开迁移阶段替换`PhilosophyRunState`最底层载体。

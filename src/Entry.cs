@@ -13,6 +13,8 @@ public static class Entry
 
     public static void Initialize()
     {
+        RitsuRunPersistenceProbe.Initialize();
+
         // Register the event relics for unlock/inspection bookkeeping without placing them in
         // the normal shared or character reward grab bags.
         ModHelper.AddModelToPool<EventRelicPool, KongziMuduo>();

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Infrastructure\RitsuRunPersistenceProbeState.cs" Link="RitsuRunPersistenceProbeState.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesCardProbeReport.cs" Link="SocratesCardProbeReport.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecord.cs" Link="SocratesKnowledgeRouteRecord.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecordCodec.cs" Link="SocratesKnowledgeRouteRecordCodec.cs" />
