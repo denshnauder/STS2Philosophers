@@ -5,12 +5,15 @@ internal interface IZenoAssentBoundaryStateHost
     ZenoRouteFeatureState CurrentState { get; }
 
     Task<bool> CommitOutcomeAsync(ZenoAssentOutcome outcome);
+
+    Task<bool> CloseAndResumeAsync();
 }
 
 internal sealed class ZenoAssentBoundaryStateHost(
     ZenoRoutePersistenceRuntime runtime,
     ZenoRouteValidationCatalog catalog,
-    string eventInstanceId) : IZenoAssentBoundaryStateHost
+    string eventInstanceId,
+    Func<CancellationToken, Task<bool>>? closeAndResume = null) : IZenoAssentBoundaryStateHost
 {
     public ZenoRouteFeatureState CurrentState => runtime.CurrentState;
 
@@ -63,4 +66,9 @@ internal sealed class ZenoAssentBoundaryStateHost(
             committed.Outcome == outcome &&
             string.Equals(committed.EventInstanceId, eventInstanceId, StringComparison.Ordinal);
     }
+
+    public Task<bool> CloseAndResumeAsync() =>
+        closeAndResume is null
+            ? Task.FromResult(false)
+            : closeAndResume(CancellationToken.None);
 }

@@ -25,6 +25,7 @@ internal sealed class ZenoRoutePersistenceCoordinator
     private readonly ZenoRouteValidationCatalog _catalog;
     private ZenoRouteFeatureState _state;
     private FrozenRequest? _frozen;
+    private FrozenRequest? _externalPrepared;
 
     public ZenoRoutePersistenceCoordinator(
         ZenoRouteFeatureState initialState,
@@ -49,11 +50,21 @@ internal sealed class ZenoRoutePersistenceCoordinator
     {
         _state = restoredState;
         _catalog = catalog;
-        _frozen = new FrozenRequest(
+        FrozenRequest restored = new(
             restoredRequest,
             restoredState,
             sourceState,
-            ZenoRoutePersistenceStatus.Unknown);
+            restoredState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed
+                ? ZenoRoutePersistenceStatus.Confirmed
+                : ZenoRoutePersistenceStatus.Unknown);
+        if (restoredState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed)
+        {
+            _externalPrepared = restored;
+        }
+        else
+        {
+            _frozen = restored;
+        }
     }
 
     public static ZenoRoutePersistenceCoordinator Restore(
@@ -100,9 +111,132 @@ internal sealed class ZenoRoutePersistenceCoordinator
 
     public ZenoRouteFeatureState CurrentState => _state;
 
-    public string? PendingRequestId => _frozen?.Request.RequestId;
+    public string? PendingRequestId => (_frozen ?? _externalPrepared)?.Request.RequestId;
 
-    public ZenoRoutePersistenceCheckpoint? PendingCheckpoint => _frozen?.Request.Checkpoint;
+    public ZenoRoutePersistenceCheckpoint? PendingCheckpoint =>
+        (_frozen ?? _externalPrepared)?.Request.Checkpoint;
+
+    public bool HasConfirmedExternalPreparation => _externalPrepared is not null;
+
+    public async Task<ZenoRoutePersistenceCoordinationResult> PrepareExternalAsync(
+        ZenoRouteTransitionResult preparedTransition,
+        IZenoRoutePersistenceConfirmationAdapter adapter,
+        CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            if (_externalPrepared is not null)
+            {
+                return FrozenResult(_externalPrepared, ZenoRoutePersistenceStatus.Confirmed);
+            }
+
+            if (_frozen is not null)
+            {
+                return FrozenResult(_frozen, _frozen.LastStatus);
+            }
+
+            if (!IsPreparedFromCurrent(preparedTransition) ||
+                preparedTransition.State.PendingOperation?.Kind != ZenoRouteOperationKind.EventClosed)
+            {
+                return Result(ZenoRoutePersistenceCoordinationStatus.Rejected);
+            }
+
+            ZenoRouteFeatureState sourceState = _state;
+            _state = preparedTransition.State;
+            if (!ZenoRoutePersistenceConfirmation.TryCreatePreparedRequest(
+                    _state,
+                    _catalog,
+                    out ZenoRoutePersistenceRequest? request) ||
+                request is null)
+            {
+                _state = sourceState;
+                return Result(ZenoRoutePersistenceCoordinationStatus.Rejected);
+            }
+
+            ZenoRoutePersistenceResult persistence = await InvokeAdapterAsync(
+                adapter,
+                request,
+                _state,
+                cancellationToken);
+            if (persistence.Status == ZenoRoutePersistenceStatus.Failed)
+            {
+                _state = sourceState;
+                return Result(
+                    ZenoRoutePersistenceCoordinationStatus.PreparationReleased,
+                    persistence.Status,
+                    request);
+            }
+
+            FrozenRequest external = new(
+                request,
+                _state,
+                sourceState,
+                persistence.Status);
+            if (persistence.Status == ZenoRoutePersistenceStatus.Confirmed)
+            {
+                _externalPrepared = external;
+                return FrozenResult(external, persistence.Status);
+            }
+
+            _frozen = external;
+            return FrozenResult(external, persistence.Status);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task<ZenoRoutePersistenceCoordinationResult> CommitExternalAsync(
+        IZenoRoutePersistenceConfirmationAdapter adapter,
+        CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            if (_externalPrepared is null || _state.PendingOperation is not { } pending ||
+                pending.Kind != ZenoRouteOperationKind.EventClosed)
+            {
+                return Result(ZenoRoutePersistenceCoordinationStatus.Rejected);
+            }
+
+            ZenoRouteTransitionResult committed = ZenoRouteStateService.Commit(
+                _state,
+                pending.OperationId,
+                pending.CandidateDigest,
+                _catalog);
+            if (committed.Status is not (
+                    ZenoRouteTransitionStatus.Committed or
+                    ZenoRouteTransitionStatus.CommitReused))
+            {
+                return Result(ZenoRoutePersistenceCoordinationStatus.Rejected);
+            }
+
+            _state = committed.State;
+            _externalPrepared = null;
+            if (!ZenoRoutePersistenceConfirmation.TryCreateCommittedRequest(
+                    _state,
+                    _catalog,
+                    out ZenoRoutePersistenceRequest? request) ||
+                request is null)
+            {
+                throw new InvalidOperationException(
+                    "The externally committed route could not create its persistence request.");
+            }
+
+            ZenoRoutePersistenceResult persistence = await InvokeAdapterAsync(
+                adapter,
+                request,
+                _state,
+                cancellationToken);
+            return HandleCommittedResult(request, persistence);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
 
     public async Task<ZenoRoutePersistenceCoordinationResult> ExecuteAsync(
         ZenoRouteTransitionResult preparedTransition,
@@ -115,6 +249,11 @@ internal sealed class ZenoRoutePersistenceCoordinator
             if (_frozen is not null)
             {
                 return FrozenResult(_frozen, _frozen.LastStatus);
+            }
+
+            if (_externalPrepared is not null)
+            {
+                return FrozenResult(_externalPrepared, ZenoRoutePersistenceStatus.Confirmed);
             }
 
             if (!IsPreparedFromCurrent(preparedTransition))
@@ -161,7 +300,9 @@ internal sealed class ZenoRoutePersistenceCoordinator
         {
             if (_frozen is null)
             {
-                return Result(ZenoRoutePersistenceCoordinationStatus.NoPendingRetry);
+                return _externalPrepared is null
+                    ? Result(ZenoRoutePersistenceCoordinationStatus.NoPendingRetry)
+                    : FrozenResult(_externalPrepared, ZenoRoutePersistenceStatus.Confirmed);
             }
 
             FrozenRequest frozen = _frozen;

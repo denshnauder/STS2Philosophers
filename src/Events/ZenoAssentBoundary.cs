@@ -104,9 +104,13 @@ public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentit
             TryRestoreView(out ZenoAssentPageView resultView))
         {
             SetPage(resultView);
+            return;
         }
 
-        // RequestClose is deliberately left for the later close-and-resume stage.
+        if (action.Kind == ZenoAssentPageActionKind.RequestClose)
+        {
+            await _stateHost.CloseAndResumeAsync();
+        }
     }
 
     private void SetPage(ZenoAssentPageView view)
@@ -119,7 +123,7 @@ public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentit
         view.Options
             .Select(option => new EventOption(
                 this,
-                option == ZenoAssentPageOption.Leave ? null : () => Choose(option),
+                () => Choose(option),
                 OptionLocalizationKey(view.Page, option),
                 Array.Empty<IHoverTip>()))
             .ToArray();

@@ -27,6 +27,9 @@ internal sealed class ZenoRoutePersistenceRuntime
 
     public ZenoRoutePersistenceCheckpoint? PendingCheckpoint => _coordinator.PendingCheckpoint;
 
+    public bool HasConfirmedExternalPreparation =>
+        _coordinator.HasConfirmedExternalPreparation;
+
     public static bool TryCreate(
         PhilosophyRunState sharedState,
         ZenoRouteValidationCatalog catalog,
@@ -122,6 +125,54 @@ internal sealed class ZenoRoutePersistenceRuntime
             try
             {
                 return await _coordinator.RetryAsync(_adapter, cancellationToken);
+            }
+            finally
+            {
+                SynchronizeSharedState(_coordinator.CurrentState);
+            }
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task<ZenoRoutePersistenceCoordinationResult> PrepareExternalAsync(
+        ZenoRouteTransitionResult preparedTransition,
+        CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            try
+            {
+                return await _coordinator.PrepareExternalAsync(
+                    preparedTransition,
+                    _adapter,
+                    cancellationToken);
+            }
+            finally
+            {
+                SynchronizeSharedState(_coordinator.CurrentState);
+            }
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task<ZenoRoutePersistenceCoordinationResult> CommitExternalAsync(
+        CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            try
+            {
+                return await _coordinator.CommitExternalAsync(
+                    _adapter,
+                    cancellationToken);
             }
             finally
             {

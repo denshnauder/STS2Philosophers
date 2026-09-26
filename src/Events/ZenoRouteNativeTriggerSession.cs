@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using System.Runtime.CompilerServices;
@@ -76,6 +78,7 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
     private readonly ZenoAssentBoundaryFactory _factory;
     private readonly ZenoAssentBoundaryRoomEntryAdapter _roomEntry;
     private Task<ZenoRouteNativeTriggerStatus>? _activeTask;
+    private Task<bool>? _closeTask;
     private AbstractRoom? _destinationRoom;
     private ZenoRouteObservedDestination? _destination;
 
@@ -96,7 +99,8 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             runState,
             runtime,
             catalog,
-            this);
+            this,
+            CloseAndResumeAsync);
     }
 
     public bool CanIntercept
@@ -148,6 +152,27 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         lock (_taskGate)
         {
             return ReferenceEquals(room, _destinationRoom) ? _destination : null;
+        }
+    }
+
+    internal Task<bool> CloseAndResumeAsync(
+        string eventInstanceId,
+        CancellationToken cancellationToken = default)
+    {
+        lock (_taskGate)
+        {
+            if (_closeTask is { IsCompleted: false } active)
+            {
+                return active;
+            }
+
+            _closeTask = CloseAndResumeCoreAsync(eventInstanceId, cancellationToken);
+            _ = _closeTask.ContinueWith(
+                completed => ClearCloseTask(completed),
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+            return _closeTask;
         }
     }
 
@@ -229,6 +254,172 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             if (ReferenceEquals(_activeTask, completed))
             {
                 _activeTask = null;
+            }
+        }
+    }
+
+    private async Task<bool> CloseAndResumeCoreAsync(
+        string eventInstanceId,
+        CancellationToken cancellationToken)
+    {
+        if (!_runManager.IsInProgress ||
+            !ReferenceEquals(_runManager.DebugOnlyGetState(), _runState) ||
+            string.IsNullOrWhiteSpace(eventInstanceId))
+        {
+            return false;
+        }
+
+        ZenoRouteFeatureState current = _runtime.CurrentState;
+        ZenoRouteState? effective = current.PendingOperation?.Candidate ?? current.Route;
+        if (effective is null ||
+            !string.Equals(effective.EventInstanceId, eventInstanceId, StringComparison.Ordinal) ||
+            effective.Stage is not (ZenoRouteStage.OutcomeCommitted or ZenoRouteStage.ZenoClosed))
+        {
+            return false;
+        }
+
+        if (current.PendingOperation is null)
+        {
+            if (current.Route?.Stage != ZenoRouteStage.OutcomeCommitted)
+            {
+                return current.Route?.Stage == ZenoRouteStage.ZenoClosed;
+            }
+
+            ZenoRouteTransitionResult prepared = ZenoRouteStateService.PrepareClose(
+                current,
+                current.Route.Revision,
+                _catalog);
+            if (!prepared.IsAccepted)
+            {
+                return false;
+            }
+
+            await _runtime.PrepareExternalAsync(prepared, cancellationToken);
+        }
+
+        if (!_runtime.HasConfirmedExternalPreparation ||
+            _runtime.CurrentState.PendingOperation?.Kind != ZenoRouteOperationKind.EventClosed)
+        {
+            return false;
+        }
+
+        ZenoRouteState closing = _runtime.CurrentState.PendingOperation.Candidate;
+        if (!await ResumeFrozenDestinationAsync(closing, cancellationToken))
+        {
+            return false;
+        }
+
+        ZenoRoutePersistenceCoordinationResult committed =
+            await _runtime.CommitExternalAsync(cancellationToken);
+        bool completed = committed.Status == ZenoRoutePersistenceCoordinationStatus.Completed &&
+                         committed.State.Route?.Stage == ZenoRouteStage.ZenoClosed &&
+                         committed.State.PendingOperation is null;
+        if (completed && closing.ResumeDestination == ZenoResumeDestination.Map)
+        {
+            NMapScreen.Instance?.SetTravelEnabled(true);
+        }
+
+        return completed;
+    }
+
+    private async Task<bool> ResumeFrozenDestinationAsync(
+        ZenoRouteState closing,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (_runState.CurrentRoom is EventRoom eventRoom)
+        {
+            if (eventRoom.LocalMutableEvent is not IZenoRouteEventSceneIdentity identity ||
+                identity.RouteEventKind != ZenoRouteObservedEventKind.Zeno ||
+                !string.Equals(
+                    identity.RouteEventInstanceId,
+                    closing.EventInstanceId,
+                    StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            await NEventRoom.Proceed();
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        return closing.ResumeDestination switch
+        {
+            ZenoResumeDestination.Map => _runState.CurrentRoomCount == 1,
+            ZenoResumeDestination.Boss => await ResumeBossAsync(closing.ResumeDestinationId),
+            ZenoResumeDestination.ActExit => await ResumeActExitAsync(),
+            _ => false,
+        };
+    }
+
+    private async Task<bool> ResumeBossAsync(string? destinationId)
+    {
+        if (!TryParseBossDestination(destinationId, out MapCoord coordinate))
+        {
+            return false;
+        }
+
+        if (_runState.CurrentMapCoord is { } current &&
+            current.row == coordinate.row &&
+            current.col == coordinate.col)
+        {
+            return true;
+        }
+
+        await _runManager.EnterMapCoord(coordinate);
+        return _runState.CurrentMapCoord is { } entered &&
+               entered.row == coordinate.row &&
+               entered.col == coordinate.col;
+    }
+
+    private async Task<bool> ResumeActExitAsync()
+    {
+        if (_runState.CurrentActIndex > 2)
+        {
+            return true;
+        }
+
+        if (_runState.CurrentActIndex != 2)
+        {
+            return false;
+        }
+
+        await _runManager.EnterNextAct();
+        return _runState.CurrentActIndex > 2;
+    }
+
+    private static bool TryParseBossDestination(
+        string? destinationId,
+        out MapCoord coordinate)
+    {
+        coordinate = default;
+        if (string.IsNullOrWhiteSpace(destinationId))
+        {
+            return false;
+        }
+
+        string[] parts = destinationId.Split('_');
+        if (parts.Length != 7 ||
+            parts[0] != "BOSS" || parts[1] != "ACT" || parts[3] != "ROW" ||
+            parts[5] != "COL" ||
+            !int.TryParse(parts[2], out int actIndex) || actIndex != 2 ||
+            !int.TryParse(parts[4], out int row) || row < 0 ||
+            !int.TryParse(parts[6], out int column) || column < 0)
+        {
+            return false;
+        }
+
+        coordinate = new MapCoord(row, column);
+        return true;
+    }
+
+    private void ClearCloseTask(Task<bool> completed)
+    {
+        lock (_taskGate)
+        {
+            if (ReferenceEquals(_closeTask, completed))
+            {
+                _closeTask = null;
             }
         }
     }

@@ -13,7 +13,8 @@ internal sealed class ZenoAssentBoundaryRoomEntryAdapter
         RunState runState,
         ZenoRoutePersistenceRuntime runtime,
         ZenoRouteValidationCatalog catalog,
-        IZenoRouteRoomDestinationReader destinationReader)
+        IZenoRouteRoomDestinationReader destinationReader,
+        Func<string, CancellationToken, Task<bool>> closeAndResume)
     {
         _entry = new ZenoAssentBoundaryRoomEntry<ZenoAssentBoundary>(
             runtime,
@@ -23,7 +24,8 @@ internal sealed class ZenoAssentBoundaryRoomEntryAdapter
                 runState,
                 runtime,
                 catalog,
-                destinationReader),
+                destinationReader,
+                closeAndResume),
             routeEvent =>
                 ((IZenoRouteEventSceneIdentity)routeEvent).RouteEventInstanceId);
     }
@@ -38,7 +40,8 @@ internal sealed class ZenoAssentBoundaryRoomEntryAdapter
         RunState runState,
         ZenoRoutePersistenceRuntime runtime,
         ZenoRouteValidationCatalog catalog,
-        IZenoRouteRoomDestinationReader destinationReader)
+        IZenoRouteRoomDestinationReader destinationReader,
+        Func<string, CancellationToken, Task<bool>> closeAndResume)
         : IZenoAssentBoundaryRoomEntryGateway<ZenoAssentBoundary>
     {
         private readonly ZenoRouteRunSceneProbe _sceneProbe =
@@ -82,7 +85,13 @@ internal sealed class ZenoAssentBoundaryRoomEntryAdapter
 
                     localEvent.Configure(
                         eventInstanceId,
-                        new ZenoAssentBoundaryStateHost(runtime, catalog, eventInstanceId),
+                        new ZenoAssentBoundaryStateHost(
+                            runtime,
+                            catalog,
+                            eventInstanceId,
+                            cancellationToken => closeAndResume(
+                                eventInstanceId,
+                                cancellationToken)),
                         catalog);
                 },
             };

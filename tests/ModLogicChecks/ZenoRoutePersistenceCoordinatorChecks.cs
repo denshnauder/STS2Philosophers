@@ -20,6 +20,8 @@ internal static class ZenoRoutePersistenceCoordinatorChecks
         PreparationUnknownFreezesAndRetriesTheSameRequest();
         CommitUnknownRetriesWithoutRepeatingPreparation();
         CommitFailureRemainsFrozenAfterPreparationConfirmation();
+        ExternalClosePersistsAroundTheExternalEffect();
+        RestoredClosePreparationWaitsForTheExternalEffect();
         CompetingCallbackCannotPersistASecondWinner();
         AdapterExceptionBecomesUnknown();
 
@@ -163,6 +165,66 @@ internal static class ZenoRoutePersistenceCoordinatorChecks
             "A durable preparation must never reopen the source choice.");
     }
 
+    private static void ExternalClosePersistsAroundTheExternalEffect()
+    {
+        ZenoRouteFeatureState outcome = CreateOutcomeCommitted();
+        ZenoRoutePersistenceCoordinator coordinator = new(outcome, Catalog);
+        ScriptedAdapter adapter = new(
+            ZenoRoutePersistenceStatus.Confirmed,
+            ZenoRoutePersistenceStatus.Confirmed);
+
+        ZenoRoutePersistenceCoordinationResult prepared = coordinator.PrepareExternalAsync(
+                ZenoRouteStateService.PrepareClose(
+                    outcome,
+                    outcome.Route!.Revision,
+                    Catalog),
+                adapter)
+            .GetAwaiter()
+            .GetResult();
+        Assert(prepared.IsFrozen && coordinator.HasConfirmedExternalPreparation &&
+               prepared.State.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed &&
+               adapter.Requests.Count == 1 &&
+               adapter.Requests[0].Checkpoint == ZenoRoutePersistenceCheckpoint.Prepared,
+            "Closing must durably retain its write-ahead record before the room or destination changes.");
+
+        ZenoRoutePersistenceCoordinationResult committed = coordinator.CommitExternalAsync(adapter)
+            .GetAwaiter()
+            .GetResult();
+        Assert(committed.Status == ZenoRoutePersistenceCoordinationStatus.Completed &&
+               committed.State.Route?.Stage == ZenoRouteStage.ZenoClosed &&
+               committed.State.PendingOperation is null &&
+               adapter.Requests.Count == 2 &&
+               adapter.Requests[1].Checkpoint == ZenoRoutePersistenceCheckpoint.Committed,
+            "Closing may commit only after the caller reports the frozen destination was resumed.");
+    }
+
+    private static void RestoredClosePreparationWaitsForTheExternalEffect()
+    {
+        ZenoRouteFeatureState outcome = CreateOutcomeCommitted();
+        ZenoRouteFeatureState closePrepared = ZenoRouteStateService.PrepareClose(
+            outcome,
+            outcome.Route!.Revision,
+            Catalog).State;
+        ZenoRoutePersistenceCoordinator restored =
+            ZenoRoutePersistenceCoordinator.Restore(closePrepared, Catalog);
+        ScriptedAdapter adapter = new(ZenoRoutePersistenceStatus.Confirmed);
+
+        ZenoRoutePersistenceCoordinationResult retry = restored.RetryAsync(adapter)
+            .GetAwaiter()
+            .GetResult();
+        Assert(retry.IsFrozen && restored.HasConfirmedExternalPreparation &&
+               adapter.Requests.Count == 0 &&
+               restored.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed,
+            "A close preparation loaded from disk is already durable and must not auto-commit before scene recovery.");
+
+        ZenoRoutePersistenceCoordinationResult committed = restored.CommitExternalAsync(adapter)
+            .GetAwaiter()
+            .GetResult();
+        Assert(committed.Status == ZenoRoutePersistenceCoordinationStatus.Completed &&
+               adapter.Requests.Single().Checkpoint == ZenoRoutePersistenceCheckpoint.Committed,
+            "Recovered closing should persist only the final checkpoint after the external effect succeeds.");
+    }
+
     private static void CompetingCallbackCannotPersistASecondWinner()
     {
         ZenoRouteFeatureState initial = CreateUnresolved();
@@ -228,6 +290,31 @@ internal static class ZenoRoutePersistenceCoordinatorChecks
             null,
             null);
         return new ZenoRouteFeatureState(ZenoRouteFeatureGeneration.Current, route);
+    }
+
+    private static ZenoRouteFeatureState CreateOutcomeCommitted()
+    {
+        ZenoRouteState route = new(
+            ZenoRouteState.CurrentVersion,
+            ZenoRouteStage.OutcomeCommitted,
+            5,
+            5,
+            "RUN_20260926_CLOSE_001",
+            2,
+            ZenoRouteIds.RouteEdge,
+            ZenoRouteIds.TerminalNode,
+            CreateMaterial(),
+            "COMPLETED_ACT_2_ROOM_42",
+            ZenoOpeningTrigger.BeforeBoss,
+            ZenoResumeDestination.Boss,
+            "BOSS_ACT_2_ROW_14_COL_3",
+            "ZENO_EVENT_INSTANCE_001",
+            ZenoAssentOutcome.Keep,
+            CurrentStatement);
+        ZenoRouteFeatureState state = new(ZenoRouteFeatureGeneration.Current, route);
+        Assert(ZenoRouteStateCodec.IsValidFeature(state, Catalog),
+            "The close transaction fixture must be valid.");
+        return state;
     }
 
     private static ZenoAssentMaterialSnapshot CreateMaterial() =>
