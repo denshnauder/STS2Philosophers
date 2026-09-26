@@ -773,3 +773,5 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 独立槽`ENC68_RUN_PERSISTENCE_PROBE`使用`GetRunSavedDataStore`保存固定token、schema和递增写入次数。开发控制台命令`ritsurunprobe write`写入或递增槽，`ritsurunprobe read`只读取并严格检查三项数据。它不读取、写入或转换任何哲学路线状态。
 
 人工验收必须使用新测试局并完成两轮：先执行`ritsurunprobe write`得到`writes=1`，正常保存并回主菜单，Load后执行`ritsurunprobe read`确认`writes=1`；再执行一次`write`得到`writes=2`，再次保存、回主菜单和Load，最后`read`确认`writes=2`。任何自动测试、构建、PCK校验或部署成功都不能代替这两轮真实SL。只有验收通过后，才允许另开迁移阶段替换`PhilosophyRunState`最底层载体。
+
+2026年9月26日用户完成上述两轮游戏内验收并确认通过。ENC68因此证明RitsuLib的独立run-scoped槽可以在当前游戏与Mod组合中连续保存、返回主菜单和加载；该结论只覆盖最小探针，不把尚未迁移的`PhilosophyRunState`、芝诺恢复链或旧存档兼容性描述为已验收。后继迁移必须保留现有状态机与事务语义，只替换最底层保存载体，并单独验证旧marker读取与新sidecar写入的过渡策略。
