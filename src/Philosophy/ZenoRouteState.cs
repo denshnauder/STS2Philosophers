@@ -194,6 +194,18 @@ internal sealed class ZenoRouteValidationCatalog
     public bool IsKnownLaterOutcome(string value) => _laterOutcomeIds.Contains(value);
 }
 
+internal static class ZenoRouteValidationCatalogs
+{
+    // Save loading happens before a producer can recreate its runtime catalog. Only
+    // fixed, code-owned sources belong here; dynamic production material remains
+    // isolated until its producer supplies the authoritative catalog.
+    public static ZenoRouteValidationCatalog SaveRestore { get; } = new(
+        [new KeyValuePair<string, int>(ZenoAssentBoundaryTestEntryPolicy.SourceKind, 1)],
+        [],
+        [],
+        []);
+}
+
 internal sealed record ZenoRouteDecodeResult(
     ZenoRoutePayloadClassification Classification,
     ZenoRouteFeatureState? State,

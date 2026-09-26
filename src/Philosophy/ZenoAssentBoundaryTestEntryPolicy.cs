@@ -26,11 +26,7 @@ internal static class ZenoAssentBoundaryTestEntryPolicy
             return false;
         }
 
-        ZenoRouteValidationCatalog catalog = new(
-            [new KeyValuePair<string, int>(SourceKind, 1)],
-            [],
-            [],
-            []);
+        ZenoRouteValidationCatalog catalog = ZenoRouteValidationCatalogs.SaveRestore;
         ZenoAssentMaterialSnapshot material = ZenoRouteStateCodec.CreateMaterialSnapshot(
             1,
             SourceKind,

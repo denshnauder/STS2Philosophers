@@ -4,8 +4,6 @@ namespace STS2Philosophers;
 
 internal sealed class PhilosophyRunState
 {
-    private static readonly ZenoRouteValidationCatalog EmptyZenoCatalog = new([], [], [], []);
-
     public CurrentDoctrine? CurrentDoctrine { get; set; }
     public List<ThoughtImprint> ThoughtImprints { get; set; } = [];
     public Dictionary<int, ActBehaviorState> ActBehaviorStates { get; set; } = [];
@@ -25,7 +23,8 @@ internal sealed class PhilosophyRunState
     public IReadOnlyList<string> PreservedSaveMarkerEntries { get; private set; } = [];
 
     [JsonIgnore]
-    internal ZenoRouteValidationCatalog ZenoRouteValidationCatalog { get; private set; } = EmptyZenoCatalog;
+    internal ZenoRouteValidationCatalog ZenoRouteValidationCatalog { get; private set; } =
+        ZenoRouteValidationCatalogs.SaveRestore;
 
     public bool HasData => CurrentDoctrine is not null
         || ThoughtImprints.Count > 0

@@ -31,7 +31,7 @@ public abstract class WesternPracticeRelic : RelicModel
     public string PracticePayload
     {
         get => _practice is null ? string.Empty : WesternPracticeStateCodec.Encode(_practice);
-        private set
+        set
         {
             AssertMutable();
             _practice = WesternPracticeStateCodec.Restore(value, ProblemId);

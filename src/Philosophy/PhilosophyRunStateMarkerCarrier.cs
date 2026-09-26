@@ -27,11 +27,9 @@ internal static class PhilosophyRunStateMarkerCarrier
 {
     public const string CurrentVersionPrefix = "V1_";
 
-    private static readonly ZenoRouteValidationCatalog EmptyZenoCatalog = new([], [], [], []);
-
     public static PhilosophyRunStateMarkerRestoreResult Restore(IReadOnlyList<string> entries)
     {
-        return Restore(entries, EmptyZenoCatalog);
+        return Restore(entries, ZenoRouteValidationCatalogs.SaveRestore);
     }
 
     internal static PhilosophyRunStateMarkerRestoreResult Restore(

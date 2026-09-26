@@ -757,3 +757,11 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 命令建立明确标记为`DEVELOPMENT_TEST_ENTRY`的无材料记录，先经过真实的路线保存事务和间隔完成回执，再进入与正式链相同的芝诺标准事件。它不加入随机事件池、不伪造苏格拉底或柏拉图上游事实，也不替代正式入口。可用它检查无材料页、翻页与返回、确认、结果页、关闭以及各保存边界的退出重载恢复。
 
 `zeno_assent_boundary.png`当前与`philosophers_gaze.png`字节一致，只是开发试玩占位图。它可以进入开发包，但不得作为正式美术验收；正式发布前仍须换成来源明确、风格和可读性合格的芝诺静态图。
+
+## ENC66 存档加载故障
+
+2026年9月26日的真实失败日志证明Continue已经进入`RunState.FromSerializable`，随后在`Player.LoadInventory → RelicModel.FromSerializable → SavedProperties.Fill`抛出`Property set method not found`。失败存档中唯一带自定义保存属性的遗物是`SOCRATES_QUESTION_CUP`；其`PracticePayload`定义在`WesternPracticeRelic`基类且原为私有setter。对实际编译程序集的只读反射确认：从具体`SocratesQuestionCup`查询继承属性时setter为空，而从声明基类查询时私有setter存在。现将该setter公开，使原版从具体遗物类型恢复属性时可以找到它，并增加源码契约检查防止回退。
+
+同一日志中的`Unknown ModelId ... during serialization, writing NONE`来自把共享状态标记放进`EventsSeen`，它是需要后续迁移的网络／包序列化风险，但不是本次Continue异常堆栈；磁盘JSON仍保留完整标记，`RunState.FromSerializable`前缀也会在原版事件历史恢复前移除它。本次不改写用户存档或以删除marker绕过故障。
+
+早期读档使用空芝诺校验目录会隔离合法开发测试路线。固定、代码自有的`DEVELOPMENT_TEST_ENTRY`现登记到读档期内建目录，使开发版NoMaterial路线在原生触发恢复之前就能严格校验；动态正式材料仍必须等待其生产者提供权威目录，不能因本修复放宽为接受任意ID。自动逻辑、Release构建和PCK装载通过不等于真实SL；验收仍须在启用Mod后完成新局保存、回主菜单加载并连续再SL至少两次。

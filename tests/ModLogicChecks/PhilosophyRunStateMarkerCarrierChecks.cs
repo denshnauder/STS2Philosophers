@@ -13,6 +13,7 @@ internal static class PhilosophyRunStateMarkerCarrierChecks
         UnknownVersionMarkersRoundTripExactly();
         MalformedCurrentMarkerRoundTripsExactly();
         InvalidZenoChildRoundTripsExactly();
+        DevelopmentZenoMarkerRestoresWithBuiltInCatalog();
 
         Console.WriteLine("Philosophy run state marker carrier checks passed.");
     }
@@ -90,6 +91,52 @@ internal static class PhilosophyRunStateMarkerCarrierChecks
             [entry],
             PhilosophyRunStateMarkerClassification.InvalidCurrent,
             "A marker with an invalid Zeno child payload");
+    }
+
+    private static void DevelopmentZenoMarkerRestoresWithBuiltInCatalog()
+    {
+        bool created = ZenoAssentBoundaryTestEntryPolicy.TryCreatePlan(
+                66UL,
+                ZenoRoutePayloadClassification.PreFeatureLegacy,
+                false,
+                new ZenoRouteNativeMapBoundary(
+                    2,
+                    1,
+                    13,
+                    true,
+                    false,
+                    ZenoRouteObservedEventKind.None),
+                out ZenoAssentBoundaryTestEntryPlan? createdPlan);
+        Assert(created && createdPlan is not null,
+            "The development route fixture should be valid.");
+        ZenoAssentBoundaryTestEntryPlan plan = createdPlan!;
+        ZenoRouteTransitionResult prepared = ZenoRouteStateService.PrepareSwitch(
+            plan.InitialState,
+            plan.InitialState.Route!.Revision,
+            plan.Material,
+            plan.Catalog);
+        ZenoRoutePendingOperation pending = prepared.State.PendingOperation
+            ?? throw new InvalidOperationException("The development Switch should prepare.");
+        ZenoRouteTransitionResult committed = ZenoRouteStateService.Commit(
+            prepared.State,
+            pending.OperationId,
+            pending.CandidateDigest,
+            plan.Catalog);
+        PhilosophyRunState state = new();
+        state.SetCurrentZenoRouteState(committed.State, plan.Catalog);
+        IReadOnlyList<string> entries = PhilosophyRunStateMarkerCarrier.GetEntriesForSave(state);
+
+        PhilosophyRunStateMarkerRestoreResult restored =
+            PhilosophyRunStateMarkerCarrier.Restore(entries);
+
+        Assert(restored.Classification == PhilosophyRunStateMarkerClassification.Current &&
+               restored.State?.ZenoRoutePayload.State?.Route is
+               {
+                   Stage: ZenoRouteStage.WaitingInterval,
+                   Material.SourceKind: ZenoAssentBoundaryTestEntryPolicy.SourceKind,
+                   Material.IsNoMaterial: true,
+               },
+            "A saved development route must restore before native trigger recovery runs.");
     }
 
     private static void AssertExactIsolation(

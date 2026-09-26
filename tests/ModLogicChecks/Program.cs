@@ -1492,6 +1492,12 @@ string runStateSavePatchSource = File.ReadAllText(Path.Combine(
     "Patches",
     "PhilosophyRunStateSavePatch.cs"));
 string bearPawSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Mengzi", "MengziXiongZhang.cs"));
+string westernPracticeRelicSource = File.ReadAllText(Path.Combine(
+    repositoryRoot,
+    "src",
+    "Relics",
+    "Western",
+    "WesternPracticeRelic.cs")).ReplaceLineEndings("\n");
 string waterJadeSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Laozi", "LaoziShuiYu.cs"))
     .ReplaceLineEndings("\n");
 string wholeLifeBiSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Yangzhu", "YangzhuQuanShengBi.cs"))
@@ -1523,6 +1529,10 @@ Check(eventSource.Contains("owner?.RunState.CurrentActIndex", StringComparison.O
 Check(bearPawSource.Contains("int virtue = InheritedVirtue;", StringComparison.Ordinal)
       && !bearPawSource.Contains("KongziQingYuPei.GetVirtue(Owner)", StringComparison.Ordinal),
     "Bear Paw combat hooks must read the relic's own saved inherited Virtue after replacement.");
+Check(westernPracticeRelicSource.Contains("public string PracticePayload", StringComparison.Ordinal)
+      && westernPracticeRelicSource.Contains("\n        set\n", StringComparison.Ordinal)
+      && !westernPracticeRelicSource.Contains("\n        private set\n", StringComparison.Ordinal),
+    "An inherited SavedProperty must expose a public setter on concrete Western relics so game loading can restore it.");
 const string damageHookParameterOrder = "Creature? target,\n        decimal damage,\n        ValueProp props,\n        Creature? dealer,";
 Check(waterJadeSource.Contains(damageHookParameterOrder, StringComparison.Ordinal)
       && wholeLifeBiSource.Contains(damageHookParameterOrder, StringComparison.Ordinal),

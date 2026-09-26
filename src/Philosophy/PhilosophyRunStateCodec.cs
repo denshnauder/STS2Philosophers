@@ -13,8 +13,6 @@ internal static class PhilosophyRunStateCodec
         "zenoRoutePendingOperation",
     ];
 
-    private static readonly ZenoRouteValidationCatalog EmptyZenoCatalog = new([], [], [], []);
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = false,
@@ -55,7 +53,7 @@ internal static class PhilosophyRunStateCodec
 
     public static PhilosophyRunState Decode(string encoded)
     {
-        return Decode(encoded, EmptyZenoCatalog);
+        return Decode(encoded, ZenoRouteValidationCatalogs.SaveRestore);
     }
 
     internal static PhilosophyRunState Decode(string encoded, ZenoRouteValidationCatalog zenoCatalog)
