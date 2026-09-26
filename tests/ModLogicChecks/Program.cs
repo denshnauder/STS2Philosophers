@@ -16,6 +16,7 @@ ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();
 ZenoRouteNativeTriggerPolicyChecks.Run();
+ZenoAssentBoundaryTestEntryPolicyChecks.Run();
 ZenoRoutePersistenceConfirmationChecks.Run();
 ZenoRoutePersistenceCoordinatorChecks.Run();
 ZenoRoutePersistenceAdapterChecks.Run();

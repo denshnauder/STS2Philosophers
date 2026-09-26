@@ -56,6 +56,7 @@
     <Compile Include="..\..\src\Philosophy\ZenoRouteStateService.cs" Link="ZenoRouteStateService.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteSchedulingPolicy.cs" Link="ZenoRouteSchedulingPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteNativeTriggerPolicy.cs" Link="ZenoRouteNativeTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryTestEntryPolicy.cs" Link="ZenoAssentBoundaryTestEntryPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRoutePersistenceConfirmation.cs" Link="ZenoRoutePersistenceConfirmation.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRoutePersistenceCoordinator.cs" Link="ZenoRoutePersistenceCoordinator.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRoutePersistenceAdapter.cs" Link="ZenoRoutePersistenceAdapter.cs" />

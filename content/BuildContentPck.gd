@@ -54,6 +54,7 @@ func _initialize() -> void:
 		"res://STS2Philosophers/images/rousseau_uncarved_stone.svg",
 		"res://STS2Philosophers/images/rousseau_uncarved_stone_outline.svg",
 		"res://images/events/philosophers_gaze.png",
+		"res://images/events/zeno_assent_boundary.png",
 		"res://STS2Philosophers/images/kongzi_muduo.png",
 		"res://STS2Philosophers/images/kongzi_muduo_outline.png",
 		"res://STS2Philosophers/images/kongzi_qing_yu_pei.png",
