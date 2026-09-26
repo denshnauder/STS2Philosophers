@@ -1,4 +1,5 @@
 using STS2Philosophers;
+using System.Text.Json;
 
 internal static class ZenoAssentPageFlowChecks
 {
@@ -22,7 +23,8 @@ internal static class ZenoAssentPageFlowChecks
         NavigationIsReversibleUntilConfirmation();
         ConfirmationProducesOneOutcomeIntent();
         LocalizationKeysMatchTheLockedContract();
-        Console.WriteLine("Zeno assent page checks passed: frozen material options, reversible pages and committed result recovery.");
+        LocalizationFilesContainTheLockedCopy();
+        Console.WriteLine("Zeno assent page checks passed: frozen material options, reversible pages, committed result recovery and bilingual copy.");
     }
 
     private static void RestoresOnlyZ0OrTheCommittedResult()
@@ -166,6 +168,68 @@ internal static class ZenoAssentPageFlowChecks
                ZenoAssentPageFlow.OptionKey(ZenoAssentPageOption.BackToScope) == "BACK_TO_SCOPE" &&
                ZenoAssentPageFlow.OptionKey(ZenoAssentPageOption.NoReassent) == "NO_REASSENT",
             "Page and option keys must remain on the approved ZENO_ASSENT_BOUNDARY matrix.");
+    }
+
+    private static void LocalizationFilesContainTheLockedCopy()
+    {
+        Dictionary<string, string[]> pageOptions = new(StringComparer.Ordinal)
+        {
+            ["MATERIAL_REVIEW"] = ["REVIEW_ORIGIN", "CONTINUE"],
+            ["ORIGIN_REVIEW"] = ["BACK_TO_MATERIAL"],
+            ["ASSENT_SCOPE"] = ["BACK_TO_MATERIAL", "KEEP", "NARROW", "WITHDRAW", "NO_REASSENT", "NO_ASSENT"],
+            ["CONFIRM_KEEP"] = ["BACK_TO_SCOPE", "CONFIRM"],
+            ["CONFIRM_NARROW"] = ["BACK_TO_SCOPE", "CONFIRM"],
+            ["CONFIRM_WITHDRAW"] = ["BACK_TO_SCOPE", "CONFIRM"],
+            ["CONFIRM_NO_REASSENT"] = ["BACK_TO_SCOPE", "CONFIRM"],
+            ["CONFIRM_NO_ASSENT"] = ["BACK_TO_SCOPE", "CONFIRM"],
+            ["RESULT_KEEP"] = ["LEAVE"],
+            ["RESULT_NARROW"] = ["LEAVE"],
+            ["RESULT_WITHDRAW"] = ["LEAVE"],
+            ["RESULT_NO_REASSENT"] = ["LEAVE"],
+            ["RESULT_NO_ASSENT"] = ["LEAVE"],
+        };
+
+        foreach (string language in new[] { "zhs", "eng" })
+        {
+            string path = Path.Combine(
+                "content",
+                "STS2Philosophers",
+                "localization",
+                language,
+                "events.json");
+            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
+            JsonElement root = document.RootElement;
+            AssertText(root, "ZENO_ASSENT_BOUNDARY.title", path);
+            foreach ((string page, string[] options) in pageOptions)
+            {
+                AssertText(root, $"ZENO_ASSENT_BOUNDARY.pages.{page}.description", path);
+                foreach (string option in options)
+                {
+                    string prefix = $"ZENO_ASSENT_BOUNDARY.pages.{page}.options.{option}";
+                    AssertText(root, $"{prefix}.title", path);
+                    AssertText(root, $"{prefix}.description", path);
+                }
+            }
+
+            AssertText(root, "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.NO_MATERIAL_WITH_STATEMENT.description", path);
+            AssertText(root, "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.NO_MATERIAL_EMPTY.description", path);
+            string material = root.GetProperty("ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.description").GetString()!;
+            string narrow = root.GetProperty("ZENO_ASSENT_BOUNDARY.pages.CONFIRM_NARROW.description").GetString()!;
+            Assert(material.Contains("{ACTION_FACT}", StringComparison.Ordinal) &&
+                   material.Contains("{PUBLIC_HISTORY}", StringComparison.Ordinal) &&
+                   material.Contains("{CURRENT_STATEMENT}", StringComparison.Ordinal) &&
+                   material.Contains("{LATER_OUTCOME}", StringComparison.Ordinal) &&
+                   narrow.Contains("{NARROW_STATEMENT}", StringComparison.Ordinal),
+                $"Zeno copy placeholders do not match the locked material contract in {path}.");
+        }
+    }
+
+    private static void AssertText(JsonElement root, string key, string path)
+    {
+        Assert(root.TryGetProperty(key, out JsonElement value) &&
+               value.ValueKind == JsonValueKind.String &&
+               !string.IsNullOrWhiteSpace(value.GetString()),
+            $"Missing Zeno localization key {key} in {path}.");
     }
 
     private static void AssertScopeOptions(
