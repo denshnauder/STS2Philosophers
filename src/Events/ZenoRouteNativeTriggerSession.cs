@@ -1,3 +1,4 @@
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Map;
@@ -117,6 +118,13 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         }
     }
 
+    internal bool HasPendingClose =>
+        _runtime.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed;
+
+    internal string? EffectiveEventInstanceId =>
+        (_runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route)
+            ?.EventInstanceId;
+
     public bool Owns(
         ZenoRoutePersistenceRuntime runtime,
         ZenoRouteValidationCatalog catalog) =>
@@ -176,6 +184,53 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         }
     }
 
+    internal async Task<bool> PrepareRestoredEventRoomAsync(
+        EventRoom eventRoom,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(eventRoom);
+        if (_runtime.CurrentState.PendingOperation is { Kind: not ZenoRouteOperationKind.EventClosed })
+        {
+            ZenoRoutePersistenceCoordinationResult retry =
+                await _runtime.RetryAsync(cancellationToken);
+            if (retry.Status != ZenoRoutePersistenceCoordinationStatus.Completed)
+            {
+                return false;
+            }
+        }
+
+        ZenoRouteState? route = _runtime.CurrentState.Route;
+        if (route is not
+            {
+                Stage: ZenoRouteStage.EventActive or ZenoRouteStage.OutcomeCommitted,
+                EventInstanceId: { } eventInstanceId,
+            })
+        {
+            return false;
+        }
+
+        Action<MegaCrit.Sts2.Core.Models.EventModel> configure = mutableEvent =>
+        {
+            if (mutableEvent is not ZenoAssentBoundary zenoEvent)
+            {
+                throw new InvalidOperationException(
+                    "The restored Zeno room created an unexpected local event model.");
+            }
+
+            zenoEvent.Configure(
+                eventInstanceId,
+                new ZenoAssentBoundaryStateHost(
+                    _runtime,
+                    _catalog,
+                    eventInstanceId,
+                    token => CloseAndResumeAsync(eventInstanceId, token)),
+                _catalog);
+        };
+        AccessTools.PropertySetter(typeof(EventRoom), nameof(EventRoom.OnStart))
+            .Invoke(eventRoom, [configure]);
+        return true;
+    }
+
     private async Task<ZenoRouteNativeTriggerStatus> TriggerCoreAsync(
         ZenoRouteNativeTriggerPlan plan,
         AbstractRoom destinationRoom,
@@ -187,6 +242,16 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             !ReferenceEquals(_runState.BaseRoom, destinationRoom))
         {
             return ZenoRouteNativeTriggerStatus.NotHandled;
+        }
+
+        if (_runtime.CurrentState.PendingOperation is { Kind: not ZenoRouteOperationKind.EventClosed })
+        {
+            ZenoRoutePersistenceCoordinationResult retry =
+                await _runtime.RetryAsync(cancellationToken);
+            if (retry.Status != ZenoRoutePersistenceCoordinationStatus.Completed)
+            {
+                return ZenoRouteNativeTriggerStatus.Blocked;
+            }
         }
 
         lock (_taskGate)

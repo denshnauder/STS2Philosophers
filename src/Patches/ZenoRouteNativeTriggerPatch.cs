@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using System.Reflection;
 
 namespace STS2Philosophers;
 
@@ -15,10 +16,22 @@ internal static class ZenoRouteMapSafeBoundaryPatch
         RunManager runManager = RunManager.Instance;
         if (!ZenoRouteNativeTriggerRegistry.TryGet(runManager, out ZenoRouteNativeTriggerSession? session) ||
             session is null ||
-            !session.CanIntercept ||
             runManager.DebugOnlyGetState() is not { } runState ||
             runState.CurrentRoom is not { } currentRoom ||
             runState.BaseRoom is not { } baseRoom)
+        {
+            return;
+        }
+
+        if (session.HasPendingClose && session.EffectiveEventInstanceId is { } closingEventId)
+        {
+            __instance.SetTravelEnabled(false);
+            _ = ObserveCloseRecoveryAsync(
+                session.CloseAndResumeAsync(closingEventId));
+            return;
+        }
+
+        if (!session.CanIntercept)
         {
             return;
         }
@@ -48,6 +61,21 @@ internal static class ZenoRouteMapSafeBoundaryPatch
             session.TriggerAsync(plan, baseRoom));
     }
 
+    private static async Task ObserveCloseRecoveryAsync(Task<bool> recovery)
+    {
+        try
+        {
+            if (!await recovery)
+            {
+                Log.Error("[STS2Philosophers] Zeno closing recovery remains blocked; map travel stays disabled.");
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] Zeno closing recovery failed; map travel stays disabled: {exception}");
+        }
+    }
+
     private static async Task ObserveMapTriggerAsync(
         NMapScreen mapScreen,
         Task<ZenoRouteNativeTriggerStatus> trigger)
@@ -67,6 +95,70 @@ internal static class ZenoRouteMapSafeBoundaryPatch
         catch (Exception exception)
         {
             Log.Error($"[STS2Philosophers] Zeno map trigger failed; map travel remains disabled: {exception}");
+        }
+    }
+}
+
+[HarmonyPatch]
+internal static class ZenoRouteRestoredEventRoomPatch
+{
+    private static readonly AsyncLocal<int> BypassDepth = new();
+
+    private static MethodBase TargetMethod() =>
+        AccessTools.DeclaredMethod(
+            typeof(EventRoom),
+            "EnterInternal",
+            [typeof(IRunState), typeof(bool)])
+        ?? throw new MissingMethodException(
+            typeof(EventRoom).FullName,
+            "EnterInternal(IRunState, bool)");
+
+    private static bool Prefix(
+        EventRoom __instance,
+        IRunState runState,
+        bool isRestoringRoomStackBase,
+        ref Task __result)
+    {
+        if (BypassDepth.Value > 0 ||
+            __instance.CanonicalEvent is not ZenoAssentBoundary ||
+            runState is not RunState concreteRunState ||
+            !ReferenceEquals(RunManager.Instance.DebugOnlyGetState(), concreteRunState) ||
+            !ZenoRouteNativeTriggerRegistry.TryGet(
+                RunManager.Instance,
+                out ZenoRouteNativeTriggerSession? session) ||
+            session is null)
+        {
+            return true;
+        }
+
+        __result = PrepareAndEnterAsync(
+            __instance,
+            runState,
+            isRestoringRoomStackBase,
+            session);
+        return false;
+    }
+
+    private static async Task PrepareAndEnterAsync(
+        EventRoom eventRoom,
+        IRunState runState,
+        bool isRestoringRoomStackBase,
+        ZenoRouteNativeTriggerSession session)
+    {
+        if (!await session.PrepareRestoredEventRoomAsync(eventRoom))
+        {
+            Log.Error("[STS2Philosophers] A restored Zeno event could not bind its persisted runtime; entry stays blocked.");
+            return;
+        }
+
+        BypassDepth.Value++;
+        try
+        {
+            await eventRoom.EnterInternal(runState, isRestoringRoomStackBase);
+        }
+        finally
+        {
+            BypassDepth.Value--;
         }
     }
 }
