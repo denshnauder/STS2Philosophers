@@ -25,6 +25,15 @@ internal static class PhilosophyRunStateSaveMarker
 [HarmonyPatch(typeof(RunManager), nameof(RunManager.ToSave))]
 internal static class PhilosophyRunStateToSavePatch
 {
+    private static void Prefix(RunManager __instance)
+    {
+        RunState? runState = __instance.DebugOnlyGetState();
+        if (runState is not null)
+        {
+            PhilosophyRunStateService.GetOrCreate(runState);
+        }
+    }
+
     private static void Postfix(RunManager __instance, ref SerializableRun __result)
     {
         List<string> existingEntries = __result.EventsSeen
@@ -38,7 +47,9 @@ internal static class PhilosophyRunStateToSavePatch
             && PhilosophyRunStateService.TryGet(runState, out PhilosophyRunState? state)
             && state is not null)
         {
-            entries = PhilosophyRunStateMarkerCarrier.GetEntriesForSave(state);
+            entries = PhilosophyRunStateRitsuStore.IsAuthoritative(runState, state)
+                ? []
+                : PhilosophyRunStateMarkerCarrier.GetEntriesForSave(state);
         }
 
         foreach (string entry in entries)
@@ -75,7 +86,7 @@ internal static class PhilosophyRunStateFromSavePatch
     {
         if (__state.State is not null)
         {
-            PhilosophyRunStateService.Restore(__result, __state.State);
+            PhilosophyRunStateService.RestoreFromLegacyMarker(__result, __state.State);
         }
     }
 }

@@ -32,6 +32,7 @@ ZenoAssentBoundaryRoomEntryChecks.Run();
 RitsuRunPersistenceProbeStateChecks.Run();
 PhilosophyRunStateZenoCodecChecks.Run();
 PhilosophyRunStateMarkerCarrierChecks.Run();
+PhilosophyRunStateRitsuChecks.Run();
 WesternEntryChecks.Run();
 WesternBeingChecks.Run();
 WesternKnowledgeChecks.Run();
@@ -1492,6 +1493,16 @@ string runStateSavePatchSource = File.ReadAllText(Path.Combine(
     "src",
     "Patches",
     "PhilosophyRunStateSavePatch.cs"));
+string runStateRitsuStoreSource = File.ReadAllText(Path.Combine(
+    repositoryRoot,
+    "src",
+    "Philosophy",
+    "PhilosophyRunStateRitsuStore.cs"));
+string zenoGameSaveGatewaySource = File.ReadAllText(Path.Combine(
+    repositoryRoot,
+    "src",
+    "Philosophy",
+    "ZenoRouteGameSaveGateway.cs"));
 string bearPawSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Mengzi", "MengziXiongZhang.cs"));
 string westernPracticeRelicSource = File.ReadAllText(Path.Combine(
     repositoryRoot,
@@ -1517,6 +1528,11 @@ Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringCompar
       && runStateSavePatchSource.Contains("nameof(RunManager.ToSave)", StringComparison.Ordinal)
       && runStateSavePatchSource.Contains("nameof(RunState.FromSerializable)", StringComparison.Ordinal),
     "Finished Neow and act one candidates must be saved before the event is entered and restored on load.");
+Check(runStateSavePatchSource.Contains("PhilosophyRunStateRitsuStore.IsAuthoritative", StringComparison.Ordinal)
+      && runStateRitsuStoreSource.Contains("RunSavedDataWritePolicy.WhenNonDefault", StringComparison.Ordinal)
+      && zenoGameSaveGatewaySource.Contains("ISaveStore", StringComparison.Ordinal)
+      && zenoGameSaveGatewaySource.Contains("PhilosophyRunStateRitsuSaveReader.Read", StringComparison.Ordinal),
+    "Shared run state must use the RitsuLib run slot while Zeno persistence confirms the real save file.");
 Check(eventSource.Contains("RelicCmd.Replace(original, replacement)", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<MengziXiongZhang>().ToMutable()", StringComparison.Ordinal)
       && eventSource.Contains("ModelDb.Relic<XunziShengMo>().ToMutable()", StringComparison.Ordinal)

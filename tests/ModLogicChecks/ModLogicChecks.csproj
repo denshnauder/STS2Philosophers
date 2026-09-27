@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Infrastructure\RitsuRunPersistenceProbeState.cs" Link="RitsuRunPersistenceProbeState.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunStateRitsuContract.cs" Link="PhilosophyRunStateRitsuContract.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunStateRitsuPayload.cs" Link="PhilosophyRunStateRitsuPayload.cs" />
+    <Compile Include="..\..\src\Philosophy\PhilosophyRunStateRitsuSaveReader.cs" Link="PhilosophyRunStateRitsuSaveReader.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesCardProbeReport.cs" Link="SocratesCardProbeReport.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecord.cs" Link="SocratesKnowledgeRouteRecord.cs" />
     <Compile Include="..\..\src\Philosophy\SocratesKnowledgeRouteRecordCodec.cs" Link="SocratesKnowledgeRouteRecordCodec.cs" />

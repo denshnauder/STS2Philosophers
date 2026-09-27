@@ -13,6 +13,7 @@ public static class Entry
 
     public static void Initialize()
     {
+        PhilosophyRunStateRitsuStore.Initialize();
         RitsuRunPersistenceProbe.Initialize();
 
         // Register the event relics for unlock/inspection bookkeeping without placing them in

@@ -43,9 +43,9 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
-- `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。状态以不可见的 `STS2PhilosophersRunState.V1_*` 保存标记写入本局存档，载入时先取出标记再交给游戏恢复原始事件历史；完全相同且可验证的当前标记会归一为一个，版本未知、结构损坏或互相冲突的标记则按原顺序原样保留并禁止替代重写。该标记没有本地化或资源，也不产生可见遗物。
-- 芝诺持久确认通过`IZenoRoutePersistenceConfirmationAdapter`边界返回已确认、明确失败或结果未知。只有单个当前标记写后读取到相同局、检查点、操作序号、阶段、修订和候选摘要才算已确认；单纯等待`SaveRun`返回、重复标记、读回不一致、读取失败或无法证明未落盘的错误都保持结果未知。同一未知操作按确定性请求身份重试，不产生第二个选择。
-- `ZenoRoutePersistenceCoordinator`为单局芝诺路线串行准备与提交检查点。准备明确失败且证实未持久时才释放源选择；准备或提交未知会冻结，同一请求只能显式重试；准备已确认后即使提交明确失败也不能回到源选择。`ZenoRouteGamePersistenceAdapter`可在当前单人局把协调器状态绑定到共享`PhilosophyRunState`，只调用一次`SaveRun`，随后以`LoadRunSave`读取本地权威运行存档；只有读取状态为`Success`且唯一Mod标记完全匹配才确认。游戏保存不提供“确定未写入”证据，所以保存异常、读取修复、缺失、重复或不一致均保持未知。
+- `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。新存档通过RitsuLib的`PHILOSOPHY_RUN_STATE`局内槽保存既有Codec输出，不再把自定义`ModelId`写入`EventsSeen`。旧`STS2PhilosophersRunState.V1_*`标记仍作为只读兼容入口：合法旧状态在首次正常保存时迁入RitsuLib；版本未知、结构损坏、互相冲突或无法验证的旧标记按原顺序保留，禁止替代重写。
+- 芝诺持久确认通过`IZenoRoutePersistenceConfirmationAdapter`边界返回已确认、明确失败或结果未知。保存完成后会经游戏当前`ISaveStore`读取真实`current_run.save`，严格解析RitsuLib sidecar并用既有Codec核对相同局、检查点、操作序号、阶段、修订和候选摘要；旧档尚未迁移时才回退读取旧标记。单纯等待`SaveRun`返回、读回不一致、读取失败或无法证明未落盘的错误都保持结果未知。
+- `ZenoRoutePersistenceCoordinator`为单局芝诺路线串行准备与提交检查点。准备明确失败且证实未持久时才释放源选择；准备或提交未知会冻结，同一请求只能显式重试；准备已确认后即使提交明确失败也不能回到源选择。`ZenoRouteGamePersistenceAdapter`只调用一次`SaveRun`，随后以磁盘sidecar读回确认；损坏的RitsuLib槽不会被旧标记或当前内存状态覆盖。
 - `ZenoRouteRuntimeService`以`RunState`弱引用保存每局唯一的`ZenoRoutePersistenceRuntime`，同一容器拥有共享状态、协调器、校验目录与游戏保存适配器。读档中的合法准备记录会恢复为同一确定性请求并等待显式重试；运行时结果始终回写同一共享状态，状态容器被替换时旧运行时失效。早期加载因尚无生产目录而隔离的合法材料标记，可在运行时取得目录后原样重验并恢复；未知或损坏标记仍保持隔离。
 - `ZenoRouteRecoveryPlanner`只读取已验证路线、可选写前记录以及事件／恢复目的地现场，输出一个无副作用动作。无准备事务时可恢复第欧根尼选择、等待间隔／领取、续建同一事件、恢复Z0／对应Zr或保持终态；六类普通准备只重试同一操作，关闭准备单独完成原目的地恢复。事件身份、目的地与阶段矛盾时只输出隔离。计划携带冻结的操作序号、事件身份、结局和目的地，不查询当前Boss或地图；当前尚未接现场探测、七类业务回调或页面执行。
 - `ZenoRoutePersistenceRuntime.RecoverAsync`在同一每局锁内先读取现场、生成恢复计划，再只执行一个动作。合法写前记录由运行时用原请求身份重试，不交给页面适配器；普通页面／等待动作只接受不可变计划。现场读取失败、页面执行失败与矛盾现场均不改路线事实；事件关闭与目的地恢复属于外部效果，现阶段明确阻断并保留原写前记录。调用方可组合真实房间栈探测器与芝诺页面恢复适配器，触发调度仍未接入。
@@ -775,3 +775,11 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 人工验收必须使用新测试局并完成两轮：先执行`ritsurunprobe write`得到`writes=1`，正常保存并回主菜单，Load后执行`ritsurunprobe read`确认`writes=1`；再执行一次`write`得到`writes=2`，再次保存、回主菜单和Load，最后`read`确认`writes=2`。任何自动测试、构建、PCK校验或部署成功都不能代替这两轮真实SL。只有验收通过后，才允许另开迁移阶段替换`PhilosophyRunState`最底层载体。
 
 2026年9月26日用户完成上述两轮游戏内验收并确认通过。ENC68因此证明RitsuLib的独立run-scoped槽可以在当前游戏与Mod组合中连续保存、返回主菜单和加载；该结论只覆盖最小探针，不把尚未迁移的`PhilosophyRunState`、芝诺恢复链或旧存档兼容性描述为已验收。后继迁移必须保留现有状态机与事务语义，只替换最底层保存载体，并单独验证旧marker读取与新sidecar写入的过渡策略。
+
+## PhilosophyRunState迁移到RitsuLib
+
+共享状态仍使用原有`PhilosophyRunStateCodec`，芝诺状态机、事务、幂等、调度和恢复规则不变。RitsuLib槽只保存Codec编码结果，并在导出时从绑定的实时共享状态重新编码，避免状态变更晚于框架快照。`RunManager.ToSave`前置只负责确保绑定已经建立；sidecar的导入、导出和落盘均由RitsuLib负责。
+
+载入时RitsuLib合法槽优先；没有新槽时才采用旧marker状态并绑定到新槽，下一次正常保存会写sidecar并移除合法旧marker。损坏的新槽、未知版本和隔离中的旧marker均不会被覆盖。芝诺写后确认直接通过当前游戏`ISaveStore`读取正在使用的存档JSON，RitsuLib槽存在但结构无效时明确拒绝回退成旧marker成功。
+
+自动检查已覆盖实时状态编码、既有Codec恢复、sidecar JSON定位、大小写兼容、缺槽、损坏JSON和不完整槽；Release编译零警告零错误。尚未完成游戏内迁移验收：需要分别验证新局两轮SL，以及含合法旧marker的备份局载入后保存、再次载入，确认状态保留且新存档已转入RitsuLib。探针暂时保留到迁移验收通过。
