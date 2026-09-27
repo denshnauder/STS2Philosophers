@@ -44,6 +44,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。新存档通过RitsuLib的`PHILOSOPHY_RUN_STATE`局内槽保存既有Codec输出，不再把自定义`ModelId`写入`EventsSeen`。旧`STS2PhilosophersRunState.V1_*`标记仍作为只读兼容入口：合法旧状态在首次正常保存时迁入RitsuLib；版本未知、结构损坏、互相冲突或无法验证的旧标记按原顺序保留，禁止替代重写。
+- `SocratesVirtueUpstreamRecord`在同一共享运行状态中保存苏格拉底德性分支的一次真实撤离机会和已提交行动。生产入口只接受已建立的苏格拉底德性节点；继续与成功非胜利撤离分别固化当时未恢复的生命损失、已消耗药水、撤离机会和胜利奖励结果，重复回调或读档重试只能得到不变结果，冲突事实拒绝。只读快照不含目的、理由、勇敢判断或后来胜负；旧档、取消请求和未提交机会都不给第欧根尼适配器提供材料。主动撤离本身尚未接入游戏，所以当前正常游玩不会产生这份材料。
 - 芝诺持久确认通过`IZenoRoutePersistenceConfirmationAdapter`边界返回已确认、明确失败或结果未知。保存完成后会经游戏当前`ISaveStore`读取真实`current_run.save`，严格解析RitsuLib sidecar并用既有Codec核对相同局、检查点、操作序号、阶段、修订和候选摘要；旧档尚未迁移时才回退读取旧标记。单纯等待`SaveRun`返回、读回不一致、读取失败或无法证明未落盘的错误都保持结果未知。
 - `ZenoRoutePersistenceCoordinator`为单局芝诺路线串行准备与提交检查点。准备明确失败且证实未持久时才释放源选择；准备或提交未知会冻结，同一请求只能显式重试；准备已确认后即使提交明确失败也不能回到源选择。`ZenoRouteGamePersistenceAdapter`只调用一次`SaveRun`，随后以磁盘sidecar读回确认；损坏的RitsuLib槽不会被旧标记或当前内存状态覆盖。
 - `ZenoRouteRuntimeService`以`RunState`弱引用保存每局唯一的`ZenoRoutePersistenceRuntime`，同一容器拥有共享状态、协调器、校验目录与游戏保存适配器。读档中的合法准备记录会恢复为同一确定性请求并等待显式重试；运行时结果始终回写同一共享状态，状态容器被替换时旧运行时失效。早期加载因尚无生产目录而隔离的合法材料标记，可在运行时取得目录后原样重验并恢复；未知或损坏标记仍保持隔离。

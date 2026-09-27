@@ -12,6 +12,7 @@ WesternGraphRevisionChecks.Run();
 WesternPracticeChecks.Run();
 SocratesBoundedCommitmentChecks.Run();
 SocratesBoundedCommitmentSaveChecks.Run();
+SocratesVirtueUpstreamRecordChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();

@@ -53,6 +53,48 @@ internal static class PhilosophyRunStateService
         state.GetOrCreateActBehaviorState(runState.CurrentActIndex);
     }
 
+    internal static SocratesVirtueRecordWriteResult OpenSocratesVirtueOpportunity(
+        RunState runState,
+        string opportunityId,
+        string combatId)
+    {
+        return GetOrCreate(runState).OpenSocratesVirtueOpportunity(
+            opportunityId,
+            combatId,
+            runState.CurrentActIndex);
+    }
+
+    internal static SocratesVirtueRecordWriteResult CommitSocratesVirtueAction(
+        RunState runState,
+        string opportunityId,
+        SocratesVirtueAction action,
+        int retainedHitPointLoss,
+        int consumedPotionCount)
+    {
+        return GetOrCreate(runState).CommitSocratesVirtueAction(
+            opportunityId,
+            action,
+            retainedHitPointLoss,
+            consumedPotionCount);
+    }
+
+    internal static bool CancelSocratesVirtueOpportunity(
+        RunState runState,
+        string opportunityId)
+    {
+        return GetOrCreate(runState).CancelSocratesVirtueOpportunity(opportunityId);
+    }
+
+    internal static bool TryGetSocratesVirtueMaterial(
+        RunState runState,
+        out SocratesVirtueMaterial? material)
+    {
+        material = null;
+        return TryGet(runState, out PhilosophyRunState? state)
+            && state is not null
+            && state.TryGetSocratesVirtueMaterial(out material);
+    }
+
     private static void Resolve(RunState runState)
     {
         if (ResolvedRuns.TryGetValue(runState, out _))

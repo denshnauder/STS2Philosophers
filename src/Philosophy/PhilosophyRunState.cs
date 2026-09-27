@@ -9,6 +9,7 @@ internal sealed class PhilosophyRunState
     public Dictionary<int, ActBehaviorState> ActBehaviorStates { get; set; } = [];
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
     public WesternJourneyState? WesternJourney { get; set; }
+    public SocratesVirtueUpstreamRecord? SocratesVirtueUpstream { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -31,6 +32,7 @@ internal sealed class PhilosophyRunState
         || ActBehaviorStates.Count > 0
         || GeneratedCandidates.Count > 0
         || WesternJourney is not null
+        || SocratesVirtueUpstream is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -115,12 +117,78 @@ internal sealed class PhilosophyRunState
         }
     }
 
+    internal SocratesVirtueRecordWriteResult OpenSocratesVirtueOpportunity(
+        string opportunityId,
+        string combatId,
+        int actIndex)
+    {
+        if (string.IsNullOrWhiteSpace(opportunityId)
+            || string.IsNullOrWhiteSpace(combatId)
+            || actIndex < 0)
+        {
+            return SocratesVirtueRecordWriteResult.Rejected;
+        }
+
+        if (SocratesVirtueUpstream is not null)
+        {
+            return SocratesVirtueUpstream.MatchesOpportunity(opportunityId, combatId, actIndex)
+                ? SocratesVirtueRecordWriteResult.Unchanged
+                : SocratesVirtueRecordWriteResult.Rejected;
+        }
+
+        if (!string.Equals(CurrentDoctrine?.ThinkerId, SocratesVirtueUpstreamRecord.SocratesThinkerId, StringComparison.Ordinal)
+            || !string.Equals(CurrentDoctrine?.DoctrineId, WesternEntryPolicy.RelicIdFor(SocratesVirtueUpstreamRecord.VirtueProblemId), StringComparison.Ordinal)
+            || !string.Equals(WesternJourney?.CurrentNodeId, SocratesVirtueUpstreamRecord.VirtueRouteNodeId, StringComparison.Ordinal))
+        {
+            return SocratesVirtueRecordWriteResult.Rejected;
+        }
+
+        SocratesVirtueUpstream = SocratesVirtueUpstreamRecord.Open(opportunityId, combatId, actIndex);
+        return SocratesVirtueRecordWriteResult.Recorded;
+    }
+
+    internal SocratesVirtueRecordWriteResult CommitSocratesVirtueAction(
+        string opportunityId,
+        SocratesVirtueAction action,
+        int retainedHitPointLoss,
+        int consumedPotionCount)
+    {
+        return SocratesVirtueUpstream?.Commit(
+            opportunityId,
+            action,
+            retainedHitPointLoss,
+            consumedPotionCount) ?? SocratesVirtueRecordWriteResult.Rejected;
+    }
+
+    internal bool CancelSocratesVirtueOpportunity(string opportunityId)
+    {
+        if (SocratesVirtueUpstream is null
+            || SocratesVirtueUpstream.Action != SocratesVirtueAction.None
+            || !string.Equals(SocratesVirtueUpstream.OpportunityId, opportunityId, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        SocratesVirtueUpstream = null;
+        return true;
+    }
+
+    internal bool TryGetSocratesVirtueMaterial(out SocratesVirtueMaterial? material)
+    {
+        material = null;
+        return SocratesVirtueUpstream?.TryGetMaterial(out material) == true;
+    }
+
     internal void NormalizeAfterLoad()
     {
         ThoughtImprints ??= [];
         ActBehaviorStates ??= [];
         GeneratedCandidates ??= [];
         WesternJourney?.NormalizeAfterLoad();
+        if (SocratesVirtueUpstream is not null && !SocratesVirtueUpstream.IsValid())
+        {
+            throw new InvalidDataException("The Socrates virtue upstream record was invalid.");
+        }
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

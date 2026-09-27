@@ -7,11 +7,51 @@ internal static class PhilosophyRunStateRitsuChecks
     public static void Run()
     {
         BoundPayloadTracksLiveState();
+        SocratesVirtueFactsRoundTripThroughLivePayload();
         LoadedPayloadRestoresExistingCodec();
         SaveReaderFindsPersistedPayload();
         SaveReaderRejectsMalformedOrIncompleteData();
 
         Console.WriteLine("Philosophy run state RitsuLib migration checks passed.");
+    }
+
+    private static void SocratesVirtueFactsRoundTripThroughLivePayload()
+    {
+        PhilosophyRunState state = new();
+        GeneratedCandidates candidates = new()
+        {
+            GenerationKey = WesternActOneCandidatePolicy.GenerationKey,
+            CandidateIds = ["SOCRATES", "PLATO", "ARISTOTLE"],
+        };
+        Assert(WesternEntryPolicy.RecordObtained(
+                state,
+                candidates,
+                SocratesVirtueUpstreamRecord.SocratesThinkerId,
+                SocratesVirtueUpstreamRecord.VirtueProblemId,
+                WesternEntryPolicy.RelicIdFor(SocratesVirtueUpstreamRecord.VirtueProblemId)),
+            "The RitsuLib fixture must establish the Socrates virtue branch.");
+        Assert(state.OpenSocratesVirtueOpportunity("RITSU_OPPORTUNITY", "RITSU_COMBAT", 0)
+               == SocratesVirtueRecordWriteResult.Recorded
+               && state.CommitSocratesVirtueAction(
+                   "RITSU_OPPORTUNITY",
+                   SocratesVirtueAction.Retreated,
+                   retainedHitPointLoss: 9,
+                   consumedPotionCount: 1) == SocratesVirtueRecordWriteResult.Recorded,
+            "The live state must contain one committed upstream action before saving.");
+
+        PhilosophyRunStateRitsuPayload payload = PhilosophyRunStateRitsuPayload.Bind(state);
+        PhilosophyRunStateRitsuPayload loaded = new()
+        {
+            SchemaVersion = payload.SchemaVersion,
+            EncodedState = payload.EncodedState,
+        };
+        Assert(loaded.TryDecode(out PhilosophyRunState? restored)
+               && restored is not null
+               && restored.TryGetSocratesVirtueMaterial(out SocratesVirtueMaterial? material)
+               && material?.Action == SocratesVirtueAction.Retreated
+               && material.RetainedHitPointLoss == 9
+               && material.ConsumedPotionCount == 1,
+            "The authoritative RitsuLib run slot must preserve the committed Socrates virtue facts.");
     }
 
     private static void BoundPayloadTracksLiveState()
