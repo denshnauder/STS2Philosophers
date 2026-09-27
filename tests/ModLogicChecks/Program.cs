@@ -25,6 +25,8 @@ ZenoRoutePersistenceRuntimeChecks.Run();
 ZenoRouteRecoveryPlannerChecks.Run();
 ZenoRouteRecoveryExecutionChecks.Run();
 ZenoRouteRecoverySceneClassifierChecks.Run();
+DiogenesStaySwitchPageFlowChecks.Run();
+DiogenesStaySwitchStateHostChecks.Run();
 ZenoAssentPageFlowChecks.Run();
 ZenoAssentBoundaryStateHostChecks.Run();
 ZenoAssentBoundaryCreationPolicyChecks.Run();

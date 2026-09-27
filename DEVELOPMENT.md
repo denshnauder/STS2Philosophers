@@ -759,6 +759,14 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 
 `zeno_assent_boundary.png`当前与`philosophers_gaze.png`字节一致，只是开发试玩占位图。它可以进入开发包，但不得作为正式美术验收；正式发布前仍须换成来源明确、风格和可读性合格的芝诺静态图。
 
+## 第欧根尼第三幕去留事件模型
+
+`DiogenesStaySwitch`只承载第三幕已经定稿的去留段：回看当前说法、Stay确认、犬儒传统与克拉特斯的中介说明、Switch确认和本地结果页。它不实现第二幕披露或第三幕说法修订，也不直接打开`ZenoAssentBoundary`；Switch成功只把既有路线事务推进到`WaitingInterval`，后续仍由芝诺安全调度链领取。
+
+页面模型把只读回看或返回放在每个不可逆页面的第一项，复用原生重建选项后的默认首项焦点；鼠标与控制器确认都进入同一个选项回调。原生没有可安全复用的取消回调，因此取消保持无动作。只有最终确认会由`DiogenesStaySwitchStateHost`调用既有`PrepareStay`或`PrepareSwitch`并经过同一双检查点持久事务；失败、未知结果、冻结和竞争回调都不能进入成功页，重复同一确认只读取已经提交的赢家。
+
+当前阶段只完成事件模型、双语短文案和纯逻辑／持久事务检查，尚未建立生产事件房间、正式第欧根尼素材、上游披露与说法生产链，也未部署覆盖芝诺待验收包，所以玩家现在还不能从正常流程进入该事件。
+
 ## ENC66 存档加载故障
 
 2026年9月26日的真实失败日志证明Continue已经进入`RunState.FromSerializable`，随后在`Player.LoadInventory → RelicModel.FromSerializable → SavedProperties.Fill`抛出`Property set method not found`。失败存档中唯一带自定义保存属性的遗物是`SOCRATES_QUESTION_CUP`；其`PracticePayload`定义在`WesternPracticeRelic`基类且原为私有setter。对实际编译程序集的只读反射确认：从具体`SocratesQuestionCup`查询继承属性时setter为空，而从声明基类查询时私有setter存在。现将该setter公开，使原版从具体遗物类型恢复属性时可以找到它，并增加源码契约检查防止回退。
