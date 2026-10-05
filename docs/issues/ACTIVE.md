@@ -1,4 +1,8 @@
-# 活动问题镜像
+# 活动问题镜像（迁移前历史）
+
+> **历史档案：本文件不再是活动任务队列，不得从这里领取、恢复、更新或创建工作。** 项目任务、依赖、优先级与授权只看 [Linear：STS2 Mod](https://linear.app/encyxu/project/sts2-mod-19d063dd0e62)；Codex 跨运行断点只看本地 Obsidian `00执行状态.md`。以下状态与“下一步”只保留迁移证据。
+>
+> 旧 ISSUE 到 Linear 的映射记录在本地 Obsidian `08问题闭环/08问题与修改.md`；新增问题必须进入 Linear。仓库 `docs/issues/` 不再镜像活动状态。
 
 ## ISSUE 009 西哲样例图未落实二轮设计审查
 
