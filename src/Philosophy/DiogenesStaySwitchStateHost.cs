@@ -43,7 +43,7 @@ internal sealed class DiogenesStaySwitchStateHost(
             : ZenoRouteStage.WaitingInterval;
         if (route.Stage == committedStage)
         {
-            return current.PendingOperation is null;
+            return current.PendingOperation is null && runtime.PendingRequestId is null;
         }
 
         if (route.Stage != ZenoRouteStage.Unresolved || current.PendingOperation is not null)

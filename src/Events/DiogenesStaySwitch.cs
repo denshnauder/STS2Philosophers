@@ -4,16 +4,20 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace STS2Philosophers;
 
-public sealed class DiogenesStaySwitch : EventModel
+public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentity
 {
     private const string LocalizationRoot = "DIOGENES_STAY_SWITCH";
 
     private IDiogenesStaySwitchStateHost? _stateHost;
     private ZenoRouteValidationCatalog? _catalog;
     private DiogenesStaySwitchPageView? _currentView;
+    private DiogenesStaySwitchEntryRecord? _entry;
+
+    ZenoRouteObservedEventKind IZenoRouteEventSceneIdentity.RouteEventKind => ZenoRouteObservedEventKind.Diogenes;
+    string? IZenoRouteEventSceneIdentity.RouteEventInstanceId => _entry?.RunId;
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
-        L10NLookup($"{LocalizationRoot}.pages.ROUTE_CHOICE.description");
+        PageDescription(DiogenesStaySwitchPage.RouteChoice);
 
     public override IEnumerable<MegaCrit.Sts2.Core.Localization.LocString> GameInfoOptions =>
         new[]
@@ -25,7 +29,8 @@ public sealed class DiogenesStaySwitch : EventModel
 
     internal void Configure(
         IDiogenesStaySwitchStateHost stateHost,
-        ZenoRouteValidationCatalog catalog)
+        ZenoRouteValidationCatalog catalog,
+        DiogenesStaySwitchEntryRecord? entry = null)
     {
         AssertMutable();
         ArgumentNullException.ThrowIfNull(stateHost);
@@ -33,6 +38,7 @@ public sealed class DiogenesStaySwitch : EventModel
 
         _stateHost = stateHost;
         _catalog = catalog;
+        _entry = entry;
         _currentView = null;
     }
 
@@ -128,9 +134,26 @@ public sealed class DiogenesStaySwitch : EventModel
         return view;
     }
 
-    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(
-        DiogenesStaySwitchPage page) =>
-        L10NLookup($"{LocalizationRoot}.pages.{DiogenesStaySwitchPageFlow.PageKey(page)}.description");
+    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(DiogenesStaySwitchPage page)
+    {
+        string suffix = _entry is not null && page is
+            DiogenesStaySwitchPage.RouteChoice or DiogenesStaySwitchPage.StatementReview or
+            DiogenesStaySwitchPage.ResultStay or DiogenesStaySwitchPage.ResultSwitch
+            ? _entry.Facts?.Action switch
+            {
+                SocratesVirtueAction.Continued => ".CONTINUED",
+                SocratesVirtueAction.Retreated => ".RETREATED",
+                _ => ".NO_MATERIAL",
+            }
+            : string.Empty;
+        var description = L10NLookup($"{LocalizationRoot}.pages.{DiogenesStaySwitchPageFlow.PageKey(page)}.description{suffix}");
+        if (_entry?.Facts is { } facts)
+        {
+            description.AddObj("HitPointLoss", facts.RetainedHitPointLoss);
+            description.AddObj("PotionCount", facts.ConsumedPotionCount);
+        }
+        return description;
+    }
 
     private static string OptionLocalizationKey(
         DiogenesStaySwitchPage page,

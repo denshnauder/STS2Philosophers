@@ -70,6 +70,7 @@
     <Compile Include="..\..\src\Philosophy\ZenoRouteRecoveryExecution.cs" Link="ZenoRouteRecoveryExecution.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoRouteRecoverySceneClassifier.cs" Link="ZenoRouteRecoverySceneClassifier.cs" />
     <Compile Include="..\..\src\Philosophy\DiogenesStaySwitchPageFlow.cs" Link="DiogenesStaySwitchPageFlow.cs" />
+    <Compile Include="..\..\src\Philosophy\DiogenesStaySwitchEntryPolicy.cs" Link="DiogenesStaySwitchEntryPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\DiogenesStaySwitchStateHost.cs" Link="DiogenesStaySwitchStateHost.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoAssentPageFlow.cs" Link="ZenoAssentPageFlow.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryStateHost.cs" Link="ZenoAssentBoundaryStateHost.cs" />

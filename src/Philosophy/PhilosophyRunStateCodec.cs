@@ -25,6 +25,7 @@ internal static class PhilosophyRunStateCodec
 
     internal static string Encode(PhilosophyRunState state, ZenoRouteValidationCatalog zenoCatalog)
     {
+        ValidateDiogenesEntry(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -68,7 +69,34 @@ internal static class PhilosophyRunStateCodec
         string? zenoPayload = ExtractZenoPayload(document.RootElement);
         ZenoRouteDecodeResult zenoResult = ZenoRouteStateCodec.Decode(zenoPayload, zenoCatalog);
         state.RestoreZenoRoutePayload(zenoResult, encoded);
+        ValidateDiogenesEntry(state);
         return state;
+    }
+
+    private static void ValidateDiogenesEntry(PhilosophyRunState state)
+    {
+        ZenoRouteState? route = state.ZenoRoutePayload.State?.Route;
+        ZenoRouteState? candidate = state.ZenoRoutePayload.State?.PendingOperation?.Candidate;
+        if (state.DiogenesStaySwitchEntry is not { } entry)
+        {
+            if (route?.RunId.StartsWith(DiogenesStaySwitchEntryPolicy.RunIdPrefix, StringComparison.Ordinal) == true ||
+                route?.Material?.SourceKind == DiogenesStaySwitchEntryPolicy.SourceKind ||
+                candidate?.Material?.SourceKind == DiogenesStaySwitchEntryPolicy.SourceKind)
+            {
+                throw new InvalidDataException("The production Diogenes route lost its frozen entry.");
+            }
+            return;
+        }
+
+        if (!DiogenesStaySwitchEntryPolicy.IsValid(entry) ||
+            state.ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.Current ||
+            route is null || route.RunId != entry.RunId ||
+            route.Material is { } material && material.Digest != entry.Material.Digest ||
+            candidate?.Material is { } pendingMaterial && pendingMaterial.Digest != entry.Material.Digest ||
+            entry.Closed && route.Stage == ZenoRouteStage.Unresolved)
+        {
+            throw new InvalidDataException("The Diogenes entry does not match its frozen route.");
+        }
     }
 
     private static string? ExtractZenoPayload(JsonElement root)

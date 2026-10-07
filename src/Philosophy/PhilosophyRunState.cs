@@ -10,6 +10,7 @@ internal sealed class PhilosophyRunState
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
     public WesternJourneyState? WesternJourney { get; set; }
     public SocratesVirtueUpstreamRecord? SocratesVirtueUpstream { get; set; }
+    public DiogenesStaySwitchEntryRecord? DiogenesStaySwitchEntry { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -33,6 +34,7 @@ internal sealed class PhilosophyRunState
         || GeneratedCandidates.Count > 0
         || WesternJourney is not null
         || SocratesVirtueUpstream is not null
+        || DiogenesStaySwitchEntry is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 

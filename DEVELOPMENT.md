@@ -38,6 +38,14 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 
 ## 赐福流程代码结构
 
+### ENC-64 隔离接入与验证边界
+
+`DiogenesStaySwitchEntryPolicy`只从真实苏格拉底德性主说／节点生成第三幕幕初邀请，不调用图边补走历史。`DiogenesStaySwitchEntryRecord`保留版本、局身份、源房间、完整只读事实（含真实成本）、原材料摘要和关闭标记；默认共享Codec可严格往返，未知／不匹配的记录不重建。事实来源及固定行动ID进入代码拥有的SaveRestore目录，无材料时不生成说法或公开历史。
+
+`DiogenesStaySwitchEntrySession`在原生幕初MapRoom完成后先保存并读回同一共享编码，再叠加标准事件；准备／提交仍复用芝诺每局事务。读档只在完整LoadIntoLatestMapCoord结束后恢复幕初缺失叠层，不能在恢复基础房间时插入第二个事件。第欧根尼EventRoom在初始选项前重绑OnStart并重试同一个去留事务；Leave先持久关闭标记再只退出同身份叠层。`ZenoRouteNativeTriggerPolicy`持久排除入口源房间，幕初MapRoom本来也不生成完成回执；后续普通房间、Boss、离幕沿原调度保证出现。
+
+本分支只执行`tools/VerifyMod.ps1 -SkipDeploy`，不覆盖芝诺人工验收包，不修改验收存档或主工作树local.props，不启动游戏。正式图片、第二幕披露、第三幕说法修订和苏格拉底主动撤离玩法均不属于本Issue；正常游玩暂时走NoMaterial。纯逻辑／Release／PCK通过不等于游戏内入口和SL已验收，人工流程由ENC-54等承担。
+
 - `src/Patches/NeowProceedPatch.cs` 与 `src/Patches/ActTwoPhilosophersGazePatch.cs` 分别负责第一层和第二层事件插入。
 - 第一层插入会拦截已经结束的涅奥事件；必须先对底层涅奥 `EventRoom` 调用 `MarkPreFinished` 并保存，再用嵌套房间进入“诸子观照”。否则退出读档会恢复一个仍可结算的涅奥房间，造成奖励重复领取。
 - `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。

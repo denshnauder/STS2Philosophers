@@ -200,8 +200,9 @@ internal static class ZenoRouteValidationCatalogs
     // fixed, code-owned sources belong here; dynamic production material remains
     // isolated until its producer supplies the authoritative catalog.
     public static ZenoRouteValidationCatalog SaveRestore { get; } = new(
-        [new KeyValuePair<string, int>(ZenoAssentBoundaryTestEntryPolicy.SourceKind, 1)],
-        [],
+        [new KeyValuePair<string, int>(ZenoAssentBoundaryTestEntryPolicy.SourceKind, 1),
+         new KeyValuePair<string, int>(DiogenesStaySwitchEntryPolicy.SourceKind, DiogenesStaySwitchEntryPolicy.CurrentVersion)],
+        [DiogenesStaySwitchEntryPolicy.ContinuedFactId, DiogenesStaySwitchEntryPolicy.RetreatedFactId],
         [],
         []);
 }

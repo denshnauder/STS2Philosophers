@@ -16,7 +16,8 @@ internal static class ZenoRouteNativeTriggerPolicy
 {
     public static bool TryCreateMapPlan(
         ZenoRouteNativeMapBoundary boundary,
-        out ZenoRouteNativeTriggerPlan? plan)
+        out ZenoRouteNativeTriggerPlan? plan,
+        int? excludedSourceRoomId = null)
     {
         plan = null;
         if (boundary.ActIndex != 2 ||
@@ -31,7 +32,7 @@ internal static class ZenoRouteNativeTriggerPolicy
         }
 
         string destinationId = $"MAP_ACT_{boundary.ActIndex}_ROOM_{roomId}";
-        string? receiptId = boundary.IsPreFinished &&
+        string? receiptId = boundary.IsPreFinished && roomId != excludedSourceRoomId &&
                             boundary.EventKind is not ZenoRouteObservedEventKind.Diogenes
             ? $"COMPLETED_ACT_{boundary.ActIndex}_ROOM_{roomId}"
             : null;
