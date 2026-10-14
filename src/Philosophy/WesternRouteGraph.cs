@@ -139,6 +139,49 @@ internal sealed class WesternRouteGraph
         return true;
     }
 
+    public bool TryReserveQuestion(WesternJourneyState state, int expectedAct)
+    {
+        return _nodes.ContainsKey(state.CurrentNodeId)
+            && state.LastFixedAct == expectedAct
+            && expectedAct is >= 1 and <= 3
+            && !state.RetainedEnding
+            && state.ResolvedQuestionActs.Add(expectedAct);
+    }
+
+    public bool TryCompleteReservedQuestion(WesternJourneyState state, string edgeId)
+    {
+        if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge)
+            || edge.Slot != "Question"
+            || !edge.Enabled
+            || edge.FromNodeId != state.CurrentNodeId
+            || state.LastFixedAct is < 1 or > 3
+            || edge.Act > state.LastFixedAct
+            || !state.ResolvedQuestionActs.Contains(state.LastFixedAct)
+            || edge.RequiredEdgeIds.Any(required => !state.CompletedEdgeIds.Contains(required)))
+        {
+            return false;
+        }
+
+        if (state.CompletedEdgeIds.Contains(edgeId))
+        {
+            return true;
+        }
+
+        if (state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId))
+        {
+            return false;
+        }
+
+        state.CompletedEdgeIds.Add(edgeId);
+        state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
+        if (edge.Outcome is "Adopt" or "Switch")
+        {
+            state.CurrentNodeId = edge.ToNodeId;
+        }
+
+        return true;
+    }
+
     public bool IsComplete(WesternJourneyState state) => state.LastFixedAct == 3
         && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node) && (node.Terminal || state.RetainedEnding);
 

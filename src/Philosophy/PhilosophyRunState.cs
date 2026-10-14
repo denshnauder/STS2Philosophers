@@ -10,6 +10,7 @@ internal sealed class PhilosophyRunState
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
     public WesternJourneyState? WesternJourney { get; set; }
     public SocratesVirtueUpstreamRecord? SocratesVirtueUpstream { get; set; }
+    public ProtagorasSharedDeliberationState? ProtagorasSharedDeliberation { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -33,6 +34,7 @@ internal sealed class PhilosophyRunState
         || GeneratedCandidates.Count > 0
         || WesternJourney is not null
         || SocratesVirtueUpstream is not null
+        || ProtagorasSharedDeliberation is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -189,6 +191,7 @@ internal sealed class PhilosophyRunState
         {
             throw new InvalidDataException("The Socrates virtue upstream record was invalid.");
         }
+        ProtagorasSharedDeliberation?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

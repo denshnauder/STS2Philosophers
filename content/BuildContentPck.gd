@@ -107,6 +107,28 @@ func _initialize() -> void:
 				quit(error)
 				return
 
+	# The Protagoras event deliberately reuses the existing Philosophers' Gaze
+	# background. Pack it under the event ModelId path without duplicating the
+	# binary source or imported texture.
+	for alias in [
+		[
+			"res://images/events/protagoras_shared_deliberation.png",
+			"res://images/events/philosophers_gaze.png",
+		],
+		[
+			"res://images/events/protagoras_shared_deliberation.png.import",
+			"res://images/events/protagoras_shared_deliberation.png.import",
+		],
+	]:
+		error = add_file_or_fail(
+			packer,
+			alias[0],
+			ProjectSettings.globalize_path(alias[1])
+		)
+		if error != OK:
+			quit(error)
+			return
+
 	error = packer.flush()
 	if error != OK:
 		push_error("Could not finish content PCK: %s" % error_string(error))

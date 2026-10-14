@@ -792,3 +792,11 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 载入时RitsuLib合法槽优先；没有新槽时才采用旧marker状态并绑定到新槽，下一次正常保存会写sidecar并移除合法旧marker。损坏的新槽、未知版本和隔离中的旧marker均不会被覆盖。芝诺写后确认直接通过当前游戏`ISaveStore`读取正在使用的存档JSON，RitsuLib槽存在但结构无效时明确拒绝回退成旧marker成功。
 
 自动检查已覆盖实时状态编码、既有Codec恢复、sidecar JSON定位、大小写兼容、缺槽、损坏JSON和不完整槽；Release编译零警告零错误。尚未完成游戏内迁移验收：需要分别验证新局两轮SL，以及含合法旧marker的备份局载入后保存、再次载入，确认状态保留且新存档已转入RitsuLib。探针暂时保留到迁移验收通过。
+
+## 普罗泰戈拉共同教育事件
+
+`ProtagorasSharedDeliberationPatch`只在单人第一幕、苏格拉底德性节点、至少完成一场战斗且Question尚未占用时，于返回地图后压入一个原生标准事件；它不加入随机事件池或新增地图节点。事件使用`PROTAGORAS_SHARED_DELIBERATION`，复用诸子观照背景的PCK纹理别名，不新增人物素材。
+
+`ProtagorasSharedDeliberationState`把接受占位、原法示范、准确复述、拒绝代言、同伴请求、玩家修订、授权范围、实际暂停、停止未来委托、实践完成、边完成和关闭分别保存。按钮动作采用待提交再提交的两次保存；读档只续同一待提交动作。`WesternRouteGraph.TryReserveQuestion`在接受时占位，`TryCompleteReservedQuestion`只允许有效最终回应补既有`WESTERN_EDGE_008`，因此中途退出不会伪装完成，重复回调也不会重复补边。
+
+相关纯逻辑检查覆盖首屏拒绝、接受后未完成、七条完成路径、限缩授权的保存恢复、触发资格与双语键完整性。2026年10月14日全量逻辑、Release零警告、PCK加载和部署三文件哈希通过；没有自动启动游戏，也没有把实际试玩当成交付闸门。
