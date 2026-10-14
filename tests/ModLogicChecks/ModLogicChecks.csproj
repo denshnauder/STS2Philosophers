@@ -24,6 +24,8 @@
     <Compile Include="..\..\src\Philosophy\WesternEntryPolicy.cs" Link="WesternEntryPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternPracticeStateCodec.cs" Link="WesternPracticeStateCodec.cs" />
     <Compile Include="..\..\src\Philosophy\WesternPracticeState.cs" Link="WesternPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\WesternEntryPracticeStateCodec.cs" Link="WesternEntryPracticeStateCodec.cs" />
+    <Compile Include="..\..\src\Philosophy\WesternEntryPracticeState.cs" Link="WesternEntryPracticeState.cs" />
     <EmbeddedResource Include="..\..\config\western_routes.json" LogicalName="STS2Philosophers.config.western_routes.json" />
     <EmbeddedResource Include="..\..\config\western_graph.json" LogicalName="STS2Philosophers.config.western_graph.json" />
     <Compile Include="..\..\src\Philosophy\WesternRouteGraph.cs" Link="WesternRouteGraph.cs" />
