@@ -162,6 +162,17 @@ public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentit
                 _ => string.Empty,
             }
             : string.Empty;
+        if (view.Page == ZenoAssentPage.MaterialReview &&
+            _stateHost?.CurrentState.Route?.Material is { } material &&
+            material.SourceKind == DiogenesStaySwitchEntryPolicy.SourceKind)
+        {
+            variant = material.ActionFactId switch
+            {
+                DiogenesStaySwitchEntryPolicy.ContinuedFactId => ".CONTINUED_NO_STATEMENT",
+                DiogenesStaySwitchEntryPolicy.RetreatedFactId => ".RETREATED_NO_STATEMENT",
+                _ => variant,
+            };
+        }
         return L10NLookup($"{LocalizationRoot}.pages.{pageKey}{variant}.description");
     }
 

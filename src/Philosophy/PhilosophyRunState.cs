@@ -16,6 +16,7 @@ internal sealed class PhilosophyRunState
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
     public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
     public HanFeiPublicStandardState? HanFeiPublicStandard { get; set; }
+    public DiogenesStaySwitchEntryRecord? DiogenesStaySwitchEntry { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -45,6 +46,7 @@ internal sealed class PhilosophyRunState
         || SextusOpposedAppearances is not null
         || DescartesMethodicReconstruction is not null
         || HanFeiPublicStandard is not null
+        || DiogenesStaySwitchEntry is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 

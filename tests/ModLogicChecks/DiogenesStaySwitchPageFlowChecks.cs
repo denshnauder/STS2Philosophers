@@ -181,6 +181,23 @@ internal static class DiogenesStaySwitchPageFlowChecks
             using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
             JsonElement root = document.RootElement;
             AssertText(root, "DIOGENES_STAY_SWITCH.title", path);
+            foreach (string page in new[] { "ROUTE_CHOICE", "STATEMENT_REVIEW", "RESULT_STAY", "RESULT_SWITCH" })
+            {
+                foreach (string material in new[] { "CONTINUED", "RETREATED", "NO_MATERIAL" })
+                {
+                    string key = $"DIOGENES_STAY_SWITCH.pages.{page}.description.{material}";
+                    AssertText(root, key, path);
+                    if (page == "STATEMENT_REVIEW" && material != "NO_MATERIAL")
+                    {
+                        string text = root.GetProperty(key).GetString()!;
+                        Assert(text.Contains("{HitPointLoss}", StringComparison.Ordinal) &&
+                               text.Contains("{PotionCount}", StringComparison.Ordinal),
+                            "A factual review must expose the frozen real costs, not current resources.");
+                    }
+                }
+            }
+            AssertText(root, "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.CONTINUED_NO_STATEMENT.description", path);
+            AssertText(root, "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.RETREATED_NO_STATEMENT.description", path);
 
             ZenoRouteState unresolved = CreateUnresolved().Route!;
             foreach (DiogenesStaySwitchPage page in Enum.GetValues<DiogenesStaySwitchPage>())

@@ -36,6 +36,12 @@ internal static class ZenoRouteMapSafeBoundaryPatch
             return;
         }
 
+        PhilosophyRunStateService.TryGet(runState, out PhilosophyRunState? shared);
+        if (shared?.DiogenesStaySwitchEntry is { Closed: false })
+        {
+            return;
+        }
+
         ZenoRouteObservedEventKind eventKind = currentRoom is EventRoom eventRoom
             ? eventRoom.LocalMutableEvent is IZenoRouteEventSceneIdentity identity
                 ? identity.RouteEventKind
@@ -49,7 +55,8 @@ internal static class ZenoRouteMapSafeBoundaryPatch
                     currentRoom.IsPreFinished,
                     currentRoom is MapRoom,
                     eventKind),
-                out ZenoRouteNativeTriggerPlan? plan) ||
+                out ZenoRouteNativeTriggerPlan? plan,
+                shared?.DiogenesStaySwitchEntry?.SourceRoomId) ||
             plan is null)
         {
             return;
