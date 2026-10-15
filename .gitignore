@@ -19,5 +19,6 @@ local.props
 .vs/
 .idea/
 .vscode/
+docs/.obsidian/
 Thumbs.db
 .DS_Store
