@@ -16,36 +16,41 @@ internal static class WesternRouteChecks
             "The seven approved problem-to-entry mappings must not drift.");
 
         HashSet<string> triples = [];
-        Dictionary<string, int> appearances = WesternRouteCatalog.EntryThinkerIds.ToDictionary(id => id, _ => 0);
-        for (ulong draw = 0; draw < 20; draw++)
+        Dictionary<string, int> appearances = PhilosophersGazeActOneCandidatePolicy.RegisteredThinkerIds
+            .ToDictionary(id => id, _ => 0);
+        for (ulong draw = 0; draw < 84; draw++)
         {
             PhilosophyRunState state = new();
-            GeneratedCandidates eastern = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(state, 0);
-            GeneratedCandidates western = WesternActOneCandidatePolicy.GetOrGenerate(state, draw);
-            Check(western.CandidateIds.Count == 3 && western.CandidateIds.Distinct().Count() == 3,
-                "Western invitations must contain three distinct people.");
-            Check(triples.Add(string.Join(',', western.CandidateIds)), "Each draw in the twenty-value range must select a different triple.");
-            foreach (string id in western.CandidateIds) appearances[id]++;
-            Check(ReferenceEquals(western, WesternActOneCandidatePolicy.GetOrGenerate(state, draw + 1)), "A repeat visit must reuse western candidates.");
+            GeneratedCandidates candidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(state, draw);
+            Check(candidates.CandidateIds.Count == 3 && candidates.CandidateIds.Distinct().Count() == 3,
+                "Unified invitations must contain three distinct people.");
+            Check(triples.Add(string.Join(',', candidates.CandidateIds)),
+                "Each draw in the eighty-four-value range must select a different unified triple.");
+            foreach (string id in candidates.CandidateIds) appearances[id]++;
+            Check(ReferenceEquals(candidates, PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(state, draw + 1)),
+                "A repeat visit must reuse unified candidates.");
             PhilosophyRunState loaded = PhilosophyRunStateCodec.Decode(PhilosophyRunStateCodec.Encode(state));
-            Check(WesternActOneCandidatePolicy.GetOrGenerate(loaded, 99).CandidateIds.SequenceEqual(western.CandidateIds), "Saving and loading must not reroll invitations.");
-            Check(loaded.GeneratedCandidates[PhilosophersGazeActOneCandidatePolicy.GenerationKey].CandidateIds.SequenceEqual(eastern.CandidateIds), "Western generation must preserve the eastern candidate namespace.");
+            Check(PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(loaded, 99).CandidateIds.SequenceEqual(candidates.CandidateIds),
+                "Saving and loading must not reroll unified invitations.");
             foreach (WesternProblem problem in WesternRouteCatalog.Problems)
             {
-                Check(WesternActOneCandidatePolicy.CanChooseProblem(western, problem.EntryThinkerId, problem.ProblemId)
-                    == western.CandidateIds.Contains(problem.EntryThinkerId), "Only an invited person may offer their approved problem.");
+                Check(PhilosophersGazeActOneCandidatePolicy.CanChooseProblem(candidates, problem.EntryThinkerId, problem.ProblemId)
+                    == candidates.CandidateIds.Contains(problem.EntryThinkerId),
+                    "Only an invited person may offer their approved problem.");
             }
-            Check(!WesternActOneCandidatePolicy.CanChooseProblem(western, "SOCRATES", "HISTORY_AND_POWER"), "A person must not unlock every western problem.");
+            Check(!PhilosophersGazeActOneCandidatePolicy.CanChooseProblem(candidates, "SOCRATES", "HISTORY_AND_POWER"),
+                "A person must not unlock every western problem.");
         }
-        Check(triples.Count == 20 && appearances.Values.All(count => count == 10), "All six people must have equal coverage across the twenty possible triples.");
+        Check(triples.Count == 84 && appearances.Values.All(count => count == 28),
+            "All nine people must have equal coverage across the eighty-four unified triples.");
 
         PhilosophyRunState damaged = new();
-        damaged.GeneratedCandidates[WesternActOneCandidatePolicy.GenerationKey] = new()
+        damaged.GeneratedCandidates[PhilosophersGazeActOneCandidatePolicy.GenerationKey] = new()
         {
-            GenerationKey = WesternActOneCandidatePolicy.GenerationKey,
+            GenerationKey = PhilosophersGazeActOneCandidatePolicy.GenerationKey,
             CandidateIds = ["SOCRATES", "SOCRATES", "PLATO"],
         };
-        Check(WesternActOneCandidatePolicy.GetOrGenerate(damaged, 0).CandidateIds.Distinct().Count() == 3,
+        Check(PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(damaged, 0).CandidateIds.Distinct().Count() == 3,
             "Malformed repeated-person candidates must be regenerated.");
         foreach (string invalid in new[] { "null", "[null]", "[]" })
         {
@@ -54,6 +59,6 @@ internal static class WesternRouteChecks
             catch (InvalidDataException) { rejected = true; }
             Check(rejected, "An invalid catalog must fail explicitly.");
         }
-        Console.WriteLine("Western route catalog, invitations, save isolation and problem authorization checks passed.");
+        Console.WriteLine("Unified act-one invitations, western catalog and problem authorization checks passed.");
     }
 }

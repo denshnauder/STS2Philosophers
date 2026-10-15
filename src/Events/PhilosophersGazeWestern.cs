@@ -9,24 +9,10 @@ namespace STS2Philosophers;
 
 public sealed partial class PhilosophersGaze
 {
-    private GeneratedCandidates WesternInvitations(RunState run) =>
-        WesternActOneCandidatePolicy.GetOrGenerate(PhilosophyRunStateService.GetOrCreate(run), run.Rng.Seed);
-
     private EventOption WesternOption(Func<Task> action, string key, IEnumerable<IHoverTip>? tips = null) =>
         new(this, action, $"{LocalizationPrefix}.WESTERN.options.{key}", tips ?? Array.Empty<IHoverTip>());
 
-    private Task ShowWesternInvitations()
-    {
-        if (!IsActOne() || Owner?.RunState is not RunState run) return Task.CompletedTask;
-        List<EventOption> options = WesternInvitations(run).CandidateIds
-            .Select(id => WesternOption(() => ShowWesternThinker(id), id)).ToList();
-        options.Add(WesternOption(ReturnToEastInvitations, "BACK"));
-        options.Add(WesternOption(ShowActOneDeclineConfirmation, "DECLINE"));
-        SetEventState(L10NLookup($"{LocalizationPrefix}.WESTERN.description"), options);
-        return Task.CompletedTask;
-    }
-
-    private Task ReturnToEastInvitations()
+    private Task ReturnToUnifiedInvitations()
     {
         if (IsActOne()) SetEventState(PageDescription(PhilosophersGazePage.Initial), GenerateActOneInitialOptions());
         return Task.CompletedTask;
@@ -34,8 +20,13 @@ public sealed partial class PhilosophersGaze
 
     private Task ShowWesternThinker(string thinkerId)
     {
-        if (!IsActOne() || Owner?.RunState is not RunState run
-            || !WesternInvitations(run).CandidateIds.Contains(thinkerId)) return Task.CompletedTask;
+        if (!IsActOne()
+            || !PhilosophersGazeActOneCandidatePolicy.Contains(GetActOneCandidates(), thinkerId)
+            || !WesternRouteCatalog.EntryThinkerIds.Contains(thinkerId, StringComparer.Ordinal))
+        {
+            return Task.CompletedTask;
+        }
+
         List<EventOption> options = [];
         foreach (WesternProblem problem in WesternRouteCatalog.Problems.Where(p => p.EntryThinkerId == thinkerId))
         {
@@ -43,7 +34,7 @@ public sealed partial class PhilosophersGaze
             options.Add(WesternOption(() => ObtainWesternEntry(thinkerId, problem.ProblemId),
                 problem.ProblemId, relic.HoverTips));
         }
-        options.Add(WesternOption(ShowWesternInvitations, "BACK_WESTERN"));
+        options.Add(WesternOption(ReturnToUnifiedInvitations, "BACK_UNIFIED"));
         options.Add(WesternOption(ConfirmActOneDecline, "DECLINE"));
         SetEventState(L10NLookup($"{LocalizationPrefix}.WESTERN_{thinkerId}.description"), options);
         return Task.CompletedTask;
@@ -56,7 +47,7 @@ public sealed partial class PhilosophersGaze
         {
             if (Owner is not { } owner || owner.RunState is not RunState run) return;
             PhilosophyRunState state = PhilosophyRunStateService.GetOrCreate(run);
-            GeneratedCandidates candidates = WesternInvitations(run);
+            GeneratedCandidates candidates = GetActOneCandidates();
             if (!WesternEntryPolicy.CanChoose(state, candidates, thinkerId, problemId, run.CurrentActIndex,
                 IsFinished, !PhilosophersGazeRelicGrantPolicy.CanGrant(GetOwnership(owner)))) return;
             // RelicCmd verifies ownership before the shared doctrine and journey are committed.

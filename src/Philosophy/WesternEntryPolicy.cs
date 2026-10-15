@@ -17,7 +17,7 @@ internal static class WesternEntryPolicy
         string thinkerId, string problemId, int actIndex, bool eventFinished, bool hasDoctrineRelic) =>
         actIndex == 0 && !eventFinished && !hasDoctrineRelic
         && state.CurrentDoctrine is null && state.WesternJourney is null
-        && WesternActOneCandidatePolicy.CanChooseProblem(candidates, thinkerId, problemId);
+        && PhilosophersGazeActOneCandidatePolicy.CanChooseProblem(candidates, thinkerId, problemId);
 
     // Only call after verifying the selected relic was actually obtained.
     public static bool RecordObtained(PhilosophyRunState state, GeneratedCandidates candidates,

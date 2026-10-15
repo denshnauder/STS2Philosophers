@@ -866,21 +866,17 @@ Check(!PhilosophersGazeInterceptionPolicy.ShouldIntercept(
 
 Console.WriteLine("PhilosophersGaze interception policy checks passed.");
 
-Dictionary<string, int> actOneThinkerAppearances = new(StringComparer.Ordinal)
-{
-    [PhilosophersGazeActOneCandidatePolicy.Kongzi] = 0,
-    [PhilosophersGazeActOneCandidatePolicy.Mozi] = 0,
-    [PhilosophersGazeActOneCandidatePolicy.Laozi] = 0,
-};
-for (ulong randomValue = 0; randomValue < 300; randomValue++)
+Dictionary<string, int> actOneThinkerAppearances =
+    PhilosophersGazeActOneCandidatePolicy.RegisteredThinkerIds.ToDictionary(id => id, _ => 0);
+for (ulong randomValue = 0; randomValue < 84; randomValue++)
 {
     PhilosophyRunState candidateState = new();
     GeneratedCandidates candidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
         candidateState,
         randomValue);
-    Check(candidates.CandidateIds.Count == 2
-          && candidates.CandidateIds.Distinct(StringComparer.Ordinal).Count() == 2,
-        "Each act one generation must contain exactly two distinct thinkers.");
+    Check(candidates.CandidateIds.Count == 3
+          && candidates.CandidateIds.Distinct(StringComparer.Ordinal).Count() == 3,
+        "Each act one generation must contain exactly three distinct thinkers.");
     foreach (string thinkerId in candidates.CandidateIds)
     {
         actOneThinkerAppearances[thinkerId]++;
@@ -893,8 +889,8 @@ for (ulong randomValue = 0; randomValue < 300; randomValue++)
         "An existing act one candidate set must not be regenerated from a later random value.");
 }
 
-Check(actOneThinkerAppearances.Values.All(count => count == 200),
-    "Kongzi, Mozi, and Laozi must have equal inclusion probability across uniform random values.");
+Check(actOneThinkerAppearances.Values.All(count => count == 28),
+    "All nine registered thinkers must have equal inclusion across the full combination cycle.");
 
 PhilosophyRunState persistedPhilosophyState = new();
 GeneratedCandidates persistedCandidates = PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
@@ -1492,6 +1488,11 @@ foreach (string localePath in localePaths)
 }
 
 string eventSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Events", "PhilosophersGaze.cs"));
+string westernEventSource = File.ReadAllText(Path.Combine(
+    repositoryRoot,
+    "src",
+    "Events",
+    "PhilosophersGazeWestern.cs"));
 string neowPatchSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Patches", "NeowProceedPatch.cs"));
 string runStateSavePatchSource = File.ReadAllText(Path.Combine(
     repositoryRoot,
@@ -1526,6 +1527,11 @@ Check(eventSource.Contains("SetEventState(", StringComparison.Ordinal)
 Check(eventSource.Contains("GetActOneCandidates()", StringComparison.Ordinal)
       && eventSource.Contains("IsActOneCandidate(thinkerId)", StringComparison.Ordinal),
     "The act one event must display and authorize only the generated thinker candidates.");
+Check(!eventSource.Contains("ShowWesternInvitations", StringComparison.Ordinal)
+      && !eventSource.Contains("WESTERN_ENTRY", StringComparison.Ordinal)
+      && !westernEventSource.Contains("WesternInvitations", StringComparison.Ordinal)
+      && westernEventSource.Contains("ReturnToUnifiedInvitations", StringComparison.Ordinal),
+    "Act one must show one unified thinker list without a second Western invitation page.");
 Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
         < neowPatchSource.IndexOf("EnterRoomWithoutExitingCurrentRoom(", StringComparison.Ordinal)
       && neowPatchSource.IndexOf("neowRoom.MarkPreFinished()", StringComparison.Ordinal)

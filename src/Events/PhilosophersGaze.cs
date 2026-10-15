@@ -30,29 +30,23 @@ public sealed partial class PhilosophersGaze : EventModel
     {
         GeneratedCandidates candidates = GetActOneCandidates();
         List<EventOption> options = [];
-        if (PhilosophersGazeActOneCandidatePolicy.Contains(
-                candidates,
-                PhilosophersGazeActOneCandidatePolicy.Kongzi))
+        foreach (string thinkerId in candidates.CandidateIds)
         {
-            options.Add(Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi));
-        }
-
-        if (PhilosophersGazeActOneCandidatePolicy.Contains(
-                candidates,
-                PhilosophersGazeActOneCandidatePolicy.Mozi))
-        {
-            options.Add(Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi));
-        }
-
-        if (PhilosophersGazeActOneCandidatePolicy.Contains(
-                candidates,
-                PhilosophersGazeActOneCandidatePolicy.Laozi))
-        {
-            options.Add(Option(ShowLaoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Laozi));
+            options.Add(thinkerId switch
+            {
+                PhilosophersGazeActOneCandidatePolicy.Kongzi =>
+                    Option(ShowKongziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Kongzi),
+                PhilosophersGazeActOneCandidatePolicy.Mozi =>
+                    Option(ShowMoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Mozi),
+                PhilosophersGazeActOneCandidatePolicy.Laozi =>
+                    Option(ShowLaoziViewpoints, PhilosophersGazePage.Initial, PhilosophersGazeOption.Laozi),
+                _ when WesternRouteCatalog.EntryThinkerIds.Contains(thinkerId, StringComparer.Ordinal) =>
+                    WesternOption(() => ShowWesternThinker(thinkerId), thinkerId),
+                _ => throw new InvalidDataException($"Unknown act-one thinker candidate: {thinkerId}"),
+            });
         }
 
         options.Add(Option(ShowActOneDeclineConfirmation, PhilosophersGazePage.Initial, PhilosophersGazeOption.Decline));
-        options.Insert(0, WesternOption(ShowWesternInvitations, "WESTERN_ENTRY"));
         return options;
     }
 

@@ -158,7 +158,7 @@ internal static class SocratesVirtueUpstreamRecordChecks
         PhilosophyRunState state = new();
         GeneratedCandidates candidates = new()
         {
-            GenerationKey = WesternActOneCandidatePolicy.GenerationKey,
+            GenerationKey = PhilosophersGazeActOneCandidatePolicy.GenerationKey,
             CandidateIds = ["SOCRATES", "PLATO", "ARISTOTLE"],
         };
         Assert(WesternEntryPolicy.RecordObtained(

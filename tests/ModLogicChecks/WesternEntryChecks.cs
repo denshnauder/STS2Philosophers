@@ -14,9 +14,10 @@ internal static class WesternEntryChecks
             PhilosophyRunState state = new();
             GeneratedCandidates candidates = new()
             {
-                GenerationKey = WesternActOneCandidatePolicy.GenerationKey,
+                GenerationKey = PhilosophersGazeActOneCandidatePolicy.GenerationKey,
                 CandidateIds = new[] { problem.EntryThinkerId }.Concat(
-                    WesternRouteCatalog.EntryThinkerIds.Where(id => id != problem.EntryThinkerId).Take(2)).ToList(),
+                    PhilosophersGazeActOneCandidatePolicy.RegisteredThinkerIds
+                        .Where(id => id != problem.EntryThinkerId).Take(2)).ToList(),
             };
             Check(WesternEntryPolicy.CanChoose(state, candidates, problem.EntryThinkerId, problem.ProblemId, 0, false, false), "Each invited entry can establish its approved problem.");
             Check(!WesternEntryPolicy.CanChoose(state, candidates, problem.EntryThinkerId, problem.ProblemId, 1, false, false)
