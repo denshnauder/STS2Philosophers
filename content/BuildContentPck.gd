@@ -112,6 +112,14 @@ func _initialize() -> void:
 	# binary source or imported texture.
 	for alias in [
 		[
+			"res://images/events/plato_whole_arrangement.png",
+			"res://images/events/philosophers_gaze.png",
+		],
+		[
+			"res://images/events/plato_whole_arrangement.png.import",
+			"res://images/events/plato_whole_arrangement.png.import",
+		],
+		[
 			"res://images/events/protagoras_shared_deliberation.png",
 			"res://images/events/philosophers_gaze.png",
 		],
