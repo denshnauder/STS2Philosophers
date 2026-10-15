@@ -16,6 +16,7 @@ SocratesVirtueUpstreamRecordChecks.Run();
 ProtagorasSharedDeliberationChecks.Run();
 PlatoWholeArrangementChecks.Run();
 EpicurusSharedMarginChecks.Run();
+SextusOpposedAppearancesChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();
