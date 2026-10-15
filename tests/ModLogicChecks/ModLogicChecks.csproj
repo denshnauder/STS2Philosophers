@@ -25,6 +25,8 @@
     <Compile Include="..\..\src\Philosophy\EpicurusSharedMarginTriggerPolicy.cs" Link="EpicurusSharedMarginTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\SextusOpposedAppearancesState.cs" Link="SextusOpposedAppearancesState.cs" />
     <Compile Include="..\..\src\Philosophy\SextusOpposedAppearancesTriggerPolicy.cs" Link="SextusOpposedAppearancesTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\DescartesMethodicReconstructionState.cs" Link="DescartesMethodicReconstructionState.cs" />
+    <Compile Include="..\..\src\Philosophy\DescartesMethodicReconstructionTriggerPolicy.cs" Link="DescartesMethodicReconstructionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternNodePracticePolicy.cs" Link="WesternNodePracticePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternSocialPracticePolicy.cs" Link="WesternSocialPracticePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternKnowledgePracticePolicy.cs" Link="WesternKnowledgePracticePolicy.cs" />

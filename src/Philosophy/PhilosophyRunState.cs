@@ -14,6 +14,7 @@ internal sealed class PhilosophyRunState
     public PlatoWholeArrangementState? PlatoWholeArrangement { get; set; }
     public EpicurusSharedMarginState? EpicurusSharedMargin { get; set; }
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
+    public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -41,6 +42,7 @@ internal sealed class PhilosophyRunState
         || PlatoWholeArrangement is not null
         || EpicurusSharedMargin is not null
         || SextusOpposedAppearances is not null
+        || DescartesMethodicReconstruction is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -201,6 +203,7 @@ internal sealed class PhilosophyRunState
         PlatoWholeArrangement?.NormalizeAfterLoad();
         EpicurusSharedMargin?.NormalizeAfterLoad();
         SextusOpposedAppearances?.NormalizeAfterLoad();
+        DescartesMethodicReconstruction?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

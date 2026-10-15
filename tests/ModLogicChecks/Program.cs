@@ -17,6 +17,7 @@ ProtagorasSharedDeliberationChecks.Run();
 PlatoWholeArrangementChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
+DescartesMethodicReconstructionChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();
