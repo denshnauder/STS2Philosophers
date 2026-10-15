@@ -15,6 +15,7 @@ SocratesBoundedCommitmentSaveChecks.Run();
 SocratesVirtueUpstreamRecordChecks.Run();
 ProtagorasSharedDeliberationChecks.Run();
 PlatoWholeArrangementChecks.Run();
+EpicurusSharedMarginChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();
