@@ -44,7 +44,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Philosophy/LaterActRelicEligibilityCatalog.cs` 是第二、三幕后继的统一资格表。每个人物声明幕索引与接受的前置遗物；运行时每次从 `Player.Relics` 的当前 `ModelId.Entry` 重新计算，不保存派生候选，因此读档、返回地图和遗物替换后不会沿用已经失去的旧资格。
 - `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层东哲事件门控；六条“根遗物 → 固定后继”由 `RegisteredRelicContinuationCandidateSource` 从同一资格表映射为现有选项。混入不同东哲根家族的损坏／调试状态仍静默跳过，同一家族双根的调试状态保留两个明确候选。
-- 柏拉图、笛卡尔和伊壁鸠鲁的生产触发同样调用 `LaterActRelicEligibilityRuntime`；第欧根尼与芝诺登记为第三幕审思砝码后继，但各自特殊路线状态仍须另行满足，状态只能收紧资格。开发专用控制台不代表生产候选。
+- 柏拉图、笛卡尔、伊壁鸠鲁和韩非的生产触发同样调用 `LaterActRelicEligibilityRuntime`；韩非只接受第三幕当前仍持有的绳墨。第欧根尼与芝诺登记为第三幕审思砝码后继，但各自特殊路线状态仍须另行满足，状态只能收紧资格。开发专用控制台不代表生产候选。
 - 资格表没有兜底人物：本幕没有已登记且当前持有遗物命中的人物时返回空集合，调用方保持正常地图流程。新增人物只登记合法关系；尚无关系的人物不进入池。
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。新存档通过RitsuLib的`PHILOSOPHY_RUN_STATE`局内槽保存既有Codec输出，不再把自定义`ModelId`写入`EventsSeen`。旧`STS2PhilosophersRunState.V1_*`标记仍作为只读兼容入口：合法旧状态在首次正常保存时迁入RitsuLib；版本未知、结构损坏、互相冲突或无法验证的旧标记按原顺序保留，禁止替代重写。
 - `SocratesVirtueUpstreamRecord`在同一共享运行状态中保存苏格拉底德性分支的一次真实撤离机会和已提交行动。生产入口只接受已建立的苏格拉底德性节点；继续与成功非胜利撤离分别固化当时未恢复的生命损失、已消耗药水、撤离机会和胜利奖励结果，重复回调或读档重试只能得到不变结果，冲突事实拒绝。只读快照不含目的、理由、勇敢判断或后来胜负；旧档、取消请求和未提交机会都不给第欧根尼适配器提供材料。主动撤离本身尚未接入游戏，所以当前正常游玩不会产生这份材料。
@@ -61,6 +61,12 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - `config/thinker_proposals.json` 是“人物 + 具体思想提案”的配置雏形，以嵌入资源进入 DLL。Phase 1 只登记六件现有根遗物；`qualification_rule_ids` 与 `resonance_tags` 保持为空，等待后续行为候选设计。
 - 六件根遗物分别保存第二层是否已经处理；12 件遗物的战斗状态保存在各自实例上。当前唯一显式跨遗物数据迁移是青玉佩的 `Virtue` 在替换时写入熊掌的 `InheritedVirtue`。
 - `tests/ModLogicChecks/Program.cs` 覆盖页面流、根遗物互斥、第二层过滤与替换、德继承、重复回调和本地化键。
+
+## 韩非第三幕公开标准事件
+
+`HanFeiPublicStandardPatch`只在单人第三幕、玩家当前持有绳墨且本幕至少完成一场战斗后，于安全返回地图时插入原生标准事件。资格来自统一后续幕登记表；没有绳墨时不创建状态或空事件。事件复用诸子观照背景，不新增地图节点、人物素材、动画或遗物。
+
+`HanFeiPublicStandardState`把页面、预先公开的数量／公共存量标准、最终荀子／韩非路线、规则撤回历史和关闭状态保存在共享局内状态。每次选择先保存 `PendingAction`，再提交并二次保存；读档只重放同一动作。坚持荀子会完成情境判断终点；执行预先公开的标准会转向韩非；看见个案后撤回会回到荀子但保留撤回历史。所有结果都不发数值奖励、不替换绳墨，也不因用户尚未试玩而保持未完成。
 
 以上是 Phase 1 开始时的兼容基线，不代表未来动态候选架构；详细设计状态与未决定问题以 Obsidian 的 `02想法与机制/02赐福系统` 和活动问题队列为准。
 

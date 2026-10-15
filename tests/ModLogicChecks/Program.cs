@@ -19,6 +19,7 @@ EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
+HanFeiPublicStandardChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();

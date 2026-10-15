@@ -13,6 +13,7 @@ internal static class LaterActCandidateIds
     public const string Epicurus = "EPICURUS";
     public const string Diogenes = "DIOGENES_OF_SINOPE";
     public const string Zeno = "ZENO_OF_CITIUM";
+    public const string HanFei = "HAN_FEI";
 }
 
 internal static class RouteRelicIds
@@ -25,6 +26,7 @@ internal static class RouteRelicIds
     public const string LaoziShuiYu = "LAOZI_SHUI_YU";
     public const string SocratesQuestionCup = "SOCRATES_QUESTION_CUP";
     public const string SocratesBalanceWeight = "SOCRATES_BALANCE_WEIGHT";
+    public const string XunziShengMo = "XUNZI_SHENG_MO";
 }
 
 internal sealed record LaterActRelicEligibilityRegistration(
@@ -50,6 +52,7 @@ internal static class LaterActRelicEligibilityCatalog
         Register(LaterActCandidateIds.Epicurus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Diogenes, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Zeno, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
+        Register(LaterActCandidateIds.HanFei, ActThreeIndex, RouteRelicIds.XunziShengMo),
     ];
 
     public static IReadOnlyList<LaterActRelicEligibilityRegistration> Registrations => Entries;

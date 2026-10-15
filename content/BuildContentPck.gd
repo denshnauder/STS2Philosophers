@@ -136,6 +136,14 @@ func _initialize() -> void:
 			"res://images/events/epicurus_shared_margin.png.import",
 		],
 		[
+			"res://images/events/han_fei_public_standard.png",
+			"res://images/events/philosophers_gaze.png",
+		],
+		[
+			"res://images/events/han_fei_public_standard.png.import",
+			"res://images/events/han_fei_public_standard.png.import",
+		],
+		[
 			"res://images/events/plato_whole_arrangement.png",
 			"res://images/events/philosophers_gaze.png",
 		],
