@@ -18,6 +18,7 @@ PlatoWholeArrangementChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
+LaterActRelicEligibilityChecks.Run();
 ZenoRouteStateChecks.Run();
 ZenoRouteStateServiceChecks.Run();
 ZenoRouteSchedulingPolicyChecks.Run();

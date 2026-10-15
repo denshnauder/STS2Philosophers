@@ -46,7 +46,10 @@ internal static class DescartesMethodicReconstructionPatch
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.DeclinedFixedActs.Contains(2) == true,
-            player?.GetRelicById(ModelDb.GetId<SocratesQuestionCup>()) is not null,
+            LaterActRelicEligibilityRuntime.IsEligible(
+                player,
+                LaterActCandidateIds.Descartes,
+                run.CurrentActIndex),
             philosophy.SextusOpposedAppearances?.Closed == true,
             currentMapPoint?.Children.Count >= 2,
             saved is not null,

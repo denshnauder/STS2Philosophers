@@ -114,7 +114,7 @@ internal static class PlatoWholeArrangementChecks
         PlatoWholeArrangementTriggerContext eligible = new(
             true, true, true, 1, 1,
             PlatoWholeArrangementState.SourceNodeId,
-            1, true, false, false, false, false, false, true);
+            1, true, false, false, true, false, false, false, true);
         Assert(PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible),
             "The Socrates virtue route must open Plato after one act-two combat and EDGE008.");
         Assert(!PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { CompletedCombatCount = 0 })
@@ -122,8 +122,9 @@ internal static class PlatoWholeArrangementChecks
                && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { CurrentNodeId = "OTHER" })
                && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { RequiredEdgeCompleted = false })
                && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { FixedActDeclined = true })
-               && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { CompletionEdgeCompleted = true }),
-            "A new Plato instance must respect combat, route, predecessor, and Fixed resolution boundaries.");
+               && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { CompletionEdgeCompleted = true })
+               && !PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with { HasRequiredRelic = false }),
+            "A new Plato instance must respect combat, route, predecessor, current relic, and Fixed resolution boundaries.");
         Assert(PlatoWholeArrangementTriggerPolicy.ShouldInsert(eligible with
                {
                    CompletedCombatCount = 0,

@@ -44,7 +44,10 @@ internal static class EpicurusSharedMarginPatch
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.CompletedEdgeIds.Contains(EpicurusSharedMarginState.RequiredEdgeId) == true,
-            player?.GetRelicById(ModelDb.GetId<SocratesBalanceWeight>()) is not null,
+            LaterActRelicEligibilityRuntime.IsEligible(
+                player,
+                LaterActCandidateIds.Epicurus,
+                run.CurrentActIndex),
             saved is not null,
             saved?.IsUsable() == true,
             saved?.Closed == true,

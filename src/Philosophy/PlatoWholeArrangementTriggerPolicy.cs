@@ -11,6 +11,7 @@ internal sealed record PlatoWholeArrangementTriggerContext(
     bool RequiredEdgeCompleted,
     bool FixedActDeclined,
     bool CompletionEdgeCompleted,
+    bool HasRequiredRelic,
     bool HasSavedInstance,
     bool SavedInstanceUsable,
     bool SavedInstanceClosed,
@@ -36,6 +37,7 @@ internal static class PlatoWholeArrangementTriggerPolicy
             && context.LastFixedAct == 1
             && context.RequiredEdgeCompleted
             && !context.FixedActDeclined
-            && !context.CompletionEdgeCompleted;
+            && !context.CompletionEdgeCompleted
+            && context.HasRequiredRelic;
     }
 }

@@ -44,7 +44,7 @@ internal static class PhilosophersGazeContinuationPolicy
         return GetAvailableOptions(
             ownership,
             continuationRecorded,
-            LegacyRelicContinuationCandidateSource.Instance);
+            RegisteredRelicContinuationCandidateSource.Instance);
     }
 
     internal static PhilosophersGazeContinuationOption GetAvailableOptions(

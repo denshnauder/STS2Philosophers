@@ -32,6 +32,7 @@
     <Compile Include="..\..\src\Philosophy\WesternKnowledgePracticePolicy.cs" Link="WesternKnowledgePracticePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternBeingPracticePolicy.cs" Link="WesternBeingPracticePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WesternEntryPolicy.cs" Link="WesternEntryPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\LaterActRelicEligibilityCatalog.cs" Link="LaterActRelicEligibilityCatalog.cs" />
     <Compile Include="..\..\src\Philosophy\WesternPracticeStateCodec.cs" Link="WesternPracticeStateCodec.cs" />
     <Compile Include="..\..\src\Philosophy\WesternPracticeState.cs" Link="WesternPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\WesternEntryPracticeStateCodec.cs" Link="WesternEntryPracticeStateCodec.cs" />

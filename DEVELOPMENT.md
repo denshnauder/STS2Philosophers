@@ -42,7 +42,10 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 - 第一层插入会拦截已经结束的涅奥事件；必须先对底层涅奥 `EventRoom` 调用 `MarkPreFinished` 并保存，再用嵌套房间进入“诸子观照”。否则退出读档会恢复一个仍可结算的涅奥房间，造成奖励重复领取。
 - `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
-- `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层候选的通用门控；六条“根遗物 → 固定后继”已隔离到 `LegacyRelicContinuationCandidateSource`，事件暂时继续使用该兼容候选源。
+- `src/Philosophy/LaterActRelicEligibilityCatalog.cs` 是第二、三幕后继的统一资格表。每个人物声明幕索引与接受的前置遗物；运行时每次从 `Player.Relics` 的当前 `ModelId.Entry` 重新计算，不保存派生候选，因此读档、返回地图和遗物替换后不会沿用已经失去的旧资格。
+- `src/Events/PhilosophersGazeContinuationPolicy.cs` 负责第二层东哲事件门控；六条“根遗物 → 固定后继”由 `RegisteredRelicContinuationCandidateSource` 从同一资格表映射为现有选项。混入不同东哲根家族的损坏／调试状态仍静默跳过，同一家族双根的调试状态保留两个明确候选。
+- 柏拉图、笛卡尔和伊壁鸠鲁的生产触发同样调用 `LaterActRelicEligibilityRuntime`；第欧根尼与芝诺登记为第三幕审思砝码后继，但各自特殊路线状态仍须另行满足，状态只能收紧资格。开发专用控制台不代表生产候选。
+- 资格表没有兜底人物：本幕没有已登记且当前持有遗物命中的人物时返回空集合，调用方保持正常地图流程。新增人物只登记合法关系；尚无关系的人物不进入池。
 - `src/Philosophy/` 保存新赐福流程的局内哲学状态、第一层候选策略与序列化逻辑。新存档通过RitsuLib的`PHILOSOPHY_RUN_STATE`局内槽保存既有Codec输出，不再把自定义`ModelId`写入`EventsSeen`。旧`STS2PhilosophersRunState.V1_*`标记仍作为只读兼容入口：合法旧状态在首次正常保存时迁入RitsuLib；版本未知、结构损坏、互相冲突或无法验证的旧标记按原顺序保留，禁止替代重写。
 - `SocratesVirtueUpstreamRecord`在同一共享运行状态中保存苏格拉底德性分支的一次真实撤离机会和已提交行动。生产入口只接受已建立的苏格拉底德性节点；继续与成功非胜利撤离分别固化当时未恢复的生命损失、已消耗药水、撤离机会和胜利奖励结果，重复回调或读档重试只能得到不变结果，冲突事实拒绝。只读快照不含目的、理由、勇敢判断或后来胜负；旧档、取消请求和未提交机会都不给第欧根尼适配器提供材料。主动撤离本身尚未接入游戏，所以当前正常游玩不会产生这份材料。
 - 芝诺持久确认通过`IZenoRoutePersistenceConfirmationAdapter`边界返回已确认、明确失败或结果未知。保存完成后会经游戏当前`ISaveStore`读取真实`current_run.save`，严格解析RitsuLib sidecar并用既有Codec核对相同局、检查点、操作序号、阶段、修订和候选摘要；旧档尚未迁移时才回退读取旧标记。单纯等待`SaveRun`返回、读回不一致、读取失败或无法证明未落盘的错误都保持结果未知。

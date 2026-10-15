@@ -41,6 +41,7 @@ internal static class PlatoWholeArrangementPatch
 
         PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
         WesternJourneyState? journey = philosophy.WesternJourney;
+        var player = run.Players.Count == 1 ? run.Players[0] : null;
         PlatoWholeArrangement? canonical = TryGetCanonicalEvent();
         PlatoWholeArrangementState? saved = philosophy.PlatoWholeArrangement;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
@@ -55,6 +56,10 @@ internal static class PlatoWholeArrangementPatch
             journey?.CompletedEdgeIds.Contains("WESTERN_EDGE_008") == true,
             journey?.DeclinedFixedActs.Contains(2) == true,
             journey?.CompletedEdgeIds.Contains(PlatoWholeArrangementState.CompletionEdgeId) == true,
+            LaterActRelicEligibilityRuntime.IsEligible(
+                player,
+                LaterActCandidateIds.Plato,
+                run.CurrentActIndex),
             saved is not null,
             saved?.IsUsable() == true,
             saved?.Closed == true,
