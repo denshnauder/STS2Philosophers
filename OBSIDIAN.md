@@ -4,14 +4,14 @@
 
 ## 当前边界
 
-- 旧独立 Vault `S:\01_Workspace\Obsidian\STS2mod\STS2 Mod 开发` 与 Google Drive 副本只作待迁移资料或只读归档。不要向它们写新的当前设计，不做手工双向同步，也不删除或覆盖旧资料。
-- `docs/` 尚未包含全部旧资料。迁移与版本分叉核对、Drive 只读归档、旧路径退役分别由独立 Linear Issue 处理；普通功能任务不得顺手宣称迁移完成。
+- 旧独立 Vault `S:\01_Workspace\Obsidian\STS2mod\STS2 Mod 开发` 与 Google Drive 副本只作研究、历史分叉、附件和恢复备份。不要向它们写新的当前设计，不做手工双向同步，也不删除或覆盖未核实资料。
+- `docs/` 不追求复制全部旧资料；当前设计入口和高频研究已迁入，完整来源→去向与外部保留项见 `docs/design/current/99迁移清单.md`。Drive 差异历史的逐篇合流和旧路径退役仍由各自 Linear Issue 处理。
 - `docs/.obsidian/` 是本机界面配置，默认不提交；只有明确授权共享 Vault 配置时才纳入 Git。
 - `docs/issues/ACTIVE.md` 与 `docs/issues/RESUME.md` 是迁移前历史，禁止据此领取或恢复任务。
 
 ## 写入规则
 
-- 当前玩法、人物和路线设计写入 `docs/design/` 的现有对应入口；实现与部署事实写入 `README.md` 或 `DEVELOPMENT.md`。
+- 当前玩法、人物和路线设计写入 `docs/design/current/` 的唯一对应入口；实现与部署事实写入 `README.md` 或 `DEVELOPMENT.md`。`docs/design/` 根目录原有文件只作支撑证据、研究或历史镜像。
 - 尚未完成迁移的旧镜像必须明确标注“历史”“候选”或“迁移待核对”，其中的旧“下一步”不构成授权。
 - 默认更新现有文件，不创建 Dxxx 过程页。只有现有结构确实无法承载且当前 Issue 明确需要时才新建 Markdown。
 - 只有真实中断时才维护简短执行恢复点；正常启动、空队列和已完成任务不读写恢复文件。
