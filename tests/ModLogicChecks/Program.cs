@@ -19,6 +19,7 @@ PlatoWholeArrangementChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
 ParmenidesInquiryChecks.Run();
+AristotleCivicInquiryChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
 HanFeiPublicStandardChecks.Run();
