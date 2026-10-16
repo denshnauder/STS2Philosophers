@@ -155,9 +155,13 @@ public abstract class WesternPracticeRelic : RelicModel
     public override CardLocation ModifyCardPlayResultLocation(
         CardModel card, bool isAutoPlay, ResourceInfo resources, CardLocation cardLocation)
     {
-        if (ProblemId != WesternEntryPracticeState.BeingAndChange || card.Owner != Owner || !IsSoleDoctrine)
+        if (card.Owner != Owner || !IsSoleDoctrine)
             return cardLocation;
         ResolveTrackedCards();
+        if (ProblemId == WesternEntryPracticeState.VirtueAndHappiness)
+            return !isAutoPlay && ReferenceEquals(card, _practiceCard)
+                ? cardLocation with { pileType = PileType.Exhaust } : cardLocation;
+        if (ProblemId != WesternEntryPracticeState.BeingAndChange) return cardLocation;
         if (!ReferenceEquals(card, _currentCard)) return cardLocation;
         // The engine freezes the result pile before BeforeCardPlayed, and after moving to Play.
         // Freeze the draw entitlement here too: effects during OnPlay cannot create it retroactively.
@@ -198,20 +202,6 @@ public abstract class WesternPracticeRelic : RelicModel
         _costQuotes[card] = new(cost, card.EnergyCost.CostsX, change.Effect);
         modifiedCost = change.Apply(cost);
         return change.Effect != WesternEntryCostEffect.None && modifiedCost != cost;
-    }
-
-    public override Task BeforeCardPlayed(CardPlay cardPlay)
-    {
-        if (cardPlay.Player != Owner || !IsSoleDoctrine)
-            return Task.CompletedTask;
-
-        ResolveTrackedCards();
-        if (cardPlay.IsAutoPlay) return Task.CompletedTask;
-
-        if (ReferenceEquals(cardPlay.Card, _practiceCard))
-            cardPlay.Card.ExhaustOnNextPlay = true;
-
-        return Task.CompletedTask;
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -421,7 +411,8 @@ public abstract class WesternPracticeRelic : RelicModel
         if (ProblemId == WesternEntryPracticeState.BeingAndChange && _currentCard is null
             && Practice.CurrentCardModelId.Length > 0)
             Practice.ObserveTrackedCardDeparture(true, false);
-        _practiceCard = ResolveTrackedCard(_practiceCard, Practice.PracticeCardModelId, allowRestore);
+        _practiceCard = ResolveTrackedCard(_practiceCard, Practice.PracticeCardModelId, allowRestore,
+            allowPlayPile: true);
         _restoreTrackedCards = false;
     }
 

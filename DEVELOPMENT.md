@@ -40,6 +40,14 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 
 10条完整决策路径及准备／提交保存边界、错误路线、已提交边重入、非法阶段、未知版本、旧档、双语与资格检查通过；完整既有逻辑检查通过。`VerifyMod.ps1` 于10:05完成Release零警告零错误及PCK加载／纹理检查，首次因游戏运行停止部署；用户确认退出后，重新检查进程并安全部署同一批已验证产物，三文件SHA256一致，报告见 `bin/Release/net9.0/verification.md`。DLL为 `11F1D25F5435E5152316171AF2880FF3A9B03A558A219959B3FBE456D90E2816`，PCK为 `D0113B7E27DDB6AB25B0063DD2E97CBD1CEC02E0B0E89C8F40AA954196172B22`，清单为 `A828CA96B92B0BBEBF2E1DCCDEC9F9448C6EDBEB3A24F3878A0F92398E81B9A4`。旧部署备份位于 `bin/deploy_backups/enc106_20261016_100509/`，可回退；验证后仅调整记录，未重复构建。当前尚无本事件的人工游戏体验证据。
 
+## ENC-112 苏格拉底用途核对与砝码修复（2026年10月16日）
+
+当前范围见 [`01苏格拉底当前设计`](docs/design/current/west/01苏格拉底当前设计.md)：同一入口内知识／德性互斥，现有诘问杯、审思砝码及各自后继满足本票既定用途；休眠的试授、撤离及C3协议不追加接入。README只明确“手动打出”条件，没有新增收益或改数值。
+
+核对本机原生 `CardModel` 证实：牌先进入Play堆，再确定 `resultLocation`／`CardPlay.ResultPile`，随后才调用 `BeforeCardPlayed`。砝码旧实现既在过晚的回调设置 `ExhaustOnNextPlay`，又只在手牌堆保留实例引用，可能丢失选中实例并漏掉消耗。现复用已存在的原生 `ModifyCardPlayResultLocation` 决定该实例的手动消耗去向，Play堆期间保留同一引用，结算后清除承诺；自动出牌不强制消耗，不追踪同名副本。没有新增存档字段、通用包装层或框架，继续使用RitsuLib 0.6.2与既有适配器。
+
+既有纯逻辑检查通过，包含互斥入口、砝码等待降费／消耗承诺与保存边界；它们不证明原生适配器的实际游戏体验。Release零警告零错误，PCK加载／纹理检查通过。首次部署因游戏运行及用户暂缓要求停止；用户恢复工作后，核对代码和产物哈希未变、游戏未运行，安全部署同批三文件并核对一致，不重复构建。旧部署回退点为 `bin/deploy_backups/enc112_20261016_101518/`，已验证产物及更新报告保存在 `bin/delivery/enc112_verified/`。DLL为 `FFE4661B91A73D2DDB2D2C6D2032BBBA067376692FC4D0E1710A39F65BDE5429`，PCK与清单同ENC-106。原有两份无关人物文档修改及tmp未改变、未暂存；没有改玩家存档或启动游戏。
+
 ## 开局事实检查
 
 运行 node tools/design/StartingHandOpportunityChecks.cjs，读取 docs/design/native_starting_facts.json，枚举五个原始牌组共1800个首手组合的直接格挡能力。事实绑定本机原生DLL哈希，仅摘录数据；原生反编译源码留在忽略目录bin/design/native。范围排除进阶额外牌、升级、额外遗物与状态变化；不模拟完整战斗、星辰或Osty，不把组合比例当游戏触发率。此开发数据不嵌入PCK，单独更新时无需MOD构建。当前解释边界以 [`docs/design/current/west/01苏格拉底当前设计.md`](docs/design/current/west/01苏格拉底当前设计.md) 为准；Drive 的“开局表达机会”只作历史来源。
