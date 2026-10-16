@@ -6,7 +6,17 @@
 
 正常任务直接查询 Linear 授权、检查 Git 工作区并读取该 Issue 所需文件；不执行固定恢复仪式，不读迁移前 `ACTIVE`／`RESUME` 队列，也不按旧 Dxxx“下一步”自行找工作。只有真实中断且已有明确恢复点时才读取它；普通交付完成后直接回到 Linear 队列。
 
-仓库 `docs/` 是 Obsidian Vault 和当前设计唯一写入目标；当前入口见 [`docs/design/current/00当前设计索引.md`](docs/design/current/00当前设计索引.md)。旧独立 Vault 与 Google Drive 只作研究、历史分叉、附件和恢复备份，不新增当前设计或手工同步。来源、去向、外部保留项与未合流差异见 [`docs/design/current/99迁移清单.md`](docs/design/current/99迁移清单.md)；标有 G 盘真源、旧任务状态或历史下一步的旧段落只作证据，不能覆盖 Linear、当前 main、README 和当前入口。
+GitHub 仓库 `docs/` 是现行设计与版本化文档的唯一写入目标；当前入口见 [`docs/design/current/00当前设计索引.md`](docs/design/current/00当前设计索引.md)。项目不再使用 Obsidian，不维护 Vault、Remotely Save、G/S 同步或每批写回 Drive。Google Drive 保存研究资料、附件和必要历史存档。来源、去向和外部保留项见 [`docs/design/current/99迁移清单.md`](docs/design/current/99迁移清单.md)；旧段落中的 G 盘真源、同步指令、任务状态或历史下一步只作证据，不能覆盖 Linear、当前 main、README 和当前入口。
+
+Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`In Progress` 优先恢复；`In Review` 等待明确验收；`Done`、`Canceled` 和 `Duplicate` 不领取。父任务同样进入队列，先检查子项和完成条件；选择顺序为依赖、优先级、创建时间，不额外按 AutoRun、其他标签或本人指派过滤。完成一个交付后重新查询，没有可执行任务就停止；Linear 不可访问时，只能凭真实中断记录继续此前已授权的同一进行中 Issue。
+
+### ENC-190 工作流退役与自动接续核对（2026年10月16日）
+
+本机 `C:/Users/35588/.codex/automations/sts2/automation.toml` 的既有“STS2 持续推进”提示原先要求从 Obsidian 的 `00执行状态.md` 恢复，禁止读写 Linear，并尝试 Remotely Save；这些规则已通过应用工具替换为上面的 Linear 授权流程。更新后读回核对提示内容、任务 ID、目标会话及每小时频率，状态仍为原有的 `PAUSED`。本次交互执行已验证无 AutoRun 标签的 ENC-190 能从 Todo 领取；未启用或触发定时运行，不能据此声称后台自动执行已验证。暂停调度本身不会阻塞当前交互任务。
+
+旧 `S:/01_Workspace/Obsidian/STS2mod/STS2 Mod 开发`、G 盘历史真源以及 `docs/` 的 Vault 用法均已退役；不从这些路径恢复或写回。仓库脚本未发现旧路径写入、同步或按 AutoRun 过滤的执行器；研究导入脚本只按显式输入目录读取资料并写入仓库配置，不是同步入口。本机 Windows 计划任务中未发现匹配本项目或旧同步流程的任务。
+
+本机遗留 `docs/.obsidian/` 只有四个基础设置文件，未发现插件目录；仍由 `.gitignore` 排除，不删除用户设置。旧 S 盘及 G 盘项目位置的 `.obsidian/` 未发现。其他设备或其他路径的软件配置未核验：若仍有指向旧项目的 Remotely Save 或双向同步，需要在原配置所在应用停用；本票未改账号、认证、远端路径或删除旧资料。退役摘要保留在 `OBSIDIAN.md`，不再列为日常指引。
 
 设计优先于代码。自动检查只证明实现符合已写规则，不能证明思想转译、可玩性、路线差异或正式呈现成立。先完成具体选择、代价、表达机会、反例与制作成本，再实施相称的最小内容；试玩反馈另开 Issue，不作为已验证并部署交付的闸门。
 
@@ -78,7 +88,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 
 `HanFeiPublicStandardState`把页面、预先公开的数量／公共存量标准、最终荀子／韩非路线、规则撤回历史和关闭状态保存在共享局内状态。每次选择先保存 `PendingAction`，再提交并二次保存；读档只重放同一动作。坚持荀子会完成情境判断终点；执行预先公开的标准会转向韩非；看见个案后撤回会回到荀子但保留撤回历史。所有结果都不发数值奖励、不替换绳墨，也不因用户尚未试玩而保持未完成。
 
-以上是 Phase 1 开始时的兼容基线，不代表未来动态候选架构；详细设计状态与未决定问题以 Obsidian 的 `02想法与机制/02赐福系统` 和活动问题队列为准。
+以上是 Phase 1 开始时的兼容基线，不代表未来动态候选架构；当前设计见 `docs/design/current/00当前设计索引.md`，任务和待决问题以 Linear 为准。
 
 ## 本机配置
 
@@ -206,7 +216,7 @@ Windows 日志位置：
 
 ## 西哲W1基础
 
-`config/western_routes.json`与`WesternRouteCatalog`登记七问题六入口。ENC-12后，西哲不再拥有独立候选命名空间：`PhilosophersGazeActOneCandidatePolicy`把三位东哲和六位西哲登记为一个九人池，用`ACT_ONE_THINKERS`保存三人组合；`WesternEntryPolicy`只允许统一候选中实际出现的人物提供其既定问题。旧`WESTERN_ACT_ONE_THINKERS`存档字段不再读取，也不会与当前三人集合拼接。后续阶段见Obsidian的`10西方思想流派/00西方思想流派索引`；旧`10西哲路线实现`已归入历史推演。
+`config/western_routes.json`与`WesternRouteCatalog`登记七问题六入口。ENC-12后，西哲不再拥有独立候选命名空间：`PhilosophersGazeActOneCandidatePolicy`把三位东哲和六位西哲登记为一个九人池，用`ACT_ONE_THINKERS`保存三人组合；`WesternEntryPolicy`只允许统一候选中实际出现的人物提供其既定问题。旧`WESTERN_ACT_ONE_THINKERS`存档字段不再读取，也不会与当前三人集合拼接。后续阶段见 `docs/design/current/west/00西哲当前路线.md`；旧 `10西哲路线实现` 只保留历史推演。
 
 ## 西哲研究基线导入
 

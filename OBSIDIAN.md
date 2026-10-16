@@ -1,19 +1,19 @@
-# 仓库 docs Obsidian Vault
+# Obsidian 工作流退役说明
 
-仓库 `docs/` 已作为本项目新的 Obsidian Vault，也是新增当前设计的唯一写入位置。Linear 仍是任务、依赖、优先级和授权的唯一真源；Git 同时保存代码事实与设计文档事实。
+2026年10月16日，按 Linear ENC-190 的最新决定，STS2 Mod 不再使用 Obsidian。本文件只保留旧路径和工作流的退役事实，不是启动、恢复、文档编辑或同步的前置步骤。
 
-## 当前边界
+## 当前入口
 
-- 旧独立 Vault `S:\01_Workspace\Obsidian\STS2mod\STS2 Mod 开发` 与 Google Drive 副本只作研究、历史分叉、附件和恢复备份。不要向它们写新的当前设计，不做手工双向同步，也不删除或覆盖未核实资料。
-- `docs/` 不追求复制全部旧资料；当前设计入口和高频研究已迁入，完整来源→去向与外部保留项见 `docs/design/current/99迁移清单.md`。Drive 差异历史的逐篇合流和旧路径退役仍由各自 Linear Issue 处理。
-- `docs/.obsidian/` 是本机界面配置，默认不提交；只有明确授权共享 Vault 配置时才纳入 Git。
-- `docs/issues/ACTIVE.md` 与 `docs/issues/RESUME.md` 是迁移前历史，禁止据此领取或恢复任务。
+- [AGENTS.md](AGENTS.md)：开发与 Linear 授权规则，Todo 无需 AutoRun 标签即可领取。
+- [当前设计索引](docs/design/current/00当前设计索引.md)：GitHub `docs/` 是现行设计与版本化文档的唯一写入目标，使用仓库相对链接。
+- [DEVELOPMENT.md](DEVELOPMENT.md)：技术事实与本机自动接续配置核对；原定时任务仍暂停，未宣称已启用。
+- [迁移清单](docs/design/current/99迁移清单.md)：已完成迁移、归档和保留在 Drive 的研究资料、附件与历史证据。
 
-## 写入规则
+## 已废止的入口与要求
 
-- 当前玩法、人物和路线设计写入 `docs/design/current/` 的唯一对应入口；实现与部署事实写入 `README.md` 或 `DEVELOPMENT.md`。`docs/design/` 根目录原有文件只作支撑证据、研究或历史镜像。
-- 尚未完成迁移的旧镜像必须明确标注“历史”“候选”或“迁移待核对”，其中的旧“下一步”不构成授权。
-- 默认更新现有文件，不创建 Dxxx 过程页。只有现有结构确实无法承载且当前 Issue 明确需要时才新建 Markdown。
-- 只有真实中断时才维护简短执行恢复点；正常启动、空队列和已完成任务不读写恢复文件。
-- 当前设计入口保留三分钟摘要：当前结论、玩家流程、取舍、界面与素材成本、已完成与未完成、准确下一步。历史证据保留，但不得冒充当前状态。
-- 内容不同的同名笔记不得自动覆盖或删除；只有具备哈希证据的完全重复副本才能自动清理。
+- `S:\01_Workspace\Obsidian\STS2mod\STS2 Mod 开发` 的独立 Vault、G 盘旧维护真源及仓库 `docs/` 的 Vault 用法全部退役，不删除或覆盖未经核验的原始资料。
+- 不维护 Remotely Save、G/S 同步、每批写回 Drive、Obsidian 双链或插件配置；Google Drive 不作为实时设计真源。
+- 不再通过 Obsidian 的 `00执行状态.md` 或旧 `docs/issues/ACTIVE.md`、`RESUME.md` 恢复任务，不再使用禁止访问 Linear 的旧自动提示。
+- `docs/.obsidian/` 是遗留本机设置，继续忽略，不作为项目依赖，也不建立共享配置维护流程。本机未发现该项目的 Remotely Save 插件；其他设备或其他路径若仍配置旧同步，需在原应用停用。
+
+历史文件中保留的旧路径、Gxx 编号、“维护真源”和同步记录只用于追溯，不能重新启用上述流程。真实中断恢复仍遵守 AGENTS.md；正常任务直接查询 Linear。
