@@ -14,6 +14,7 @@ internal sealed class PhilosophyRunState
     public PlatoWholeArrangementState? PlatoWholeArrangement { get; set; }
     public EpicurusSharedMarginState? EpicurusSharedMargin { get; set; }
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
+    public ParmenidesInquiryState? ParmenidesInquiry { get; set; }
     public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
     public HanFeiPublicStandardState? HanFeiPublicStandard { get; set; }
     public DiogenesStaySwitchEntryRecord? DiogenesStaySwitchEntry { get; set; }
@@ -44,6 +45,7 @@ internal sealed class PhilosophyRunState
         || PlatoWholeArrangement is not null
         || EpicurusSharedMargin is not null
         || SextusOpposedAppearances is not null
+        || ParmenidesInquiry is not null
         || DescartesMethodicReconstruction is not null
         || HanFeiPublicStandard is not null
         || DiogenesStaySwitchEntry is not null
@@ -207,6 +209,7 @@ internal sealed class PhilosophyRunState
         PlatoWholeArrangement?.NormalizeAfterLoad();
         EpicurusSharedMargin?.NormalizeAfterLoad();
         SextusOpposedAppearances?.NormalizeAfterLoad();
+        ParmenidesInquiry?.NormalizeAfterLoad();
         DescartesMethodicReconstruction?.NormalizeAfterLoad();
         HanFeiPublicStandard?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
