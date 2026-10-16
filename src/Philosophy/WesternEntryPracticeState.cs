@@ -63,6 +63,11 @@ internal sealed class WesternEntryPracticeState
     public List<string> OpeningCardModelIds { get; set; } = [];
 
     public string CurrentCardModelId { get; set; } = string.Empty;
+    // Nullable distinguishes old version-1 saves from this additive Heraclitus rule.
+    public int? FlowRuleVersion { get; set; }
+    public bool FlowDrawClaimed { get; set; }
+    public WesternPracticeCardKind FlowCardKind { get; set; }
+    public int FlowPlayedKinds { get; set; }
     public string PracticeCardModelId { get; set; } = string.Empty;
     public int PracticeWaits { get; set; }
 
@@ -102,6 +107,10 @@ internal sealed class WesternEntryPracticeState
         TurnClosed = false;
         RetainsResolvedTurn = 0;
         CurrentCardModelId = string.Empty;
+        FlowRuleVersion = ProblemId == BeingAndChange ? 1 : null;
+        FlowDrawClaimed = false;
+        FlowCardKind = WesternPracticeCardKind.Other;
+        FlowPlayedKinds = 0;
         LawDiscountUsed = false;
         LawSurchargeUsed = false;
         OtherIntentTurn = 0;
@@ -157,11 +166,36 @@ internal sealed class WesternEntryPracticeState
 
     public bool ObserveDraw(string cardModelId, WesternPracticeCardKind kind, bool alreadyExhausts)
     {
-        if (ProblemId != BeingAndChange || !CanAct() || CurrentCardModelId.Length > 0
+        if (ProblemId != BeingAndChange || !CanAct() || FlowRuleVersion != 1 || FlowDrawClaimed
+            || RetainsResolvedTurn == Turn
             || string.IsNullOrWhiteSpace(cardModelId) || alreadyExhausts
             || kind is not (WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill)) return false;
         CurrentCardModelId = cardModelId;
+        FlowDrawClaimed = true;
+        FlowCardKind = kind;
         return true;
+    }
+
+    public bool CanRetainCurrent => ProblemId == BeingAndChange && CanAct()
+        && FlowRuleVersion == 1 && FlowDrawClaimed && CurrentCardModelId.Length > 0;
+
+    public bool CanReleaseCurrent => CanRetainCurrent && (FlowCardKind switch
+    {
+        WesternPracticeCardKind.Attack => (FlowPlayedKinds & 2) != 0,
+        WesternPracticeCardKind.Skill => (FlowPlayedKinds & 1) != 0,
+        _ => false,
+    });
+
+    // Old combat records cannot prove a once-per-turn claim or an opposing play.
+    // Suspend only this turn's marker; the next genuine BeginTurn starts the new rule.
+    internal void SuspendLegacyFlow()
+    {
+        if (ProblemId != BeingAndChange || FlowRuleVersion is not null) return;
+        CurrentCardModelId = string.Empty;
+        FlowCardKind = WesternPracticeCardKind.Other;
+        FlowPlayedKinds = 0;
+        FlowDrawClaimed = CombatActive && Turn > 0;
+        FlowRuleVersion = FlowDrawClaimed ? 1 : null;
     }
 
     public bool ObserveOtherIntent(uint combatId, bool intendsAttack)
@@ -265,9 +299,17 @@ internal sealed class WesternEntryPracticeState
             }
         }
 
-        bool drawOne = ProblemId == BeingAndChange && trackedCurrent && CurrentCardModelId == cardModelId;
+        bool currentPlayed = ProblemId == BeingAndChange && trackedCurrent && CurrentCardModelId == cardModelId;
+        bool drawOne = currentPlayed && CanReleaseCurrent;
         bool practicePlayed = ProblemId == VirtueAndHappiness && trackedPractice && PracticeCardModelId == cardModelId;
-        if (drawOne) CurrentCardModelId = string.Empty;
+        if (currentPlayed) ObserveTrackedCardDeparture(true, false);
+        if (ProblemId == BeingAndChange && FlowRuleVersion == 1)
+            FlowPlayedKinds |= kind switch
+            {
+                WesternPracticeCardKind.Attack => 1,
+                WesternPracticeCardKind.Skill => 2,
+                _ => 0,
+            };
         if (practicePlayed)
         {
             PracticeCardModelId = string.Empty;
@@ -312,7 +354,11 @@ internal sealed class WesternEntryPracticeState
 
     public void ObserveTrackedCardDeparture(bool trackedCurrent, bool trackedPractice)
     {
-        if (trackedCurrent) CurrentCardModelId = string.Empty;
+        if (trackedCurrent)
+        {
+            CurrentCardModelId = string.Empty;
+            FlowCardKind = WesternPracticeCardKind.Other;
+        }
         if (trackedPractice)
         {
             PracticeCardModelId = string.Empty;
@@ -324,9 +370,9 @@ internal sealed class WesternEntryPracticeState
     {
         if (!CanAct() || RetainsResolvedTurn == Turn) return default;
         RetainsResolvedTurn = Turn;
-        bool retainCurrent = ProblemId == BeingAndChange && CurrentCardModelId.Length > 0 && currentStillInHand;
+        bool retainCurrent = CanRetainCurrent && currentStillInHand;
         bool retainPractice = ProblemId == VirtueAndHappiness && PracticeCardModelId.Length > 0 && practiceStillInHand;
-        if (!retainCurrent) CurrentCardModelId = string.Empty;
+        if (!retainCurrent) ObserveTrackedCardDeparture(true, false);
         if (retainPractice) PracticeWaits++;
         else if (ProblemId == VirtueAndHappiness)
         {
@@ -368,10 +414,20 @@ internal sealed class WesternEntryPracticeState
             || ConventionFormedTurn < 0 || ConventionFormedTurn > Turn
             || !Enum.IsDefined(OpeningStage) || !Enum.IsDefined(LawKind)
             || OpeningCardModelIds is null || RecordedPlayIds is null || TurnCardCounts is null
+            || CurrentCardModelId is null || PracticeCardModelId is null || ConventionCardModelId is null
             || OpeningCardModelIds.Any(string.IsNullOrWhiteSpace)
             || RecordedPlayIds.Any(string.IsNullOrWhiteSpace)
             || RecordedPlayIds.Distinct(StringComparer.Ordinal).Count() != RecordedPlayIds.Count
             || TurnCardCounts.Any(pair => string.IsNullOrWhiteSpace(pair.Key) || pair.Value <= 0)) return false;
+
+        if (FlowRuleVersion is not (null or 1) || !Enum.IsDefined(FlowCardKind)
+            || FlowPlayedKinds is < 0 or > 3) return false;
+        if (FlowRuleVersion == 1 && (ProblemId != BeingAndChange || Turn < 1
+            || (CurrentCardModelId.Length > 0 && (!FlowDrawClaimed
+                || FlowCardKind is not (WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill)))
+            || (CurrentCardModelId.Length == 0 && FlowCardKind != WesternPracticeCardKind.Other))) return false;
+        if (FlowRuleVersion is null && (FlowDrawClaimed || FlowCardKind != WesternPracticeCardKind.Other
+            || FlowPlayedKinds != 0)) return false;
 
         int openingMaximum = ProblemId == KnowledgeAndDoubt ? 2 : ProblemId == VirtueAndHappiness ? 1 : 0;
         if (OpeningCardModelIds.Count > openingMaximum
@@ -385,6 +441,7 @@ internal sealed class WesternEntryPracticeState
             return Turn == 0 && !TurnClosed && RetainsResolvedTurn == 0
                 && OpeningStage == WesternOpeningStage.NotStarted && OpeningCardModelIds.Count == 0
                 && CurrentCardModelId.Length == 0 && PracticeCardModelId.Length == 0 && PracticeWaits == 0
+                && FlowRuleVersion is null && !FlowDrawClaimed && FlowPlayedKinds == 0
                 && LawKind == WesternPracticeCardKind.Other && !LawDiscountUsed && !LawSurchargeUsed
                 && OtherCombatId is null && OtherBoundTurn == 0 && OtherIntentTurn == 0 && OtherIntendsAttack is null
                 && !OtherResponseUsed && CategoryBucket == -1 && CategoryDiscountsRemaining == 0
@@ -415,6 +472,10 @@ internal sealed class WesternEntryPracticeState
         OpeningStage = WesternOpeningStage.NotStarted;
         OpeningCardModelIds = [];
         CurrentCardModelId = string.Empty;
+        FlowRuleVersion = null;
+        FlowDrawClaimed = false;
+        FlowCardKind = WesternPracticeCardKind.Other;
+        FlowPlayedKinds = 0;
         PracticeCardModelId = string.Empty;
         PracticeWaits = 0;
         LawKind = WesternPracticeCardKind.Other;

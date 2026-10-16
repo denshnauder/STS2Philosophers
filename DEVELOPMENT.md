@@ -22,6 +22,16 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 
 新增通用基础设施前先检查当前锁定版本的 RitsuLib、游戏原生公开 API 和仓库现有适配器。只有缺少能力、语义或兼容性不符，或关键原子性／恢复要求无法满足时才自建，并在对应 Issue 记录理由。业务状态机允许自研；保持 RitsuLib 为唯一主框架，不叠加 BaseLib，不以减少代码量换取存档、SL、幂等或兼容风险。
 
+## ENC-105 赫拉克利特琴弓（2026年10月16日）
+
+当前设计为 [`09赫拉克利特当前设计`](docs/design/current/west/09赫拉克利特当前设计.md)。复用原有 `HeraclitusLyre`、`HERACLITUS_LYRE`、图标与邀请，不修改九人池、路线关系或后继资格。起手抽牌绑定一次具体实例，真实手动相反类型使其具备消耗换牌资格；直接使用、保留到下回合和消耗换牌各有独立代价。
+
+检查锁定 RitsuLib 0.6.2 与现有适配器后，沿用原生 `SavedProperty` 和既有 `PracticePayload`，没有新增通用存档层。载荷版本仍为1，新增可空规则版本与本回合事实；旧活动载荷无法证明一次抽牌预算与相反类型时，仅暂停当前标记，到下一真实回合恢复。其他六问题的默认字段与业务行为保持兼容。未知或损坏状态不产生新收益；没有读写玩家实际存档，也没有迁移共享路线槽。
+
+本机原生 DLL SHA256 为 `0861BFA1DF347538D932F22D580E75420F08082792EB914E53B4882764ACDBE9`。定向读取证实 `fromHandDraw` 仅指回合开始抽牌，出牌结果堆在 `BeforeCardPlayed` 之前已确定，且牌已进入 Play 堆。因此琴弓通过 `ModifyCardPlayResultLocation` 提前冻结消耗去向，在 Play 堆保持同一实例引用；之后只在同一真实手动结算、最终结果为消耗且机会未消费时抽1。`TryModifyKeywordsInCombat`、`NCard.UpdateVisuals`、`ExtraHoverTips` 与 `CardHoverTip` 负责原生保留显示、标记实例和计数1／2提示。悬浮只读取状态，不领取或恢复机会；弃牌、自动出牌和同名副本不重开窗口。
+
+验证：254种不同短出牌顺序及保留、同名副本、自动行为、重复回调、旧／损坏载荷和双语提示检查通过；完整既有逻辑检查通过。`tools/VerifyMod.ps1` 于本地08:51完成 Release 零警告零错误、PCK 加载／纹理校验和游戏未运行时的安全部署，三文件 SHA256 一致，报告在 `bin/Release/net9.0/verification.md`。旧部署三文件和哈希保留于 `bin/deploy_backups/enc105_20261016_085132/`，可回退。构建使用本工作区，已有两份人物文档修改保持原样且不嵌入程序集或PCK，`tmp/` C# 被项目排除；不把工作区描述为纯净检出。未启动游戏或执行人工实机验收，后续体验问题独立登记。
+
 ## 开局事实检查
 
 运行 node tools/design/StartingHandOpportunityChecks.cjs，读取 docs/design/native_starting_facts.json，枚举五个原始牌组共1800个首手组合的直接格挡能力。事实绑定本机原生DLL哈希，仅摘录数据；原生反编译源码留在忽略目录bin/design/native。范围排除进阶额外牌、升级、额外遗物与状态变化；不模拟完整战斗、星辰或Osty，不把组合比例当游戏触发率。此开发数据不嵌入PCK，单独更新时无需MOD构建。当前解释边界以 [`docs/design/current/west/01苏格拉底当前设计.md`](docs/design/current/west/01苏格拉底当前设计.md) 为准；Drive 的“开局表达机会”只作历史来源。

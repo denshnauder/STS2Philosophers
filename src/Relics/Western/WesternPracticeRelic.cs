@@ -6,9 +6,11 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
@@ -28,6 +30,7 @@ public abstract class WesternPracticeRelic : RelicModel
     private HashSet<object>? _callbacks;
     private CardModel? _currentCard;
     private CardModel? _practiceCard;
+    private CardModel? _flowReleasePrepared;
     private bool _restoreTrackedCards;
     private readonly Dictionary<CardModel, CostQuote> _costQuotes = new(ReferenceEqualityComparer.Instance);
 
@@ -41,7 +44,8 @@ public abstract class WesternPracticeRelic : RelicModel
     public override bool ShowCounter => CombatManager.Instance.IsInProgress && Practice.CombatActive;
     public override int DisplayAmount => ProblemId switch
     {
-        WesternEntryPracticeState.BeingAndChange => Practice.CurrentCardModelId.Length > 0 ? 1 : 0,
+        WesternEntryPracticeState.BeingAndChange => Practice.CurrentCardModelId.Length == 0 ? 0
+            : Practice.CanReleaseCurrent ? 2 : 1,
         WesternEntryPracticeState.KnowledgeAndDoubt =>
             Practice.OpeningStage is WesternOpeningStage.Completed or WesternOpeningStage.Failed ? 1 : 0,
         WesternEntryPracticeState.VirtueAndHappiness => Practice.PracticeWaits,
@@ -57,6 +61,21 @@ public abstract class WesternPracticeRelic : RelicModel
             Practice.ConventionCardModelId.Length > 0 && !Practice.ConventionUsed ? 1 : 0,
         _ => 0,
     };
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips
+    {
+        get
+        {
+            if (ProblemId != WesternEntryPracticeState.BeingAndChange || !IsMutable
+                || Owner?.PlayerCombatState is null || !IsSoleDoctrine) return [];
+            string key = _currentCard is null ? (Practice.FlowDrawClaimed ? "spent" : "waiting")
+                : Practice.CanReleaseCurrent ? "ready" : "held";
+            List<IHoverTip> tips = [new HoverTip(new LocString("relics", "HERACLITUS_LYRE.tension.title"),
+                new LocString("relics", $"HERACLITUS_LYRE.tension.{key}"))];
+            if (_currentCard is not null) tips.Add(new CardHoverTip(_currentCard));
+            return tips;
+        }
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string PracticePayload
@@ -97,6 +116,7 @@ public abstract class WesternPracticeRelic : RelicModel
         {
             _callbacks = null;
             _currentCard = null;
+            _flowReleasePrepared = null;
             _costQuotes.Clear();
             InvokeDisplayAmountChanged();
         }
@@ -111,14 +131,50 @@ public abstract class WesternPracticeRelic : RelicModel
     {
         if (fromHandDraw
             && card.Owner == Owner
+            && card.Pile is { Type: PileType.Hand } drawnPile
             && IsSoleDoctrine
             && Practice.ObserveDraw(CardId(card), KindOf(card), card.Keywords.Contains(CardKeyword.Exhaust)))
         {
             _currentCard = card;
+            // Reuse the native keyword renderer, rather than adding an overlay or popup.
+            NCard.FindOnTable(card)?.UpdateVisuals(drawnPile.Type, CardPreviewMode.Normal);
             Flash();
             InvokeDisplayAmountChanged();
         }
 
+        return Task.CompletedTask;
+    }
+
+    public override bool TryModifyKeywordsInCombat(CardModel card, ISet<CardKeyword> keywords)
+    {
+        return ProblemId == WesternEntryPracticeState.BeingAndChange && IsSoleDoctrine
+            && card.Owner == Owner && ReferenceEquals(card, _currentCard) && Practice.CanRetainCurrent
+            && card.Pile?.Type == PileType.Hand && keywords.Add(CardKeyword.Retain);
+    }
+
+    public override CardLocation ModifyCardPlayResultLocation(
+        CardModel card, bool isAutoPlay, ResourceInfo resources, CardLocation cardLocation)
+    {
+        if (ProblemId != WesternEntryPracticeState.BeingAndChange || card.Owner != Owner || !IsSoleDoctrine)
+            return cardLocation;
+        ResolveTrackedCards();
+        if (!ReferenceEquals(card, _currentCard)) return cardLocation;
+        // The engine freezes the result pile before BeforeCardPlayed, and after moving to Play.
+        // Freeze the draw entitlement here too: effects during OnPlay cannot create it retroactively.
+        _flowReleasePrepared = !isAutoPlay && Practice.CanReleaseCurrent ? card : null;
+        return _flowReleasePrepared is not null ? cardLocation with { pileType = PileType.Exhaust } : cardLocation;
+    }
+
+    public override Task AfterCardChangedPiles(CardModel card, PileType oldPileType, AbstractModel? clonedBy)
+    {
+        if (ProblemId == WesternEntryPracticeState.BeingAndChange && ReferenceEquals(card, _currentCard)
+            && oldPileType == PileType.Hand && card.Pile?.Type is not (PileType.Hand or PileType.Play))
+        {
+            Practice.ObserveTrackedCardDeparture(true, false);
+            _currentCard = null;
+            _flowReleasePrepared = null;
+            InvokeDisplayAmountChanged();
+        }
         return Task.CompletedTask;
     }
 
@@ -152,8 +208,7 @@ public abstract class WesternPracticeRelic : RelicModel
         ResolveTrackedCards();
         if (cardPlay.IsAutoPlay) return Task.CompletedTask;
 
-        if (ReferenceEquals(cardPlay.Card, _currentCard)
-            || ReferenceEquals(cardPlay.Card, _practiceCard))
+        if (ReferenceEquals(cardPlay.Card, _practiceCard))
             cardPlay.Card.ExhaustOnNextPlay = true;
 
         return Task.CompletedTask;
@@ -171,7 +226,12 @@ public abstract class WesternPracticeRelic : RelicModel
         // captured before play instead of trying to recover a same-model copy from the hand.
         bool trackedCurrent = ReferenceEquals(cardPlay.Card, _currentCard);
         bool trackedPractice = ReferenceEquals(cardPlay.Card, _practiceCard);
-        string playId = $"{state.TurnNumber}:{cardPlay.PlayIndex}:{cardPlay.PlayCount}:{CardId(cardPlay.Card)}";
+        // Distinct same-model copies often have the same PlayIndex and PlayCount.
+        // The native CardPlay reference gate above identifies callbacks; the saved sequence
+        // keeps subsequent Heraclitus plays distinct after a payload is restored.
+        string playId = ProblemId == WesternEntryPracticeState.BeingAndChange
+            ? $"Flow:{state.TurnNumber}:{Practice.RecordedPlayIds.Count}"
+            : $"{state.TurnNumber}:{cardPlay.PlayIndex}:{cardPlay.PlayCount}:{CardId(cardPlay.Card)}";
 
         if (cardPlay.IsAutoPlay)
         {
@@ -204,7 +264,10 @@ public abstract class WesternPracticeRelic : RelicModel
         InvokeDisplayAmountChanged();
         if (!resolution.Counted) return;
 
-        if (resolution.DrawOne)
+        bool flowReleasePrepared = ReferenceEquals(cardPlay.Card, _flowReleasePrepared)
+            && cardPlay.ResultPile == PileType.Exhaust;
+        if (trackedCurrent) _flowReleasePrepared = null;
+        if (resolution.DrawOne && flowReleasePrepared)
         {
             Flash();
             await CardPileCmd.Draw(choiceContext, 1m, Owner);
@@ -353,17 +416,24 @@ public abstract class WesternPracticeRelic : RelicModel
     private void ResolveTrackedCards()
     {
         bool allowRestore = _restoreTrackedCards;
-        _currentCard = ResolveTrackedCard(_currentCard, Practice.CurrentCardModelId, allowRestore);
+        _currentCard = ResolveTrackedCard(_currentCard, Practice.CurrentCardModelId, allowRestore,
+            allowPlayPile: ProblemId == WesternEntryPracticeState.BeingAndChange);
+        if (ProblemId == WesternEntryPracticeState.BeingAndChange && _currentCard is null
+            && Practice.CurrentCardModelId.Length > 0)
+            Practice.ObserveTrackedCardDeparture(true, false);
         _practiceCard = ResolveTrackedCard(_practiceCard, Practice.PracticeCardModelId, allowRestore);
         _restoreTrackedCards = false;
     }
 
-    private CardModel? ResolveTrackedCard(CardModel? tracked, string cardModelId, bool allowRestore)
+    private CardModel? ResolveTrackedCard(CardModel? tracked, string cardModelId, bool allowRestore,
+        bool allowPlayPile = false)
     {
         if (Owner.PlayerCombatState is not { } combatState || string.IsNullOrWhiteSpace(cardModelId))
             return null;
         if (tracked is not null)
-            return combatState.Hand.Cards.Contains(tracked) && CardId(tracked) == cardModelId
+            return (combatState.Hand.Cards.Contains(tracked)
+                    || (allowPlayPile && tracked.Owner == Owner && tracked.Pile?.Type == PileType.Play))
+                && CardId(tracked) == cardModelId
                 ? tracked
                 : null;
         if (!allowRestore) return null;
@@ -383,6 +453,7 @@ public abstract class WesternPracticeRelic : RelicModel
         _callbacks = null;
         _currentCard = null;
         _practiceCard = null;
+        _flowReleasePrepared = null;
         _restoreTrackedCards = restoreTrackedCards;
         _costQuotes.Clear();
     }

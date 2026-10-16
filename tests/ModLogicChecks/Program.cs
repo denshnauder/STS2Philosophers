@@ -10,6 +10,7 @@ WesternResearchChecks.Run();
 WesternGraphChecks.Run();
 WesternGraphRevisionChecks.Run();
 WesternPracticeChecks.Run();
+HeraclitusLyreChecks.Run();
 SocratesBoundedCommitmentChecks.Run();
 SocratesBoundedCommitmentSaveChecks.Run();
 SocratesVirtueUpstreamRecordChecks.Run();

@@ -54,6 +54,7 @@ internal static class WesternPracticeChecks
             "Flow must mark only the first eligible non-exhaust Attack or Skill drawn each turn.");
         Check(RoundTrip(flow).CurrentCardModelId == "STRIKE",
             "Save/load must preserve the current-card fact without inventing a card instance.");
+        Play(flow, "F0", "DEFEND", WesternPracticeCardKind.Skill);
         WesternEntryPlayResolution flowPlay = Play(flow, "F1", "STRIKE", WesternPracticeCardKind.Attack,
             trackedCurrent: true);
         Check(flowPlay is { Counted: true, DrawOne: true, ExhaustPlayedCard: true }
@@ -64,11 +65,14 @@ internal static class WesternPracticeChecks
         Check(flow.RecordAutomaticPlay("F2", trackedCurrent: true, trackedPractice: false)
               && flow.CurrentCardModelId.Length == 0,
             "Automatic play must end the current opportunity without claiming the flow reward.");
+        Check(!flow.ObserveDraw("SECOND_DEFEND", WesternPracticeCardKind.Skill, false),
+            "Automatic departure must not reopen the first-draw window.");
+        flow.BeginTurn(3);
         flow.ObserveDraw("SECOND_DEFEND", WesternPracticeCardKind.Skill, false);
         WesternEntryRetainResolution flowRetain = flow.ResolveRetains(true, false);
         Check(flowRetain.RetainCurrent && !flow.ResolveRetains(true, false).Applied,
             "Keeping the current card must request retain only once.");
-        flow.BeginTurn(3);
+        flow.BeginTurn(4);
         Check(flow.CurrentCardModelId.Length == 0, "A retained current card must not remain current next turn.");
 
         WesternEntryPracticeState doubt = Start(WesternEntryPracticeState.KnowledgeAndDoubt);

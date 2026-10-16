@@ -16,8 +16,10 @@ internal static class WesternEntryPracticeStateCodec
         try
         {
             WesternEntryPracticePayload? saved = JsonSerializer.Deserialize<WesternEntryPracticePayload>(payload);
-            return saved is { Version: CurrentVersion, State: not null }
-                && saved.State.IsValidForRestore(problemId) ? saved.State : Fresh();
+            if (saved is not { Version: CurrentVersion, State: not null }
+                || !saved.State.IsValidForRestore(problemId)) return Fresh();
+            saved.State.SuspendLegacyFlow();
+            return saved.State;
         }
         catch (JsonException) { return Fresh(); }
     }
