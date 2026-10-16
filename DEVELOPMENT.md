@@ -56,6 +56,18 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 
 12条完整路径、两次保存边界、已提交路线重入、非法阶段／版本、旧档、不同问题来源排除与双语检查通过。`VerifyMod.ps1`于本地10:31完成Release零警告零错误、PCK加载／纹理校验及游戏未运行时安全部署，三文件SHA256一致；报告留在 `bin/delivery/enc113/verification.md`，旧部署回退点 `bin/deploy_backups/enc113_20261016_103128/`。DLL为 `DA524FF7FD19E2882E2C85F6463D6E18C025DACDADC13B41C298EF927327BC6D`，PCK为 `6E5CA5B0C90572B7302F69714CD646570CD678167C9C42ED77981F5A6D79863B`，清单同ENC-106。范畴石板此前已部署，本票不改其规则或资源；未为其他问题面扩入口，也未接入其他未授权人物。构建使用本工作区，原有两份无关文档不嵌入产物，tmp的C#被项目排除；均保持原样。未修改玩家存档，未启动游戏或执行人工体验。
 
+## ENC-191 沉思镜原生费用链回归（2026年10月16日）
+
+原生`PlayCardAction.ExecuteAction`先`SpendResources`，后`OnPlayWrapper`设置`CurrentTarget`；旧费用钩子用后者判目标，导致非攻击分支在扣费前失效。现优先读取当前原生出牌行动及其卡牌实例的目标，牌面同步预览与`CanPlayTargeting`以有异常清理的同步作用域传递原生目标，未指定时仅对唯一存活敌人作确定预览。只给单体敌方目标优惠，己方召唤物不计为敌人；原有技能分支和预算不改。RitsuLib 0.6.2和原生钩子没有费用目标参数，因此补充这两个窄UI／可支付性补丁，没有新存档层。悬浮提示披露当前分支与一次性机会。
+
+集成还复现公共适配器以同名牌的`PlayIndex/PlayCount`生成重复身份，导致第二次真实出牌不结算预算。现所有入口共用原生CardPlay引用防重与保存序号标识。旧载荷保持版本1及既有字段，历史ID仍可保留；不把临时引用保存进玩家档案。ENC-192需要独立复现惯例场景后单独关闭。
+
+`tests/NativeRuntimeChecks`引用本机锁定原生DLL与生产MOD程序集，真实调用原生CardEnergyCost→Hook→生产遗物→SpendResources／LoseEnergy，再按原生时序写目标、移至Play堆并触发遗物回调。Player壳、回合循环启动与网络卡牌身份表由反射搭建，以避开完整游戏／Godot日志启动；不替换费用或扣能量算法。原生预览方法和可支付性补丁由Harmony实际绑定，费用getter在相同同步目标作用域下检查；没有创建渲染NCard、执行完整GameAction调度／伤害动画或读写真实存档文件。保存覆盖仅为生产PracticePayload往返，不能声称实机重放或完整SL验收。
+
+失败证据在 `bin/delivery/enc191/before_fix.log`（第二回合费用仍1）及`before_shared_identity_fix.log`（已用机会未消费）；修复后同一链回归覆盖未锁定／唯一敌人／多敌人／己方单位、两种意图、选目标前后的费用与真实付款、0能量可支付性、重复回调、同名不同实例、跨回合、目标死亡与载荷恢复。运行命令为`dotnet run --project tests/NativeRuntimeChecks/NativeRuntimeChecks.csproj -c Release -p:DeployOnBuild=false`，已纳入VerifyMod；控制台的Sentry扩展未加载提示属于未启动Godot的已知覆盖边界。
+
+VerifyMod于本地16:49完成逻辑与原生托管集成检查、Release零警告零错误、PCK加载／纹理校验，游戏未运行时安全部署，三哈希一致。报告 `bin/delivery/enc191/verification.md`；回退点 `bin/deploy_backups/enc191_20261016_164850/`。DLL `4BAA4C600F973A5EFB9DCB247C5BF4C7CDB5FCC29589268B681FDFB3C59E3A1C`，PCK `5BAE4C7053595D091478761CDF95FCA80D7B14A22704C57AC21A39F47683A2F5`，清单同ENC-106。验证后仅更新记录，已有两份无关人物文档与tmp保持原样。本次修复已安装可用，尚无修复后人工实机体验。
+
 ## 开局事实检查
 
 运行 node tools/design/StartingHandOpportunityChecks.cjs，读取 docs/design/native_starting_facts.json，枚举五个原始牌组共1800个首手组合的直接格挡能力。事实绑定本机原生DLL哈希，仅摘录数据；原生反编译源码留在忽略目录bin/design/native。范围排除进阶额外牌、升级、额外遗物与状态变化；不模拟完整战斗、星辰或Osty，不把组合比例当游戏触发率。此开发数据不嵌入PCK，单独更新时无需MOD构建。当前解释边界以 [`docs/design/current/west/01苏格拉底当前设计.md`](docs/design/current/west/01苏格拉底当前设计.md) 为准；Drive 的“开局表达机会”只作历史来源。

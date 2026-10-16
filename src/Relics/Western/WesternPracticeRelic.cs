@@ -66,6 +66,16 @@ public abstract class WesternPracticeRelic : RelicModel
     {
         get
         {
+            if (ProblemId == WesternEntryPracticeState.SelfAndOther && IsMutable
+                && Owner?.PlayerCombatState is not null && IsSoleDoctrine)
+            {
+                string response = Practice.OtherCombatId is null ? "unbound"
+                    : Practice.OtherResponseUsed ? "spent"
+                    : Practice.Turn <= Practice.OtherBoundTurn ? "waiting"
+                    : Practice.OtherIntendsAttack == true ? "skill" : "target";
+                return [new HoverTip(new LocString("relics", "DESCARTES_THINKING_LENS.response.title"),
+                    new LocString("relics", $"DESCARTES_THINKING_LENS.response.{response}"))];
+            }
             if (ProblemId != WesternEntryPracticeState.BeingAndChange || !IsMutable
                 || Owner?.PlayerCombatState is null || !IsSoleDoctrine) return [];
             string key = _currentCard is null ? (Practice.FlowDrawClaimed ? "spent" : "waiting")
@@ -198,7 +208,8 @@ public abstract class WesternPracticeRelic : RelicModel
             cost,
             card.EnergyCost.CostsX,
             trackedPractice,
-            card.CurrentTarget?.CombatId);
+            (ProblemId == WesternEntryPracticeState.SelfAndOther
+                ? DescartesThinkingLensTargetContext.Resolve(card) : card.CurrentTarget)?.CombatId);
         _costQuotes[card] = new(cost, card.EnergyCost.CostsX, change.Effect);
         modifiedCost = change.Apply(cost);
         return change.Effect != WesternEntryCostEffect.None && modifiedCost != cost;
@@ -216,12 +227,10 @@ public abstract class WesternPracticeRelic : RelicModel
         // captured before play instead of trying to recover a same-model copy from the hand.
         bool trackedCurrent = ReferenceEquals(cardPlay.Card, _currentCard);
         bool trackedPractice = ReferenceEquals(cardPlay.Card, _practiceCard);
-        // Distinct same-model copies often have the same PlayIndex and PlayCount.
-        // The native CardPlay reference gate above identifies callbacks; the saved sequence
-        // keeps subsequent Heraclitus plays distinct after a payload is restored.
-        string playId = ProblemId == WesternEntryPracticeState.BeingAndChange
-            ? $"Flow:{state.TurnNumber}:{Practice.RecordedPlayIds.Count}"
-            : $"{state.TurnNumber}:{cardPlay.PlayIndex}:{cardPlay.PlayCount}:{CardId(cardPlay.Card)}";
+        // PlayIndex/PlayCount describe replays within one play, not a unique play.
+        // Reference gating rejects repeated callbacks; the saved sequence distinguishes
+        // separate same-model instances and survives a payload restore for every entry.
+        string playId = $"Entry:{state.TurnNumber}:{Practice.RecordedPlayIds.Count}";
 
         if (cardPlay.IsAutoPlay)
         {

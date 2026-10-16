@@ -37,6 +37,9 @@ try {
     $stage = 'Logic checks'
     & $dotnet run --project ./tests/ModLogicChecks/ModLogicChecks.csproj -c Release
     if ($LASTEXITCODE -ne 0) { throw "Logic checks failed: $LASTEXITCODE" }
+    $stage = 'Native runtime checks'
+    & $dotnet run --project ./tests/NativeRuntimeChecks/NativeRuntimeChecks.csproj -c Release -p:DeployOnBuild=false
+    if ($LASTEXITCODE -ne 0) { throw "Native runtime checks failed: $LASTEXITCODE" }
     $stage = 'Release build'
     & $dotnet build ./STS2Philosophers.csproj -c Release -p:DeployOnBuild=false
     if ($LASTEXITCODE -ne 0) { throw "Release build failed: $LASTEXITCODE" }
@@ -74,7 +77,7 @@ try {
         }
     }
     $stage = 'Report'
-    $report = @('# Verification result', '', "Time: $(Get-Date -Format o)", "Source base commit: $commit", 'Source: working tree; tracked changes recorded in verification_changes.patch; untracked contents are not archived', '', 'Logic checks: passed', 'Release build: passed', 'PCK load and textures: passed', "Deployment: $deployment", '', 'In-game acceptance: not performed by this script', '', '## Working tree before verification', '```', $initialStatus, '```', '', '## Working tree after verification', '```', (& git status --short), '```', '', '## SHA256')
+    $report = @('# Verification result', '', "Time: $(Get-Date -Format o)", "Source base commit: $commit", 'Source: working tree; tracked changes recorded in verification_changes.patch; untracked contents are not archived', '', 'Logic checks: passed', 'Native managed runtime checks: passed (no rendered UI or full game replay)', 'Release build: passed', 'PCK load and textures: passed', "Deployment: $deployment", '', 'In-game acceptance: not performed by this script', '', '## Working tree before verification', '```', $initialStatus, '```', '', '## Working tree after verification', '```', (& git status --short), '```', '', '## SHA256')
     $report += $hashes | ForEach-Object { "$(Split-Path -Leaf $_.Path): $($_.Hash)" }
     $report | Set-Content -LiteralPath $reportPath -Encoding UTF8
     Write-Host "Verification passed. $deployment"
