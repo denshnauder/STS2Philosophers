@@ -66,6 +66,19 @@ public abstract class WesternPracticeRelic : RelicModel
     {
         get
         {
+            if (ProblemId == WesternEntryPracticeState.HistoryAndPower && IsMutable
+                && Owner?.PlayerCombatState is not null && IsSoleDoctrine)
+            {
+                string convention = Practice.ConventionCardModelId.Length == 0 ? "unformed"
+                    : Practice.ConventionUsed ? "spent" : "ready";
+                List<IHoverTip> conventionTips = [new HoverTip(new LocString("relics", "ROUSSEAU_UNCARVED_STONE.convention.title"),
+                    new LocString("relics", $"ROUSSEAU_UNCARVED_STONE.convention.{convention}"))];
+                string[] identity = Practice.ConventionCardModelId.Split('.');
+                if (identity is ["CARD", var entry]
+                    && ModelDb.GetByIdOrNull<CardModel>(new ModelId("CARD", entry)) is { } card)
+                    conventionTips.Add(new CardHoverTip(card));
+                return conventionTips;
+            }
             if (ProblemId == WesternEntryPracticeState.SelfAndOther && IsMutable
                 && Owner?.PlayerCombatState is not null && IsSoleDoctrine)
             {

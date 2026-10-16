@@ -103,7 +103,7 @@ internal sealed class NativeRuntimeFixture
         var play = new CardPlay { Card = card, Player = Player, Target = target,
             IsAutoPlay = false, ResultPile = PileType.Discard, PlayIndex = 0, PlayCount = 1,
             Resources = new ResourceInfo { EnergySpent = energy, EnergyValue = energy, StarsSpent = stars, StarValue = stars } };
-        await Relic.AfterCardPlayed(null!, play);
+        await Relic.AfterCardPlayed(new ThrowingPlayerChoiceContext(), play);
         Set(card, "_currentTarget", null);
         ClearAction();
         return play;

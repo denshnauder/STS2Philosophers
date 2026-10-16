@@ -68,6 +68,16 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 
 VerifyMod于本地16:49完成逻辑与原生托管集成检查、Release零警告零错误、PCK加载／纹理校验，游戏未运行时安全部署，三哈希一致。报告 `bin/delivery/enc191/verification.md`；回退点 `bin/deploy_backups/enc191_20261016_164850/`。DLL `4BAA4C600F973A5EFB9DCB247C5BF4C7CDB5FCC29589268B681FDFB3C59E3A1C`，PCK `5BAE4C7053595D091478761CDF95FCA80D7B14A22704C57AC21A39F47683A2F5`，清单同ENC-106。验证后仅更新记录，已有两份无关人物文档与tmp保持原样。本次修复已安装可用，尚无修复后人工实机体验。
 
+## ENC-192 未琢之石独立回归（2026年10月16日）
+
+此票单独使用`RousseauUncarvedStoneRuntimeChecks`复现第6回合两张不同实例原生StrikeSilent与一张Survivor、第7回合优惠。用同一新回归测试运行ENC-191部署前的备份程序集（DLL SHA256 `DA524FF7FD19E2882E2C85F6463D6E18C025DACDADC13B41C298EF927327BC6D`）时，第二张打击被旧公共身份误判重复，`打击×2`断言真实失败；日志 `bin/delivery/enc192/before_fix.log`，基线哈希 `baseline_hash.json`。只临时替换测试输出目录中的MOD引用，finally恢复并验哈希，未回退工作区或安装目录。当前共享修复后同一测试通过，不另造人物特例计数补丁。
+
+当前回归真实调用原生费用getter、Hook、生产遗物、SpendResources／LoseEnergy和PowerCmd／StrengthPower：普通＋强化打击同牌种计2；第7回合首张正费用打击显示／付款0；存活敌人各+1力量，死亡敌人与己方不加；重复回调、第二张打击与载荷恢复不重复付代价；局部0费不消费，未抽到不付代价，同回合稍后抽入仍可用，跨回合预算及战斗结束清理通过。原生TestMode只跳过图形等待，不替换扣费或力量算法；没有执行原生卡牌的伤害／弃牌效果、完整GameAction调度、渲染界面或实际存档文件，不能称实机重放。失败与成功使用同一托管原生组合，测试已加入VerifyMod入口。
+
+悬浮使用现有CardHoverTip展示当前惯例牌种和未形成／可用／已用状态。描述补明早已存在并被既有逻辑检查锁定的“无新赢家沿用旧惯例”“强化同牌种”“只计手动”，不改数值、规则或存档字段；0费和未使用不付力量代价。
+
+VerifyMod于本地16:58完成既有纯逻辑及两件遗物各自原生托管回归、Release零警告零错误、PCK加载／纹理校验，游戏未运行时安全部署且三哈希一致。报告 `bin/delivery/enc192/verification.md`；回退点 `bin/deploy_backups/enc192_20261016_165756/`。DLL `BA8D1338395C38B3F4254497E3E78DE685327C38CF721E4253960305C67DE9CD`，PCK `A8B316B07FB4708C957C8115C91B79C92A057F203BA21A1EAE4F56A08391D5F7`，清单同ENC-106。本票独立场景通过，当前安装已含修复及提示，尚无修复后人工实机体验；原有两份无关人物文档和tmp未改变、未提交。
+
 ## 开局事实检查
 
 运行 node tools/design/StartingHandOpportunityChecks.cjs，读取 docs/design/native_starting_facts.json，枚举五个原始牌组共1800个首手组合的直接格挡能力。事实绑定本机原生DLL哈希，仅摘录数据；原生反编译源码留在忽略目录bin/design/native。范围排除进阶额外牌、升级、额外遗物与状态变化；不模拟完整战斗、星辰或Osty，不把组合比例当游戏触发率。此开发数据不嵌入PCK，单独更新时无需MOD构建。当前解释边界以 [`docs/design/current/west/01苏格拉底当前设计.md`](docs/design/current/west/01苏格拉底当前设计.md) 为准；Drive 的“开局表达机会”只作历史来源。

@@ -1,1 +1,2 @@
-await DescartesThinkingLensRuntimeChecks.Run();
+if (!args.Contains("--convention-only")) await DescartesThinkingLensRuntimeChecks.Run();
+await RousseauUncarvedStoneRuntimeChecks.Run();
