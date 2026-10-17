@@ -84,7 +84,7 @@ internal static class AristotleCivicInquiryChecks
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 }, eligible with { LastFixedAct = 2 },
             eligible with { CurrentNodeId = "PLATO__VIRTUE_AND_HAPPINESS__CORE" }, eligible with { HasRequiredRelic = false },
             eligible with { CompletedCombatCount = 0 }, eligible with { RunInProgress = false }, eligible with { IsSingleplayer = false },
-            eligible with { CurrentRoomIsMap = false }, eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true },
+            eligible with { AtSafeMapBoundary = false }, eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true },
             eligible with { HasSavedInstance = true, SavedInstanceUsable = true, SavedInstanceClosed = true },
         }) Check(!AristotleCivicInquiryTriggerPolicy.ShouldInsert(denied), "Wrong source, act, unavailable or consumed state cannot enter.");
         Check(AristotleCivicInquiryTriggerPolicy.ShouldInsert(eligible with

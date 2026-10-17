@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Rooms;
 
 namespace STS2Philosophers;
 
@@ -11,6 +11,8 @@ public sealed class PlatoWholeArrangement : EventModel
 {
     private const string LocalizationRoot = "PLATO_WHOLE_ARRANGEMENT";
     private int _resolving;
+    private bool _ready;
+    private bool _blocked;
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
         PageDescription(PlatoArrangementStage.Invitation);
@@ -22,70 +24,56 @@ public sealed class PlatoWholeArrangement : EventModel
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DECLINE_INVITATION"),
         };
 
-    protected override IReadOnlyList<EventOption> GenerateInitialOptions()
-    {
-        PlatoWholeArrangementState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
-    }
+    // A disabled option keeps the native event open while its awaited start hook
+    // confirms the saved room and any pending choice before exposing actions.
+    protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
+        if (TryRestoreState() is not { } state || isPreFinished && !state.Closed)
         {
-            throw new InvalidOperationException("PlatoWholeArrangement cannot start pre-finished.");
-        }
-
-        PlatoWholeArrangementState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        SetPage(state.Stage);
-    }
-
-    private async Task Choose(PlatoArrangementAction action)
-    {
-        if (Interlocked.Exchange(ref _resolving, 1) != 0)
-        {
+            SetEventState(InitialDescription, LockedOptions());
+            Block("PlatoWholeArrangement cannot restore its saved event state.");
             return;
         }
+        SetEventState(PageDescription(state.Stage), LockedOptions());
+    }
 
+    public override Task AfterEventStarted() => ResumeAfterEntryAsync();
+
+    private async Task ResumeAfterEntryAsync()
+    {
+        if (_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
         try
         {
-            if (Owner?.RunState is not RunState run)
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             {
+                Block("PlatoWholeArrangement run state is unavailable.");
                 return;
             }
-
-            PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
-            if (philosophy.PlatoWholeArrangement is not { } state
-                || philosophy.WesternJourney is not { } journey
-                || !PlatoWholeArrangementFlow.TryPrepare(state, action))
+            if (TryRestoreState() is not { } state)
             {
+                Block("PlatoWholeArrangement saved event state is unavailable.");
                 return;
             }
-
-            await SaveManager.Instance.SaveRun(null);
-            if (!PlatoWholeArrangementFlow.TryCommitPending(
-                    state,
-                    journey,
-                    WesternRouteGraph.LoadEmbedded()))
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
-                Log.Error($"[STS2Philosophers] Plato action could not commit: {action}.");
+                Block("PlatoWholeArrangement entry persistence is unknown.");
                 return;
             }
-
-            await SaveManager.Instance.SaveRun(null);
-            if (action == PlatoArrangementAction.Leave)
+            if (state.PendingAction != PlatoArrangementAction.None
+                && (!CommitPending(shared, state)
+                    || !await RouteEventMapBoundary.PersistEventAsync(run, shared)))
             {
-                SetEventFinished(PageDescription(state.Stage));
+                Block("The saved PlatoWholeArrangement choice remains blocked for recovery.");
+                return;
             }
-            else
-            {
-                SetPage(state.Stage);
-            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2Philosophers] Plato whole arrangement action failed: {exception}");
+            Block($"PlatoWholeArrangement entry failed: {exception}");
         }
         finally
         {
@@ -93,49 +81,102 @@ public sealed class PlatoWholeArrangement : EventModel
         }
     }
 
-    private void ResumePendingInMemory(PlatoWholeArrangementState state)
+    private async Task Choose(PlatoWholeArrangementState expectedState, string expectedInstanceId,
+        PlatoArrangementStage expectedStage, int expectedActionCount, PlatoArrangementAction action)
     {
-        if (state.PendingAction == PlatoArrangementAction.None
-            || Owner?.RunState is not RunState run)
+        // Reject an obsolete button before acquiring a gate or touching native run state.
+        if (expectedState.InstanceId != expectedInstanceId || expectedState.Stage != expectedStage
+            || expectedState.ConfirmedActions.Count != expectedActionCount) return;
+        if (!_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
         {
-            return;
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
+            {
+                Block("PlatoWholeArrangement run state is unavailable.");
+                return;
+            }
+            if (shared.PlatoWholeArrangement is not { } state || !ReferenceEquals(state, expectedState)
+                || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
+                || state.ConfirmedActions.Count != expectedActionCount
+                || state.PendingAction != PlatoArrangementAction.None || state.Closed
+                || !PlatoWholeArrangementFlow.TryPrepare(state, action)) return;
+            _ready = false;
+            SetEventState(PageDescription(state.Stage), LockedOptions());
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"PlatoWholeArrangement prepared choice persistence is unknown: {action}.");
+                return;
+            }
+            if (!IsActiveRoom(run) || !CommitPending(shared, state))
+            {
+                Block($"PlatoWholeArrangement choice could not commit: {action}.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"PlatoWholeArrangement committed choice persistence is unknown: {action}.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
-
-        PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
-        if (philosophy.WesternJourney is not { } journey
-            || !PlatoWholeArrangementFlow.TryCommitPending(
-                state,
-                journey,
-                WesternRouteGraph.LoadEmbedded()))
+        catch (Exception exception)
         {
-            throw new InvalidDataException("The saved Plato action could not be resumed.");
+            Block($"PlatoWholeArrangement choice failed: {exception}");
         }
-
+        finally
+        {
+            Volatile.Write(ref _resolving, 0);
+        }
     }
 
-    private void SetPage(PlatoArrangementStage stage) =>
-        SetEventState(PageDescription(stage), GenerateOptions(stage));
+    private static bool CommitPending(PhilosophyRunState shared, PlatoWholeArrangementState state) =>
+        ReferenceEquals(shared.PlatoWholeArrangement, state) && shared.WesternJourney is { } journey
+        && PlatoWholeArrangementFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private IReadOnlyList<EventOption> GenerateOptions(PlatoArrangementStage stage) =>
-        PlatoWholeArrangementFlow.Options(stage)
-            .Select(action => new EventOption(
-                this,
-                () => Choose(action),
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+
+    private void ShowConfirmedState(PlatoWholeArrangementState state)
+    {
+        _ready = !state.Closed;
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetEventState(PageDescription(state.Stage), GenerateOptions(state));
+    }
+
+    private IReadOnlyList<EventOption> LockedOptions() =>
+        [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())];
+
+    private IReadOnlyList<EventOption> GenerateOptions(PlatoWholeArrangementState state)
+    {
+        string instanceId = state.InstanceId;
+        PlatoArrangementStage stage = state.Stage;
+        int actionCount = state.ConfirmedActions.Count;
+        return PlatoWholeArrangementFlow.Options(stage)
+            .Select(action => new EventOption(this,
+                () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{PlatoWholeArrangementFlow.StageKey(stage)}.options.{PlatoWholeArrangementFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
+    }
 
-    private PlatoWholeArrangementState RestoreStateOrThrow()
+    private PlatoWholeArrangementState? TryRestoreState()
     {
         if (Owner?.RunState is RunState run
-            && PhilosophyRunStateService.GetOrCreate(run).PlatoWholeArrangement is { } state
-            && state.IsUsable()
-            && !state.Closed)
-        {
-            return state;
-        }
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.PlatoWholeArrangement is { } state && state.IsUsable()) return state;
+        return null;
+    }
 
-        throw new InvalidOperationException("PlatoWholeArrangement requires one open saved instance.");
+    private void Block(string reason)
+    {
+        _ready = false;
+        _blocked = true;
+        if (Owner?.RunState is RunState run && IsActiveRoom(run))
+        {
+            if (!IsFinished) SetEventState(Description ?? InitialDescription, LockedOptions());
+            RouteEventMapBoundary.Freeze(run, reason);
+        }
+        else Log.Error($"[STS2Philosophers] {reason}");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(PlatoArrangementStage stage) =>

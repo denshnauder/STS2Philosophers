@@ -1,4 +1,6 @@
 {
+  "ROUTE_EVENT.options.RECOVERING.title": "保存尚未确认。",
+  "ROUTE_EVENT.options.RECOVERING.description": "暂不可选择。若未恢复，请保留现场后退出重载同一局。",
   "DEMOCRITUS_ARRANGEMENT.title": "德谟克利特：空隙与排列",
   "DEMOCRITUS_ARRANGEMENT.options.RECOVERING.title": "保存尚未确认。",
   "DEMOCRITUS_ARRANGEMENT.options.RECOVERING.description": "暂不可选择。若未恢复，请保留现场后退出重载同一局。",

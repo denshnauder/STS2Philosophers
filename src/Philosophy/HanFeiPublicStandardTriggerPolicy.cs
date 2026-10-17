@@ -2,7 +2,7 @@ namespace STS2Philosophers;
 
 internal sealed record HanFeiPublicStandardTriggerContext(
     bool RunInProgress,
-    bool CurrentRoomIsMap,
+    bool AtSafeMapBoundary,
     bool IsSingleplayer,
     int CurrentActIndex,
     int CompletedCombatCount,
@@ -17,7 +17,7 @@ internal static class HanFeiPublicStandardTriggerPolicy
     public static bool ShouldInsert(HanFeiPublicStandardTriggerContext context)
     {
         if (!context.RunInProgress
-            || !context.CurrentRoomIsMap
+            || !context.AtSafeMapBoundary
             || !context.IsSingleplayer
             || context.CurrentActIndex != LaterActRelicEligibilityCatalog.ActThreeIndex
             || !context.ModelAvailable)

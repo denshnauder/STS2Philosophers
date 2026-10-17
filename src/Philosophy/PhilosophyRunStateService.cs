@@ -8,6 +8,22 @@ internal static class PhilosophyRunStateService
 {
     private static readonly ConditionalWeakTable<RunState, PhilosophyRunState> States = new();
     private static readonly ConditionalWeakTable<RunState, ResolutionMarker> ResolvedRuns = new();
+    private static readonly ConditionalWeakTable<RunState, List<string>> LoadedLegacyEntries = new();
+
+    internal static bool IsAvailable(RunState runState)
+    {
+        Resolve(runState);
+        return !PhilosophyRunStateRitsuStore.IsIsolated(runState);
+    }
+
+    internal static void PreserveLoadedLegacyEntries(RunState runState, IEnumerable<string> entries)
+    {
+        LoadedLegacyEntries.Remove(runState);
+        LoadedLegacyEntries.Add(runState, entries.ToList());
+    }
+
+    internal static IReadOnlyList<string> GetIsolatedLegacyEntries(RunState runState) =>
+        LoadedLegacyEntries.TryGetValue(runState, out var entries) ? entries : [];
 
     public static PhilosophyRunState GetOrCreate(RunState runState)
     {
@@ -18,11 +34,17 @@ internal static class PhilosophyRunStateService
     public static bool TryGet(RunState runState, out PhilosophyRunState? state)
     {
         Resolve(runState);
+        if (PhilosophyRunStateRitsuStore.IsIsolated(runState))
+        {
+            state = null;
+            return false;
+        }
         return States.TryGetValue(runState, out state);
     }
 
     public static void Restore(RunState runState, PhilosophyRunState state)
     {
+        if (PhilosophyRunStateRitsuStore.IsIsolated(runState)) return;
         ReplaceState(runState, state);
         PhilosophyRunStateRitsuStore.TryBind(runState, state);
         MarkResolved(runState);
@@ -36,6 +58,7 @@ internal static class PhilosophyRunStateService
 
     public static GeneratedCandidates GetOrGenerateActOneCandidates(RunState runState)
     {
+        if (!IsAvailable(runState)) return new GeneratedCandidates();
         return PhilosophersGazeActOneCandidatePolicy.GetOrGenerate(
             GetOrCreate(runState),
             runState.Rng.Seed);
@@ -45,6 +68,7 @@ internal static class PhilosophyRunStateService
         RunState runState,
         ThinkerProposal proposal)
     {
+        if (!IsAvailable(runState)) return;
         PhilosophyRunState state = GetOrCreate(runState);
         state.RecordCurrentDoctrine(
             proposal.ThinkerId,
@@ -58,6 +82,7 @@ internal static class PhilosophyRunStateService
         string opportunityId,
         string combatId)
     {
+        if (!IsAvailable(runState)) return SocratesVirtueRecordWriteResult.Rejected;
         return GetOrCreate(runState).OpenSocratesVirtueOpportunity(
             opportunityId,
             combatId,
@@ -71,6 +96,7 @@ internal static class PhilosophyRunStateService
         int retainedHitPointLoss,
         int consumedPotionCount)
     {
+        if (!IsAvailable(runState)) return SocratesVirtueRecordWriteResult.Rejected;
         return GetOrCreate(runState).CommitSocratesVirtueAction(
             opportunityId,
             action,
@@ -82,6 +108,7 @@ internal static class PhilosophyRunStateService
         RunState runState,
         string opportunityId)
     {
+        if (!IsAvailable(runState)) return false;
         return GetOrCreate(runState).CancelSocratesVirtueOpportunity(opportunityId);
     }
 
@@ -114,11 +141,16 @@ internal static class PhilosophyRunStateService
             PhilosophyRunState state = States.GetValue(runState, static _ => new PhilosophyRunState());
             if (status == PhilosophyRunStateRitsuRestoreStatus.Invalid)
             {
+                PhilosophyRunStateRitsuStore.Isolate(runState);
+                ReplaceState(runState, new PhilosophyRunState());
                 Log.Error("[STS2Philosophers] RitsuLib philosophy run data is invalid; preserving it without overwrite.");
             }
             else
             {
-                PhilosophyRunStateRitsuStore.TryBind(runState, state);
+                if (!PhilosophyRunStateRitsuPayload.CanPersist(state))
+                    PhilosophyRunStateRitsuStore.Isolate(runState);
+                else
+                    PhilosophyRunStateRitsuStore.TryBind(runState, state);
             }
         }
 

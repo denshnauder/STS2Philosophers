@@ -32,6 +32,7 @@ internal static class NeowProceedPatch
             RunState? runState = runInProgress
                 ? runManager.DebugOnlyGetState()
                 : null;
+            if (runState is not null && !PhilosophyRunStateService.IsAvailable(runState)) return true;
             EventRoom? eventRoom = runState?.CurrentRoom as EventRoom;
             CurrentEventKind currentEvent = eventRoom?.LocalMutableEvent switch
             {

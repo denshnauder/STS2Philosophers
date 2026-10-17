@@ -50,6 +50,7 @@ internal static class ActTwoPhilosophersGazePatch
             : null;
         if (isRestoringRoomStackBase
             || runState is null
+            || !PhilosophyRunStateService.IsAvailable(runState)
             || runState.CurrentActIndex != 1
             || runState.Players.Count != 1)
         {

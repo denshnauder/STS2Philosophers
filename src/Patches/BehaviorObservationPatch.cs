@@ -15,13 +15,14 @@ internal static class BehaviorObservationCombatStartPatch
     {
         if (runState is not RunState concreteRunState
             || concreteRunState.Players.Count != 1
-            || CombatManager.Instance.CurrentCombatId is not { } combatId)
+            || CombatManager.Instance.CurrentCombatId is not { } combatId
+            || !PhilosophyRunStateService.TryGet(concreteRunState, out var shared) || shared is null)
         {
             return;
         }
 
         BehaviorObservationRecorder.BeginCombat(
-            PhilosophyRunStateService.GetOrCreate(concreteRunState),
+            shared,
             concreteRunState.CurrentActIndex,
             combatId.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
     }
@@ -34,13 +35,14 @@ internal static class BehaviorObservationCardPlayedPatch
     {
         if (combatState.RunState is not RunState runState
             || runState.Players.Count != 1
-            || !ReferenceEquals(runState.Players[0], cardPlay.Player))
+            || !ReferenceEquals(runState.Players[0], cardPlay.Player)
+            || !PhilosophyRunStateService.TryGet(runState, out var shared) || shared is null)
         {
             return;
         }
 
         BehaviorObservationRecorder.RecordCardPlayed(
-            PhilosophyRunStateService.GetOrCreate(runState),
+            shared,
             runState.CurrentActIndex,
             GetCardTypeFactId(cardPlay.Card.Type));
     }
@@ -66,13 +68,12 @@ internal static class BehaviorObservationCombatEndPatch
     private static void Prefix(IRunState runState, CombatRoom room)
     {
         if (runState is not RunState concreteRunState
-            || concreteRunState.Players.Count != 1)
+            || concreteRunState.Players.Count != 1
+            || !PhilosophyRunStateService.TryGet(concreteRunState, out var philosophyState) || philosophyState is null)
         {
             return;
         }
 
-        PhilosophyRunState philosophyState =
-            PhilosophyRunStateService.GetOrCreate(concreteRunState);
         int actIndex = concreteRunState.CurrentActIndex;
         if (BehaviorObservationRecorder.CompleteCombat(
                 philosophyState,

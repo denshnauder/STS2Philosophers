@@ -1,0 +1,18 @@
+; An isolated test scene. No game autoloads, Steam bootstrap or player save store.
+config_version=5
+
+[application]
+config/name="STS2PhilosophersRuntimeChecks"
+run/main_scene="res://RuntimeCheckHost.tscn"
+config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
+config/use_custom_user_dir=true
+config/custom_user_dir_name="STS2PhilosophersRuntimeChecks"
+
+[dotnet]
+project/assembly_name="GodotRuntimeChecks"
+
+[debug]
+file_logging/enable_file_logging=false
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

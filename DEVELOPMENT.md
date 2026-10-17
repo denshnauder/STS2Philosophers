@@ -8,11 +8,11 @@
 
 GitHub 仓库 `docs/` 是现行设计与版本化文档的唯一写入目标；当前入口见 [`docs/design/current/00当前设计索引.md`](docs/design/current/00当前设计索引.md)。项目不再使用 Obsidian，不维护 Vault、Remotely Save、G/S 同步或每批写回 Drive。Google Drive 保存研究资料、附件和必要历史存档。来源、去向和外部保留项见 [`docs/design/current/99迁移清单.md`](docs/design/current/99迁移清单.md)；旧段落中的 G 盘真源、同步指令、任务状态或历史下一步只作证据，不能覆盖 Linear、当前 main、README 和当前入口。
 
-Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`In Progress` 优先恢复；`In Review` 等待明确验收；`Done`、`Canceled` 和 `Duplicate` 不领取。父任务同样进入队列，先检查子项和完成条件；选择顺序为依赖、优先级、创建时间，不额外按 AutoRun、其他标签或本人指派过滤。完成一个交付后重新查询，没有可执行任务就停止；Linear 不可访问时，只能凭真实中断记录继续此前已授权的同一进行中 Issue。
+Linear 的 `Todo` 表示授权，不表示可跳过人物顺序；`In Progress` 先核对安全恢复范围，提前领取的后序人物只安全收尾原子修改及必要公共阻断。人物以 `config/western_research.json` 的 `people` 数组顺序逐位核对真实交付及 `blockedBy`，同一人物内才按优先级、创建时间选择；公共阻断 Bug 与非人物工程按其明确授权范围处理。`Backlog` 默认未授权，只有 ENC-193 的既有持续补位授权可按同一顺序补位，不复制票或改依赖。父任务也检查其子项与完成条件，不按 AutoRun、标签或指派人过滤。人物必须完成合法可达、内容、保存、验证、构建、安全部署及回退后才 Done；研究或定义只算阶段。无合法可执行项时停止；Linear 不可访问只凭真实中断记录继续此前已授权的同一任务。
 
 ### ENC-190 工作流退役与自动接续核对（2026年10月16日）
 
-本机 `C:/Users/35588/.codex/automations/sts2/automation.toml` 的既有“STS2 持续推进”提示原先要求从 Obsidian 的 `00执行状态.md` 恢复，禁止读写 Linear，并尝试 Remotely Save；这些规则已通过应用工具替换为上面的 Linear 授权流程。更新后读回核对提示内容、任务 ID、目标会话及每小时频率，状态仍为原有的 `PAUSED`。本次交互执行已验证无 AutoRun 标签的 ENC-190 能从 Todo 领取；未启用或触发定时运行，不能据此声称后台自动执行已验证。暂停调度本身不会阻塞当前交互任务。
+本机 `C:/Users/35588/.codex/automations/sts2/automation.toml` 的既有“STS2 持续推进”提示原先要求从 Obsidian 的 `00执行状态.md` 恢复，禁止读写 Linear，并尝试 Remotely Save；这些规则已通过应用工具替换为 Linear 授权流程。本次交互执行已验证无 AutoRun 标签的 ENC-190 能从 Todo 领取。2026年10月17日继续核对并通过应用工具更新了人物顺序、真实交付、公共 Bug 和后序 WIP 收尾规则，并同步 Linear 项目总说明。读回确认 ID、目标会话、原有每日09:00频率及 `PAUSED` 均保留；旧记录中的“每小时”描述不准确。更新提示不等于启用或验证后台定时运行，当前未启动该调度。
 
 旧 `S:/01_Workspace/Obsidian/STS2mod/STS2 Mod 开发`、G 盘历史真源以及 `docs/` 的 Vault 用法均已退役；不从这些路径恢复或写回。仓库脚本未发现旧路径写入、同步或按 AutoRun 过滤的执行器；研究导入脚本只按显式输入目录读取资料并写入仓库配置，不是同步入口。本机 Windows 计划任务中未发现匹配本项目或旧同步流程的任务。
 
@@ -21,6 +21,22 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 设计优先于代码。自动检查只证明实现符合已写规则，不能证明思想转译、可玩性、路线差异或正式呈现成立。先完成具体选择、代价、表达机会、反例与制作成本，再实施相称的最小内容；试玩反馈另开 Issue，不作为已验证并部署交付的闸门。
 
 新增通用基础设施前先检查当前锁定版本的 RitsuLib、游戏原生公开 API 和仓库现有适配器。只有缺少能力、语义或兼容性不符，或关键原子性／恢复要求无法满足时才自建，并在对应 Issue 记录理由。业务状态机允许自研；保持 RitsuLib 为唯一主框架，不叠加 BaseLib，不以减少代码量换取存档、SL、幂等或兼容风险。
+
+## ENC-123 公共前置安全收尾与顺序修正（2026年10月17日，0.5.4）
+
+本批只修已有内容的公共缺陷，不交付马基雅维利。原工作区存在人物草稿及其他未提交内容，因此从 `10335f9` 创建独立受控工作树，构建不包含马基雅维利代码、资源、本地化或测试，原工作区保留。六入口、89人数组、路线依赖、公开模型、业务保存结构及玩法数值不变；公共修复完成后原人物票回到 Todo，不能据此 Done。
+
+`tools/SelectDeliveryIssue.ps1` 是只读领取守卫，直接读取原89人数组和完整 Linear 项目快照（包括完成状态），要求候选依赖信息已核实；不另建实时任务清单、不修改 Linear。人物先取最早未完成者，同人内才看依赖／优先级／创建时间；必要公共工程例外必须传入获授权的 Issue 与明确范围。21个检查覆盖后序高优先级、较早创建、已有 In Progress、研究冲突、缺失映射与依赖、父任务及工程例外。真实快照默认阻断于第1位泰勒斯 ENC-102 的用途／验收冲突；本批显式授权的 ENC-123 公共修复例外不改变该定位。本机自动接续提示和 Linear 项目说明已同步要求领取或补位前执行该守卫，定时状态仍为 `PAUSED`。
+
+九个既有事件改用 `RouteEventMapBoundary` 的真实 `NMapScreen.Open` 边界，检查完成房间、奖励继续确认、叠层、地图旅行及恢复门禁，依次只派发一个合格事件。`EnterRoomInternal(MapRoom)` 无法覆盖普通战后返回。进入事件使用原生界面清理与 `EventRoom`，保存后核对原生房间 ID／类型／未完成标志及完整共享编码。各事件由原生等待的 `AfterEventStarted` 恢复同一未决操作后才开放按钮，旧实例、旧阶段和旧确认次数的回调不能推进。业务上的准备→提交→保存、人物路线与异常恢复继续保留：框架的保存槽不能替代这些领域规则。
+
+继续直接复用 RitsuLib 0.6.2 的 `BeginModDataRegistration`、`GetRunSavedDataStore(...).Register`、`RunSavedData<T>.TryGet/Set`，写策略改为 `RunSavedDataWritePolicy.WhenSet`，有效现场每次序列化前重新绑定并 Set，未知对象载荷由框架保留原文档，不误当空槽重建。原生 `MigrationManager.LoadWithAggressiveRecovery<SerializableRun>` 的精确输入记录来源，避免读另一份磁盘文件冒充加载结果。槽为非对象、父容器损坏、来源不明或原生备份与 Ritsu 主档不一致时，窄范围 `SaveManager.SaveRun(AbstractRoom,bool)` 保护返回失败 Task，保留现有源文件；不接管最终 JSON 写入，也不把保存失败报告成成功。可证明原样保留的未知对象仅停用本 Mod 路线，不阻止原生保存。生产代码不调用 Ritsu 内部导入器；真实导入／导出反射只存在于测试。
+
+框架没有提供“标准地图叠层事件＋精确原生房间身份＋原子路线提交”这一整套业务语义，因此保留窄入口补丁与状态校验。既有原生遗物生命周期、`SavedProperty`、共享槽、Codec 与人物规则不迁移；通用生命周期订阅及补丁诊断的进一步复用留在既有 ENC-186 范围，不随本批升级框架、叠加 BaseLib 或重写全仓库。
+
+最终 `VerifyMod.ps1 -SkipDeploy` 通过21项领取检查、完整纯逻辑、原生运行时、Release零警告零错误、PCK加载及纹理检查。运行时在独立无界面 Godot 场景中实际加载 NuGet RitsuLib 0.6.2（`1bebdb0`），同一DLL再以本机0.6.7／compat 0.111.0（`8ca62f9`）运行全部集成检查；覆盖真实导入／导出、九事件原生房间往返、危险保存拒绝、陈旧按钮及当前原生调用链。没有渲染UI、完整游戏重放或读写玩家实际存档，不能据此称为实机试玩通过。
+
+17:33确认游戏未运行后，部署同一批0.5.4三文件并逐一核对SHA256；回退备份为该受控工作树的 `bin/deploy_backups/verified_20261017_173334_541/`，报告为 `bin/Release/net9.0/verification.md`，本机0.6.7日志为 `bin/runtime067_verification.log`。DLL `851645EC8E06AFFE6B72CDD098B15AD041BADE9836FF5A71EAC46F02DCC19338`；PCK `9CF76C878A70DB7FF9D1543C1BCBA3D8A83D662179F04103966B2B0FFB7D7E9F`；清单 `120A2747102E2250BA09E8AC0C7CC60AE83B205009961EED70956C38BA6B7842`。部署后只修改记录；无实质差异的 Godot `.import` 行尾不纳入提交。
 
 ## ENC-92 合并未来试玩脚本（2026年10月16日）
 
@@ -98,7 +114,7 @@ Linear 的 `Backlog` 未授权；`Todo` 已授权，依赖满足即可领取；`
 
 `tests/NativeRuntimeChecks`引用本机锁定原生DLL与生产MOD程序集，真实调用原生CardEnergyCost→Hook→生产遗物→SpendResources／LoseEnergy，再按原生时序写目标、移至Play堆并触发遗物回调。Player壳、回合循环启动与网络卡牌身份表由反射搭建，以避开完整游戏／Godot日志启动；不替换费用或扣能量算法。原生预览方法和可支付性补丁由Harmony实际绑定，费用getter在相同同步目标作用域下检查；没有创建渲染NCard、执行完整GameAction调度／伤害动画或读写真实存档文件。保存覆盖仅为生产PracticePayload往返，不能声称实机重放或完整SL验收。
 
-失败证据在 `bin/delivery/enc191/before_fix.log`（第二回合费用仍1）及`before_shared_identity_fix.log`（已用机会未消费）；修复后同一链回归覆盖未锁定／唯一敌人／多敌人／己方单位、两种意图、选目标前后的费用与真实付款、0能量可支付性、重复回调、同名不同实例、跨回合、目标死亡与载荷恢复。运行命令为`dotnet run --project tests/NativeRuntimeChecks/NativeRuntimeChecks.csproj -c Release -p:DeployOnBuild=false`，已纳入VerifyMod；控制台的Sentry扩展未加载提示属于未启动Godot的已知覆盖边界。
+失败证据在 `bin/delivery/enc191/before_fix.log`（第二回合费用仍1）及`before_shared_identity_fix.log`（已用机会未消费）；修复后同一链回归覆盖未锁定／唯一敌人／多敌人／己方单位、两种意图、选目标前后的费用与真实付款、0能量可支付性、重复回调、同名不同实例、跨回合、目标死亡与载荷恢复。当时使用控制台直接执行原生托管检查；0.5.4新增真实Ritsu保存检查后，统一改用 `tools/RunNativeRuntimeChecks.ps1` 的独立无界面Godot宿主并纳入VerifyMod，避免Ritsu日志调用未初始化的原生引擎。
 
 VerifyMod于本地16:49完成逻辑与原生托管集成检查、Release零警告零错误、PCK加载／纹理校验，游戏未运行时安全部署，三哈希一致。报告 `bin/delivery/enc191/verification.md`；回退点 `bin/deploy_backups/enc191_20261016_164850/`。DLL `4BAA4C600F973A5EFB9DCB247C5BF4C7CDB5FCC29589268B681FDFB3C59E3A1C`，PCK `5BAE4C7053595D091478761CDF95FCA80D7B14A22704C57AC21A39F47683A2F5`，清单同ENC-106。验证后仅更新记录，已有两份无关人物文档与tmp保持原样。本次修复已安装可用，尚无修复后人工实机体验。
 
@@ -197,7 +213,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 ./tools/VerifyMod.ps1
 ```
 
-该入口使用 `local.props` 中的 SDK，依次运行纯逻辑测试、禁止部署的 Release 构建、无界面的 PCK 打包及独立加载校验。全部通过且游戏未运行时才复制三个 MOD 文件并逐一核对 SHA256；游戏运行时保留校验结果并报告部署受阻。传入 `-SkipDeploy` 可明确只检查。任何测试、构建或内容包错误都会停止后续部署。
+该入口使用 `local.props` 中的 SDK，依次运行领取规则检查、纯逻辑测试、无界面Godot中的原生运行时检查、禁止部署的 Release 构建、无界面的 PCK 打包及独立加载校验。全部通过且游戏未运行时才备份并校验现有部署，复制三个 MOD 文件并逐一核对 SHA256；游戏运行时保留校验结果并报告部署受阻。传入 `-SkipDeploy` 可明确只检查。任何测试、构建或内容包错误都会停止后续部署。
 
 每次执行先重置 `bin/Release/net9.0/verification.md` 为进行中；失败记录具体阶段和错误，避免误读上次成功。成功报告保存开始/结束时的工作区状态、源代码基准提交与产物哈希，已跟踪差异保存在同目录 `verification_changes.patch`；未跟踪文件仅列名，不归档内容。构建使用整个工作区，不能把报告中的基准提交当成部署版本的完整描述。脚本不启动游戏、Steam 或 Godot 界面，自动检查不能代替游戏内验收。
 
@@ -208,6 +224,15 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 ```powershell
 dotnet run --project .\tests\ModLogicChecks\ModLogicChecks.csproj -c Release
 ```
+
+单独运行领取规则与原生集成（PowerShell 7）：
+
+```powershell
+pwsh -NoProfile -File ./tests/DeliverySelectionChecks.ps1
+./tools/RunNativeRuntimeChecks.ps1
+```
+
+宿主为 `tests/GodotRuntimeChecks` 的独立无界面场景及独立用户目录，不启动游戏或编辑器。可用 `-RitsuRuntimeDirectory @('实际版本兼容程序集目录', '实际版本shared目录')` 在临时测试目录替换整组Ritsu程序集，检查输出记录实际加载路径／版本；不覆盖NuGet或已安装Mod。领取时另将最新完整Linear快照传给 `tools/SelectDeliveryIssue.ps1 -IssueSnapshotPath ...`，不能把模拟测试或旧快照当成实时领取结果。
 
 当前覆盖木铎回合规则、青玉佩仁行与奖励策略、熊掌回合触发、绳墨序列、墨色竹简的相利状态、历物筹的共同格挡与首次破甲奖励、守城图与守城械的守御窗口、大瓠的保留与两次奖励、全生璧的能量保全与减伤，以及“诸子观照”三阶段页面流、第一层候选等概率与状态往返、行为事实累计、表达机会与印象单场去重、重复战斗开始、未完成战斗丢弃、旧存档兼容、导航零副作用、根遗物互斥、二层过滤与替换、德继承、重复回调门控、插入防重和中英本地化键。
 

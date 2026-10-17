@@ -2,7 +2,10 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Saves.Migrations;
+using System.Reflection;
 
 namespace STS2Philosophers;
 
@@ -30,7 +33,8 @@ internal static class PhilosophyRunStateToSavePatch
         RunState? runState = __instance.DebugOnlyGetState();
         if (runState is not null)
         {
-            PhilosophyRunStateService.GetOrCreate(runState);
+            if (PhilosophyRunStateService.TryGet(runState, out var state) && state is not null)
+                PhilosophyRunStateRitsuStore.TryBind(runState, state);
         }
     }
 
@@ -43,6 +47,8 @@ internal static class PhilosophyRunStateToSavePatch
         __result.EventsSeen.RemoveAll(PhilosophyRunStateSaveMarker.IsCategoryMarker);
         IReadOnlyList<string> entries = existingEntries;
         RunState? runState = __instance.DebugOnlyGetState();
+        if (runState is not null && !PhilosophyRunStateService.IsAvailable(runState))
+            entries = PhilosophyRunStateService.GetIsolatedLegacyEntries(runState);
         if (runState is not null
             && PhilosophyRunStateService.TryGet(runState, out PhilosophyRunState? state)
             && state is not null)
@@ -62,31 +68,73 @@ internal static class PhilosophyRunStateToSavePatch
 [HarmonyPatch(typeof(RunState), nameof(RunState.FromSerializable))]
 internal static class PhilosophyRunStateFromSavePatch
 {
+    internal sealed record LoadedMarkers(PhilosophyRunStateMarkerRestoreResult Restore, IReadOnlyList<string> Entries);
+
     private static void Prefix(
         SerializableRun save,
-        out PhilosophyRunStateMarkerRestoreResult __state)
+        out LoadedMarkers __state)
     {
         List<string> entries = save.EventsSeen
             .Where(PhilosophyRunStateSaveMarker.IsCategoryMarker)
             .Select(marker => marker.Entry)
             .ToList();
         save.EventsSeen.RemoveAll(PhilosophyRunStateSaveMarker.IsCategoryMarker);
-        __state = PhilosophyRunStateMarkerCarrier.Restore(entries);
-        if (__state.IsIsolated)
+        var restore = PhilosophyRunStateMarkerCarrier.Restore(entries);
+        __state = new(restore, entries);
+        if (restore.IsIsolated)
         {
             Log.Error(
                 $"[STS2Philosophers] Isolated philosophy run state markers: " +
-                $"classification={__state.Classification}, count={__state.MarkerCount}.");
+                $"classification={restore.Classification}, count={restore.MarkerCount}.");
         }
     }
 
     private static void Postfix(
+        SerializableRun save,
         RunState __result,
-        PhilosophyRunStateMarkerRestoreResult __state)
+        LoadedMarkers __state)
     {
-        if (__state.State is not null)
+        PhilosophyRunStateRitsuStore.ObserveRestoredRun(save, __result);
+        PhilosophyRunStateService.PreserveLoadedLegacyEntries(__result, __state.Entries);
+        if (__state.Restore.State is not null)
         {
-            PhilosophyRunStateService.RestoreFromLegacyMarker(__result, __state.State);
+            PhilosophyRunStateService.RestoreFromLegacyMarker(__result, __state.Restore.State);
         }
+    }
+}
+
+// The native reader has already obtained these exact bytes. Capturing here
+// avoids a second disk read and never accesses Ritsu's private registry.
+[HarmonyPatch]
+internal static class PhilosophyRunStateLoadSnapshotPatch
+{
+    private static MethodBase TargetMethod() =>
+        (AccessTools.DeclaredMethod(typeof(MigrationManager), "LoadWithAggressiveRecovery")
+            ?? throw new MissingMethodException(typeof(MigrationManager).FullName, "LoadWithAggressiveRecovery"))
+        .MakeGenericMethod(typeof(SerializableRun));
+
+    private static void Postfix(string filePath, string content, object __result)
+    {
+        // Reference-type generic instantiations can share native code. Ignore
+        // other save kinds even if Harmony shares this closed generic patch.
+        if (__result is ReadSaveResult<SerializableRun> { SaveData: { } save })
+            PhilosophyRunStateRitsuStore.ObserveLoadedSave(save, content, filePath);
+    }
+}
+
+// The native SaveRun catches write exceptions and otherwise completes normally.
+// Reject before that catch when preserving the loaded record cannot be proven.
+[HarmonyPatch(typeof(SaveManager), nameof(SaveManager.SaveRun), [typeof(AbstractRoom), typeof(bool)])]
+internal static class PhilosophyRunStateUnsafeSaveGuardPatch
+{
+    private static bool Prefix(ref Task __result)
+    {
+        RunState? run = RunManager.Instance.DebugOnlyGetState();
+        if (run is null || PhilosophyRunStateService.IsAvailable(run)
+            || !PhilosophyRunStateRitsuStore.TryGetUnsafeSaveReason(run, out string? reason)) return true;
+        string message = $"[STS2Philosophers] Refused to save this isolated run; original save files remain unchanged. {reason}";
+        Log.Error(message);
+        __result = Task.FromException(new IOException(message));
+        return false;
     }
 }

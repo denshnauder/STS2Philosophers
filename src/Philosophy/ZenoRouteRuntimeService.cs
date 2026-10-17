@@ -15,7 +15,11 @@ internal static class ZenoRouteRuntimeService
     {
         lock (Gate)
         {
-            PhilosophyRunState sharedState = PhilosophyRunStateService.GetOrCreate(runState);
+            if (!PhilosophyRunStateService.TryGet(runState, out var sharedState) || sharedState is null)
+            {
+                runtime = null;
+                return false;
+            }
             if (ZenoRoutePersistenceRuntime.TryRecoverIsolatedSharedState(
                     sharedState,
                     catalog,

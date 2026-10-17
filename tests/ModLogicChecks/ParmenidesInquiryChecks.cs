@@ -94,7 +94,7 @@ internal static class ParmenidesInquiryChecks
             eligible with { CurrentActIndex = 1 }, eligible with { HasRequiredRelic = false },
             eligible with { CurrentNodeId = "OTHER" }, eligible with { CompletedCombatCount = 0 },
             eligible with { QuestionAlreadyResolved = true }, eligible with { IsSingleplayer = false },
-            eligible with { CurrentRoomIsMap = false }, eligible with { RunInProgress = false },
+            eligible with { AtSafeMapBoundary = false }, eligible with { RunInProgress = false },
             eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true },
             eligible with { HasSavedInstance = true, SavedInstanceUsable = true, SavedInstanceClosed = true },
         }) Check(!ParmenidesInquiryTriggerPolicy.ShouldInsert(denied), "Invalid or consumed entry cannot invite again.");

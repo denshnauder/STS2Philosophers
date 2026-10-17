@@ -766,7 +766,9 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private static int GetCurrentActIndex(Player? owner) => owner?.RunState.CurrentActIndex ?? -1;
 
-    private bool TryBeginResolution() => _resolutionGate.TryBegin();
+    private bool TryBeginResolution() =>
+        (Owner?.RunState is not RunState run || PhilosophyRunStateService.IsAvailable(run))
+        && _resolutionGate.TryBegin();
 
     private void EndResolution() => _resolutionGate.End();
 

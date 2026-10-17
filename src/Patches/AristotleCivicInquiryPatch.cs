@@ -1,36 +1,20 @@
-using System.Reflection;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Nodes.Screens.Map;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
-[HarmonyPatch]
 internal static class AristotleCivicInquiryPatch
 {
-    private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(typeof(RunManager), "EnterRoomInternal", [typeof(AbstractRoom), typeof(bool)])
-        ?? throw new MissingMethodException(typeof(RunManager).FullName, "EnterRoomInternal(AbstractRoom, bool)");
-
-    private static void Postfix(AbstractRoom room, bool isRestoringRoomStackBase, ref Task __result)
+    internal static async Task InsertAtBoundaryAsync()
     {
-        if (room is MapRoom) __result = InsertAfterMapEntry(__result, isRestoringRoomStackBase);
-    }
-
-    private static async Task InsertAfterMapEntry(Task mapEntryTask, bool isRestoringRoomStackBase)
-    {
-        await mapEntryTask;
-        if (isRestoringRoomStackBase) return;
-
         RunManager manager = RunManager.Instance;
         RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
         if (run is null) return;
 
-        PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
+        if (!RouteEventMapBoundary.IsSafe(run)) return;
+
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
         WesternJourneyState? journey = philosophy.WesternJourney;
         AristotleCivicInquiry? canonical = TryGetCanonicalEvent();
         AristotleCivicInquiryState? saved = philosophy.AristotleCivicInquiry;
@@ -38,7 +22,7 @@ internal static class AristotleCivicInquiryPatch
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         AristotleCivicInquiryTriggerContext context = new(
             manager.IsInProgress,
-            run.CurrentRoom is MapRoom,
+            RouteEventMapBoundary.IsSafe(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -56,12 +40,10 @@ internal static class AristotleCivicInquiryPatch
             if (journey is null) return;
             philosophy.AristotleCivicInquiry = AristotleCivicInquiryState.Create(
                 $"ARISTOTLE_CIVIC_INQUIRY:{run.Rng.Seed}:2");
-            if (manager.ShouldSave) await SaveManager.Instance.SaveRun(null);
         }
 
         Log.Info("[STS2Philosophers] Presenting Aristotle civic inquiry after combat.");
-        NMapScreen.Instance?.Close(animateOut: false);
-        await manager.EnterRoomWithoutExitingCurrentRoom(new EventRoom(canonical!), fadeToBlack: false);
+        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
     }
 
     private static AristotleCivicInquiry? TryGetCanonicalEvent()

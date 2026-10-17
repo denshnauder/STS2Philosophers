@@ -33,7 +33,7 @@ internal sealed class DiogenesStaySwitchEntrySession
             return null;
         }
 
-        PhilosophyRunState shared = PhilosophyRunStateService.GetOrCreate(run);
+        if (!PhilosophyRunStateService.TryGet(run, out var shared) || shared is null) return null;
         DiogenesStaySwitchEntrySession session = Sessions.GetValue(run, key => new(key, shared));
         return ReferenceEquals(session._shared, shared) ? session : null;
     }

@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Rooms;
 
 namespace STS2Philosophers;
 
@@ -11,6 +11,8 @@ public sealed class ParmenidesInquiry : EventModel
 {
     private const string LocalizationRoot = "PARMENIDES_INQUIRY";
     private int _resolving;
+    private bool _ready;
+    private bool _blocked;
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
         PageDescription(ParmenidesInquiryStage.Invitation);
@@ -22,49 +24,56 @@ public sealed class ParmenidesInquiry : EventModel
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DECLINE_INVITATION"),
         };
 
-    protected override IReadOnlyList<EventOption> GenerateInitialOptions()
-    {
-        ParmenidesInquiryState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
-    }
+    // A disabled option keeps the native event open while its awaited start hook
+    // confirms the saved room and any pending choice before exposing actions.
+    protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
+        if (TryRestoreState() is not { } state || isPreFinished && !state.Closed)
         {
-            throw new InvalidOperationException("ParmenidesInquiry cannot start pre-finished.");
+            SetEventState(InitialDescription, LockedOptions());
+            Block("ParmenidesInquiry cannot restore its saved event state.");
+            return;
         }
-
-        ParmenidesInquiryState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        SetEventState(PageDescription(state.Stage), LockedOptions());
     }
 
-    private async Task Choose(ParmenidesInquiryAction action)
+    public override Task AfterEventStarted() => ResumeAfterEntryAsync();
+
+    private async Task ResumeAfterEntryAsync()
     {
-        if (Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        if (_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
         try
         {
-            if (Owner?.RunState is not RunState run) return;
-            PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
-            if (philosophy.ParmenidesInquiry is not { } state
-                || !ParmenidesInquiryFlow.TryPrepare(state, action)) return;
-
-            await SaveManager.Instance.SaveRun(null);
-            if (!CommitPending(state))
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             {
-                Log.Error($"[STS2Philosophers] Parmenides action could not commit: {action}.");
+                Block("ParmenidesInquiry run state is unavailable.");
                 return;
             }
-
-            await SaveManager.Instance.SaveRun(null);
-            if (action == ParmenidesInquiryAction.Leave) SetEventFinished(PageDescription(state.Stage));
-            else SetPage(state.Stage);
+            if (TryRestoreState() is not { } state)
+            {
+                Block("ParmenidesInquiry saved event state is unavailable.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block("ParmenidesInquiry entry persistence is unknown.");
+                return;
+            }
+            if (state.PendingAction != ParmenidesInquiryAction.None
+                && (!CommitPending(shared, state)
+                    || !await RouteEventMapBoundary.PersistEventAsync(run, shared)))
+            {
+                Block("The saved ParmenidesInquiry choice remains blocked for recovery.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2Philosophers] Parmenides inquiry action failed: {exception}");
+            Block($"ParmenidesInquiry entry failed: {exception}");
         }
         finally
         {
@@ -72,42 +81,102 @@ public sealed class ParmenidesInquiry : EventModel
         }
     }
 
-    private bool CommitPending(ParmenidesInquiryState state) =>
-        Owner?.RunState is RunState run
-        && PhilosophyRunStateService.GetOrCreate(run).WesternJourney is { } journey
-        && ParmenidesInquiryFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
-    private void ResumePendingInMemory(ParmenidesInquiryState state)
+    private async Task Choose(ParmenidesInquiryState expectedState, string expectedInstanceId,
+        ParmenidesInquiryStage expectedStage, int expectedActionCount, ParmenidesInquiryAction action)
     {
-        if (state.PendingAction != ParmenidesInquiryAction.None
-            && !CommitPending(state))
+        // Reject an obsolete button before acquiring a gate or touching native run state.
+        if (expectedState.InstanceId != expectedInstanceId || expectedState.Stage != expectedStage
+            || expectedState.ConfirmedActions.Count != expectedActionCount) return;
+        if (!_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
         {
-            throw new InvalidDataException("The saved Parmenides action could not be resumed.");
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
+            {
+                Block("ParmenidesInquiry run state is unavailable.");
+                return;
+            }
+            if (shared.ParmenidesInquiry is not { } state || !ReferenceEquals(state, expectedState)
+                || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
+                || state.ConfirmedActions.Count != expectedActionCount
+                || state.PendingAction != ParmenidesInquiryAction.None || state.Closed
+                || !ParmenidesInquiryFlow.TryPrepare(state, action)) return;
+            _ready = false;
+            SetEventState(PageDescription(state.Stage), LockedOptions());
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"ParmenidesInquiry prepared choice persistence is unknown: {action}.");
+                return;
+            }
+            if (!IsActiveRoom(run) || !CommitPending(shared, state))
+            {
+                Block($"ParmenidesInquiry choice could not commit: {action}.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"ParmenidesInquiry committed choice persistence is unknown: {action}.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
+        }
+        catch (Exception exception)
+        {
+            Block($"ParmenidesInquiry choice failed: {exception}");
+        }
+        finally
+        {
+            Volatile.Write(ref _resolving, 0);
         }
     }
 
-    private void SetPage(ParmenidesInquiryStage stage) =>
-        SetEventState(PageDescription(stage), GenerateOptions(stage));
+    private static bool CommitPending(PhilosophyRunState shared, ParmenidesInquiryState state) =>
+        ReferenceEquals(shared.ParmenidesInquiry, state) && shared.WesternJourney is { } journey
+        && ParmenidesInquiryFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private IReadOnlyList<EventOption> GenerateOptions(ParmenidesInquiryStage stage) =>
-        ParmenidesInquiryFlow.Options(stage)
-            .Select(action => new EventOption(
-                this,
-                () => Choose(action),
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+
+    private void ShowConfirmedState(ParmenidesInquiryState state)
+    {
+        _ready = !state.Closed;
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetEventState(PageDescription(state.Stage), GenerateOptions(state));
+    }
+
+    private IReadOnlyList<EventOption> LockedOptions() =>
+        [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())];
+
+    private IReadOnlyList<EventOption> GenerateOptions(ParmenidesInquiryState state)
+    {
+        string instanceId = state.InstanceId;
+        ParmenidesInquiryStage stage = state.Stage;
+        int actionCount = state.ConfirmedActions.Count;
+        return ParmenidesInquiryFlow.Options(stage)
+            .Select(action => new EventOption(this,
+                () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{ParmenidesInquiryFlow.StageKey(stage)}.options.{ParmenidesInquiryFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
+    }
 
-    private ParmenidesInquiryState RestoreStateOrThrow()
+    private ParmenidesInquiryState? TryRestoreState()
     {
         if (Owner?.RunState is RunState run
-            && PhilosophyRunStateService.GetOrCreate(run).ParmenidesInquiry is { } state
-            && state.IsUsable()
-            && !state.Closed)
-        {
-            return state;
-        }
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.ParmenidesInquiry is { } state && state.IsUsable()) return state;
+        return null;
+    }
 
-        throw new InvalidOperationException("ParmenidesInquiry requires one open saved instance.");
+    private void Block(string reason)
+    {
+        _ready = false;
+        _blocked = true;
+        if (Owner?.RunState is RunState run && IsActiveRoom(run))
+        {
+            if (!IsFinished) SetEventState(Description ?? InitialDescription, LockedOptions());
+            RouteEventMapBoundary.Freeze(run, reason);
+        }
+        else Log.Error($"[STS2Philosophers] {reason}");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(ParmenidesInquiryStage stage) =>

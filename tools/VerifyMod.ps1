@@ -34,11 +34,17 @@ try {
     $env:DOTNET_ROLL_FORWARD = 'Major'
     $env:PATH = "$dotNetRoot;$originalPath"
 
+    $stage = 'Delivery selection checks'
+    $powershell = if ($PSVersionTable.PSVersion.Major -ge 7) {
+        (Get-Process -Id $PID).Path
+    } else { (Get-Command pwsh -ErrorAction Stop).Source }
+    & $powershell -NoProfile -File (Join-Path $repository 'tests/DeliverySelectionChecks.ps1')
+    if ($LASTEXITCODE -ne 0) { throw "Delivery selection checks failed: $LASTEXITCODE" }
     $stage = 'Logic checks'
     & $dotnet run --project ./tests/ModLogicChecks/ModLogicChecks.csproj -c Release
     if ($LASTEXITCODE -ne 0) { throw "Logic checks failed: $LASTEXITCODE" }
     $stage = 'Native runtime checks'
-    & $dotnet run --project ./tests/NativeRuntimeChecks/NativeRuntimeChecks.csproj -c Release -p:DeployOnBuild=false
+    & (Join-Path $PSScriptRoot 'RunNativeRuntimeChecks.ps1')
     if ($LASTEXITCODE -ne 0) { throw "Native runtime checks failed: $LASTEXITCODE" }
     $stage = 'Release build'
     & $dotnet build ./STS2Philosophers.csproj -c Release -p:DeployOnBuild=false
@@ -63,6 +69,18 @@ try {
         } else {
             $destination = Join-Path $gameDirectory 'mods/STS2Philosophers'
             New-Item -ItemType Directory -Path $destination -Force | Out-Null
+            $backupDirectory = Join-Path $repository ('bin/deploy_backups/verified_' + (Get-Date -Format 'yyyyMMdd_HHmmss_fff'))
+            New-Item -ItemType Directory -Path $backupDirectory | Out-Null
+            foreach ($source in $sources) {
+                $installed = Join-Path $destination (Split-Path -Leaf $source)
+                if (Test-Path -LiteralPath $installed -PathType Leaf) {
+                    $backupFile = Join-Path $backupDirectory (Split-Path -Leaf $source)
+                    Copy-Item -LiteralPath $installed -Destination $backupFile
+                    if ((Get-FileHash -LiteralPath $installed).Hash -ne (Get-FileHash -LiteralPath $backupFile).Hash) {
+                        throw "Rollback backup hash mismatch: $installed"
+                    }
+                }
+            }
             foreach ($source in $sources) {
                 if (@(Get-Process | Where-Object { $_.ProcessName -match '(?i)sts2|slay.*spire' }).Count -gt 0) {
                     throw 'Game started during deployment. Close it and rerun verification before playing.'
@@ -73,7 +91,7 @@ try {
                     throw "Deployment hash mismatch: $target"
                 }
             }
-            $deployment = 'Deployed; all three SHA256 hashes match'
+            $deployment = "Deployed; all three SHA256 hashes match; rollback backup $backupDirectory"
         }
     }
     $stage = 'Report'

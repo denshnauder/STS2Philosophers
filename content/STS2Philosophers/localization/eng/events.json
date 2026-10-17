@@ -1,4 +1,6 @@
 {
+  "ROUTE_EVENT.options.RECOVERING.title": "Awaiting saved confirmation.",
+  "ROUTE_EVENT.options.RECOVERING.description": "Choices are locked. If recovery stops, retain the evidence and reload this run.",
   "DEMOCRITUS_ARRANGEMENT.title": "Democritus: Void and Arrangement",
   "DEMOCRITUS_ARRANGEMENT.options.RECOVERING.title": "Awaiting saved confirmation.",
   "DEMOCRITUS_ARRANGEMENT.options.RECOVERING.description": "Choices are locked. If recovery stops, retain the evidence and reload this run.",

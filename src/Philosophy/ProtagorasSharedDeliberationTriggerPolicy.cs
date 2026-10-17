@@ -2,7 +2,7 @@ namespace STS2Philosophers;
 
 internal sealed record ProtagorasSharedDeliberationTriggerContext(
     bool RunInProgress,
-    bool CurrentRoomIsMap,
+    bool AtSafeMapBoundary,
     bool IsSingleplayer,
     int CurrentActIndex,
     int CompletedCombatCount,
@@ -20,7 +20,7 @@ internal static class ProtagorasSharedDeliberationTriggerPolicy
     public static bool ShouldInsert(ProtagorasSharedDeliberationTriggerContext context)
     {
         if (!context.RunInProgress
-            || !context.CurrentRoomIsMap
+            || !context.AtSafeMapBoundary
             || !context.IsSingleplayer
             || context.CurrentActIndex != 0
             || !context.ModelAvailable)

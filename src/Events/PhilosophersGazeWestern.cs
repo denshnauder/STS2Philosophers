@@ -46,7 +46,7 @@ public sealed partial class PhilosophersGaze
         try
         {
             if (Owner is not { } owner || owner.RunState is not RunState run) return;
-            PhilosophyRunState state = PhilosophyRunStateService.GetOrCreate(run);
+            if (!PhilosophyRunStateService.TryGet(run, out var state) || state is null) return;
             GeneratedCandidates candidates = GetActOneCandidates();
             if (!WesternEntryPolicy.CanChoose(state, candidates, thinkerId, problemId, run.CurrentActIndex,
                 IsFinished, !PhilosophersGazeRelicGrantPolicy.CanGrant(GetOwnership(owner)))) return;

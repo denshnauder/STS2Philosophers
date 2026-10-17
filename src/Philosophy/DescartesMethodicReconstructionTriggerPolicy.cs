@@ -2,7 +2,7 @@ namespace STS2Philosophers;
 
 internal sealed record DescartesMethodicReconstructionTriggerContext(
     bool RunInProgress,
-    bool CurrentRoomIsMap,
+    bool AtSafeMapBoundary,
     bool IsSingleplayer,
     int CurrentActIndex,
     int CompletedCombatCount,
@@ -21,7 +21,7 @@ internal static class DescartesMethodicReconstructionTriggerPolicy
 {
     public static bool ShouldInsert(DescartesMethodicReconstructionTriggerContext context)
     {
-        if (!context.RunInProgress || !context.CurrentRoomIsMap || !context.IsSingleplayer
+        if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
             || context.CurrentActIndex != 1 || !context.ModelAvailable)
         {
             return false;

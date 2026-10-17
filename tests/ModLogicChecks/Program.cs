@@ -1551,7 +1551,7 @@ Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringCompar
       && runStateSavePatchSource.Contains("nameof(RunState.FromSerializable)", StringComparison.Ordinal),
     "Finished Neow and act one candidates must be saved before the event is entered and restored on load.");
 Check(runStateSavePatchSource.Contains("PhilosophyRunStateRitsuStore.IsAuthoritative", StringComparison.Ordinal)
-      && runStateRitsuStoreSource.Contains("RunSavedDataWritePolicy.WhenNonDefault", StringComparison.Ordinal)
+      && runStateRitsuStoreSource.Contains("RunSavedDataWritePolicy.WhenSet", StringComparison.Ordinal)
       && zenoGameSaveGatewaySource.Contains("ISaveStore", StringComparison.Ordinal)
       && zenoGameSaveGatewaySource.Contains("PhilosophyRunStateRitsuSaveReader.Read", StringComparison.Ordinal),
     "Shared run state must use the RitsuLib run slot while Zeno persistence confirms the real save file.");

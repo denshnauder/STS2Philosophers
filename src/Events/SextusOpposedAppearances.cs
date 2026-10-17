@@ -3,7 +3,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Rooms;
 
 namespace STS2Philosophers;
 
@@ -11,6 +11,8 @@ public sealed class SextusOpposedAppearances : EventModel
 {
     private const string LocalizationRoot = "SEXTUS_OPPOSED_APPEARANCES";
     private int _resolving;
+    private bool _ready;
+    private bool _blocked;
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
         PageDescription(SextusAppearancesStage.Invitation);
@@ -22,49 +24,56 @@ public sealed class SextusOpposedAppearances : EventModel
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DECLINE_INVITATION"),
         };
 
-    protected override IReadOnlyList<EventOption> GenerateInitialOptions()
-    {
-        SextusOpposedAppearancesState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
-    }
+    // A disabled option keeps the native event open while its awaited start hook
+    // confirms the saved room and any pending choice before exposing actions.
+    protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
+        if (TryRestoreState() is not { } state || isPreFinished && !state.Closed)
         {
-            throw new InvalidOperationException("SextusOpposedAppearances cannot start pre-finished.");
+            SetEventState(InitialDescription, LockedOptions());
+            Block("SextusOpposedAppearances cannot restore its saved event state.");
+            return;
         }
-
-        SextusOpposedAppearancesState state = RestoreStateOrThrow();
-        ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        SetEventState(PageDescription(state.Stage), LockedOptions());
     }
 
-    private async Task Choose(SextusAppearancesAction action)
+    public override Task AfterEventStarted() => ResumeAfterEntryAsync();
+
+    private async Task ResumeAfterEntryAsync()
     {
-        if (Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        if (_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
         try
         {
-            if (Owner?.RunState is not RunState run) return;
-            PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
-            if (philosophy.SextusOpposedAppearances is not { } state
-                || !SextusOpposedAppearancesFlow.TryPrepare(state, action)) return;
-
-            await SaveManager.Instance.SaveRun(null);
-            if (!SextusOpposedAppearancesFlow.TryCommitPending(state))
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             {
-                Log.Error($"[STS2Philosophers] Sextus action could not commit: {action}.");
+                Block("SextusOpposedAppearances run state is unavailable.");
                 return;
             }
-
-            await SaveManager.Instance.SaveRun(null);
-            if (action == SextusAppearancesAction.Leave) SetEventFinished(PageDescription(state.Stage));
-            else SetPage(state.Stage);
+            if (TryRestoreState() is not { } state)
+            {
+                Block("SextusOpposedAppearances saved event state is unavailable.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block("SextusOpposedAppearances entry persistence is unknown.");
+                return;
+            }
+            if (state.PendingAction != SextusAppearancesAction.None
+                && (!CommitPending(shared, state)
+                    || !await RouteEventMapBoundary.PersistEventAsync(run, shared)))
+            {
+                Block("The saved SextusOpposedAppearances choice remains blocked for recovery.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
         {
-            Log.Error($"[STS2Philosophers] Sextus opposed appearances action failed: {exception}");
+            Block($"SextusOpposedAppearances entry failed: {exception}");
         }
         finally
         {
@@ -72,38 +81,101 @@ public sealed class SextusOpposedAppearances : EventModel
         }
     }
 
-    private void ResumePendingInMemory(SextusOpposedAppearancesState state)
+    private async Task Choose(SextusOpposedAppearancesState expectedState, string expectedInstanceId,
+        SextusAppearancesStage expectedStage, int expectedActionCount, SextusAppearancesAction action)
     {
-        if (state.PendingAction != SextusAppearancesAction.None
-            && !SextusOpposedAppearancesFlow.TryCommitPending(state))
+        // Reject an obsolete button before acquiring a gate or touching native run state.
+        if (expectedState.InstanceId != expectedInstanceId || expectedState.Stage != expectedStage
+            || expectedState.ConfirmedActions.Count != expectedActionCount) return;
+        if (!_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
         {
-            throw new InvalidDataException("The saved Sextus action could not be resumed.");
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
+            {
+                Block("SextusOpposedAppearances run state is unavailable.");
+                return;
+            }
+            if (shared.SextusOpposedAppearances is not { } state || !ReferenceEquals(state, expectedState)
+                || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
+                || state.ConfirmedActions.Count != expectedActionCount
+                || state.PendingAction != SextusAppearancesAction.None || state.Closed
+                || !SextusOpposedAppearancesFlow.TryPrepare(state, action)) return;
+            _ready = false;
+            SetEventState(PageDescription(state.Stage), LockedOptions());
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"SextusOpposedAppearances prepared choice persistence is unknown: {action}.");
+                return;
+            }
+            if (!IsActiveRoom(run) || !CommitPending(shared, state))
+            {
+                Block($"SextusOpposedAppearances choice could not commit: {action}.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"SextusOpposedAppearances committed choice persistence is unknown: {action}.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
+        }
+        catch (Exception exception)
+        {
+            Block($"SextusOpposedAppearances choice failed: {exception}");
+        }
+        finally
+        {
+            Volatile.Write(ref _resolving, 0);
         }
     }
 
-    private void SetPage(SextusAppearancesStage stage) =>
-        SetEventState(PageDescription(stage), GenerateOptions(stage));
+    private static bool CommitPending(PhilosophyRunState shared, SextusOpposedAppearancesState state) =>
+        ReferenceEquals(shared.SextusOpposedAppearances, state) && SextusOpposedAppearancesFlow.TryCommitPending(state);
 
-    private IReadOnlyList<EventOption> GenerateOptions(SextusAppearancesStage stage) =>
-        SextusOpposedAppearancesFlow.Options(stage)
-            .Select(action => new EventOption(
-                this,
-                () => Choose(action),
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+
+    private void ShowConfirmedState(SextusOpposedAppearancesState state)
+    {
+        _ready = !state.Closed;
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetEventState(PageDescription(state.Stage), GenerateOptions(state));
+    }
+
+    private IReadOnlyList<EventOption> LockedOptions() =>
+        [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())];
+
+    private IReadOnlyList<EventOption> GenerateOptions(SextusOpposedAppearancesState state)
+    {
+        string instanceId = state.InstanceId;
+        SextusAppearancesStage stage = state.Stage;
+        int actionCount = state.ConfirmedActions.Count;
+        return SextusOpposedAppearancesFlow.Options(stage)
+            .Select(action => new EventOption(this,
+                () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{SextusOpposedAppearancesFlow.StageKey(stage)}.options.{SextusOpposedAppearancesFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
+    }
 
-    private SextusOpposedAppearancesState RestoreStateOrThrow()
+    private SextusOpposedAppearancesState? TryRestoreState()
     {
         if (Owner?.RunState is RunState run
-            && PhilosophyRunStateService.GetOrCreate(run).SextusOpposedAppearances is { } state
-            && state.IsUsable()
-            && !state.Closed)
-        {
-            return state;
-        }
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.SextusOpposedAppearances is { } state && state.IsUsable()) return state;
+        return null;
+    }
 
-        throw new InvalidOperationException("SextusOpposedAppearances requires one open saved instance.");
+    private void Block(string reason)
+    {
+        _ready = false;
+        _blocked = true;
+        if (Owner?.RunState is RunState run && IsActiveRoom(run))
+        {
+            if (!IsFinished) SetEventState(Description ?? InitialDescription, LockedOptions());
+            RouteEventMapBoundary.Freeze(run, reason);
+        }
+        else Log.Error($"[STS2Philosophers] {reason}");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(SextusAppearancesStage stage) =>
