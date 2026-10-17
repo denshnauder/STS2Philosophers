@@ -124,32 +124,18 @@ try {
         $person = $people[$index]
         $active = @($mapped[$person.display_name] | Where-Object { $_.status -notin @('Canceled', 'Cancelled', 'Duplicate') })
         $unfinished = @($active | Where-Object { $_.status -ne 'Done' })
-        # A research-only closing exception is not proof of a character delivery.
-        $conflicts = @()
-        if ($person.primary_use -eq '研究') {
-            $conflicts = @($active | Where-Object {
-                $deliveryTitle = [string]$_.title -match '(?:完成并交付|交付).*人物用途'
-                $closingException = [string]$_.description -match '(?:研究专用|仅研究|只做研究|仅角色定义|无[^\r\n。；]{0,30}(?:入池|入口|载体)[^\r\n。；]{0,60}角色定义)'
-                # An explicit approval must be an affirmative scope decision, not
-                # the generic template's "requires approval" instruction.
-                $resolvedResearchScope = -not $deliveryTitle -and [string]$_.description -match
-                    '(?m)^\s*用户(?:已)?明确(?:批准|确认)[^\r\n]{0,40}(?:将本票|将本任务)[^\r\n]{0,30}(?:改为|重新定义为)纯研究任务'
-                ($deliveryTitle -or $closingException) -and -not $resolvedResearchScope
-            })
-        }
-        if ($unfinished.Count -gt 0 -or $conflicts.Count -gt 0 -or $active.Count -eq 0) {
+        # Linear records completion under the baseline primary use. Research
+        # delivery is authorized project-wide; titles do not require gameplay.
+        if ($unfinished.Count -gt 0 -or $active.Count -eq 0) {
             $result.earliestUnfinished = [ordered]@{
                 order = $index + 1
                 displayName = $person.display_name
                 thinkerId = $person.thinker_id
                 primaryUse = $person.primary_use
                 issues = @($active | ForEach-Object { IssueSummary $_ })
-                researchScopeConflict = ($conflicts.Count -gt 0)
+                researchScopeConflict = $false
             }
             $earliestIssues = $unfinished
-            if ($conflicts.Count -gt 0) {
-                $result.reasons += '最早人物任务含研究或角色定义收口例外；与合法接入、实际内容、验证和安全部署的完成标准冲突，须在原票核对，不能按研究Done放行。'
-            }
             if ($active.Count -eq 0) { $result.reasons += '最早人物仅有Canceled或Duplicate记录，没有有效交付完成证据。' }
             break
         }
@@ -174,7 +160,6 @@ try {
         }
         $candidates = $earliestIssues
         $selectionKind = 'CharacterDelivery'
-        if ($null -ne $result.earliestUnfinished -and $result.earliestUnfinished.researchScopeConflict) { $candidates = @() }
     }
     $orderedCandidates = @($candidates | Where-Object { $_.status -in @('Todo', 'In Progress') } |
         Sort-Object @{Expression = { if ($_.status -eq 'In Progress') { 0 } else { 1 } }},
@@ -204,7 +189,7 @@ try {
         }
     } elseif ($null -eq $result.earliestUnfinished -and $AuthorizedEngineeringIssueId.Count -eq 0) {
         $result.status = 'complete'
-        $result.reasons += '快照中已映射人物任务均为Done且未检测到研究收口冲突；本检查器不代替原票的接入、内容、验证和部署证据。'
+        $result.reasons += '快照中已映射人物任务均为Done；本检查器不代替原票按主要用途验收的研究成果或玩法接入、验证与部署证据。'
     } else {
         $result.status = 'blocked'
         foreach ($issue in $candidates) {

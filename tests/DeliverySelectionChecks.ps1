@@ -105,7 +105,12 @@ try {
     $snapshot.issues[0].description = '人物：泰勒斯（Thales）' + "`n无合法入池方式则完成角色定义。"
     $snapshot.issues[27].status = 'In Progress'
     $output = RunCase $snapshot
-    AssertCase ($output.status -eq 'blocked' -and $output.earliestUnfinished.order -eq 1 -and $output.earliestUnfinished.researchScopeConflict) 'Research-only Done was accepted as a delivered person.'
+    AssertCase ($output.selectedIssue.id -eq 'PERSON28' -and $output.earliestUnfinished.order -eq 28) 'Completed research was reopened solely because of research wording.'
+
+    $snapshot.issues[0].status = 'Todo'
+    $snapshot.issues[0].title = '完成并交付泰勒斯既定人物用途'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON1' -and -not $output.earliestUnfinished.researchScopeConflict) 'An authorized research primary use required another approval because of its delivery title.'
 
     $snapshot.issues[27].id = 'ENC123'
     $scope = '仅公共生产入口修复，不新增马基雅维利玩法或认定其人物交付。'
@@ -122,11 +127,28 @@ try {
     AssertCase ($output.selectedIssue.id -eq 'PERSON5' -and $output.earliestUnfinished.order -eq 5) 'Generic research wording falsely reopened an already Done non-research person.'
 
     $snapshot = NewSnapshot
-    $snapshot.issues[0].description = "人物：泰勒斯（Thales）`n用户明确批准将本票重新定义为纯研究任务。`n仅研究。"
-    $snapshot.issues[0].title = '泰勒斯纯研究产物'
+    $snapshot.issues[0].description = "人物：泰勒斯（Thales）`n按原定研究用途完成，无部署。"
+    $snapshot.issues[0].title = '完成并交付泰勒斯既定人物用途'
     $snapshot.issues[1].status = 'Todo'
     $output = RunCase $snapshot
-    AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'An explicitly approved research-only scope decision was ignored.'
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'Completed primary research required a renamed task or repeated individual permission.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[7].status = 'Todo'
+    $snapshot.issues[7].title = '完成并交付留基伯既定人物用途'
+    $snapshot.issues[7].description = "人物：留基伯（Leucippus）`n仅研究。"
+    $snapshot.issues[8].status = 'Todo'; $snapshot.issues[8].priority = 1
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON8') 'A later primary research person was skipped or blocked by gameplay requirements.'
+    $snapshot.issues[7].status = 'Done'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON9') 'The queue did not continue after the next primary research delivery.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'Todo'
+    $snapshot.issues[1].description += "`n研究兼任；快照RESEARCH_ONLY；尚未接入。"
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2' -and $output.earliestUnfinished.primaryUse -eq '问号') 'Secondary research or RESEARCH_ONLY snapshot was treated as completed primary research.'
 
     $snapshot = NewSnapshot
     $snapshot.issues[21].description = ''; $snapshot.issues[21].title = '交付塞克斯都理由并置'; $snapshot.issues[21].status = 'Todo'
