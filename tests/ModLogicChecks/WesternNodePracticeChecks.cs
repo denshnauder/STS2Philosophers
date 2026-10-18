@@ -91,8 +91,12 @@ internal static class WesternNodePracticeChecks
             Check(state.TryBindNode("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE") && state.PreviousKinds.Count == 0
                 && state.PendingReward == default && state.SuccessfulTurns == 0, "Changing doctrine clears earlier practice state.");
         }
-        Check(covered.Count == 47 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
-            "Every current graph node needs an explicit positive and violation case, with no fabricated node.");
+        const string questionOnlyNode = "ANAXIMANDER__BEING_AND_CHANGE__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(questionOnlyNode, Plays("ASA", "abc"), previous, 3) == default,
+            "Anaximander's question-only node must grant no combat reward.");
+        covered.Add(questionOnlyNode);
+        Check(covered.Count == 48 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+            "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
             or (freedom, "ZENO_OF_CITIUM") or (freedom, "IMMANUEL_KANT") or (freedom, "MARY_WOLLSTONECRAFT")
@@ -123,6 +127,6 @@ internal static class WesternNodePracticeChecks
             "Same-problem node payloads cannot transfer rewards.");
         foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
             Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
-        Console.WriteLine("Western node practice checks passed: all 47 nodes, wrong stages/problems, violations and manual-play boundaries.");
+        Console.WriteLine("Western node practice checks passed: all 48 nodes, including one question-only node, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

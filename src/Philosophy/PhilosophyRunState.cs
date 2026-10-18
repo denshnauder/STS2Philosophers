@@ -15,6 +15,7 @@ internal sealed class PhilosophyRunState
     public EpicurusSharedMarginState? EpicurusSharedMargin { get; set; }
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
     public ParmenidesInquiryState? ParmenidesInquiry { get; set; }
+    public AnaximanderOriginInquiryState? AnaximanderOriginInquiry { get; set; }
     public AristotleCivicInquiryState? AristotleCivicInquiry { get; set; }
     public DemocritusArrangementState? DemocritusArrangement { get; set; }
     public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
@@ -48,6 +49,7 @@ internal sealed class PhilosophyRunState
         || EpicurusSharedMargin is not null
         || SextusOpposedAppearances is not null
         || ParmenidesInquiry is not null
+        || AnaximanderOriginInquiry is not null
         || AristotleCivicInquiry is not null
         || DemocritusArrangement is not null
         || DescartesMethodicReconstruction is not null
@@ -214,6 +216,7 @@ internal sealed class PhilosophyRunState
         EpicurusSharedMargin?.NormalizeAfterLoad();
         SextusOpposedAppearances?.NormalizeAfterLoad();
         ParmenidesInquiry?.NormalizeAfterLoad();
+        AnaximanderOriginInquiry?.NormalizeAfterLoad();
         AristotleCivicInquiry?.NormalizeAfterLoad();
         DemocritusArrangement?.NormalizeAfterLoad();
         DescartesMethodicReconstruction?.NormalizeAfterLoad();

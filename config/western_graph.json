@@ -19,6 +19,14 @@
       "terminal": false
     },
     {
+      "node_id": "ANAXIMANDER__BEING_AND_CHANGE__CORE",
+      "thinker_id": "ANAXIMANDER",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "阿那克西曼德",
+      "terminal": false
+    },
+    {
       "node_id": "ARISTOTLE__BEING_AND_CHANGE__CORE",
       "thinker_id": "ARISTOTLE",
       "problem_id": "BEING_AND_CHANGE",
@@ -1694,6 +1702,30 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_043",
+      "from_node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "to_node_id": "ANAXIMANDER__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Revise",
+      "confidence": "Low",
+      "relation_summary": "同题有界比较，低；不声称直接影响或完整接受无定者学说",
+      "source": "13阿那克西曼德当前设计.md",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": ["ParallelComparison"],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "记录有限追问不授予战斗收益，也不自动替换当前学说。",
+        "interpretation_boundary": "古代证言不完整；不声称两人直接影响、面对面争辩或无定者构成完整机制证明。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": ["13阿那克西曼德当前设计.md"]
       }
     }
   ],

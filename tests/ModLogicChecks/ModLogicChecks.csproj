@@ -10,6 +10,8 @@
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementState.cs" Link="DemocritusArrangementState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementTriggerPolicy.cs" Link="DemocritusArrangementTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AristotleCivicInquiryState.cs" Link="AristotleCivicInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AristotleCivicInquiryTriggerPolicy.cs" Link="AristotleCivicInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryTriggerPolicy.cs" Link="ParmenidesInquiryTriggerPolicy.cs" />

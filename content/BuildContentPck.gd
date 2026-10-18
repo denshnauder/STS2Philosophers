@@ -117,6 +117,8 @@ func _initialize() -> void:
 		["res://images/events/aristotle_civic_inquiry.png.import", "res://images/events/aristotle_civic_inquiry.png.import"],
 		["res://images/events/parmenides_inquiry.png", "res://images/events/philosophers_gaze.png"],
 		["res://images/events/parmenides_inquiry.png.import", "res://images/events/parmenides_inquiry.png.import"],
+		["res://images/events/anaximander_origin_inquiry.png", "res://images/events/philosophers_gaze.png"],
+		["res://images/events/anaximander_origin_inquiry.png.import", "res://images/events/anaximander_origin_inquiry.png.import"],
 		[
 			"res://images/events/descartes_methodic_reconstruction.png",
 			"res://images/events/philosophers_gaze.png",
