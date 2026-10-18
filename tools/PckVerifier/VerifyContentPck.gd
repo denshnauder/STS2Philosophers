@@ -1,6 +1,7 @@
 extends SceneTree
 
 const REQUIRED_FILES := [
+	"res://images/events/machiavelli_emergency_mandate.png",
 	"res://images/events/democritus_arrangement.png",
 	"res://images/events/parmenides_inquiry.png",
 	"res://images/events/aristotle_civic_inquiry.png",
@@ -42,6 +43,7 @@ const REQUIRED_FILES := [
 ]
 
 const REQUIRED_TEXTURES := [
+	"res://images/events/machiavelli_emergency_mandate.png",
 	"res://images/events/democritus_arrangement.png",
 	"res://images/events/parmenides_inquiry.png",
 	"res://images/events/aristotle_civic_inquiry.png",

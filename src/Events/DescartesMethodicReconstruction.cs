@@ -26,19 +26,19 @@ public sealed class DescartesMethodicReconstruction : EventModel
     {
         DescartesMethodicReconstructionState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
+        return state.Closed ? Array.Empty<EventOption>() : GenerateOptions(state.Stage);
     }
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
-        {
-            throw new InvalidOperationException("DescartesMethodicReconstruction cannot start pre-finished.");
-        }
-
         DescartesMethodicReconstructionState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        if (isPreFinished && !state.Closed)
+        {
+            throw new InvalidDataException("An open DescartesMethodicReconstruction cannot be pre-finished.");
+        }
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetPage(state.Stage);
     }
 
     private async Task Choose(DescartesReconstructionAction action)
@@ -97,13 +97,12 @@ public sealed class DescartesMethodicReconstruction : EventModel
     {
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.GetOrCreate(run).DescartesMethodicReconstruction is { } state
-            && state.IsUsable()
-            && !state.Closed)
+            && state.IsUsable())
         {
             return state;
         }
 
-        throw new InvalidOperationException("DescartesMethodicReconstruction requires one open saved instance.");
+        throw new InvalidOperationException("DescartesMethodicReconstruction requires one valid saved instance.");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(DescartesReconstructionStage stage) =>

@@ -24,19 +24,19 @@ public sealed class HanFeiPublicStandard : EventModel
     {
         HanFeiPublicStandardState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
+        return state.Closed ? Array.Empty<EventOption>() : GenerateOptions(state.Stage);
     }
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
-        {
-            throw new InvalidOperationException("HanFeiPublicStandard cannot start pre-finished.");
-        }
-
         HanFeiPublicStandardState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        if (isPreFinished && !state.Closed)
+        {
+            throw new InvalidDataException("An open HanFeiPublicStandard cannot be pre-finished.");
+        }
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetPage(state.Stage);
     }
 
     private async Task Choose(HanFeiPublicStandardAction action)
@@ -121,14 +121,13 @@ public sealed class HanFeiPublicStandard : EventModel
     {
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.GetOrCreate(run).HanFeiPublicStandard is { } state
-            && state.IsUsable()
-            && !state.Closed)
+            && state.IsUsable())
         {
             return state;
         }
 
         throw new InvalidOperationException(
-            "HanFeiPublicStandard requires one open saved instance.");
+            "HanFeiPublicStandard requires one valid saved instance.");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(

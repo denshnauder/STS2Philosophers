@@ -9,45 +9,18 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
-[HarmonyPatch]
 internal static class HanFeiPublicStandardPatch
 {
-    private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(
-            typeof(RunManager),
-            "EnterRoomInternal",
-            [typeof(AbstractRoom), typeof(bool)])
-        ?? throw new MissingMethodException(
-            typeof(RunManager).FullName,
-            "EnterRoomInternal(AbstractRoom, bool)");
-
-    private static void Postfix(
-        AbstractRoom room,
-        bool isRestoringRoomStackBase,
-        ref Task __result)
+    internal static async Task InsertAtBoundaryAsync()
     {
-        if (room is MapRoom)
-        {
-            __result = InsertAfterMapEntry(__result, isRestoringRoomStackBase);
-        }
-    }
-
-    private static async Task InsertAfterMapEntry(
-        Task mapEntryTask,
-        bool isRestoringRoomStackBase)
-    {
-        await mapEntryTask;
-        if (isRestoringRoomStackBase)
-        {
-            return;
-        }
-
         RunManager manager = RunManager.Instance;
         RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
         if (run is null)
         {
             return;
         }
+
+        if (!RouteEventMapBoundary.IsSafe(run)) return;
 
         PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
         HanFeiPublicStandard? canonical = TryGetCanonicalEvent();
@@ -57,7 +30,7 @@ internal static class HanFeiPublicStandardPatch
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         HanFeiPublicStandardTriggerContext context = new(
             manager.IsInProgress,
-            run.CurrentRoom is MapRoom,
+            RouteEventMapBoundary.IsSafe(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -78,17 +51,10 @@ internal static class HanFeiPublicStandardPatch
         {
             philosophy.HanFeiPublicStandard = HanFeiPublicStandardState.Create(
                 $"HAN_FEI_PUBLIC_STANDARD:{run.Rng.Seed}:3");
-            if (manager.ShouldSave)
-            {
-                await SaveManager.Instance.SaveRun(null);
-            }
         }
 
         Log.Info("[STS2Philosophers] Presenting Han Fei's act-three public standard.");
-        NMapScreen.Instance?.Close(animateOut: false);
-        await manager.EnterRoomWithoutExitingCurrentRoom(
-            new EventRoom(canonical!),
-            fadeToBlack: false);
+        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
     }
 
     private static HanFeiPublicStandard? TryGetCanonicalEvent()

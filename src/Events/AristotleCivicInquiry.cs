@@ -26,19 +26,19 @@ public sealed class AristotleCivicInquiry : EventModel
     {
         AristotleCivicInquiryState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
+        return state.Closed ? Array.Empty<EventOption>() : GenerateOptions(state.Stage);
     }
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
-        {
-            throw new InvalidOperationException("AristotleCivicInquiry cannot start pre-finished.");
-        }
-
         AristotleCivicInquiryState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        if (isPreFinished && !state.Closed)
+        {
+            throw new InvalidDataException("An open AristotleCivicInquiry cannot be pre-finished.");
+        }
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetPage(state.Stage);
     }
 
     private async Task Choose(AristotleCivicInquiryAction action)
@@ -101,13 +101,12 @@ public sealed class AristotleCivicInquiry : EventModel
     {
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.GetOrCreate(run).AristotleCivicInquiry is { } state
-            && state.IsUsable()
-            && !state.Closed)
+            && state.IsUsable())
         {
             return state;
         }
 
-        throw new InvalidOperationException("AristotleCivicInquiry requires one open saved instance.");
+        throw new InvalidOperationException("AristotleCivicInquiry requires one valid saved instance.");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(AristotleCivicInquiryStage stage) =>

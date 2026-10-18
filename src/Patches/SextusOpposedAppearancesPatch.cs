@@ -9,26 +9,15 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
-[HarmonyPatch]
 internal static class SextusOpposedAppearancesPatch
 {
-    private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(typeof(RunManager), "EnterRoomInternal", [typeof(AbstractRoom), typeof(bool)])
-        ?? throw new MissingMethodException(typeof(RunManager).FullName, "EnterRoomInternal(AbstractRoom, bool)");
-
-    private static void Postfix(AbstractRoom room, bool isRestoringRoomStackBase, ref Task __result)
+    internal static async Task InsertAtBoundaryAsync()
     {
-        if (room is MapRoom) __result = InsertAfterMapEntry(__result, isRestoringRoomStackBase);
-    }
-
-    private static async Task InsertAfterMapEntry(Task mapEntryTask, bool isRestoringRoomStackBase)
-    {
-        await mapEntryTask;
-        if (isRestoringRoomStackBase) return;
-
         RunManager manager = RunManager.Instance;
         RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
         if (run is null) return;
+
+        if (!RouteEventMapBoundary.IsSafe(run)) return;
 
         PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
         WesternJourneyState? journey = philosophy.WesternJourney;
@@ -40,7 +29,7 @@ internal static class SextusOpposedAppearancesPatch
         bool hasNaturalFork = currentMapPoint?.Children.Count >= 2;
         SextusOpposedAppearancesTriggerContext context = new(
             manager.IsInProgress,
-            run.CurrentRoom is MapRoom,
+            RouteEventMapBoundary.IsSafe(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -60,12 +49,10 @@ internal static class SextusOpposedAppearancesPatch
             if (journey is null || !WesternRouteGraph.LoadEmbedded().TryReserveQuestion(journey, 1)) return;
             philosophy.SextusOpposedAppearances = SextusOpposedAppearancesState.Create(
                 $"SEXTUS_OPPOSED_APPEARANCES:{run.Rng.Seed}:1");
-            if (manager.ShouldSave) await SaveManager.Instance.SaveRun(null);
         }
 
         Log.Info("[STS2Philosophers] Presenting Sextus's opposed appearances at a natural map fork.");
-        NMapScreen.Instance?.Close(animateOut: false);
-        await manager.EnterRoomWithoutExitingCurrentRoom(new EventRoom(canonical!), fadeToBlack: false);
+        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
     }
 
     private static SextusOpposedAppearances? TryGetCanonicalEvent()

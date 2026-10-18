@@ -1,7 +1,7 @@
 namespace STS2Philosophers;
 
 internal sealed record DemocritusArrangementTriggerContext(
-    bool RunInProgress, bool CurrentRoomIsMap, bool IsSingleplayer, int CurrentActIndex,
+    bool RunInProgress, bool AtSafeMapBoundary, bool IsSingleplayer, int CurrentActIndex,
     int CompletedCombatCount, string? CurrentNodeId, int LastFixedAct, bool HasRequiredRelic,
     bool HasPrerequisite, bool RetainedEnding, bool IsSafeRoomStack,
     bool HasSavedInstance, bool SavedInstanceUsable, bool SavedInstanceClosed, bool ModelAvailable);
@@ -10,7 +10,7 @@ internal static class DemocritusArrangementTriggerPolicy
 {
     public static bool ShouldInsert(DemocritusArrangementTriggerContext context)
     {
-        if (!context.RunInProgress || !context.CurrentRoomIsMap || !context.IsSingleplayer
+        if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
             || context.CurrentActIndex != 1 || !context.ModelAvailable
             || !context.HasPrerequisite || context.RetainedEnding || !context.IsSafeRoomStack) return false;
         if (context.HasSavedInstance) return context.SavedInstanceUsable && !context.SavedInstanceClosed

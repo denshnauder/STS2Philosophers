@@ -2,7 +2,7 @@ namespace STS2Philosophers;
 
 internal sealed record SextusOpposedAppearancesTriggerContext(
     bool RunInProgress,
-    bool CurrentRoomIsMap,
+    bool AtSafeMapBoundary,
     bool IsSingleplayer,
     int CurrentActIndex,
     int CompletedCombatCount,
@@ -20,7 +20,7 @@ internal static class SextusOpposedAppearancesTriggerPolicy
 {
     public static bool ShouldInsert(SextusOpposedAppearancesTriggerContext context)
     {
-        if (!context.RunInProgress || !context.CurrentRoomIsMap || !context.IsSingleplayer
+        if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
             || context.CurrentActIndex != 0 || !context.ModelAvailable)
         {
             return false;

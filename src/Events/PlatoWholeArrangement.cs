@@ -26,19 +26,19 @@ public sealed class PlatoWholeArrangement : EventModel
     {
         PlatoWholeArrangementState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
+        return state.Closed ? Array.Empty<EventOption>() : GenerateOptions(state.Stage);
     }
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
-        {
-            throw new InvalidOperationException("PlatoWholeArrangement cannot start pre-finished.");
-        }
-
         PlatoWholeArrangementState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        if (isPreFinished && !state.Closed)
+        {
+            throw new InvalidDataException("An open PlatoWholeArrangement cannot be pre-finished.");
+        }
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetPage(state.Stage);
     }
 
     private async Task Choose(PlatoArrangementAction action)
@@ -129,13 +129,12 @@ public sealed class PlatoWholeArrangement : EventModel
     {
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.GetOrCreate(run).PlatoWholeArrangement is { } state
-            && state.IsUsable()
-            && !state.Closed)
+            && state.IsUsable())
         {
             return state;
         }
 
-        throw new InvalidOperationException("PlatoWholeArrangement requires one open saved instance.");
+        throw new InvalidOperationException("PlatoWholeArrangement requires one valid saved instance.");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(PlatoArrangementStage stage) =>

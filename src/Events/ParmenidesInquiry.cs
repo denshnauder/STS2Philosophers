@@ -26,19 +26,19 @@ public sealed class ParmenidesInquiry : EventModel
     {
         ParmenidesInquiryState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        return GenerateOptions(state.Stage);
+        return state.Closed ? Array.Empty<EventOption>() : GenerateOptions(state.Stage);
     }
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
-        {
-            throw new InvalidOperationException("ParmenidesInquiry cannot start pre-finished.");
-        }
-
         ParmenidesInquiryState state = RestoreStateOrThrow();
         ResumePendingInMemory(state);
-        SetPage(state.Stage);
+        if (isPreFinished && !state.Closed)
+        {
+            throw new InvalidDataException("An open ParmenidesInquiry cannot be pre-finished.");
+        }
+        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
+        else SetPage(state.Stage);
     }
 
     private async Task Choose(ParmenidesInquiryAction action)
@@ -101,13 +101,12 @@ public sealed class ParmenidesInquiry : EventModel
     {
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.GetOrCreate(run).ParmenidesInquiry is { } state
-            && state.IsUsable()
-            && !state.Closed)
+            && state.IsUsable())
         {
             return state;
         }
 
-        throw new InvalidOperationException("ParmenidesInquiry requires one open saved instance.");
+        throw new InvalidOperationException("ParmenidesInquiry requires one valid saved instance.");
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(ParmenidesInquiryStage stage) =>

@@ -1,0 +1,3976 @@
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler : System.Object
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP MegaCrit.Sts2.Core.Rooms.RoomType[] HandledTypes get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.TimeSpan Timeout get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  FIELD System.Int32 _maxIterations [Private, Static, Literal, HasDefault]
+  FIELD System.String _roomPath [Private, Static, Literal, HasDefault]
+  METHOD RoomType[] get_HandledTypes() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD TimeSpan get_Timeout() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Task HandleAncientEventDialogue(NAncientEventLayout ancientLayout, CancellationToken ct) [Private, HideBySig]
+  METHOD Task HandleAsync(Rng random, CancellationToken ct) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Task HandleEventCombat(CancellationToken ct) [Private, HideBySig]
+  METHOD Task HandleFakeMerchantEvent(NFakeMerchant fakeMerchant, CancellationToken ct) [Private, HideBySig]
+  METHOD Task`1 WaitForEventOptions(Node eventRoom, CancellationToken ct) [Private, HideBySig]
+  METHOD Task`1 WaitForEventRoom(CancellationToken ct) [Private, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c : System.Object
+  ATTR System.SerializableAttribute
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c <>9 [Public, Static, InitOnly]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__11_1 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__11_2 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_0 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_1 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_2 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_6 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_7 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__6_8 [Public, Static]
+  FIELD System.Func`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__7_0 [Public, Static]
+  FIELD System.Func`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__7_1 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Entities.Creatures.Creature, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__7_2 [Public, Static]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Models.PowerModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__7_3 [Public, Static]
+  METHOD Boolean <HandleAncientEventDialogue>b__11_1(NEventOptionButton b) [Assembly, HideBySig]
+  METHOD Boolean <HandleAncientEventDialogue>b__11_2(NEventOptionButton b) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_0(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_1(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_2(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_6(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_7(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__6_8(NEventOptionButton o) [Assembly, HideBySig]
+  METHOD Boolean <HandleEventCombat>b__7_0() [Assembly, HideBySig]
+  METHOD Boolean <HandleEventCombat>b__7_1() [Assembly, HideBySig]
+  METHOD Boolean <HandleEventCombat>b__7_2(Creature e) [Assembly, HideBySig]
+  METHOD Boolean <HandleEventCombat>b__7_3(PowerModel p) [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass10_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.Custom.NFakeMerchant fakeMerchant [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.CommonUi.NProceedButton proceedButton [Public]
+  METHOD Boolean <HandleFakeMerchantEvent>b__0() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass11_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout ancientLayout [Public]
+  METHOD Boolean <HandleAncientEventDialogue>b__0() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Func`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__3 [Public]
+  FIELD System.Func`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>9__5 [Public]
+  FIELD Godot.Node eventRoom [Public]
+  METHOD Boolean <HandleAsync>b__3() [Assembly, HideBySig]
+  METHOD Boolean <HandleAsync>b__5() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_1 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_0 CS$<>8__locals1 [Public]
+  FIELD System.Collections.Generic.HashSet`1[[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] previousButtons [Public]
+  METHOD Boolean <HandleAsync>b__4() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass9_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD Godot.Node eventRoom [Public]
+  FIELD System.Int32 waitCycles [Public]
+  METHOD Boolean <WaitForEventOptions>b__0() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<HandleAncientEventDialogue>d__11 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass11_0 <>8__1 [Private]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD System.Int32 <clicks>5__2 [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout ancientLayout [Public]
+  FIELD System.Threading.CancellationToken ct [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<HandleAsync>d__6 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler <>4__this [Public]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_0 <>8__1 [Private]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_1 <>8__2 [Private]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[Godot.Node, GodotSharp, Version=4.5.1.0, Culture=neutral, PublicKeyToken=null]] <>u__1 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>u__2 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__3 [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton <choice>5__3 [Private]
+  FIELD System.Int32 <iterations>5__2 [Private]
+  FIELD System.Threading.CancellationToken ct [Public]
+  FIELD MegaCrit.Sts2.Core.Random.Rng random [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<HandleEventCombat>d__7 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD System.Collections.Generic.IEnumerator`1[[MegaCrit.Sts2.Core.Entities.Creatures.Creature, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>7__wrap5 [Private]
+  FIELD System.Collections.Generic.List`1+Enumerator[[MegaCrit.Sts2.Core.Models.PowerModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>7__wrap7 [Private]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[MegaCrit.Sts2.Core.Models.Powers.StrengthPower, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>u__2 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[MegaCrit.Sts2.Core.Models.Powers.PlatingPower, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>u__3 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[MegaCrit.Sts2.Core.Models.Powers.RegenPower, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>u__4 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>u__5 [Private]
+  FIELD MegaCrit.Sts2.Core.Combat.CombatState <combatState>5__5 [Private]
+  FIELD MegaCrit.Sts2.Core.Entities.Creatures.Creature <creature>5__7 [Private]
+  FIELD System.Int32 <killAttempts>5__3 [Private]
+  FIELD System.Int32 <noEnemyWaitLoops>5__4 [Private]
+  FIELD MegaCrit.Sts2.Core.Entities.Creatures.Creature <player>5__2 [Private]
+  FIELD System.Threading.CancellationToken ct [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<HandleFakeMerchantEvent>d__10 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass10_0 <>8__1 [Private]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD System.Threading.CancellationToken ct [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.Custom.NFakeMerchant fakeMerchant [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<WaitForEventOptions>d__9 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD System.Threading.CancellationToken ct [Public]
+  FIELD Godot.Node eventRoom [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<WaitForEventRoom>d__8 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[[Godot.Node, GodotSharp, Version=4.5.1.0, Culture=neutral, PublicKeyToken=null]] <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[Godot.Node, GodotSharp, Version=4.5.1.0, Culture=neutral, PublicKeyToken=null]] <>u__1 [Private]
+  FIELD System.Threading.CancellationToken ct [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Events.EventOption : System.Object
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP MegaCrit.Sts2.Core.Localization.LocString Description get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean DisableOnChosen get=Private, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Localization.LocString HistoryName get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.HoverTips.IHoverTip, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] HoverTips get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP System.Boolean IsLocked get=Public, HideBySig, SpecialName set=
+  PROP System.Boolean IsProceed get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Func`1[[System.Threading.Tasks.Task, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] OnChosen get=Private, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.RelicModel Relic get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean ShouldSaveChoiceToHistory get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean ShouldSaveVariablesToHistory get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.String TextKey get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Localization.LocString Title get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean WasChosen get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Func`2[[MegaCrit.Sts2.Core.Entities.Players.Player, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] WillKillPlayer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  FIELD MegaCrit.Sts2.Core.Localization.LocString <Description>k__BackingField [Private]
+  FIELD System.Boolean <DisableOnChosen>k__BackingField [Private, InitOnly]
+  FIELD MegaCrit.Sts2.Core.Localization.LocString <HistoryName>k__BackingField [Private]
+  FIELD System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.HoverTips.IHoverTip, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <HoverTips>k__BackingField [Private]
+  FIELD System.Boolean <IsLocked>k__BackingField [Private, InitOnly]
+  FIELD System.Boolean <IsProceed>k__BackingField [Private]
+  FIELD System.Func`1[[System.Threading.Tasks.Task, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <OnChosen>k__BackingField [Private, InitOnly]
+  FIELD MegaCrit.Sts2.Core.Models.RelicModel <Relic>k__BackingField [Private]
+  FIELD System.Boolean <ShouldSaveChoiceToHistory>k__BackingField [Private]
+  FIELD System.Boolean <ShouldSaveVariablesToHistory>k__BackingField [Private]
+  FIELD System.String <TextKey>k__BackingField [Private]
+  FIELD MegaCrit.Sts2.Core.Localization.LocString <Title>k__BackingField [Private]
+  FIELD System.Boolean <WasChosen>k__BackingField [Private]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Entities.Players.Player, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <WillKillPlayer>k__BackingField [Private]
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Threading.Tasks.Task, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] BeforeChosen [Private]
+  METHOD Void add_BeforeChosen(Func`2 value) [Public, HideBySig, SpecialName]
+  METHOD Void AddLocVars(EventModel eventModel) [Private, HideBySig]
+  METHOD Task Chosen() [Public, HideBySig]
+  METHOD EventOption FromRelic(RelicModel relic, EventModel eventModel, Func`1 onChosen, String textKey) [Public, Static, HideBySig]
+  METHOD LocString get_Description() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_DisableOnChosen() [Private, HideBySig, SpecialName]
+  METHOD LocString get_HistoryName() [Public, HideBySig, SpecialName]
+  METHOD IEnumerable`1 get_HoverTips() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsLocked() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsProceed() [Public, HideBySig, SpecialName]
+  METHOD Func`1 get_OnChosen() [Private, HideBySig, SpecialName]
+  METHOD RelicModel get_Relic() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ShouldSaveChoiceToHistory() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ShouldSaveVariablesToHistory() [Public, HideBySig, SpecialName]
+  METHOD String get_TextKey() [Public, HideBySig, SpecialName]
+  METHOD LocString get_Title() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_WasChosen() [Public, HideBySig, SpecialName]
+  METHOD Func`2 get_WillKillPlayer() [Public, HideBySig, SpecialName]
+  METHOD Void remove_BeforeChosen(Func`2 value) [Public, HideBySig, SpecialName]
+  METHOD Void set_Description(LocString value) [Private, HideBySig, SpecialName]
+  METHOD Void set_HistoryName(LocString value) [Private, HideBySig, SpecialName]
+  METHOD Void set_HoverTips(IEnumerable`1 value) [Public, HideBySig, SpecialName]
+  METHOD Void set_IsProceed(Boolean value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Relic(RelicModel value) [Private, HideBySig, SpecialName]
+  METHOD Void set_ShouldSaveChoiceToHistory(Boolean value) [Private, HideBySig, SpecialName]
+  METHOD Void set_ShouldSaveVariablesToHistory(Boolean value) [Private, HideBySig, SpecialName]
+  METHOD Void set_TextKey(String value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Title(LocString value) [Private, HideBySig, SpecialName]
+  METHOD Void set_WasChosen(Boolean value) [Private, HideBySig, SpecialName]
+  METHOD Void set_WillKillPlayer(Func`2 value) [Private, HideBySig, SpecialName]
+  METHOD EventOption ThatDecreasesMaxHp(Decimal value) [Public, HideBySig]
+  METHOD EventOption ThatDoesDamage(Decimal damage) [Public, HideBySig]
+  METHOD EventOption ThatHasDynamicTitle() [Public, HideBySig]
+  METHOD EventOption ThatWillKillPlayerIf(Func`2 willKillPlayer) [Public, HideBySig]
+  METHOD EventOption ThatWontSaveToChoiceHistory() [Public, HideBySig]
+  METHOD String ToString() [Public, Virtual, HideBySig]
+  METHOD EventOption WithOverridenHistoryName(LocString historyName) [Public, HideBySig]
+  METHOD EventOption WithRelic(Player owner) [Public, HideBySig]
+  METHOD EventOption WithRelic(RelicModel relic) [Public, HideBySig]
+  CTOR .ctor(EventModel eventModel, Func`1 onChosen, LocString title, LocString description, String textKey, IEnumerable`1 hoverTips) [Public, HideBySig, SpecialName, RTSpecialName]
+  CTOR .ctor(EventModel eventModel, Func`1 onChosen, String textKey, IEnumerable`1 hoverTips) [Public, HideBySig, SpecialName, RTSpecialName]
+  CTOR .ctor(EventModel eventModel, Func`1 onChosen, String textKey, IHoverTip[] hoverTips) [Public, HideBySig, SpecialName, RTSpecialName]
+  CTOR .ctor(EventModel eventModel, Func`1 onChosen, String textKey, Boolean disableOnChosen, Boolean isProceed, IHoverTip[] hoverTips) [Public, HideBySig, SpecialName, RTSpecialName]
+  CTOR .ctor(EventOption eventOption) [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Events.EventOption+<>c__DisplayClass66_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Decimal damage [Public]
+  METHOD Boolean <ThatDoesDamage>b__0(Player p) [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Events.EventOption+<>c__DisplayClass67_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Decimal value [Public]
+  METHOD Boolean <ThatDecreasesMaxHp>b__0(Player p) [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Events.EventOption+<Chosen>d__64 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Events.EventOption <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Models.AncientEventModel : MegaCrit.Sts2.Core.Models.EventModel
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] AllPossibleOptions get=Public, Virtual, HideBySig, VtableLayoutMask, Abstract, SpecialName set=
+  PROP System.String AmbientBgm get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Models.CharacterModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] AnyCharacterDialogueBlacklist get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Godot.Color ButtonColor get=Public, Virtual, HideBySig, SpecialName set=
+  PROP System.String CustomDonePage get=Private, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.String DebugOption get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Godot.Color DialogueColor get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueSet DialogueSet get=Public, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Localization.LocString Epithet get=Public, HideBySig, SpecialName set=
+  PROP Godot.Color EventButtonColor get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName
+  PROP System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] GeneratedOptions get=Private, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean HasAmbientBgm get=Public, HideBySig, SpecialName set=
+  PROP System.Int32 HealedAmount get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Localization.LocString InitialDescription get=Public, Virtual, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Events.EventLayoutType LayoutType get=Public, Virtual, HideBySig, SpecialName set=
+  PROP System.String LocTable get=Public, Virtual, HideBySig, SpecialName set=
+  PROP Godot.Texture2D MapIcon get=Public, HideBySig, SpecialName set=
+  PROP Godot.Texture2D MapIconOutline get=Public, HideBySig, SpecialName set=
+  PROP System.String MapIconOutlinePath get=Private, HideBySig, SpecialName set=
+  PROP System.String MapIconPath get=Private, HideBySig, SpecialName set=
+  PROP System.Collections.Generic.IEnumerable`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] MapNodeAssetPaths get=Public, HideBySig, SpecialName set=
+  PROP Godot.Texture2D RunHistoryIcon get=Public, HideBySig, SpecialName set=
+  PROP Godot.Texture2D RunHistoryIconOutline get=Public, HideBySig, SpecialName set=
+  PROP System.String RunHistoryIconOutlinePath get=Private, HideBySig, SpecialName set=
+  FIELD System.String _customDonePage [Private]
+  FIELD System.String _debugOption [Private]
+  FIELD MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueSet _dialogueSet [Private]
+  FIELD System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] _generatedOptions [Private]
+  FIELD Godot.Color <DialogueColor>k__BackingField [Private, InitOnly]
+  FIELD Godot.Color <EventButtonColor>k__BackingField [Private]
+  FIELD System.Int32 <HealedAmount>k__BackingField [Private]
+  METHOD Boolean <GenerateInitialOptionsWrapper>b__63_0(EventOption c) [Private, HideBySig]
+  METHOD Task BeforeEventStarted(Boolean isPreFinished) [Family, Virtual, HideBySig]
+  METHOD String CharKey() [Family, Static, HideBySig]
+  METHOD AncientDialogueSet DefineDialogues() [Family, Virtual, HideBySig, VtableLayoutMask, Abstract]
+  METHOD Void Done() [Family, HideBySig]
+  METHOD IReadOnlyList`1 GenerateInitialOptionsWrapper() [Family, Final, Virtual, HideBySig]
+  METHOD IEnumerable`1 get_AllPossibleOptions() [Public, Virtual, HideBySig, VtableLayoutMask, Abstract, SpecialName]
+  METHOD String get_AmbientBgm() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IEnumerable`1 get_AnyCharacterDialogueBlacklist() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Color get_ButtonColor() [Public, Virtual, HideBySig, SpecialName]
+  METHOD String get_CustomDonePage() [Private, HideBySig, SpecialName]
+  METHOD String get_DebugOption() [Public, HideBySig, SpecialName]
+  METHOD Color get_DialogueColor() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD AncientDialogueSet get_DialogueSet() [Public, HideBySig, SpecialName]
+  METHOD LocString get_Epithet() [Public, HideBySig, SpecialName]
+  METHOD Color get_EventButtonColor() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD List`1 get_GeneratedOptions() [Private, HideBySig, SpecialName]
+  METHOD Boolean get_HasAmbientBgm() [Public, HideBySig, SpecialName]
+  METHOD Int32 get_HealedAmount() [Public, HideBySig, SpecialName]
+  METHOD LocString get_InitialDescription() [Public, Virtual, HideBySig, SpecialName]
+  METHOD EventLayoutType get_LayoutType() [Public, Virtual, HideBySig, SpecialName]
+  METHOD String get_LocTable() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Texture2D get_MapIcon() [Public, HideBySig, SpecialName]
+  METHOD Texture2D get_MapIconOutline() [Public, HideBySig, SpecialName]
+  METHOD String get_MapIconOutlinePath() [Private, HideBySig, SpecialName]
+  METHOD String get_MapIconPath() [Private, HideBySig, SpecialName]
+  METHOD IEnumerable`1 get_MapNodeAssetPaths() [Public, HideBySig, SpecialName]
+  METHOD Texture2D get_RunHistoryIcon() [Public, HideBySig, SpecialName]
+  METHOD Texture2D get_RunHistoryIconOutline() [Public, HideBySig, SpecialName]
+  METHOD String get_RunHistoryIconOutlinePath() [Private, HideBySig, SpecialName]
+  METHOD EventOption RelicOption(String pageName, String customDonePage) [Family, HideBySig]
+  METHOD EventOption RelicOption(RelicModel relic, String pageName, String customDonePage) [Family, HideBySig]
+  METHOD Void set_CustomDonePage(String value) [Private, HideBySig, SpecialName]
+  METHOD Void set_DebugOption(String value) [Public, HideBySig, SpecialName]
+  METHOD Void set_EventButtonColor(Color value) [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void set_GeneratedOptions(List`1 value) [Private, HideBySig, SpecialName]
+  METHOD Void set_HealedAmount(Int32 value) [Private, HideBySig, SpecialName]
+  METHOD Void SetInitialEventState(Boolean isPreFinished) [Family, Virtual, HideBySig]
+  METHOD Void StartPreFinished() [Public, HideBySig]
+  METHOD Void UpdateRunHistory() [Private, HideBySig]
+  CTOR .ctor() [Family, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Models.AncientEventModel+<>c__DisplayClass69_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD MegaCrit.Sts2.Core.Models.AncientEventModel <>4__this [Public]
+  FIELD System.String customDonePage [Public]
+  FIELD MegaCrit.Sts2.Core.Models.RelicModel relic [Public]
+  METHOD Task <RelicOption>g__OnChosen|0() [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Models.AncientEventModel+<>c__DisplayClass69_0+<<RelicOption>g__OnChosen|0>d : System.ValueType
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Models.AncientEventModel+<>c__DisplayClass69_0 <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[MegaCrit.Sts2.Core.Models.RelicModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>u__1 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Models.AncientEventModel+<>O : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Func`1[[System.Threading.Tasks.Task, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <0>__Proceed [Public, Static]
+
+TYPE MegaCrit.Sts2.Core.Models.AncientEventModel+<BeforeEventStarted>d__62 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Models.AncientEventModel <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD System.Int32 <oldHp>5__2 [Private]
+  FIELD System.Boolean isPreFinished [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Models.EventModel : MegaCrit.Sts2.Core.Models.AbstractModel
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP System.String BackgroundScenePath get=Private, HideBySig, SpecialName set=
+  PROP Godot.Color ButtonColor get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.EncounterModel CanonicalEncounter get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.EventModel CanonicalInstance get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] CanonicalVars get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Collections.Generic.IReadOnlyList`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] CurrentOptions get=Public, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Localization.LocString Description get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVarSet DynamicVars get=Public, HideBySig, SpecialName set=
+  PROP System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Localization.LocString, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] GameInfoOptions get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean HasPhobiaModePortrait get=Public, HideBySig, SpecialName set=
+  PROP System.Boolean HasVfx get=Public, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Localization.LocString InitialDescription get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.String InitialPhobiaModePortraitPath get=Private, HideBySig, SpecialName set=
+  PROP System.String InitialPortraitPath get=Private, HideBySig, SpecialName set=
+  PROP System.Boolean IsDeterministic get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean IsFinished get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean IsShared get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.String LayoutScenePath get=Private, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Events.EventLayoutType LayoutType get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.String LocTable get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Godot.Control Node get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Entities.Players.Player Owner get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Random.Rng Rng get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Boolean ShouldReceiveCombatHooks get=Public, Virtual, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Localization.LocString Title get=Public, HideBySig, SpecialName set=
+  PROP Godot.Vector2 VfxOffset get=Public, Static, HideBySig, SpecialName set=
+  PROP System.String VfxPath get=Private, HideBySig, SpecialName set=
+  FIELD MegaCrit.Sts2.Core.Models.EventModel _canonicalInstance [Private]
+  FIELD System.Boolean _cleanupCalled [Private]
+  FIELD MegaCrit.Sts2.Core.Multiplayer.Game.EventCombatSynchronizer _combatSynchronizer [Family]
+  FIELD System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] _currentOptions [Private]
+  FIELD MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVarSet _dynamicVars [Private]
+  FIELD System.String _initialPageKey [Family, Static, Literal, HasDefault]
+  FIELD System.Boolean _isFinished [Private]
+  FIELD MegaCrit.Sts2.Core.Localization.LocString <Description>k__BackingField [Private]
+  FIELD Godot.Control <Node>k__BackingField [Private]
+  FIELD MegaCrit.Sts2.Core.Entities.Players.Player <Owner>k__BackingField [Private]
+  FIELD MegaCrit.Sts2.Core.Random.Rng <Rng>k__BackingField [Private]
+  FIELD System.Action EnteringEventCombat [Private]
+  FIELD System.Action`1[[MegaCrit.Sts2.Core.Models.EventModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] StateChanged [Private]
+  METHOD Boolean <get_GameInfoOptions>b__59_0(String k) [Private, HideBySig]
+  METHOD LocString <get_GameInfoOptions>b__59_1(String k) [Private, HideBySig]
+  METHOD Void add_EnteringEventCombat(Action value) [Public, HideBySig, SpecialName]
+  METHOD Void add_StateChanged(Action`1 value) [Public, HideBySig, SpecialName]
+  METHOD Void AfterCloned() [Family, Virtual, HideBySig]
+  METHOD Task AfterEventStarted() [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Task BeforeEventStarted(Boolean isPreFinished) [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Task BeginEvent(Player player, EventCombatSynchronizer combatSynchronizer, Boolean isPreFinished) [Public, HideBySig]
+  METHOD Void CalculateVars() [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void ClearCurrentOptions() [Family, HideBySig]
+  METHOD PackedScene CreateBackgroundScene() [Public, HideBySig]
+  METHOD ICombatRoomVisuals CreateCombatRoomVisuals(IEnumerable`1 players, ActModel act) [Public, HideBySig]
+  METHOD Texture2D CreateInitialPhobiaModePortrait() [Public, HideBySig]
+  METHOD Texture2D CreateInitialPortrait() [Public, HideBySig]
+  METHOD PackedScene CreateScene() [Public, HideBySig]
+  METHOD Node2D CreateVfx() [Public, HideBySig]
+  METHOD Void DeepCloneFields() [Family, Virtual, HideBySig]
+  METHOD Void EnsureCleanup() [Public, HideBySig]
+  METHOD Void EnterCombatWithoutExitingEvent(IReadOnlyList`1 extraRewards, Boolean shouldResumeAfterCombat) [Family, HideBySig]
+  METHOD Void EnterCombatWithoutExitingEvent(EncounterModel canonicalEncounter, IReadOnlyList`1 extraRewards, Boolean shouldResumeAfterCombat) [Family, HideBySig]
+  METHOD IReadOnlyList`1 GenerateInitialOptions() [Family, Virtual, HideBySig, VtableLayoutMask, Abstract]
+  METHOD IReadOnlyList`1 GenerateInitialOptionsWrapper() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD String get_BackgroundScenePath() [Private, HideBySig, SpecialName]
+  METHOD Color get_ButtonColor() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD EncounterModel get_CanonicalEncounter() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD EventModel get_CanonicalInstance() [Public, HideBySig, SpecialName]
+  METHOD IEnumerable`1 get_CanonicalVars() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_CurrentOptions() [Public, HideBySig, SpecialName]
+  METHOD LocString get_Description() [Public, HideBySig, SpecialName]
+  METHOD DynamicVarSet get_DynamicVars() [Public, HideBySig, SpecialName]
+  METHOD IEnumerable`1 get_GameInfoOptions() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_HasPhobiaModePortrait() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_HasVfx() [Public, HideBySig, SpecialName]
+  METHOD LocString get_InitialDescription() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD String get_InitialPhobiaModePortraitPath() [Private, HideBySig, SpecialName]
+  METHOD String get_InitialPortraitPath() [Private, HideBySig, SpecialName]
+  METHOD Boolean get_IsDeterministic() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_IsFinished() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsShared() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD String get_LayoutScenePath() [Private, HideBySig, SpecialName]
+  METHOD EventLayoutType get_LayoutType() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD String get_LocTable() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Control get_Node() [Public, HideBySig, SpecialName]
+  METHOD Player get_Owner() [Public, HideBySig, SpecialName]
+  METHOD Rng get_Rng() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ShouldReceiveCombatHooks() [Public, Virtual, HideBySig, SpecialName]
+  METHOD LocString get_Title() [Public, HideBySig, SpecialName]
+  METHOD Vector2 get_VfxOffset() [Public, Static, HideBySig, SpecialName]
+  METHOD String get_VfxPath() [Private, HideBySig, SpecialName]
+  METHOD IEnumerable`1 GetAssetPaths(IRunState runState) [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD LocString GetOptionDescription(String key) [Public, HideBySig]
+  METHOD LocString GetOptionTitle(String key) [Public, HideBySig]
+  METHOD String InitialOptionKey(String optionName) [Family, HideBySig]
+  METHOD Boolean IsAllowed(IRunState runState) [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD LocString L10NLookup(String entryName) [Family, HideBySig]
+  METHOD Void OnEventFinished() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnRoomEnter() [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD String OptionKey(String pageName, String optionName) [Private, HideBySig]
+  METHOD EventOption RelicOption(Func`1 onChosen, String pageName) [Family, HideBySig]
+  METHOD EventOption RelicOption(RelicModel relic, Func`1 onChosen, String pageName) [Family, HideBySig]
+  METHOD Void remove_EnteringEventCombat(Action value) [Public, HideBySig, SpecialName]
+  METHOD Void remove_StateChanged(Action`1 value) [Public, HideBySig, SpecialName]
+  METHOD Void ReplaceNullOptions(List`1 options) [Family, HideBySig]
+  METHOD Task Resume(AbstractRoom exitedRoom) [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Task SelectCardsToAddToDeckFromGrid(List`1 cards, CardSelectorPrefs prefs) [Family, HideBySig]
+  METHOD Void set_CanonicalInstance(EventModel value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Description(LocString value) [Private, HideBySig, SpecialName]
+  METHOD Void set_IsFinished(Boolean value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Node(Control value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Owner(Player value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Rng(Rng value) [Private, HideBySig, SpecialName]
+  METHOD Void SetEventFinished(LocString description) [Family, HideBySig]
+  METHOD Void SetEventState(LocString description, IEnumerable`1 eventOptions) [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetInitialEventState(Boolean isPreFinished) [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetNode(Control node) [Public, HideBySig]
+  METHOD EventModel ToMutable() [Public, HideBySig]
+  CTOR .ctor() [Family, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Models.EventModel+<>c__DisplayClass113_0 : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Models.CardModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] selectedCards [Public]
+  METHOD Boolean <SelectCardsToAddToDeckFromGrid>b__0(CardCreationResult c) [Assembly, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Models.EventModel+<BeginEvent>d__28 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD MegaCrit.Sts2.Core.Multiplayer.Game.EventCombatSynchronizer combatSynchronizer [Public]
+  FIELD System.Boolean isPreFinished [Public]
+  FIELD MegaCrit.Sts2.Core.Entities.Players.Player player [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Models.EventModel+<SelectCardsToAddToDeckFromGrid>d__113 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel <>4__this [Public]
+  FIELD System.Collections.Generic.IEnumerator`1[[MegaCrit.Sts2.Core.Models.CardModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>7__wrap2 [Private]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel+<>c__DisplayClass113_0 <>8__1 [Private]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Models.CardModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>u__1 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[MegaCrit.Sts2.Core.Entities.Cards.CardPileAddResult, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <>u__2 [Private]
+  FIELD System.Collections.Generic.IEnumerable`1[[MegaCrit.Sts2.Core.Entities.Cards.CardCreationResult, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <unselectedCards>5__2 [Private]
+  FIELD System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Entities.Cards.CardCreationResult, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] cards [Public]
+  FIELD MegaCrit.Sts2.Core.CardSelection.CardSelectorPrefs prefs [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Models.Events.Mocks.MockEventModel : MegaCrit.Sts2.Core.Models.EventModel
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] DefaultInitialOptions get=Private, HideBySig, SpecialName set=
+  PROP System.Boolean IsMock get=Public, Virtual, HideBySig, SpecialName set=
+  PROP System.Boolean IsShared get=Public, Virtual, HideBySig, SpecialName set=
+  PROP System.String OptionKey get=Public, HideBySig, SpecialName set=
+  FIELD System.Func`2[[MegaCrit.Sts2.Core.Models.EventModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null],[System.Collections.Generic.IReadOnlyList`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] generateInitialOptions [Public]
+  FIELD System.Boolean isShared [Public]
+  FIELD System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] optionChosen [Public]
+  METHOD Task <get_DefaultInitialOptions>b__10_0() [Private, HideBySig]
+  METHOD Task <get_DefaultInitialOptions>b__10_1() [Private, HideBySig]
+  METHOD Void EnterCombatWithoutExitingEvent(IReadOnlyList`1 extraRewards, Boolean shouldResumeAfterCombat) [Public, HideBySig]
+  METHOD IReadOnlyList`1 GenerateInitialOptions() [Family, Virtual, HideBySig]
+  METHOD List`1 get_DefaultInitialOptions() [Private, HideBySig, SpecialName]
+  METHOD Boolean get_IsMock() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Boolean get_IsShared() [Public, Virtual, HideBySig, SpecialName]
+  METHOD String get_OptionKey() [Public, HideBySig, SpecialName]
+  METHOD Void SetEventFinished() [Public, HideBySig]
+  METHOD Void SetEventState(IEnumerable`1 options) [Public, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Sync.SharedEventOptionChosenMessage : System.ValueType
+  PROP MegaCrit.Sts2.Core.Runs.RunLocation Location get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Logging.LogLevel LogLevel get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Multiplayer.Transport.NetTransferMode Mode get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean ShouldBroadcast get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean ShouldBuffer get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  FIELD MegaCrit.Sts2.Core.Runs.RunLocation location [Public]
+  FIELD System.UInt32 optionIndex [Public]
+  FIELD System.UInt32 pageIndex [Public]
+  METHOD Void Deserialize(PacketReader reader) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD RunLocation get_Location() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD LogLevel get_LogLevel() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD NetTransferMode get_Mode() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_ShouldBroadcast() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_ShouldBuffer() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void Serialize(PacketWriter writer) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD String ToString() [Public, Virtual, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Sync.VotedForSharedEventOptionMessage : System.ValueType
+  PROP MegaCrit.Sts2.Core.Runs.RunLocation Location get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Logging.LogLevel LogLevel get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Multiplayer.Transport.NetTransferMode Mode get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean ShouldBroadcast get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP System.Boolean ShouldBuffer get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  FIELD MegaCrit.Sts2.Core.Runs.RunLocation location [Public]
+  FIELD System.UInt32 optionIndex [Public]
+  FIELD System.UInt32 pageIndex [Public]
+  METHOD Void Deserialize(PacketReader reader) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD RunLocation get_Location() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD LogLevel get_LogLevel() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD NetTransferMode get_Mode() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_ShouldBroadcast() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_ShouldBuffer() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void Serialize(PacketWriter writer) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD String ToString() [Public, Virtual, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton : MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  ATTR Godot.ScriptPathAttribute
+  PROP System.String AncientScenePath get=Private, Static, HideBySig, SpecialName set=
+  PROP System.Collections.Generic.IEnumerable`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] AssetPaths get=Public, Static, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.EventModel Event get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.Int32 Index get=Private, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Events.EventOption Option get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP System.String ScenePath get=Private, Static, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Nodes.CommonUi.NMultiplayerVoteContainer VoteContainer get=Public, HideBySig, SpecialName set=
+  FIELD Godot.Tween _animInTween [Private]
+  FIELD Godot.Color _buttonColor [Private]
+  FIELD System.Threading.CancellationTokenSource _cancelToken [Private, InitOnly]
+  FIELD Godot.NinePatchRect _confirmFlash [Private]
+  FIELD System.Threading.CancellationTokenSource _deathPreventionCancellation [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.Vfx.NThoughtBubbleVfx _deathPreventionVfx [Private]
+  FIELD Godot.Vector2 _deathPreventionVfxPosition [Private]
+  FIELD System.Single _defaultV [Private, Static, Literal, HasDefault]
+  FIELD Godot.Tween _flashTween [Private]
+  FIELD Godot.StringName _h [Private, Static, InitOnly]
+  FIELD Godot.Vector2 _hoverScale [Private, Static, InitOnly]
+  FIELD System.Single _hoverV [Private, Static, Literal, HasDefault]
+  FIELD Godot.ShaderMaterial _hsv [Private]
+  FIELD Godot.NinePatchRect _image [Private]
+  FIELD Godot.NinePatchRect _killGlow [Private]
+  FIELD Godot.Tween _killGlowTween [Private]
+  FIELD MegaCrit.Sts2.addons.mega_text.MegaRichTextLabel _label [Private]
+  FIELD Godot.NinePatchRect _outline [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.CommonUi.NMultiplayerVoteContainer _playerVoteContainer [Private]
+  FIELD Godot.Vector2 _pressScale [Private, Static, InitOnly]
+  FIELD Godot.StringName _s [Private, Static, InitOnly]
+  FIELD Godot.Tween _tween [Private]
+  FIELD Godot.StringName _v [Private, Static, InitOnly]
+  FIELD System.String _voteIconPath [Private, Static, InitOnly]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel <Event>k__BackingField [Private]
+  FIELD System.Int32 <Index>k__BackingField [Private]
+  FIELD MegaCrit.Sts2.Core.Events.EventOption <Option>k__BackingField [Private]
+  METHOD Void _ExitTree() [Public, Virtual, HideBySig]
+  METHOD Void _Ready() [Public, Virtual, HideBySig]
+  METHOD Void AnimateIn() [Public, HideBySig]
+  METHOD NEventOptionButton Create(EventModel eventModel, EventOption option, Int32 index) [Public, Static, HideBySig]
+  METHOD Void EnableButton() [Public, HideBySig]
+  METHOD Task ExpireDeathPreventionVfx() [Private, HideBySig]
+  METHOD Task FlashConfirmation() [Public, HideBySig]
+  METHOD String get_AncientScenePath() [Private, Static, HideBySig, SpecialName]
+  METHOD IEnumerable`1 get_AssetPaths() [Public, Static, HideBySig, SpecialName]
+  METHOD EventModel get_Event() [Public, HideBySig, SpecialName]
+  METHOD Int32 get_Index() [Private, HideBySig, SpecialName]
+  METHOD EventOption get_Option() [Public, HideBySig, SpecialName]
+  METHOD String get_ScenePath() [Private, Static, HideBySig, SpecialName]
+  METHOD NMultiplayerVoteContainer get_VoteContainer() [Public, HideBySig, SpecialName]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name& name, godot_variant& value) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD Void GrayOut() [Public, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name& method) [Family, Virtual, HideBySig]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret) [Family, Virtual, HideBySig]
+  METHOD Void OnFocus() [Family, Virtual, HideBySig]
+  METHOD Void OnPress() [Family, Virtual, HideBySig]
+  METHOD Void OnRelease() [Family, Virtual, HideBySig]
+  METHOD Void OnUnfocus() [Family, Virtual, HideBySig]
+  METHOD Void PulseKillGlow() [Private, HideBySig]
+  METHOD Void RefreshVotes() [Public, HideBySig]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo info) [Family, Virtual, HideBySig]
+  METHOD Task RumbleDeathVfx() [Private, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo info) [Family, Virtual, HideBySig]
+  METHOD Void set_Event(EventModel value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Index(Int32 value) [Private, HideBySig, SpecialName]
+  METHOD Void set_Option(EventOption value) [Private, HideBySig, SpecialName]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name& name, godot_variant& value) [Family, Virtual, HideBySig]
+  METHOD Void SetVisuallyLocked() [Private, HideBySig]
+  METHOD Boolean ShouldDisplayPlayerVote(Player player) [Private, HideBySig]
+  METHOD Void ShowPersistentKillGlow() [Private, HideBySig]
+  METHOD Void UpdateShaderParam(Single newV) [Private, HideBySig]
+  METHOD Boolean WillKillPlayer() [Private, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+<ExpireDeathPreventionVfx>d__51 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+<FlashConfirmation>d__55 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>u__1 [Private]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__2 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+<RumbleDeathVfx>d__50 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter`1[[System.Single, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <>u__1 [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.Vfx.Utilities.ScreenRumbleInstance <rumble>5__2 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+MethodName : MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton+MethodName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  FIELD Godot.StringName _ExitTree [Public, Static, InitOnly]
+  FIELD Godot.StringName _Ready [Public, Static, InitOnly]
+  FIELD Godot.StringName AnimateIn [Public, Static, InitOnly]
+  FIELD Godot.StringName EnableButton [Public, Static, InitOnly]
+  FIELD Godot.StringName GrayOut [Public, Static, InitOnly]
+  FIELD Godot.StringName OnFocus [Public, Static, InitOnly]
+  FIELD Godot.StringName OnPress [Public, Static, InitOnly]
+  FIELD Godot.StringName OnRelease [Public, Static, InitOnly]
+  FIELD Godot.StringName OnUnfocus [Public, Static, InitOnly]
+  FIELD Godot.StringName PulseKillGlow [Public, Static, InitOnly]
+  FIELD Godot.StringName RefreshVotes [Public, Static, InitOnly]
+  FIELD Godot.StringName SetVisuallyLocked [Public, Static, InitOnly]
+  FIELD Godot.StringName ShowPersistentKillGlow [Public, Static, InitOnly]
+  FIELD Godot.StringName UpdateShaderParam [Public, Static, InitOnly]
+  FIELD Godot.StringName WillKillPlayer [Public, Static, InitOnly]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+PropertyName : MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton+PropertyName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  FIELD Godot.StringName _animInTween [Public, Static, InitOnly]
+  FIELD Godot.StringName _buttonColor [Public, Static, InitOnly]
+  FIELD Godot.StringName _confirmFlash [Public, Static, InitOnly]
+  FIELD Godot.StringName _deathPreventionVfx [Public, Static, InitOnly]
+  FIELD Godot.StringName _deathPreventionVfxPosition [Public, Static, InitOnly]
+  FIELD Godot.StringName _flashTween [Public, Static, InitOnly]
+  FIELD Godot.StringName _hsv [Public, Static, InitOnly]
+  FIELD Godot.StringName _image [Public, Static, InitOnly]
+  FIELD Godot.StringName _killGlow [Public, Static, InitOnly]
+  FIELD Godot.StringName _killGlowTween [Public, Static, InitOnly]
+  FIELD Godot.StringName _label [Public, Static, InitOnly]
+  FIELD Godot.StringName _outline [Public, Static, InitOnly]
+  FIELD Godot.StringName _playerVoteContainer [Public, Static, InitOnly]
+  FIELD Godot.StringName _tween [Public, Static, InitOnly]
+  FIELD Godot.StringName Index [Public, Static, InitOnly]
+  FIELD Godot.StringName VoteContainer [Public, Static, InitOnly]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+SignalName : MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton+SignalName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom : Godot.Control
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  ATTR Godot.ScriptPathAttribute
+  PROP System.Collections.Generic.IEnumerable`1[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] AssetPaths get=Public, Static, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Nodes.Events.ICustomEventNode CustomEventNode get=Public, HideBySig, SpecialName set=
+  PROP Godot.Control DefaultFocusedControl get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom EmbeddedCombatRoom get=Public, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom Instance get=Public, Static, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Nodes.Events.NEventLayout Layout get=Public, HideBySig, SpecialName set=
+  PROP Godot.Control VfxContainer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  FIELD System.Collections.Generic.List`1[[MegaCrit.Sts2.Core.Events.EventOption, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] _connectedOptions [Private, InitOnly]
+  FIELD System.Threading.CancellationTokenSource _cts [Private, InitOnly]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel _event [Private]
+  FIELD MegaCrit.Sts2.Core.Nodes.NSceneContainer _eventContainer [Private]
+  FIELD System.Boolean _isPreFinished [Private]
+  FIELD MegaCrit.Sts2.Core.Runs.IRunState _runState [Private]
+  FIELD System.String _scenePath [Private, Static, Literal, HasDefault]
+  FIELD Godot.Control <VfxContainer>k__BackingField [Private]
+  METHOD Void _EnterTree() [Public, Virtual, HideBySig]
+  METHOD Void _ExitTree() [Public, Virtual, HideBySig]
+  METHOD Void _Ready() [Public, Virtual, HideBySig]
+  METHOD Task BeforeOptionChosen(EventOption option) [Private, HideBySig]
+  METHOD NEventRoom Create(EventModel eventModel, IRunState runState, Boolean isPreFinished) [Public, Static, HideBySig]
+  METHOD Void DisableOptionButtons() [Private, HideBySig]
+  METHOD IEnumerable`1 get_AssetPaths() [Public, Static, HideBySig, SpecialName]
+  METHOD ICustomEventNode get_CustomEventNode() [Public, HideBySig, SpecialName]
+  METHOD Control get_DefaultFocusedControl() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD NCombatRoom get_EmbeddedCombatRoom() [Public, HideBySig, SpecialName]
+  METHOD NEventRoom get_Instance() [Public, Static, HideBySig, SpecialName]
+  METHOD NEventLayout get_Layout() [Public, HideBySig, SpecialName]
+  METHOD Control get_VfxContainer() [Public, HideBySig, SpecialName]
+  METHOD LocString GetDescriptionOrFallback() [Private, HideBySig]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name& name, godot_variant& value) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name& method) [Family, Virtual, HideBySig]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name& method, NativeVariantPtrArgs args, godot_variant& ret) [Family, Virtual, HideBySig]
+  METHOD Void OnActiveScreenUpdated() [Private, HideBySig]
+  METHOD Void OnEnteringEventCombat() [Private, HideBySig]
+  METHOD Void OptionButtonClicked(EventOption option, Int32 index) [Public, HideBySig]
+  METHOD Task Proceed() [Public, Static, HideBySig]
+  METHOD Void RefreshEventState(EventModel eventModel) [Private, HideBySig]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo info) [Family, Virtual, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo info) [Family, Virtual, HideBySig]
+  METHOD Void set_VfxContainer(Control value) [Private, HideBySig, SpecialName]
+  METHOD Void SetDescription(LocString description) [Private, HideBySig]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name& name, godot_variant& value) [Family, Virtual, HideBySig]
+  METHOD Void SetOptions(EventModel eventModel) [Private, HideBySig]
+  METHOD Void SetPortrait(Texture2D portrait) [Public, HideBySig]
+  METHOD Void SetTitle(LocString title) [Private, HideBySig]
+  METHOD Task SetupLayout() [Private, HideBySig]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+<>O : System.Object
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Func`1[[System.Threading.Tasks.Task, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <0>__Proceed [Public, Static]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+<BeforeOptionChosen>d__31 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD MegaCrit.Sts2.Core.Events.EventOption option [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+<SetupLayout>d__25 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+MethodName : Godot.Control+MethodName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  FIELD Godot.StringName _EnterTree [Public, Static, InitOnly]
+  FIELD Godot.StringName _ExitTree [Public, Static, InitOnly]
+  FIELD Godot.StringName _Ready [Public, Static, InitOnly]
+  FIELD Godot.StringName DisableOptionButtons [Public, Static, InitOnly]
+  FIELD Godot.StringName OnActiveScreenUpdated [Public, Static, InitOnly]
+  FIELD Godot.StringName OnEnteringEventCombat [Public, Static, InitOnly]
+  FIELD Godot.StringName SetPortrait [Public, Static, InitOnly]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+PropertyName : Godot.Control+PropertyName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  FIELD Godot.StringName _eventContainer [Public, Static, InitOnly]
+  FIELD Godot.StringName _isPreFinished [Public, Static, InitOnly]
+  FIELD Godot.StringName DefaultFocusedControl [Public, Static, InitOnly]
+  FIELD Godot.StringName EmbeddedCombatRoom [Public, Static, InitOnly]
+  FIELD Godot.StringName Layout [Public, Static, InitOnly]
+  FIELD Godot.StringName VfxContainer [Public, Static, InitOnly]
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+SignalName : Godot.Control+SignalName
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  CTOR .ctor() [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Rooms.EventRoom : MegaCrit.Sts2.Core.Rooms.AbstractRoom
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP MegaCrit.Sts2.Core.Models.EventModel CanonicalEvent get=Public, HideBySig, SpecialName set=
+  PROP System.Boolean IsPreFinished get=Public, Virtual, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.EventModel LocalMutableEvent get=Public, HideBySig, SpecialName set=
+  PROP MegaCrit.Sts2.Core.Models.ModelId ModelId get=Public, Virtual, HideBySig, SpecialName set=
+  PROP System.Action`1[[MegaCrit.Sts2.Core.Models.EventModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] OnStart get=Private, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP MegaCrit.Sts2.Core.Rooms.RoomType RoomType get=Public, Virtual, HideBySig, SpecialName set=
+  FIELD System.Boolean _isPreFinished [Private]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel <CanonicalEvent>k__BackingField [Private, InitOnly]
+  FIELD System.Action`1[[MegaCrit.Sts2.Core.Models.EventModel, sts2, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]] <OnStart>k__BackingField [Private, InitOnly]
+  METHOD Task EnterInternal(IRunState runState, Boolean isRestoringRoomStackBase) [Public, Virtual, HideBySig]
+  METHOD Task Exit(IRunState runState) [Public, Virtual, HideBySig]
+  METHOD EventModel get_CanonicalEvent() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsPreFinished() [Public, Virtual, HideBySig, SpecialName]
+  METHOD EventModel get_LocalMutableEvent() [Public, HideBySig, SpecialName]
+  METHOD ModelId get_ModelId() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Action`1 get_OnStart() [Private, HideBySig, SpecialName]
+  METHOD RoomType get_RoomType() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Void MarkPreFinished() [Public, HideBySig]
+  METHOD Void OnEventStateChanged(EventModel eventModel) [Private, HideBySig]
+  METHOD Task Resume(AbstractRoom exitedRoom, IRunState runState) [Public, Virtual, HideBySig]
+  METHOD Void set_OnStart(Action`1 value) [Public, HideBySig, SpecialName]
+  METHOD SerializableRoom ToSerializable() [Public, Virtual, HideBySig]
+  CTOR .ctor(EventModel eventModel) [Public, HideBySig, SpecialName, RTSpecialName]
+  CTOR .ctor(SerializableRoom serializableRoom) [Public, HideBySig, SpecialName, RTSpecialName]
+
+TYPE MegaCrit.Sts2.Core.Rooms.EventRoom+<EnterInternal>d__18 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  FIELD MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3 [Private]
+  FIELD System.Boolean <preloadsAfterCombatState>5__2 [Private]
+  FIELD System.Boolean isRestoringRoomStackBase [Public]
+  FIELD MegaCrit.Sts2.Core.Runs.IRunState runState [Public]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Rooms.EventRoom+<Exit>d__19 : System.ValueType
+  ATTR System.Runtime.CompilerServices.CompilerGeneratedAttribute
+  FIELD System.Int32 <>1__state [Public]
+  FIELD MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this [Public]
+  FIELD System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder [Public]
+  FIELD System.Runtime.CompilerServices.TaskAwaiter <>u__1 [Private]
+  METHOD Void MoveNext() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void SetStateMachine(IAsyncStateMachine stateMachine) [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+
+TYPE MegaCrit.Sts2.Core.Runs.History.EventOptionHistoryEntry : System.ValueType
+  ATTR System.Runtime.CompilerServices.NullableContextAttribute
+  ATTR System.Runtime.CompilerServices.NullableAttribute
+  PROP MegaCrit.Sts2.Core.Localization.LocString Title get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] Variables get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  FIELD MegaCrit.Sts2.Core.Localization.LocString <Title>k__BackingField [Private]
+  FIELD System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] <Variables>k__BackingField [Private]
+  METHOD Void Deserialize(PacketReader reader) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD LocString get_Title() [Public, HideBySig, SpecialName]
+  METHOD Dictionary`2 get_Variables() [Public, HideBySig, SpecialName]
+  METHOD Void Serialize(PacketWriter writer) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void set_Title(LocString value) [Public, HideBySig, SpecialName]
+  METHOD Void set_Variables(Dictionary`2 value) [Public, HideBySig, SpecialName]
+
+=== KEYWORD MEMBERS ACROSS STS2 ===
+
+KEYTYPE MegaCrit.Sts2.Core.Assets.PreloadManager+<LoadRoomEventAssets>d__13
+  Field eventModel
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler
+  NestedType <HandleAncientEventDialogue>d__11
+  NestedType <HandleEventCombat>d__7
+  NestedType <HandleFakeMerchantEvent>d__10
+  NestedType <WaitForEventOptions>d__9
+  NestedType <WaitForEventRoom>d__8
+  Method HandleAncientEventDialogue
+  Method HandleEventCombat
+  Method HandleFakeMerchantEvent
+  Method WaitForEventOptions
+  Method WaitForEventRoom
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c
+  Method <HandleAncientEventDialogue>b__11_1
+  Method <HandleAncientEventDialogue>b__11_2
+  Method <HandleEventCombat>b__7_0
+  Method <HandleEventCombat>b__7_1
+  Method <HandleEventCombat>b__7_2
+  Method <HandleEventCombat>b__7_3
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass10_0
+  Method <HandleFakeMerchantEvent>b__0
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass11_0
+  Method <HandleAncientEventDialogue>b__0
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass6_0
+  Field eventRoom
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<>c__DisplayClass9_0
+  Method <WaitForEventOptions>b__0
+  Field eventRoom
+
+KEYTYPE MegaCrit.Sts2.Core.AutoSlay.Handlers.Rooms.EventRoomHandler+<WaitForEventOptions>d__9
+  Field eventRoom
+
+KEYTYPE MegaCrit.Sts2.Core.Bindings.MegaSpine.MegaEventData
+  Method GetEventName
+
+KEYTYPE MegaCrit.Sts2.Core.DevConsole.ConsoleCommands.EventConsoleCmd
+  Property Events
+  Method get_Events
+
+KEYTYPE MegaCrit.Sts2.Core.DevConsole.ConsoleCommands.EventConsoleCmd+<>c__DisplayClass8_0
+  Field eventName
+
+KEYTYPE MegaCrit.Sts2.Core.Entities.Multiplayer.NetScreenType
+  Field Feedback
+
+KEYTYPE MegaCrit.Sts2.Core.Entities.Multiplayer.PlayerChoiceOptions
+  Field CancelPlayCardActions
+
+KEYTYPE MegaCrit.Sts2.Core.Entities.RestSite.MendRestSiteOption
+  Method ShouldCancelTargeting
+
+KEYTYPE MegaCrit.Sts2.Core.Entities.RestSite.RestSiteOption
+  Field <Owner>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Entities.RestSite.SmithRestSiteOption
+  Field <SmithCount>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereCell
+  Field <Item>k__BackingField
+  Field <X>k__BackingField
+  Field <Y>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereItem
+  Field <Position>k__BackingField
+  Method get_Texture
+  Method get_TexturePath
+  Property Texture
+  Property TexturePath
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereItems.CrystalSphereCardReward
+  Method get_TexturePath
+  Property TexturePath
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereItems.CrystalSphereGold
+  Method get_TexturePath
+  Property TexturePath
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereItems.CrystalSpherePotion
+  Method get_TexturePath
+  Property TexturePath
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereItems.CrystalSphereRelic
+  Method get_TexturePath
+  Property TexturePath
+
+KEYTYPE MegaCrit.Sts2.Core.Events.Custom.CrystalSphereEvent.CrystalSphereMinigame
+  Field <CrystalSphereTool>k__BackingField
+  Field <HighlightedCells>k__BackingField
+  Field <HoveredCell>k__BackingField
+  Field <PlacedAllItems>k__BackingField
+  Field <Rng>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Events.EventOption
+  Field <Description>k__BackingField
+  Field <DisableOnChosen>k__BackingField
+  Field <HistoryName>k__BackingField
+  Field <HoverTips>k__BackingField
+  Field <IsLocked>k__BackingField
+  Field <IsProceed>k__BackingField
+  Field <OnChosen>k__BackingField
+  Field <Relic>k__BackingField
+  Field <ShouldSaveChoiceToHistory>k__BackingField
+  Field <ShouldSaveVariablesToHistory>k__BackingField
+  Field <TextKey>k__BackingField
+  Field <Title>k__BackingField
+  Field <WasChosen>k__BackingField
+  Field <WillKillPlayer>k__BackingField
+  Method get_ShouldSaveChoiceToHistory
+  Method get_ShouldSaveVariablesToHistory
+  Method set_ShouldSaveChoiceToHistory
+  Method set_ShouldSaveVariablesToHistory
+  Property ShouldSaveChoiceToHistory
+  Property ShouldSaveVariablesToHistory
+  Method ThatWontSaveToChoiceHistory
+
+KEYTYPE MegaCrit.Sts2.Core.Hooks.Hook+<AfterPreventingBlockClear>d__65
+  Field preventer
+
+KEYTYPE MegaCrit.Sts2.Core.Hooks.Hook+<AfterPreventingDeath>d__66
+  Field preventer
+
+KEYTYPE MegaCrit.Sts2.Core.Models.AncientEventModel
+  NestedType <BeforeEventStarted>d__62
+  Field <DialogueColor>k__BackingField
+  Field <EventButtonColor>k__BackingField
+  Field <HealedAmount>k__BackingField
+  Method BeforeEventStarted
+  Property EventButtonColor
+  Method get_EventButtonColor
+  Method set_EventButtonColor
+  Method SetInitialEventState
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter
+  Method SaveCustomState
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Encounters.FakeMerchantEventEncounter
+  Method get_HasCustomBackground
+  Property HasCustomBackground
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Encounters.TheArchitectEventEncounter
+  Method get_HasCustomBackground
+  Property HasCustomBackground
+
+KEYTYPE MegaCrit.Sts2.Core.Models.EventModel
+  NestedType <BeginEvent>d__28
+  Field <Description>k__BackingField
+  Field <Node>k__BackingField
+  Field <Owner>k__BackingField
+  Field <Rng>k__BackingField
+  Method add_EnteringEventCombat
+  Method AfterEventStarted
+  Property BackgroundScenePath
+  Method BeforeEventStarted
+  Method BeginEvent
+  Method CreateBackgroundScene
+  Method EnterCombatWithoutExitingEvent
+  Method EnterCombatWithoutExitingEvent
+  Event EnteringEventCombat
+  Field EnteringEventCombat
+  Method get_BackgroundScenePath
+  Method OnEventFinished
+  Method remove_EnteringEventCombat
+  Method SetEventFinished
+  Method SetEventState
+  Method SetInitialEventState
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.DollRoom
+  Method BeforeEventStarted
+  Method OnEventFinished
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.FakeMerchant
+  Method BeforeEventStarted
+  Method OnEventFinished
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.Mocks.MockEventModel
+  Method EnterCombatWithoutExitingEvent
+  Method SetEventFinished
+  Method SetEventState
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.Nonupeipe
+  Property BeautifulBraceletEventOption
+  Property EventButtonColor
+  Method get_BeautifulBraceletEventOption
+  Method get_EventButtonColor
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.PunchOff
+  Method AfterEventStarted
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.RanwidTheElder
+  Method BeforeEventStarted
+  Method OnEventFinished
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.SelfHelpBook
+  Field _readTheBackDescriptionKey
+  NestedType <ReadTheBack>d__9
+  Method ReadTheBack
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.StoneOfAllTime
+  Method BeforeEventStarted
+  Method OnEventFinished
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.TheArchitect
+  Method SetInitialEventState
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Events.TheFutureOfPotions
+  Method BeforeEventStarted
+  Method OnEventFinished
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Powers.Mocks.MockPreventDeathPower
+  NestedType <AfterPreventingDeath>d__7
+  Method AfterPreventingDeath
+
+KEYTYPE MegaCrit.Sts2.Core.Models.Relics.SturdyClamp+<AfterPreventingBlockClear>d__8
+  Field preventer
+
+KEYTYPE MegaCrit.Sts2.Core.Multiplayer.Game.EventCombatSynchronizer
+  Field _canonicalEvent
+  Field <CombatStateForLayout>k__BackingField
+  Field <MutableEncounterForLayout>k__BackingField
+  NestedType EventCombatState
+  Method InitializeForEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer
+  Field _canonicalEvent
+  Field _events
+  Method BeginEvent
+  Method ChooseOptionForEvent
+  Method ChooseOptionForSharedEvent
+  Method ChooseSharedEventOption
+  Property Events
+  Method get_Events
+  Method GetEventForPlayer
+  Method GetLocalEvent
+  Method HandleEventOptionChosenMessage
+  Method HandleSharedEventOptionChosenMessage
+  Method HandleVotedForSharedEventOptionMessage
+  Method ResumeEvents
+  Method SaveEventOptionToHistory
+
+KEYTYPE MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Flavor.RestSiteOptionHoveredMessage
+  Field <Location>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Multiplayer.Messages.Game.Sync.OptionIndexType
+  Field Event
+
+KEYTYPE MegaCrit.Sts2.Core.Multiplayer.Replay.CombatReplayEvent
+  Field eventType
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.CommonUi.NSettingsScreenPopup
+  Field _backstop
+  Field <VerticalPopup>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.CommonUi.NSettingsScreenPopup+PropertyName
+  Field _backstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereCell
+  Field <Entity>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereDialogue
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereItem
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereMask
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereScreen+<>c
+  Method <get_DefaultFocusedControl>b__40_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.CrystalSphere.NCrystalSphereScreen+PropertyName
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.NFakeMerchant
+  Field _event
+  Field <Inventory>k__BackingField
+  Field <MerchantButton>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.Custom.NFakeMerchant+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.EventSplitVoteAnimation
+  Field _eventLayout
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientDialogueHitbox
+  Method OnFocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientDialogueHitbox+MethodName
+  Field OnFocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientDialogueLine
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout
+  Field _ancientEvent
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method OnDialogueLineFocused
+  Method OnDialogueLineUnfocused
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout+MethodName
+  Field OnDialogueLineFocused
+  Field OnDialogueLineUnfocused
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NCombatEventLayout
+  Field <EmbeddedCombatRoom>k__BackingField
+  Field <HasCombatStarted>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method HideEventVisuals
+  Method SaveGodotObjectData
+  Method SetEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NCombatEventLayout+MethodName
+  Field HideEventVisuals
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NCombatEventLayout+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NDivinationButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NDivinationButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventLayout
+  Field _event
+  Field _sharedEventLabel
+  Field _sharedEventLoc
+  Field <VfxContainer>k__BackingField
+  Property DefaultFocusedControl
+  Method DisableEventOptions
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+  Method SetEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventLayout+MethodName
+  Field DisableEventOptions
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventLayout+PropertyName
+  Field _sharedEventLabel
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton
+  Field _cancelToken
+  Field _deathPreventionCancellation
+  Field _deathPreventionVfx
+  Field _deathPreventionVfxPosition
+  Field _image
+  Field <Event>k__BackingField
+  NestedType <ExpireDeathPreventionVfx>d__51
+  Field <Index>k__BackingField
+  Field <Option>k__BackingField
+  Property Event
+  Method ExpireDeathPreventionVfx
+  Method get_Event
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+  Method set_Event
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton+PropertyName
+  Field _deathPreventionVfx
+  Field _deathPreventionVfxPosition
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatBackground
+  Method SaveGodotObjectData
+  Method SetBackgroundLayers
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatBackgroundLayer
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom
+  Field <BackCombatVfxContainer>k__BackingField
+  Field <Background>k__BackingField
+  Field <BgContainer>k__BackingField
+  Field <CombatVfxContainer>k__BackingField
+  Field <CreatedMsec>k__BackingField
+  Field <EncounterSlots>k__BackingField
+  Field <LastTargetedCreature>k__BackingField
+  Field <Mode>k__BackingField
+  Field <SceneContainer>k__BackingField
+  Field <Ui>k__BackingField
+  Property BackCombatVfxContainer
+  Property Background
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method GenerateBackgroundRngForCurrentPoint
+  Method get_BackCombatVfxContainer
+  Method get_Background
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method SaveGodotObjectData
+  Method set_BackCombatVfxContainer
+  Method set_Background
+  Method SetUpBackground
+  Method SubscribeToCombatEvents
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom+<>c
+  Method <get_FocusedControlFromTopBar>b__96_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom+MethodName
+  Field SubscribeToCombatEvents
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom+PropertyName
+  Field BackCombatVfxContainer
+  Field Background
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom
+  Field _event
+  Field _eventContainer
+  Field <VfxContainer>k__BackingField
+  Property CustomEventNode
+  Property DefaultFocusedControl
+  Method get_CustomEventNode
+  Method get_DefaultFocusedControl
+  Method GetDescriptionOrFallback
+  Method OnEnteringEventCombat
+  Method RefreshEventState
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+MethodName
+  Field OnEnteringEventCombat
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+PropertyName
+  Field _eventContainer
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMapRoom
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMapRoom+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMerchantButton
+  Field _focusedWhileTargeting
+  Field <IsLocalPlayerDead>k__BackingField
+  Field <PlayerDeadLines>k__BackingField
+  Field backing_MerchantOpened
+  NestedType MerchantOpenedEventHandler
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method RefreshFocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMerchantButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+  Field RefreshFocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMerchantButton+PropertyName
+  Field _focusedWhileTargeting
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMerchantRoom
+  Field <Inventory>k__BackingField
+  Field <MerchantButton>k__BackingField
+  Field <Room>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NMerchantRoom+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NRestSiteRoom
+  Field _lastFocused
+  Field <BgContainer>k__BackingField
+  Field <Characters>k__BackingField
+  Field <Description>k__BackingField
+  Field <Header>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NRestSiteRoom+PropertyName
+  Field _lastFocused
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NTreasureRoom
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NTreasureRoom+<OpenChest>d__26
+  Field <cancelSource>5__2
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Rooms.NTreasureRoom+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiary
+  Field _iconOutlineTexture
+  Field _iconTexture
+  Field <BackVfxContainer>k__BackingField
+  Field <Instance>k__BackingField
+  Field <VfxContainer>k__BackingField
+  Method AddEvents
+  Property BackVfxContainer
+  Method get_BackVfxContainer
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+  Method set_BackVfxContainer
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiary+MethodName
+  Field AddEvents
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiary+PropertyName
+  Field _iconOutlineTexture
+  Field _iconTexture
+  Field BackVfxContainer
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryCharacterFilter
+  Field _focusedMultiplier
+  Field _image
+  Field backing_Toggled
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType ToggledEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryCharacterFilter+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryCharacterFilter+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryEntry
+  Field <Entry>k__BackingField
+  Field <IsDiscovered>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLabelDivider
+  Field <LocString>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLabelDivider+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLayout
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLayoutDecimillipede
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLayoutDefault
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLayoutKaiserCrab
+  Field _background
+  Field _backgroundPosition
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryLayoutKaiserCrab+PropertyName
+  Field _background
+  Field _backgroundPosition
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryModeButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryModeButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryMoveButton
+  Field <Move>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Bestiary.NBestiaryMoveButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Capstones.ICapstoneScreen
+  Method get_UseSharedBackstop
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Capstones.NCapstoneContainer
+  Field _backstop
+  Field _backstopFade
+  Field <CurrentCapstoneScreen>k__BackingField
+  Field backing_CapstoneClosed
+  Field backing_Changed
+  NestedType CapstoneClosedEventHandler
+  NestedType ChangedEventHandler
+  Method DisableBackstopInstantly
+  Method EnableBackstopInstantly
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Capstones.NCapstoneContainer+MethodName
+  Field DisableBackstopInstantly
+  Field EnableBackstopInstantly
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Capstones.NCapstoneContainer+PropertyName
+  Field _backstop
+  Field _backstopFade
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CapstoneSubmenuType
+  Field Feedback
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardCostTickbox
+  Field _image
+  Field <Loc>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardCostTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardCostTickbox+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardLibrary
+  Field _displayCardsShortDelayCancelToken
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardLibrary+<DisplayCardsAfterShortDelay>d__58
+  Field <cancelToken>5__2
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardLibrary+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardLibraryGrid
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardLibraryStats
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardPoolFilter
+  Field _focusedMultiplier
+  Field _image
+  Field <Loc>k__BackingField
+  Field backing_Toggled
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType ToggledEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardPoolFilter+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardPoolFilter+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardRarityTickbox
+  Field <Loc>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardRarityTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardTypeTickbox
+  Field _image
+  Field <Loc>k__BackingField
+  Field backing_Toggled
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType ToggledEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardTypeTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NCardTypeTickbox+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NClearSearchButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NClearSearchButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NClearSearchButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NLibraryStatTickbox
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary.NLibraryStatTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardGridSelectionScreen
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardGridSelectionScreen+PropertyName
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardRewardAlternativeButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardRewardAlternativeButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardRewardAlternativeButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardRewardSelectionScreen
+  Field _lastFocusedControl
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCardRewardSelectionScreen+PropertyName
+  Field _lastFocusedControl
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChoiceSelectionSkipButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChoiceSelectionSkipButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChoiceSelectionSkipButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChooseABundleSelectionScreen
+  Field _previewCancelButton
+  Method CancelSelection
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChooseABundleSelectionScreen+MethodName
+  Field CancelSelection
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChooseABundleSelectionScreen+PropertyName
+  Field _previewCancelButton
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChooseACardSelectionScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NChooseACardSelectionScreen+PropertyName
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NCombatPileCardSelectScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckCardSelectScreen
+  Field _previewCancelButton
+  Method CancelSelection
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckCardSelectScreen+MethodName
+  Field CancelSelection
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckCardSelectScreen+PropertyName
+  Field _previewCancelButton
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckEnchantSelectScreen
+  Field _multiPreviewCancelButton
+  Field _singlePreviewCancelButton
+  Method CancelSelection
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckEnchantSelectScreen+MethodName
+  Field CancelSelection
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckEnchantSelectScreen+PropertyName
+  Field _multiPreviewCancelButton
+  Field _singlePreviewCancelButton
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckTransformSelectScreen
+  Field _previewCancelButton
+  Method CancelSelection
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckTransformSelectScreen+MethodName
+  Field CancelSelection
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckTransformSelectScreen+PropertyName
+  Field _previewCancelButton
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckUpgradeSelectScreen
+  Field _multiPreviewCancelButton
+  Field _singlePreviewCancelButton
+  Method CancelSelection
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckUpgradeSelectScreen+MethodName
+  Field CancelSelection
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NDeckUpgradeSelectScreen+PropertyName
+  Field _multiPreviewCancelButton
+  Field _singlePreviewCancelButton
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CardSelection.NSimpleCardSelectScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NActDropdown
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NActDropdown+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NAscensionPanel
+  Field <Ascension>k__BackingField
+  NestedType AscensionLevelChangedEventHandler
+  Field backing_AscensionLevelChanged
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectButton
+  Field <IsRandom>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectScreen
+  Field _backButton
+  Field _characterUnlockAnimationBackstop
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectScreen+PropertyName
+  Field _backButton
+  Field _characterUnlockAnimationBackstop
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectScreenBg
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NMultiplayerLoadGameScreen
+  Field _backButton
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NMultiplayerLoadGameScreen+PropertyName
+  Field _backButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NRegentCharacterSelectBg
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Credits.NCreditsScreen
+  Field _backButton
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method ProcessScrollEvent
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Credits.NCreditsScreen+MethodName
+  Field ProcessScrollEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Credits.NCreditsScreen+PropertyName
+  Field _backButton
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunLoadScreen
+  Field _backButton
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunLoadScreen+PropertyName
+  Field _backButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunRandomizeButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunRandomizeButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunScreen
+  Field _backButton
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+  Method TryFocusOnModifiersList
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunScreen+MethodName
+  Field TryFocusOnModifiersList
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NCustomRunScreen+PropertyName
+  Field _backButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NRunModifierTickbox
+  Field <Modifier>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.CustomRun.NRunModifierTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunCharacterContainer
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLeaderboard
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLeaderboardHeader
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLeaderboardRow
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLeaderboardSeparator
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLoadScreen
+  Field _backButton
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunLoadScreen+PropertyName
+  Field _backButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunScoreWarning
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunScoreWarning+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunScreen
+  Field _backButton
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunScreen+PropertyName
+  Field _backButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NDailyRunScreenModifier
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NGlobalRankTickbox
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NGlobalRankTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NLeaderboardDayPaginator
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NLeaderboardDayPaginator+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NLeaderboardPageArrow
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NLeaderboardPageArrow+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.DailyRun.NLeaderboardPageArrow+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NFeedbackCategoryDropdown
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NFeedbackCategoryDropdown+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NFeedbackCategoryDropdownItem
+  Field <CategoryIndex>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NFeedbackScreenOpener
+  Field <Instance>k__BackingField
+  NestedType <OpenFeedbackScreen>d__7
+  Method OpenFeedbackScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackCartoon
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackEmojiButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackEmojiButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackFlower
+  Field _anticipationImage
+  Field _noddingImage
+  Field _normalImage
+  Field <Cartoon>k__BackingField
+  Field <MyState>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackScreen
+  Field _backButton
+  Field _runInBackgroundTaskSource
+  Field _screenClosedCancelToken
+  Field _sendBackstop
+  NestedType <OnFeedbackFailed>d__55
+  NestedType <OnFeedbackSuccess>d__56
+  NestedType <SendFeedback>d__52
+  NestedType <SendFeedbackWrapper>d__51
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method OnFeedbackFailed
+  Method OnFeedbackSuccess
+  Method ReturnToGameFocused
+  Method ReturnToGameUnfocused
+  Method SaveGodotObjectData
+  Method SendButtonFocused
+  Method SendButtonUnfocused
+  Method SendFeedback
+  Method SendFeedbackWrapper
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackScreen+MethodName
+  Field ReturnToGameFocused
+  Field ReturnToGameUnfocused
+  Field SendButtonFocused
+  Field SendButtonUnfocused
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.FeedbackScreen.NSendFeedbackScreen+PropertyName
+  Field _backButton
+  Field _sendBackstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NBadge
+  Method GetBadgeBaseTexture
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NBadge+MethodName
+  Field GetBadgeBaseTexture
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NDiscoveredItem
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NDiscoveredItem+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverContinueButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverContinueButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverScreen
+  Field _backstop
+  Field _backstopMaterial
+  Field _fullBlackBackstop
+  Field _summaryBackstop
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method get_UseSharedBackstop
+  Method SaveBadgesToProgress
+  Method SaveGodotObjectData
+  Method UpdateBackstopMaterial
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverScreen+<>c__DisplayClass51_0
+  Method <SaveBadgesToProgress>b__0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverScreen+<AnimateIn>d__68
+  Field <backstopTween>5__2
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverScreen+MethodName
+  Field UpdateBackstopMaterial
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NGameOverScreen+PropertyName
+  Field _backstop
+  Field _backstopMaterial
+  Field _fullBlackBackstop
+  Field _summaryBackstop
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NReturnToMainMenuButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NReturnToMainMenuButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NRunSummary
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NRunSummary+<>c
+  Method <get_DefaultFocusedControl>b__16_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NRunSummary+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NScoreLine
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NViewRunButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.GameOverScreen.NViewRunButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens.NInspectRelicScreen
+  Field _backstop
+  Field _relicImage
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method OnBackstopPressed
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens.NInspectRelicScreen+MethodName
+  Field OnBackstopPressed
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens.NInspectRelicScreen+PropertyName
+  Field _backstop
+  Field _relicImage
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens.NUpgradePreviewTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCompendiumBottomButton
+  Field _focusV
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCompendiumBottomButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCompendiumBottomButton+PropertyName
+  Field _focusV
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCompendiumSubmenu
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCompendiumSubmenu+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NContinueRunInfo
+  Field <HasResult>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCustomRunModifiersList
+  Field backing_ModifiersChanged
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  NestedType ModifiersChangedEventHandler
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NCustomRunModifiersList+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NDisclaimerProceedButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NDisclaimerProceedButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NEarlyAccessDisclaimer
+  Field _image
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NEarlyAccessDisclaimer+PropertyName
+  Field _image
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendButton
+  Field <PlayerId>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendRefreshButton
+  Field <PlayerId>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendRefreshButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendScreen
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendScreen+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NJoinFriendScreenButtonLayout
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NLogoAnimation
+  Field _cancelled
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NLogoAnimation+PropertyName
+  Field _cancelled
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenu
+  Field _backstopTween
+  Field _readRunSaveResult
+  Field <BlurBackstop>k__BackingField
+  Method <ConnectMainMenuTextButtonFocusLogic>b__48_0
+  Field <PatchNotesScreen>k__BackingField
+  Field <SubmenuStack>k__BackingField
+  Property BlurBackstop
+  Method ConnectMainMenuTextButtonFocusLogic
+  Property DefaultFocusedControl
+  Method DisableBackstop
+  Method DisableBackstopInstantly
+  Method DisplayLoadSaveError
+  Method EnableBackstop
+  Method EnableBackstopInstantly
+  Method get_BlurBackstop
+  Method get_DefaultFocusedControl
+  Method MainMenuButtonFocused
+  Method MainMenuButtonUnfocused
+  Method SaveGodotObjectData
+  Method set_BlurBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenu+<>c
+  Method <get_DefaultFocusedControl>b__61_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenu+<>c__DisplayClass48_0
+  Method <ConnectMainMenuTextButtonFocusLogic>b__1
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenu+MethodName
+  Field ConnectMainMenuTextButtonFocusLogic
+  Field DisableBackstop
+  Field DisableBackstopInstantly
+  Field DisplayLoadSaveError
+  Field EnableBackstop
+  Field EnableBackstopInstantly
+  Field MainMenuButtonFocused
+  Field MainMenuButtonUnfocused
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenu+PropertyName
+  Field _backstopTween
+  Field BlurBackstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuBg
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuContinueButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuContinueButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuSubmenuStack
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuTextButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMainMenuTextButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMultiplayerHostSubmenu
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMultiplayerHostSubmenu+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMultiplayerSubmenu
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NMultiplayerSubmenu+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NOpenProfileScreenButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NOpenProfileScreenButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NPatchNotesButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NPatchNotesButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NPatchNotesScreen
+  Field _backButton
+  Field <IsOpen>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NPatchNotesScreen+PropertyName
+  Field _backButton
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NShortSubmenuButton
+  Field _focusV
+  Method GetImagePath
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NShortSubmenuButton+MethodName
+  Field GetImagePath
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NShortSubmenuButton+PropertyName
+  Field _focusV
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSingleplayerSubmenu
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSingleplayerSubmenu+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenu
+  Field _backButton
+  Field _lastFocusedControl
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_InitialFocusedControl
+  Method HideBackButtonImmediately
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenu+MethodName
+  Field HideBackButtonImmediately
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenu+PropertyName
+  Field _backButton
+  Field _lastFocusedControl
+  Field DefaultFocusedControl
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenuButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenuButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenuStack
+  Field backing_StackModified
+  Method HideBackstop
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  Method ShowBackstop
+  NestedType StackModifiedEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.MainMenu.NSubmenuStack+MethodName
+  Field HideBackstop
+  Field ShowBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NAncientMapPoint
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NAncientMapPoint+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NBaseMapDrawingButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NBossMapPoint
+  Field _placeholderImage
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NBossMapPoint+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NBossMapPoint+PropertyName
+  Field _placeholderImage
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NControllerMapDrawingInput
+  Method OnGuiFocusChanged
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NControllerMapDrawingInput+MethodName
+  Field OnGuiFocusChanged
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapBg
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapClearButton
+  Field _glowImagePath
+  Field _imagePath
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapClearButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawButton
+  Field _glowImagePath
+  Field _imagePath
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawingInput
+  Field <DrawingMode>k__BackingField
+  Field backing_Finished
+  NestedType FinishedEventHandler
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawings
+  Method QueueOrSendEvent
+  Method RepositionBasedOnBackground
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawings+DrawingState
+  Field drawingTexture
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawings+MethodName
+  Field RepositionBasedOnBackground
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapEraseButton
+  Field _glowImagePath
+  Field _imagePath
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapEraseButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapLegendItem
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapLegendItem+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapMarker
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapPoint
+  Field <Point>k__BackingField
+  Field <VoteContainer>k__BackingField
+  Property AllowFocusWhileDisabled
+  Method get_AllowFocusWhileDisabled
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapPoint+<>c__DisplayClass43_0
+  Method <OnFocus>b__0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapPoint+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapPoint+PropertyName
+  Field AllowFocusWhileDisabled
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapScreen
+  Field _backButton
+  Field _backstop
+  Field <Drawings>k__BackingField
+  Method <get_DefaultFocusedControl>b__132_1
+  Field <IsDebugTravelEnabled>k__BackingField
+  Field <IsOpen>k__BackingField
+  Field <IsTravelEnabled>k__BackingField
+  Field <IsTraveling>k__BackingField
+  Field <PlayerVoteDictionary>k__BackingField
+  Method <ProcessMouseDrawingEvent>b__105_0
+  Field backing_Closed
+  Field backing_Opened
+  NestedType ClosedEventHandler
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method OnBackButtonPressed
+  Method OnPlayerVoteCancelled
+  NestedType OpenedEventHandler
+  Method ProcessControllerEvent
+  Method ProcessMouseDrawingEvent
+  Method ProcessMouseEvent
+  Method ProcessScrollEvent
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  Method TryCancelStartOfActAnim
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapScreen+<>c
+  Method <get_DefaultFocusedControl>b__132_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapScreen+MethodName
+  Field OnBackButtonPressed
+  Field ProcessControllerEvent
+  Field ProcessMouseDrawingEvent
+  Field ProcessMouseEvent
+  Field ProcessScrollEvent
+  Field TryCancelStartOfActAnim
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapScreen+PropertyName
+  Field _backButton
+  Field _backstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapShareButton
+  Field _buttonImage
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapShareButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapShareButton+PropertyName
+  Field _buttonImage
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMouseHeldMapDrawingInput
+  Method ProcessMouseDrawingEvent
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMouseHeldMapDrawingInput+MethodName
+  Field ProcessMouseDrawingEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMouseModeMapDrawingInput
+  Method ProcessMouseDrawingEvent
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NMouseModeMapDrawingInput+MethodName
+  Field ProcessMouseDrawingEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NNormalMapPoint
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Map.NNormalMapPoint+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NConfirmModLoadingPopup
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NConfirmModLoadingPopup+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModdingScreen
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModdingScreen+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModInfoContainer
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModInfoContainer+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModMenuButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModMenuButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModMenuButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModMenuRow
+  Field <Mod>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ModdingScreen.NModMenuRow+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NAncientBgContainer
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCapstoneSubmenuStack
+  Field <Stack>k__BackingField
+  Field <Type>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCapstoneSubmenuStack+PropertyName
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCardPileScreen
+  Field _backButton
+  Field _background
+  Field <Pile>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCardPileScreen+PropertyName
+  Field _backButton
+  Field _background
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCardsViewScreen
+  Field _backButton
+  Field _background
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NCardsViewScreen+PropertyName
+  Field _backButton
+  Field _background
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NChooseARelicSelection
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method get_UseSharedBackstop
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NChooseARelicSelection+PropertyName
+  Field DefaultFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NDeckViewScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NInspectCardScreen
+  Field _backstop
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method OnBackstopPressed
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NInspectCardScreen+MethodName
+  Field OnBackstopPressed
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NInspectCardScreen+PropertyName
+  Field _backstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NRewardsScreen
+  Field _lastRewardFocused
+  Field <IsComplete>k__BackingField
+  Field backing_Completed
+  NestedType CompletedEventHandler
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+  Method get_UseSharedBackstop
+  Method ProcessGuiFocus
+  Method ProcessScrollEvent
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NRewardsScreen+MethodName
+  Field ProcessGuiFocus
+  Field ProcessScrollEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NRewardsScreen+PropertyName
+  Field _lastRewardFocused
+  Field DefaultFocusedControl
+  Field FocusedControlFromTopBar
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NRunSubmenuStack
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NShareButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.NSimpleCardsViewScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Overlays.IOverlayScreen
+  Method get_UseSharedBackstop
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Overlays.NOverlayStack
+  Field _backstop
+  Field _backstopFade
+  Field backing_Changed
+  NestedType ChangedEventHandler
+  Method HideBackstop
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  Method ShowBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Overlays.NOverlayStack+MethodName
+  Field HideBackstop
+  Field ShowBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Overlays.NOverlayStack+PropertyName
+  Field _backstop
+  Field _backstopFade
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenu
+  Field _backButton
+  Field _saveAndQuitButton
+  Field _saveAndQuitLoc
+  Method get_InitialFocusedControl
+  Method get_UseSharedBackstop
+  Property InitialFocusedControl
+  Method OnBackOrResumeButtonPressed
+  Method OnSaveAndQuitButtonPressed
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenu+MethodName
+  Field OnBackOrResumeButtonPressed
+  Field OnSaveAndQuitButtonPressed
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenu+PropertyName
+  Field _backButton
+  Field _saveAndQuitButton
+  Field InitialFocusedControl
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenuButton
+  Field _backButton
+  Field _image
+  Method get_UseSharedBackstop
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+  Property UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenuButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu.NPauseMenuButton+PropertyName
+  Field _backButton
+  Field _image
+  Field UseSharedBackstop
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NLabPotionHolder
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NLabPotionHolder+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NPotionLab
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NPotionLab+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NPotionLabCategory
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.PotionLab.NPotionLabCategory+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NDeleteProfileButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NDeleteProfileButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileButton
+  Field _background
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileButton+PropertyName
+  Field _background
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileIcon
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileScreen
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ProfileScreen.NProfileScreen+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollection
+  Field _event
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+  Method SetLastFocusedRelic
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollection+MethodName
+  Field SetLastFocusedRelic
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollection+PropertyName
+  Field _event
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollectionCategory
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollectionCategory+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollectionEntry
+  Field <ModelVisibility>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RelicCollection.NRelicCollectionEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.GameOverType
+  Field EventDeath
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NActHistoryEntry
+  Field <Entries>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NDeckHistory
+  Field backing_Hovered
+  Field backing_Unhovered
+  NestedType HoveredEventHandler
+  Method OnEntryFocused
+  Method OnEntryUnfocused
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType UnhoveredEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NDeckHistory+MethodName
+  Field OnEntryFocused
+  Field OnEntryUnfocused
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NDeckHistoryEntry
+  Field _cardImage
+  Field _enchantmentImage
+  Field <Card>k__BackingField
+  Field <FloorsAddedToDeck>k__BackingField
+  Field backing_Clicked
+  NestedType ClickedEventHandler
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NDeckHistoryEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NDeckHistoryEntry+PropertyName
+  Field _cardImage
+  Field _enchantmentImage
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistory
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistory+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistoryEntry
+  Field _texture
+  Field <FloorNum>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistoryEntry+<>c__DisplayClass23_0
+  Method <OnFocus>b__0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistoryEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NMapPointHistoryEntry+PropertyName
+  Field _texture
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRelicHistory
+  Field backing_Hovered
+  Field backing_Unhovered
+  NestedType HoveredEventHandler
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType UnhoveredEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRunHistory
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRunHistory+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRunHistoryArrowButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRunHistoryPlayerIcon
+  Field <Player>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.RunHistoryScreen.NRunHistoryPlayerIcon+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext.ActiveScreenContext
+  Method FocusOnDefaultControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext.IScreenContext
+  Property DefaultFocusedControl
+  Property FocusedControlFromTopBar
+  Method get_DefaultFocusedControl
+  Method get_FocusedControlFromTopBar
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NAbandonRunButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NAbandonRunButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NAmbienceSlider
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NAspectRatioDropdown
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NAspectRatioDropdownItem
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NBackgroundModeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NBackgroundModeTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NBgmVolumeSlider
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NCommonTooltipsHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NCommonTooltipsTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NCreditsButton
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NCreditsButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NDisplayDropdown
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NDisplayDropdownItem
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NDropdownPositioner
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NFastModeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NFastModeTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NFpsPaginator
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NFullscreenHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NFullscreenTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NHandCardCountHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NHandCardCountTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NInputSettingsEntry
+  Field <InputName>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NInputSettingsEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NInputSettingsPanel
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NIntroLogoHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NIntroLogoTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NKeyboardOnlyModeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NKeyboardOnlyModeTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLanguageButton
+  Field _image
+  Field <IsSelected>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLanguageButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLanguageButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLanguageDropdown
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLanguageDropdownItem
+  Field _warnImageTag
+  Field <LanguageCode>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLongPressConfirmationHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NLongPressConfirmationTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NMasterVolumeSlider
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NMsaaHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NMsaaPaginator
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NMuteInBackgroundTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NOpenFeedbackScreenButton
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NOpenFeedbackScreenButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NOpenModdingScreenButton
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NOpenModdingScreenButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPaginateArrow
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPaginateArrow+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPaginateArrow+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPaginator
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPaginator+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPhobiaModeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NPhobiaModeTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetGameplayButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetGraphicsButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetToDefaultControlsButton
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetToDefaultControlsButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetTutorialsButton
+  Field _image
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResetTutorialsButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResolutionDropdown
+  Field <Instance>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NResolutionDropdownItem
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NRunTimerHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NRunTimerTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NScreenshakeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NScreenshakePaginator
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsDropdown
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsDropdown+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsGradientMask
+  Field _texture
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsGradientMask+PropertyName
+  Field _texture
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsPaginatorArrow
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsPaginatorArrow+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsPaginatorArrow+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsPanel
+  Field <Content>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsPanel+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsScreen
+  Field _feedbackScreenButton
+  NestedType <OpenFeedbackScreen>d__21
+  Field backing_SettingsClosed
+  Field backing_SettingsOpened
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method OpenFeedbackScreen
+  Method OpenFeedbackScreen
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType SettingsClosedEventHandler
+  NestedType SettingsOpenedEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsScreen+MethodName
+  Field OpenFeedbackScreen
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsScreen+PropertyName
+  Field _feedbackScreenButton
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsSlider
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsSlider+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTab
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTab+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTab+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTabManager
+  Field backing_TabChanged
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType TabChangedEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTabManager+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTickbox
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsTickbox+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSettingsToast
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NSfxVolumeSlider
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NShowMpMapDrawingsHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NShowMpMapDrawingsTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NTextEffectsHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NTextEffectsTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NUploadDataTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NUploadGameplayDataHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NVSyncPaginator
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NWindowResizeHoverTip
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Settings.NWindowResizeTickbox
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NFakeMerchantInventory
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantCard
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantCardRemoval
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantCharacter
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantDialogue
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantHand
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantHand+<WaitAndReturn>d__16
+  Field cancelToken
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantInventory
+  Field _backButton
+  Field _backstop
+  Field <Inventory>k__BackingField
+  Field <IsOpen>k__BackingField
+  Field <MerchantHand>k__BackingField
+  Field backing_InventoryClosed
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  NestedType InventoryClosedEventHandler
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantInventory+<>c
+  Method <get_DefaultFocusedControl>b__48_0
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantInventory+PropertyName
+  Field _backButton
+  Field _backstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantPotion
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantRelic
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantSlot
+  Field backing_Hovered
+  Field backing_Unhovered
+  NestedType HoveredEventHandler
+  Method OnFocus
+  Method OnUnfocus
+  Method RaiseGodotClassSignalCallbacks
+  Method SaveGodotObjectData
+  NestedType UnhoveredEventHandler
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Shops.NMerchantSlot+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NAchievementHolder
+  Field <IsUnlocked>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NAchievementsGrid
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NAchievementsGrid+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NCharacterStats
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NGeneralStatsGrid
+  Field _eventsEntry
+  Field _eventsIconPath
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NGeneralStatsGrid+<>c__DisplayClass30_0
+  Field progressSave
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NGeneralStatsGrid+PropertyName
+  Field _eventsEntry
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NShareStatsButton
+  Field _image
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NShareStatsButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NShareStatsButton+PropertyName
+  Field _image
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatEntry
+  Field _controllerFocusReticle
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatEntry+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatEntry+PropertyName
+  Field _controllerFocusReticle
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatsScreen
+  Method get_InitialFocusedControl
+  Property InitialFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatsScreen+PropertyName
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.StatsScreen.NStatsTabManager
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NAcknowledgeButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NAcknowledgeButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NChapterPaginateButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NChapterPaginateButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NCloseButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NCloseButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochCard
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochInspectScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Field lockedImagePath
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochInspectScreen+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochPaginateButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochReminderText
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochSlot
+  Field _slotImage
+  Field <HasSpawned>k__BackingField
+  Field <State>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochSlot+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEpochSlot+PropertyName
+  Field _slotImage
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NEraColumn
+  NestedType <SaveBeforeAnimationPosition>d__22
+  Method SaveBeforeAnimationPosition
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NResetProgressButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NSlotsContainer
+  Field _bounceBackStrength
+  Method ProcessGuiFocus
+  Method ProcessPanEvent
+  Method ProcessScrollEvent
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NSlotsContainer+MethodName
+  Field ProcessGuiFocus
+  Field ProcessPanEvent
+  Field ProcessScrollEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineLineMask
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen
+  Field _backButton
+  Field _backstop
+  Field _backstopTween
+  Field _save
+  Field <CurrentUnlockScreen>k__BackingField
+  NestedType <GetAllEraTexturePaths>d__46
+  NestedType <HideBackstopAndShowUi>d__57
+  Method get_InitialFocusedControl
+  Method GetAllEraTexturePaths
+  Method GetEraTexturePath
+  Method HideBackstopAndShowUi
+  Property InitialFocusedControl
+  Method OnBackButtonPressed
+  Method RefreshBackButton
+  Method SaveGodotObjectData
+  Method ShowBackstopAndHideUi
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen+<>c
+  Method <get_InitialFocusedControl>b__67_0
+  Method <get_InitialFocusedControl>b__67_1
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen+<>O
+  Field <0>__OnBackButtonPressed
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen+<HideBackstopAndShowUi>d__57
+  Field showBackButton
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen+MethodName
+  Field GetEraTexturePath
+  Field OnBackButtonPressed
+  Field RefreshBackButton
+  Field ShowBackstopAndHideUi
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineScreen+PropertyName
+  Field _backButton
+  Field _backstop
+  Field _backstopTween
+  Field InitialFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineTutorial
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NTimelineTutorial+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NUnlockConfirmButton
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NUnlockConfirmButton+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.NUnlockInfo
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockCardsScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockCardsScreen+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockCharacterScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockEpochScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockMiscScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockPotionsScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockPotionsScreen+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockRelicsScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockRelicsScreen+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockScreen
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockScreen+PropertyName
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.Timeline.UnlockScreens.NUnlockTimelineScreen
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NHandImage
+  Field _textureRect
+  Field <Index>k__BackingField
+  Field <IsDown>k__BackingField
+  Field <IsShown>k__BackingField
+  Field <Player>k__BackingField
+  Method SaveGodotObjectData
+  Method SetTextureToFightMove
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NHandImage+MethodName
+  Field SetTextureToFightMove
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NHandImage+PropertyName
+  Field _textureRect
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NHandImageCollection
+  Method ProcessGuiFocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NHandImageCollection+MethodName
+  Field ProcessGuiFocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NTreasureRoomRelicCollection
+  Field _fightBackstop
+  Field <SingleplayerRelicHolder>k__BackingField
+  Property DefaultFocusedControl
+  Method get_DefaultFocusedControl
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NTreasureRoomRelicCollection+PropertyName
+  Field _fightBackstop
+  Field DefaultFocusedControl
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NTreasureRoomRelicHolder
+  Field <Index>k__BackingField
+  Field <Relic>k__BackingField
+  Field <VoteContainer>k__BackingField
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Screens.TreasureRoomRelic.NTreasureRoomRelicHolder+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.sts2.Core.Nodes.TopBar.NTopBarRoomIcon
+  Method OnFocus
+  Method OnUnfocus
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.sts2.Core.Nodes.TopBar.NTopBarRoomIcon+MethodName
+  Field OnFocus
+  Field OnUnfocus
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.TreasureRooms.NTreasureButton
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.Events.NSymbioteEyeMovementVfx
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.NEpochOffscreenVfx
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.NFullscreenTextVfx
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.Ui.NGaseousScreenVfx
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.Utilities.NScreenShake
+  Field <ShakeTarget>k__BackingField
+  Method SaveGodotObjectData
+
+KEYTYPE MegaCrit.Sts2.Core.Nodes.Vfx.Utilities.ScreenPunchInstance
+  Method Cancel
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.AbstractRoom
+  Field <Id>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.BackgroundAssets
+  Field <BackgroundScenePath>k__BackingField
+  Field <BgLayers>k__BackingField
+  Field <FgLayer>k__BackingField
+  Property BackgroundScenePath
+  Method get_BackgroundScenePath
+  Method SelectRandomBackgroundAssetLayers
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.BackgroundAssets+<>c
+  Method <SelectRandomBackgroundAssetLayers>b__12_0
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.CombatEventVisuals
+  Field <Act>k__BackingField
+  Field <Allies>k__BackingField
+  Field <Encounter>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.CombatRoom
+  Field <CombatState>k__BackingField
+  Field <GoldProportion>k__BackingField
+  Field <ParentEventId>k__BackingField
+  Field <ShouldCreateCombat>k__BackingField
+  Field <ShouldResumeParentEventAfterCombat>k__BackingField
+  Method get_ParentEventId
+  Method get_ShouldResumeParentEventAfterCombat
+  Property ParentEventId
+  Method set_ParentEventId
+  Method set_ShouldResumeParentEventAfterCombat
+  Property ShouldResumeParentEventAfterCombat
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.EventRoom
+  Field <CanonicalEvent>k__BackingField
+  Field <OnStart>k__BackingField
+  Property CanonicalEvent
+  Method get_CanonicalEvent
+  Method get_LocalMutableEvent
+  Property LocalMutableEvent
+  Method OnEventStateChanged
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.EventRoom+<EnterInternal>d__18
+  Field <localEvent>5__3
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.MerchantRoom
+  Field <Inventories>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.RoomSet
+  Field <SecondBoss>k__BackingField
+  Method EnsureNextEventIsValid
+  Field events
+  Field eventsVisited
+  Method FromSave
+  Method get_NextEvent
+  Property NextEvent
+  Method ToSave
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.RoomSet+<>c
+  Method <FromSave>b__34_0
+  Method <FromSave>b__34_1
+  Method <FromSave>b__34_2
+  Method <ToSave>b__33_0
+  Method <ToSave>b__33_1
+  Method <ToSave>b__33_2
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.RoomSet+<>O
+  Field <0>__EventOrDeprecated
+
+KEYTYPE MegaCrit.Sts2.Core.Rooms.RoomType
+  Field Event
+
+KEYTYPE MegaCrit.Sts2.Core.Runs.CardCreationOptions
+  Field <CardPoolFilter>k__BackingField
+  Field <Flags>k__BackingField
+  Field <RarityOdds>k__BackingField
+  Field <RngOverride>k__BackingField
+  Field <Source>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Runs.History.EventOptionHistoryEntry
+  Field <Title>k__BackingField
+  Field <Variables>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Runs.History.MapPointRoomHistoryEntry
+  Field <ModelId>k__BackingField
+  Field <MonsterIds>k__BackingField
+  Field <RoomType>k__BackingField
+  Field <TurnsTaken>k__BackingField
+
+KEYTYPE MegaCrit.Sts2.Core.Saves.Runs.SerializableRoom
+  Field <EncounterId>k__BackingField
+  Field <EncounterState>k__BackingField
+  Field <EventId>k__BackingField
+  Field <ExtraRewards>k__BackingField
+  Field <GoldProportion>k__BackingField
+  Field <IsPreFinished>k__BackingField
+  Field <ParentEventId>k__BackingField
+  Field <RoomType>k__BackingField
+  Field <ShouldResumeParentEvent>k__BackingField
+  Property EventId
+  Method get_EventId
+  Method get_ParentEventId
+  Method get_ShouldResumeParentEvent
+  Property ParentEventId
+  Method set_EventId
+  Method set_ParentEventId
+  Method set_ShouldResumeParentEvent
+  Property ShouldResumeParentEvent
+
+KEYTYPE MegaCrit.Sts2.Core.Saves.Runs.SerializableRoomSet
+  Field <AncientId>k__BackingField
+  Field <BossEncountersVisited>k__BackingField
+  Field <BossId>k__BackingField
+  Field <EliteEncounterIds>k__BackingField
+  Field <EliteEncountersVisited>k__BackingField
+  Field <EventIds>k__BackingField
+  Field <EventsVisited>k__BackingField
+  Field <NormalEncounterIds>k__BackingField
+  Field <NormalEncountersVisited>k__BackingField
+  Field <SecondBossId>k__BackingField
+  Property EventIds
+  Property EventsVisited
+  Method get_EventIds
+  Method get_EventsVisited
+  Method set_EventIds
+  Method set_EventsVisited
+
+KEYTYPE MegaCrit.Sts2.Core.Timeline.Epochs.Event1Epoch
+  Property Events
+  Method get_Events
+
+KEYTYPE MegaCrit.Sts2.Core.Timeline.Epochs.Event2Epoch
+  Property Events
+  Method get_Events
+
+KEYTYPE MegaCrit.Sts2.Core.Timeline.Epochs.Event3Epoch
+  Property Events
+  Method get_Events
+
+KEYTYPE MegaCrit.Sts2.GameInfo.Objects.EventInfo
+  Field <Act>k__BackingField
+  Field <BotKeyword>k__BackingField
+  Field <BotText>k__BackingField
+  Field <Id>k__BackingField
+  Field <Name>k__BackingField
+  Field <Options>k__BackingField

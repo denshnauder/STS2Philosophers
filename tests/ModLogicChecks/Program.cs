@@ -21,6 +21,7 @@ SextusOpposedAppearancesChecks.Run();
 ParmenidesInquiryChecks.Run();
 AristotleCivicInquiryChecks.Run();
 DemocritusArrangementChecks.Run();
+MachiavelliEmergencyMandateChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
 HanFeiPublicStandardChecks.Run();

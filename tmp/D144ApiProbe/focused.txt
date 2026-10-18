@@ -1,0 +1,2610 @@
+
+TYPE MegaCrit.Sts2.Core.Nodes.Events.NEventLayout : Godot.Control
+  PROP Control DefaultFocusedControl get=Public, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP IEnumerable`1 OptionButtons get=Public, HideBySig, SpecialName set=
+  PROP Control VfxContainer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  FIELD Texture2D _currentPhobiaPortraitTex [Private]
+  FIELD Texture2D _currentPortraitTex [Private]
+  FIELD MegaRichTextLabel _description [Family]
+  FIELD Tween _descriptionTween [Family]
+  FIELD EventModel _event [Family]
+  FIELD Boolean _isDebugUiVisible [Private, Static]
+  FIELD VBoxContainer _optionsContainer [Family]
+  FIELD TextureRect _portrait [Private]
+  FIELD MegaLabel _sharedEventLabel [Family]
+  FIELD LocString _sharedEventLoc [Private, Static, InitOnly]
+  FIELD MegaLabel _title [Private]
+  FIELD Control <VfxContainer>k__BackingField [Private]
+  FIELD String defaultScenePath [Public, Static, Literal, HasDefault]
+  METHOD Void _EnterTree() [Public, Virtual, HideBySig]
+  METHOD Void _ExitTree() [Public, Virtual, HideBySig]
+  METHOD Void _Input(InputEvent) [Public, Virtual, HideBySig]
+  METHOD Void _Ready() [Public, Virtual, HideBySig]
+  METHOD Void AddOptions(IEnumerable`1) [Public, HideBySig]
+  METHOD Void AddVfxAnchoredToPortrait(Node) [Public, HideBySig]
+  METHOD Void AnimateButtonsIn() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void AnimateIn() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void ApplyDebugUiVisibility() [Private, HideBySig]
+  METHOD Task BeforeSharedOptionChosen(EventOption) [Public, HideBySig]
+  METHOD Void ClearOptions() [Public, HideBySig]
+  METHOD Void DisableEventOptions() [Public, HideBySig]
+  METHOD Control get_DefaultFocusedControl() [Public, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IEnumerable`1 get_OptionButtons() [Public, HideBySig, SpecialName]
+  METHOD Control get_VfxContainer() [Public, HideBySig, SpecialName]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name&) [Family, Virtual, HideBySig]
+  METHOD Void InitializeVisuals() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name&,NativeVariantPtrArgs,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void OnPlayerVoteChanged(Player) [Private, HideBySig]
+  METHOD Void OnSetupComplete() [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void RemoveNodesOnPortrait() [Public, HideBySig]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void set_VfxContainer(Control) [Private, HideBySig, SpecialName]
+  METHOD Void SetDescription(String) [Public, HideBySig]
+  METHOD Void SetEvent(EventModel) [Public, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void SetPortrait(Texture2D,Texture2D) [Public, HideBySig]
+  METHOD Void SetTitle(String) [Public, HideBySig]
+  METHOD Void UpdatePhobiaMode() [Private, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Nodes.GodotExtensions.NClickableControl : Godot.Control
+  PROP Boolean AllowFocusWhileDisabled get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Boolean IsEnabled get=Public, HideBySig, SpecialName set=
+  PROP Boolean IsFocused get=Family, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  FIELD Vector2 _beginDragPosition [Private]
+  FIELD StyleBoxEmpty _blankFocusStyle [Private, Static, InitOnly]
+  FIELD Single _ignoreDragThreshold [Family]
+  FIELD Boolean _isControllerFocused [Private]
+  FIELD Boolean _isControllerNavigable [Private]
+  FIELD Boolean _isEnabled [Family]
+  FIELD Boolean _isHovered [Private]
+  FIELD Boolean _isPressed [Private]
+  FIELD Boolean <IsFocused>k__BackingField [Private]
+  FIELD FocusedEventHandler backing_Focused [Private]
+  FIELD MousePressedEventHandler backing_MousePressed [Private]
+  FIELD MouseReleasedEventHandler backing_MouseReleased [Private]
+  FIELD ReleasedEventHandler backing_Released [Private]
+  FIELD UnfocusedEventHandler backing_Unfocused [Private]
+  METHOD Void _GuiInput(InputEvent) [Public, Virtual, HideBySig]
+  METHOD Void <Enable>b__42_0() [Private, HideBySig]
+  METHOD Void add_Focused(FocusedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void add_MousePressed(MousePressedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void add_MouseReleased(MouseReleasedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void add_Released(ReleasedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void add_Unfocused(UnfocusedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void CheckMouseDragThreshold(InputEvent) [Family, HideBySig]
+  METHOD Void ConnectSignals() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void DebugPress() [Public, HideBySig]
+  METHOD Void DebugRelease() [Public, HideBySig]
+  METHOD Void Disable() [Public, HideBySig]
+  METHOD Void EmitSignalFocused(NClickableControl) [Family, HideBySig]
+  METHOD Void EmitSignalMousePressed(InputEvent) [Family, HideBySig]
+  METHOD Void EmitSignalMouseReleased(InputEvent) [Family, HideBySig]
+  METHOD Void EmitSignalReleased(NClickableControl) [Family, HideBySig]
+  METHOD Void EmitSignalUnfocused(NClickableControl) [Family, HideBySig]
+  METHOD Void Enable() [Public, HideBySig]
+  METHOD Void ForceClick() [Public, HideBySig]
+  METHOD Boolean get_AllowFocusWhileDisabled() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_IsEnabled() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsFocused() [Family, HideBySig, SpecialName]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotSignalList() [Assembly, Static, HideBySig]
+  METHOD Void HandleMousePress(InputEvent) [Private, HideBySig]
+  METHOD Void HandleMouseRelease(InputEvent) [Private, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name&) [Family, Virtual, HideBySig]
+  METHOD Boolean HasGodotClassSignal(godot_string_name&) [Family, Virtual, HideBySig]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name&,NativeVariantPtrArgs,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void OnDisable() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnEnable() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnFocus() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnFocusHandler() [Private, HideBySig]
+  METHOD Void OnHoverHandler() [Private, HideBySig]
+  METHOD Void OnPress() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnPressHandler() [Family, HideBySig]
+  METHOD Void OnRelease() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnReleaseHandler() [Family, HideBySig]
+  METHOD Void OnUnfocus() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void OnUnFocusHandler() [Private, HideBySig]
+  METHOD Void OnUnhoverHandler() [Private, HideBySig]
+  METHOD Void OnVisibilityChanged() [Private, HideBySig]
+  METHOD Void RaiseGodotClassSignalCallbacks(godot_string_name&,NativeVariantPtrArgs) [Family, Virtual, HideBySig]
+  METHOD Void RefreshFocus() [Private, HideBySig]
+  METHOD Void remove_Focused(FocusedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void remove_MousePressed(MousePressedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void remove_MouseReleased(MouseReleasedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void remove_Released(ReleasedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void remove_Unfocused(UnfocusedEventHandler) [Public, HideBySig, SpecialName]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void set_IsFocused(Boolean) [Private, HideBySig, SpecialName]
+  METHOD Void SetEnabled(Boolean) [Public, HideBySig]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton : MegaCrit.Sts2.Core.Nodes.GodotExtensions.NClickableControl
+  PROP String ClickedSfx get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP String ControllerIconHotkey get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Boolean HasControllerHotkey get=Private, HideBySig, SpecialName set=
+  PROP String[] Hotkeys get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP String HoveredSfx get=Family, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  FIELD NHotkeyIcon _hotkeyIcon [Family]
+  METHOD Void _EnterTree() [Public, Virtual, HideBySig]
+  METHOD Void _ExitTree() [Public, Virtual, HideBySig]
+  METHOD Void _Input(InputEvent) [Public, Virtual, HideBySig]
+  METHOD Void _Ready() [Public, Virtual, HideBySig]
+  METHOD Void ConnectSignals() [Family, Virtual, HideBySig]
+  METHOD String get_ClickedSfx() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD String get_ControllerIconHotkey() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_HasControllerHotkey() [Private, HideBySig, SpecialName]
+  METHOD String[] get_Hotkeys() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD String get_HoveredSfx() [Family, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void GetControllerIconNode() [Family, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name&) [Family, Virtual, HideBySig]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name&,NativeVariantPtrArgs,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void OnDisable() [Family, Virtual, HideBySig]
+  METHOD Void OnEnable() [Family, Virtual, HideBySig]
+  METHOD Void OnFocus() [Family, Virtual, HideBySig]
+  METHOD Void OnPress() [Family, Virtual, HideBySig]
+  METHOD Void RegisterHotkeys() [Family, HideBySig]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void UnregisterHotkeys() [Family, HideBySig]
+  METHOD Void UpdateControllerButton() [Family, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom : Godot.Control
+  PROP IEnumerable`1 AssetPaths get=Public, Static, HideBySig, SpecialName set=
+  PROP ICustomEventNode CustomEventNode get=Public, HideBySig, SpecialName set=
+  PROP Control DefaultFocusedControl get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP NCombatRoom EmbeddedCombatRoom get=Public, HideBySig, SpecialName set=
+  PROP NEventRoom Instance get=Public, Static, HideBySig, SpecialName set=
+  PROP NEventLayout Layout get=Public, HideBySig, SpecialName set=
+  PROP Control VfxContainer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  FIELD List`1 _connectedOptions [Private, InitOnly]
+  FIELD CancellationTokenSource _cts [Private, InitOnly]
+  FIELD EventModel _event [Private]
+  FIELD NSceneContainer _eventContainer [Private]
+  FIELD Boolean _isPreFinished [Private]
+  FIELD IRunState _runState [Private]
+  FIELD String _scenePath [Private, Static, Literal, HasDefault]
+  FIELD Control <VfxContainer>k__BackingField [Private]
+  METHOD Void _EnterTree() [Public, Virtual, HideBySig]
+  METHOD Void _ExitTree() [Public, Virtual, HideBySig]
+  METHOD Void _Ready() [Public, Virtual, HideBySig]
+  METHOD Task BeforeOptionChosen(EventOption) [Private, HideBySig]
+  METHOD NEventRoom Create(EventModel,IRunState,Boolean) [Public, Static, HideBySig]
+  METHOD Void DisableOptionButtons() [Private, HideBySig]
+  METHOD IEnumerable`1 get_AssetPaths() [Public, Static, HideBySig, SpecialName]
+  METHOD ICustomEventNode get_CustomEventNode() [Public, HideBySig, SpecialName]
+  METHOD Control get_DefaultFocusedControl() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD NCombatRoom get_EmbeddedCombatRoom() [Public, HideBySig, SpecialName]
+  METHOD NEventRoom get_Instance() [Public, Static, HideBySig, SpecialName]
+  METHOD NEventLayout get_Layout() [Public, HideBySig, SpecialName]
+  METHOD Control get_VfxContainer() [Public, HideBySig, SpecialName]
+  METHOD LocString GetDescriptionOrFallback() [Private, HideBySig]
+  METHOD Boolean GetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD List`1 GetGodotMethodList() [Assembly, Static, HideBySig]
+  METHOD List`1 GetGodotPropertyList() [Assembly, Static, HideBySig]
+  METHOD Boolean HasGodotClassMethod(godot_string_name&) [Family, Virtual, HideBySig]
+  METHOD Boolean InvokeGodotClassMethod(godot_string_name&,NativeVariantPtrArgs,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void OnActiveScreenUpdated() [Private, HideBySig]
+  METHOD Void OnEnteringEventCombat() [Private, HideBySig]
+  METHOD Void OptionButtonClicked(EventOption,Int32) [Public, HideBySig]
+  METHOD Task Proceed() [Public, Static, HideBySig]
+  METHOD Void RefreshEventState(EventModel) [Private, HideBySig]
+  METHOD Void RestoreGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void SaveGodotObjectData(GodotSerializationInfo) [Family, Virtual, HideBySig]
+  METHOD Void set_VfxContainer(Control) [Private, HideBySig, SpecialName]
+  METHOD Void SetDescription(LocString) [Private, HideBySig]
+  METHOD Boolean SetGodotClassPropertyValue(godot_string_name&,godot_variant&) [Family, Virtual, HideBySig]
+  METHOD Void SetOptions(EventModel) [Private, HideBySig]
+  METHOD Void SetPortrait(Texture2D) [Public, HideBySig]
+  METHOD Void SetTitle(LocString) [Private, HideBySig]
+  METHOD Task SetupLayout() [Private, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Runs.RunManager : System.Object
+  PROP ActChangeSynchronizer ActChangeSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP ActionExecutor ActionExecutor get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP ActionQueueSet ActionQueueSet get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP ActionQueueSynchronizer ActionQueueSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP AscensionManager AscensionManager get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP ChecksumTracker ChecksumTracker get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP CombatReplayWriter CombatReplayWriter get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP CombatStateSynchronizer CombatStateSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Nullable`1 DailyTime get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP EventSynchronizer EventSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP FlavorSynchronizer FlavorSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Boolean ForceDiscoveryOrderModifications get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP RunHistory History get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP HoveredModelTracker HoveredModelTracker get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP PeerInputSynchronizer InputSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RunManager Instance get=Public, Static, HideBySig, SpecialName set=
+  PROP Boolean IsAbandoned get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Boolean IsCleaningUp get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Boolean IsGameOver get=Public, HideBySig, SpecialName set=
+  PROP Boolean IsInProgress get=Public, HideBySig, SpecialName set=
+  PROP Boolean IsPaused get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Boolean IsSingleplayerOrFakeMultiplayer get=Public, HideBySig, SpecialName set=
+  PROP SerializableMapDrawings MapDrawingsToLoad get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP MapSelectionSynchronizer MapSelectionSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP INetGameService NetService get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP OneOffSynchronizer OneOffSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP PlayerChoiceSynchronizer PlayerChoiceSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RestSiteSynchronizer RestSiteSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RewardsSetSynchronizer RewardsSetSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RewardSynchronizer RewardSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RunLobby RunLobby get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RunLocationTargetedMessageBuffer RunLocationTargetedBuffer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Int64 RunTime get=Public, HideBySig, SpecialName set=
+  PROP Dictionary`2 SavedMapsToLoad get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Boolean ShouldSave get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RunState State get=Private, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP TreasureRoomRelicSynchronizer TreasureRoomRelicSynchronizer get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP Int64 WinTime get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  FIELD Int64 _activeRunTime [Private]
+  FIELD Boolean _isPaused [Private]
+  FIELD Int32 _numReloads [Private]
+  FIELD Int64 _prevSessionRunTime [Private]
+  FIELD Boolean _runHistoryWasUploaded [Private]
+  FIELD Int64 _startOfCurrentActiveRunTime [Private]
+  FIELD Int64 _startTime [Private]
+  FIELD ActChangeSynchronizer <ActChangeSynchronizer>k__BackingField [Private]
+  FIELD ActionExecutor <ActionExecutor>k__BackingField [Private]
+  FIELD ActionQueueSet <ActionQueueSet>k__BackingField [Private]
+  FIELD ActionQueueSynchronizer <ActionQueueSynchronizer>k__BackingField [Private]
+  FIELD AscensionManager <AscensionManager>k__BackingField [Private]
+  FIELD ChecksumTracker <ChecksumTracker>k__BackingField [Private]
+  FIELD CombatReplayWriter <CombatReplayWriter>k__BackingField [Private]
+  FIELD CombatStateSynchronizer <CombatStateSynchronizer>k__BackingField [Private]
+  FIELD Nullable`1 <DailyTime>k__BackingField [Private]
+  FIELD EventSynchronizer <EventSynchronizer>k__BackingField [Private]
+  FIELD FlavorSynchronizer <FlavorSynchronizer>k__BackingField [Private]
+  FIELD Boolean <ForceDiscoveryOrderModifications>k__BackingField [Private]
+  FIELD RunHistory <History>k__BackingField [Private]
+  FIELD HoveredModelTracker <HoveredModelTracker>k__BackingField [Private]
+  FIELD PeerInputSynchronizer <InputSynchronizer>k__BackingField [Private]
+  FIELD RunManager <Instance>k__BackingField [Private, Static, InitOnly]
+  FIELD Boolean <IsAbandoned>k__BackingField [Private]
+  FIELD Boolean <IsCleaningUp>k__BackingField [Private]
+  FIELD SerializableMapDrawings <MapDrawingsToLoad>k__BackingField [Private]
+  FIELD MapSelectionSynchronizer <MapSelectionSynchronizer>k__BackingField [Private]
+  FIELD INetGameService <NetService>k__BackingField [Private]
+  FIELD OneOffSynchronizer <OneOffSynchronizer>k__BackingField [Private]
+  FIELD PlayerChoiceSynchronizer <PlayerChoiceSynchronizer>k__BackingField [Private]
+  FIELD RestSiteSynchronizer <RestSiteSynchronizer>k__BackingField [Private]
+  FIELD RewardsSetSynchronizer <RewardsSetSynchronizer>k__BackingField [Private]
+  FIELD RewardSynchronizer <RewardSynchronizer>k__BackingField [Private]
+  FIELD RunLobby <RunLobby>k__BackingField [Private]
+  FIELD RunLocationTargetedMessageBuffer <RunLocationTargetedBuffer>k__BackingField [Private]
+  FIELD Dictionary`2 <SavedMapsToLoad>k__BackingField [Private]
+  FIELD Boolean <ShouldSave>k__BackingField [Private]
+  FIELD RunState <State>k__BackingField [Private]
+  FIELD TreasureRoomRelicSynchronizer <TreasureRoomRelicSynchronizer>k__BackingField [Private]
+  FIELD Int64 <WinTime>k__BackingField [Private]
+  FIELD Action ActEntered [Private]
+  FIELD Action debugAfterCombatRewardsOverride [Public]
+  FIELD Action RoomEntered [Private]
+  FIELD Action RoomExited [Private]
+  FIELD Action`1 RunStarted [Private]
+  FIELD Func`1 TestFadeIn [Private]
+  FIELD Func`1 TestFadeOut [Private]
+  METHOD Void Abandon() [Public, HideBySig]
+  METHOD Task AbandonInternal() [Private, HideBySig]
+  METHOD Void add_ActEntered(Action) [Public, HideBySig, SpecialName]
+  METHOD Void add_RoomEntered(Action) [Public, HideBySig, SpecialName]
+  METHOD Void add_RoomExited(Action) [Public, HideBySig, SpecialName]
+  METHOD Void add_RunStarted(Action`1) [Public, HideBySig, SpecialName]
+  METHOD Void add_TestFadeIn(Func`1) [Public, HideBySig, SpecialName]
+  METHOD Void add_TestFadeOut(Func`1) [Public, HideBySig, SpecialName]
+  METHOD Void AfterMapLocationChanged() [Private, HideBySig]
+  METHOD Void ApplyAscensionEffects(Player) [Public, HideBySig]
+  METHOD HashSet`1 BuildRoomTypeBlacklist(MapPointHistoryEntry,IReadOnlyCollection`1) [Public, Static, HideBySig]
+  METHOD SerializableRun CanonicalizeSave(SerializableRun,UInt64) [Public, Static, HideBySig]
+  METHOD Void CheckUpdateEnemyDiscoveryAfterLoss(Player,ModelId) [Private, Static, HideBySig]
+  METHOD Void CleanUp(Boolean) [Public, HideBySig]
+  METHOD Void ClearScreens() [Private, HideBySig]
+  METHOD AbstractRoom CreateRoom(RoomType,MapPointType,AbstractModel) [Private, HideBySig]
+  METHOD RunState DebugOnlyGetState() [Public, HideBySig]
+  METHOD Task EnterAct(Int32,Boolean) [Public, HideBySig]
+  METHOD Task EnterMapCoord(MapCoord) [Public, HideBySig]
+  METHOD Task EnterMapCoordDebug(MapCoord,RoomType,MapPointType,AbstractModel,Boolean) [Public, HideBySig]
+  METHOD Task EnterMapCoordInternal(MapCoord,AbstractRoom,Boolean) [Private, HideBySig]
+  METHOD Task EnterMapPointInternal(Int32,MapPointType,AbstractRoom,Boolean) [Public, HideBySig]
+  METHOD Task EnterNextAct() [Public, HideBySig]
+  METHOD Task EnterRoom(AbstractRoom) [Public, HideBySig]
+  METHOD Task`1 EnterRoomDebug(RoomType,MapPointType,AbstractModel,Boolean) [Public, HideBySig]
+  METHOD Task EnterRoomInternal(AbstractRoom,Boolean) [Private, HideBySig]
+  METHOD Task EnterRoomWithoutExitingCurrentRoom(AbstractRoom,Boolean) [Public, HideBySig]
+  METHOD Task`1 ExitCurrentRoom() [Private, HideBySig]
+  METHOD Task ExitCurrentRooms() [Private, HideBySig]
+  METHOD Task FadeIn(Boolean) [Public, HideBySig]
+  METHOD Task FadeOut() [Public, HideBySig]
+  METHOD Task FinalizeStartingRelics() [Public, HideBySig]
+  METHOD Task GenerateMap() [Public, HideBySig]
+  METHOD Void GenerateRooms() [Public, HideBySig]
+  METHOD ActChangeSynchronizer get_ActChangeSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD ActionExecutor get_ActionExecutor() [Public, HideBySig, SpecialName]
+  METHOD ActionQueueSet get_ActionQueueSet() [Public, HideBySig, SpecialName]
+  METHOD ActionQueueSynchronizer get_ActionQueueSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD AscensionManager get_AscensionManager() [Public, HideBySig, SpecialName]
+  METHOD ChecksumTracker get_ChecksumTracker() [Public, HideBySig, SpecialName]
+  METHOD CombatReplayWriter get_CombatReplayWriter() [Public, HideBySig, SpecialName]
+  METHOD CombatStateSynchronizer get_CombatStateSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD Nullable`1 get_DailyTime() [Public, HideBySig, SpecialName]
+  METHOD EventSynchronizer get_EventSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD FlavorSynchronizer get_FlavorSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ForceDiscoveryOrderModifications() [Public, HideBySig, SpecialName]
+  METHOD RunHistory get_History() [Public, HideBySig, SpecialName]
+  METHOD HoveredModelTracker get_HoveredModelTracker() [Public, HideBySig, SpecialName]
+  METHOD PeerInputSynchronizer get_InputSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD RunManager get_Instance() [Public, Static, HideBySig, SpecialName]
+  METHOD Boolean get_IsAbandoned() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsCleaningUp() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsGameOver() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsInProgress() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsPaused() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsSingleplayerOrFakeMultiplayer() [Public, HideBySig, SpecialName]
+  METHOD SerializableMapDrawings get_MapDrawingsToLoad() [Public, HideBySig, SpecialName]
+  METHOD MapSelectionSynchronizer get_MapSelectionSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD INetGameService get_NetService() [Public, HideBySig, SpecialName]
+  METHOD OneOffSynchronizer get_OneOffSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD PlayerChoiceSynchronizer get_PlayerChoiceSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD RestSiteSynchronizer get_RestSiteSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD RewardsSetSynchronizer get_RewardsSetSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD RewardSynchronizer get_RewardSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD RunLobby get_RunLobby() [Public, HideBySig, SpecialName]
+  METHOD RunLocationTargetedMessageBuffer get_RunLocationTargetedBuffer() [Public, HideBySig, SpecialName]
+  METHOD Int64 get_RunTime() [Public, HideBySig, SpecialName]
+  METHOD Dictionary`2 get_SavedMapsToLoad() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ShouldSave() [Public, HideBySig, SpecialName]
+  METHOD RunState get_State() [Private, HideBySig, SpecialName]
+  METHOD TreasureRoomRelicSynchronizer get_TreasureRoomRelicSynchronizer() [Public, HideBySig, SpecialName]
+  METHOD Int64 get_WinTime() [Public, HideBySig, SpecialName]
+  METHOD String GetLocalCharacterEnergyIconPrefix() [Public, HideBySig]
+  METHOD ClientRejoinResponseMessage GetRejoinMessage() [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Task GuaranteeKillAllPlayers() [Private, HideBySig]
+  METHOD Boolean HasAscension(AscensionLevel) [Public, HideBySig]
+  METHOD Void InitializeNewRun() [Private, HideBySig]
+  METHOD Void InitializeRunLobby(INetGameService,RunState,IEnumerable`1) [Private, HideBySig]
+  METHOD Void InitializeSavedRun(SerializableRun) [Private, HideBySig]
+  METHOD Void InitializeShared(INetGameService,PeerInputSynchronizer,Boolean,Nullable`1,Int64,Int64,Int64,Int32) [Private, HideBySig]
+  METHOD RunState Launch() [Public, HideBySig]
+  METHOD Task LoadIntoLatestMapCoord(AbstractRoom) [Public, HideBySig]
+  METHOD Void LocalPlayerDisconnected(NetErrorInfo) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void MegaCrit.Sts2.Core.Multiplayer.Game.Lobby.IRunLobbyListener.RunAbandoned() [Private, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD SerializableRun OnEnded(Boolean) [Public, HideBySig]
+  METHOD Task ProceedFromTerminalRewardsScreen() [Public, HideBySig]
+  METHOD Void RemotePlayerDisconnected(UInt64) [Private, HideBySig]
+  METHOD Void remove_ActEntered(Action) [Public, HideBySig, SpecialName]
+  METHOD Void remove_RoomEntered(Action) [Public, HideBySig, SpecialName]
+  METHOD Void remove_RoomExited(Action) [Public, HideBySig, SpecialName]
+  METHOD Void remove_RunStarted(Action`1) [Public, HideBySig, SpecialName]
+  METHOD Void remove_TestFadeIn(Func`1) [Public, HideBySig, SpecialName]
+  METHOD Void remove_TestFadeOut(Func`1) [Public, HideBySig, SpecialName]
+  METHOD Task ResumePreviousRoom() [Private, HideBySig]
+  METHOD Task ReturnToMainMenuWithError(NetErrorInfo) [Private, HideBySig]
+  METHOD RoomType RollRoomTypeFor(MapPointType,IEnumerable`1) [Private, HideBySig]
+  METHOD Void SendPostActionChecksum(GameAction) [Private, HideBySig]
+  METHOD Void set_ActChangeSynchronizer(ActChangeSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_ActionExecutor(ActionExecutor) [Private, HideBySig, SpecialName]
+  METHOD Void set_ActionQueueSet(ActionQueueSet) [Private, HideBySig, SpecialName]
+  METHOD Void set_ActionQueueSynchronizer(ActionQueueSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_AscensionManager(AscensionManager) [Private, HideBySig, SpecialName]
+  METHOD Void set_ChecksumTracker(ChecksumTracker) [Private, HideBySig, SpecialName]
+  METHOD Void set_CombatReplayWriter(CombatReplayWriter) [Private, HideBySig, SpecialName]
+  METHOD Void set_CombatStateSynchronizer(CombatStateSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_DailyTime(Nullable`1) [Private, HideBySig, SpecialName]
+  METHOD Void set_EventSynchronizer(EventSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_FlavorSynchronizer(FlavorSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_ForceDiscoveryOrderModifications(Boolean) [Public, HideBySig, SpecialName]
+  METHOD Void set_History(RunHistory) [Public, HideBySig, SpecialName]
+  METHOD Void set_HoveredModelTracker(HoveredModelTracker) [Private, HideBySig, SpecialName]
+  METHOD Void set_InputSynchronizer(PeerInputSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_IsAbandoned(Boolean) [Private, HideBySig, SpecialName]
+  METHOD Void set_IsCleaningUp(Boolean) [Private, HideBySig, SpecialName]
+  METHOD Void set_IsPaused(Boolean) [Public, HideBySig, SpecialName]
+  METHOD Void set_MapDrawingsToLoad(SerializableMapDrawings) [Public, HideBySig, SpecialName]
+  METHOD Void set_MapSelectionSynchronizer(MapSelectionSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_NetService(INetGameService) [Private, HideBySig, SpecialName]
+  METHOD Void set_OneOffSynchronizer(OneOffSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_PlayerChoiceSynchronizer(PlayerChoiceSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_RestSiteSynchronizer(RestSiteSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_RewardsSetSynchronizer(RewardsSetSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_RewardSynchronizer(RewardSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_RunLobby(RunLobby) [Private, HideBySig, SpecialName]
+  METHOD Void set_RunLocationTargetedBuffer(RunLocationTargetedMessageBuffer) [Private, HideBySig, SpecialName]
+  METHOD Void set_SavedMapsToLoad(Dictionary`2) [Public, HideBySig, SpecialName]
+  METHOD Void set_ShouldSave(Boolean) [Private, HideBySig, SpecialName]
+  METHOD Void set_State(RunState) [Private, HideBySig, SpecialName]
+  METHOD Void set_TreasureRoomRelicSynchronizer(TreasureRoomRelicSynchronizer) [Private, HideBySig, SpecialName]
+  METHOD Void set_WinTime(Int64) [Public, HideBySig, SpecialName]
+  METHOD Task SetActInternal(Int32) [Public, HideBySig]
+  METHOD Void SetStartedWithNeowFlag() [Private, HideBySig]
+  METHOD Void SetUpNewMultiplayer(RunState,StartRunLobby,Boolean,Nullable`1) [Public, HideBySig]
+  METHOD Void SetUpNewSingleplayer(RunState,Boolean,Nullable`1) [Public, HideBySig]
+  METHOD Void SetUpReplay(RunState,CombatReplay,UInt64) [Public, HideBySig]
+  METHOD Task SetUpSavedMultiplayer(RunState,LoadRunLobby) [Public, HideBySig]
+  METHOD Task SetUpSavedSingleplayer(RunState,SerializableRun) [Public, HideBySig]
+  METHOD Void SetUpTest(RunState,INetGameService,Boolean,Boolean) [Public, HideBySig]
+  METHOD Boolean ShouldApplyTutorialModifications() [Public, HideBySig]
+  METHOD Void StateDiverged(UInt64,NetFullCombatState) [Private, HideBySig]
+  METHOD SerializableRun ToSave(AbstractRoom) [Public, HideBySig]
+  METHOD Boolean TryGetRoomTypeForTutorial(MapPointType,RoomType&) [Private, HideBySig]
+  METHOD Void UpdatePlayerStatsInMapPointHistory() [Private, HideBySig]
+  METHOD Void UpdateRichPresence() [Private, HideBySig]
+  METHOD Task WinRun() [Public, HideBySig]
+  METHOD Void WriteReplay(Boolean) [Public, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Runs.RunState : System.Object
+  PROP ActModel Act get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Int32 ActFloor get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName
+  PROP IReadOnlyList`1 Acts get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Private, HideBySig, SpecialName
+  PROP Int32 AscensionLevel get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP IReadOnlyList`1 BadgeModels get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Private, HideBySig, SpecialName
+  PROP AbstractRoom BaseRoom get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Int32 CurrentActIndex get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName
+  PROP Nullable`1 CurrentMapCoord get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MapPoint CurrentMapPoint get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP MapPointHistoryEntry CurrentMapPointHistoryEntry get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP AbstractRoom CurrentRoom get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP Int32 CurrentRoomCount get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP ExtraRunFields ExtraFields get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Private, HideBySig, SpecialName
+  PROP GameMode GameMode get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP Boolean IsGameOver get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP ActMap Map get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName
+  PROP MapLocation MapLocation get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP IReadOnlyList`1 MapPointHistory get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP IReadOnlyList`1 Modifiers get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Private, HideBySig, SpecialName
+  PROP MultiplayerScalingModel MultiplayerScalingModel get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Private, HideBySig, SpecialName
+  PROP Int32 NextRoomId get=Public, HideBySig, SpecialName set=Private, HideBySig, SpecialName
+  PROP RunOddsSet Odds get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP IReadOnlyList`1 Players get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP RunRngSet Rng get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP RunLocation RunLocation get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP RelicGrabBag SharedRelicGrabBag get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP Int32 TotalFloor get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=
+  PROP UnlockState UnlockState get=Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName set=Public, HideBySig, SpecialName
+  PROP IReadOnlySet`1 VisitedEventIds get=Public, HideBySig, SpecialName set=
+  PROP IReadOnlyList`1 VisitedMapCoords get=Public, HideBySig, SpecialName set=
+  FIELD List`1 _allCards [Private, InitOnly]
+  FIELD Int32 _currentActIndex [Private]
+  FIELD List`1 _currentRooms [Private, InitOnly]
+  FIELD List`1 _mapPointHistory [Private, InitOnly]
+  FIELD List`1 _players [Private, InitOnly]
+  FIELD HashSet`1 _visitedEventIds [Private, InitOnly]
+  FIELD List`1 _visitedMapCoords [Private, InitOnly]
+  FIELD Int32 <ActFloor>k__BackingField [Private]
+  FIELD IReadOnlyList`1 <Acts>k__BackingField [Private]
+  FIELD Int32 <AscensionLevel>k__BackingField [Private, InitOnly]
+  FIELD IReadOnlyList`1 <BadgeModels>k__BackingField [Private]
+  FIELD ExtraRunFields <ExtraFields>k__BackingField [Private]
+  FIELD GameMode <GameMode>k__BackingField [Private, InitOnly]
+  FIELD ActMap <Map>k__BackingField [Private]
+  FIELD IReadOnlyList`1 <Modifiers>k__BackingField [Private]
+  FIELD MultiplayerScalingModel <MultiplayerScalingModel>k__BackingField [Private]
+  FIELD Int32 <NextRoomId>k__BackingField [Private]
+  FIELD RunOddsSet <Odds>k__BackingField [Private, InitOnly]
+  FIELD RunRngSet <Rng>k__BackingField [Private, InitOnly]
+  FIELD RelicGrabBag <SharedRelicGrabBag>k__BackingField [Private, InitOnly]
+  FIELD UnlockState <UnlockState>k__BackingField [Private, InitOnly]
+  METHOD Void AddCard(CardModel,Player) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void AddCard(CardModel) [Private, HideBySig]
+  METHOD Void AddModifierDebug(ModifierModel) [Public, HideBySig]
+  METHOD Void AddPlayerDebug(Player,Int32) [Public, HideBySig]
+  METHOD Void AddVisitedEvent(EventModel) [Public, HideBySig]
+  METHOD Boolean AddVisitedMapCoord(MapCoord) [Public, HideBySig]
+  METHOD Void AppendToMapPointHistory(MapPointType,RoomType,ModelId) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void ClearVisitedMapCoordsDebug() [Public, HideBySig]
+  METHOD CardModel CloneCard(CardModel) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Boolean Contains(AbstractModel) [Private, Static, HideBySig]
+  METHOD Boolean ContainsCard(CardModel) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD T CreateCard(Player) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD CardModel CreateCard(CardModel,Player) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD RunState CreateForNewRun(IReadOnlyList`1,IReadOnlyList`1,IReadOnlyList`1,GameMode,Int32,String) [Public, Static, HideBySig]
+  METHOD RunState CreateForTest(IReadOnlyList`1,IReadOnlyList`1,IReadOnlyList`1,GameMode,Int32,String) [Public, Static, HideBySig]
+  METHOD RunState CreateShared(IReadOnlyList`1,IReadOnlyList`1,IReadOnlyList`1,GameMode,Int32,RunRngSet,RunOddsSet,RelicGrabBag,Int32) [Private, Static, HideBySig]
+  METHOD RunState FromSerializable(SerializableRun) [Public, Static, HideBySig]
+  METHOD ActModel get_Act() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_ActFloor() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_Acts() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_AscensionLevel() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_BadgeModels() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD AbstractRoom get_BaseRoom() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_CurrentActIndex() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Nullable`1 get_CurrentMapCoord() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD MapPoint get_CurrentMapPoint() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD MapPointHistoryEntry get_CurrentMapPointHistoryEntry() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD AbstractRoom get_CurrentRoom() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_CurrentRoomCount() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD ExtraRunFields get_ExtraFields() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD GameMode get_GameMode() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Boolean get_IsGameOver() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD ActMap get_Map() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD MapLocation get_MapLocation() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_MapPointHistory() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_Modifiers() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD MultiplayerScalingModel get_MultiplayerScalingModel() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_NextRoomId() [Public, HideBySig, SpecialName]
+  METHOD RunOddsSet get_Odds() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlyList`1 get_Players() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD RunRngSet get_Rng() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD RunLocation get_RunLocation() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD RelicGrabBag get_SharedRelicGrabBag() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Int32 get_TotalFloor() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD UnlockState get_UnlockState() [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD IReadOnlySet`1 get_VisitedEventIds() [Public, HideBySig, SpecialName]
+  METHOD IReadOnlyList`1 get_VisitedMapCoords() [Public, HideBySig, SpecialName]
+  METHOD Int32 GetAndIncrementNextRoomId() [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD MapPointHistoryEntry GetHistoryEntryFor(MapLocation) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Player GetPlayer(UInt64) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Int32 GetPlayerSlotIndex(Player) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Int32 GetPlayerSlotIndex(UInt64) [Public, HideBySig]
+  METHOD IEnumerable`1 IterateHookListeners(ICombatState) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD CardModel LoadCard(SerializableCard,Player) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD AbstractRoom PopCurrentRoom() [Public, HideBySig]
+  METHOD Void PushRoom(AbstractRoom) [Public, HideBySig]
+  METHOD Void RemoveCard(CardModel) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void RemoveStaleVisitedMapCoords(ActMap) [Public, HideBySig]
+  METHOD Void set_ActFloor(Int32) [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void set_Acts(IReadOnlyList`1) [Private, HideBySig, SpecialName]
+  METHOD Void set_AscensionLevel(Int32) [Public, HideBySig, SpecialName]
+  METHOD Void set_BadgeModels(IReadOnlyList`1) [Private, HideBySig, SpecialName]
+  METHOD Void set_CurrentActIndex(Int32) [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void set_ExtraFields(ExtraRunFields) [Private, HideBySig, SpecialName]
+  METHOD Void set_GameMode(GameMode) [Public, HideBySig, SpecialName]
+  METHOD Void set_Map(ActMap) [Public, Final, Virtual, HideBySig, VtableLayoutMask, SpecialName]
+  METHOD Void set_Modifiers(IReadOnlyList`1) [Private, HideBySig, SpecialName]
+  METHOD Void set_MultiplayerScalingModel(MultiplayerScalingModel) [Private, HideBySig, SpecialName]
+  METHOD Void set_NextRoomId(Int32) [Private, HideBySig, SpecialName]
+  METHOD Void set_Odds(RunOddsSet) [Public, HideBySig, SpecialName]
+  METHOD Void set_Rng(RunRngSet) [Public, HideBySig, SpecialName]
+  METHOD Void set_SharedRelicGrabBag(RelicGrabBag) [Public, HideBySig, SpecialName]
+  METHOD Void set_UnlockState(UnlockState) [Public, HideBySig, SpecialName]
+  METHOD Void SetActDebug(ActModel) [Public, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Rooms.EventRoom : MegaCrit.Sts2.Core.Rooms.AbstractRoom
+  PROP EventModel CanonicalEvent get=Public, HideBySig, SpecialName set=
+  PROP Boolean IsPreFinished get=Public, Virtual, HideBySig, SpecialName set=
+  PROP EventModel LocalMutableEvent get=Public, HideBySig, SpecialName set=
+  PROP ModelId ModelId get=Public, Virtual, HideBySig, SpecialName set=
+  PROP Action`1 OnStart get=Private, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP RoomType RoomType get=Public, Virtual, HideBySig, SpecialName set=
+  FIELD Boolean _isPreFinished [Private]
+  FIELD EventModel <CanonicalEvent>k__BackingField [Private, InitOnly]
+  FIELD Action`1 <OnStart>k__BackingField [Private, InitOnly]
+  METHOD Task EnterInternal(IRunState,Boolean) [Public, Virtual, HideBySig]
+  METHOD Task Exit(IRunState) [Public, Virtual, HideBySig]
+  METHOD EventModel get_CanonicalEvent() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsPreFinished() [Public, Virtual, HideBySig, SpecialName]
+  METHOD EventModel get_LocalMutableEvent() [Public, HideBySig, SpecialName]
+  METHOD ModelId get_ModelId() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Action`1 get_OnStart() [Private, HideBySig, SpecialName]
+  METHOD RoomType get_RoomType() [Public, Virtual, HideBySig, SpecialName]
+  METHOD Void MarkPreFinished() [Public, HideBySig]
+  METHOD Void OnEventStateChanged(EventModel) [Private, HideBySig]
+  METHOD Task Resume(AbstractRoom,IRunState) [Public, Virtual, HideBySig]
+  METHOD Void set_OnStart(Action`1) [Public, HideBySig, SpecialName]
+  METHOD SerializableRoom ToSerializable() [Public, Virtual, HideBySig]
+
+TYPE MegaCrit.Sts2.Core.Saves.Runs.SerializableRoom : System.Object
+  PROP ModelId EncounterId get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Dictionary`2 EncounterState get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP ModelId EventId get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Dictionary`2 ExtraRewards get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Single GoldProportion get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Boolean IsPreFinished get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP ModelId ParentEventId get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP RoomType RoomType get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  PROP Boolean ShouldResumeParentEvent get=Public, HideBySig, SpecialName set=Public, HideBySig, SpecialName
+  FIELD ModelId <EncounterId>k__BackingField [Private]
+  FIELD Dictionary`2 <EncounterState>k__BackingField [Private]
+  FIELD ModelId <EventId>k__BackingField [Private]
+  FIELD Dictionary`2 <ExtraRewards>k__BackingField [Private]
+  FIELD Single <GoldProportion>k__BackingField [Private]
+  FIELD Boolean <IsPreFinished>k__BackingField [Private]
+  FIELD ModelId <ParentEventId>k__BackingField [Private]
+  FIELD RoomType <RoomType>k__BackingField [Private]
+  FIELD Boolean <ShouldResumeParentEvent>k__BackingField [Private]
+  METHOD Void Deserialize(PacketReader) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD ModelId get_EncounterId() [Public, HideBySig, SpecialName]
+  METHOD Dictionary`2 get_EncounterState() [Public, HideBySig, SpecialName]
+  METHOD ModelId get_EventId() [Public, HideBySig, SpecialName]
+  METHOD Dictionary`2 get_ExtraRewards() [Public, HideBySig, SpecialName]
+  METHOD Single get_GoldProportion() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_IsPreFinished() [Public, HideBySig, SpecialName]
+  METHOD ModelId get_ParentEventId() [Public, HideBySig, SpecialName]
+  METHOD RoomType get_RoomType() [Public, HideBySig, SpecialName]
+  METHOD Boolean get_ShouldResumeParentEvent() [Public, HideBySig, SpecialName]
+  METHOD Void Serialize(PacketWriter) [Public, Final, Virtual, HideBySig, VtableLayoutMask]
+  METHOD Void set_EncounterId(ModelId) [Public, HideBySig, SpecialName]
+  METHOD Void set_EncounterState(Dictionary`2) [Public, HideBySig, SpecialName]
+  METHOD Void set_EventId(ModelId) [Public, HideBySig, SpecialName]
+  METHOD Void set_ExtraRewards(Dictionary`2) [Public, HideBySig, SpecialName]
+  METHOD Void set_GoldProportion(Single) [Public, HideBySig, SpecialName]
+  METHOD Void set_IsPreFinished(Boolean) [Public, HideBySig, SpecialName]
+  METHOD Void set_ParentEventId(ModelId) [Public, HideBySig, SpecialName]
+  METHOD Void set_RoomType(RoomType) [Public, HideBySig, SpecialName]
+  METHOD Void set_ShouldResumeParentEvent(Boolean) [Public, HideBySig, SpecialName]
+
+IL MegaCrit.Sts2.Core.Nodes.Events.NEventLayout.get_DefaultFocusedControl
+  IL_0000: ldarg.0 
+  IL_0001: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton] get_OptionButtons()
+  IL_0006: call MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton FirstOrDefault[NEventOptionButton](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Nodes.Events.NEventOptionButton])
+  IL_000b: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Events.NEventLayout.SetPortrait
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Godot.TextureRect _portrait
+  IL_0006: brtrue.s IL_0013
+  IL_0008: ldstr "Trying to set a portrait in an event layout that doesn't have one."
+  IL_000d: newobj Void .ctor(System.String)
+  IL_0012: throw 
+  IL_0013: ldarg.0 
+  IL_0014: ldarg.1 
+  IL_0015: stfld Godot.Texture2D _currentPortraitTex
+  IL_001a: ldarg.0 
+  IL_001b: ldarg.2 
+  IL_001c: stfld Godot.Texture2D _currentPhobiaPortraitTex
+  IL_0021: ldarg.0 
+  IL_0022: ldfld Godot.TextureRect _portrait
+  IL_0027: call MegaCrit.Sts2.Core.Saves.SaveManager get_Instance()
+  IL_002c: callvirt MegaCrit.Sts2.Core.Saves.PrefsSave get_PrefsSave()
+  IL_0031: callvirt Boolean get_PhobiaMode()
+  IL_0036: brfalse.s IL_0040
+  IL_0038: ldarg.0 
+  IL_0039: ldfld Godot.Texture2D _currentPhobiaPortraitTex
+  IL_003e: brtrue.s IL_0048
+  IL_0040: ldarg.0 
+  IL_0041: ldfld Godot.Texture2D _currentPortraitTex
+  IL_0046: br.s IL_004e
+  IL_0048: ldarg.0 
+  IL_0049: ldfld Godot.Texture2D _currentPhobiaPortraitTex
+  IL_004e: callvirt Void set_Texture(Godot.Texture2D)
+  IL_0053: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Events.NEventLayout.ClearOptions
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Godot.VBoxContainer _optionsContainer
+  IL_0006: ldc.i4.0 
+  IL_0007: callvirt Godot.Collections.Array`1[Godot.Node] GetChildren(Boolean)
+  IL_000c: call System.Collections.Generic.List`1[Godot.Node] ToList[Node](System.Collections.Generic.IEnumerable`1[Godot.Node])
+  IL_0011: callvirt Enumerator GetEnumerator()
+  IL_0016: stloc.0 
+  IL_0017: br.s IL_0033
+  IL_0019: ldloca.s 0
+  IL_001b: call Godot.Node get_Current()
+  IL_0020: stloc.1 
+  IL_0021: ldarg.0 
+  IL_0022: ldfld Godot.VBoxContainer _optionsContainer
+  IL_0027: ldloc.1 
+  IL_0028: call Void RemoveChildSafely(Godot.Node, Godot.Node)
+  IL_002d: ldloc.1 
+  IL_002e: call Void QueueFreeSafely(Godot.Node)
+  IL_0033: ldloca.s 0
+  IL_0035: call Boolean MoveNext()
+  IL_003a: brtrue.s IL_0019
+  IL_003c: leave.s IL_004c
+  IL_003e: ldloca.s 0
+  IL_0040: constrained. System.Collections.Generic.List`1+Enumerator[Godot.Node]
+  IL_0046: callvirt Void Dispose()
+  IL_004b: endfinally 
+  IL_004c: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.GodotExtensions.NButton._Input
+  IL_0000: ldarg.0 
+  IL_0001: ldarg.1 
+  IL_0002: call Void CheckMouseDragThreshold(Godot.InputEvent)
+  IL_0007: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.GodotExtensions.NClickableControl._GuiInput
+  IL_0000: ldarg.1 
+  IL_0001: isinst Godot.InputEventMouseButton
+  IL_0006: stloc.0 
+  IL_0007: ldloc.0 
+  IL_0008: brfalse.s IL_0058
+  IL_000a: ldarg.0 
+  IL_000b: ldfld Boolean _isEnabled
+  IL_0010: brfalse.s IL_0058
+  IL_0012: ldloc.0 
+  IL_0013: callvirt Godot.MouseButton get_ButtonIndex()
+  IL_0018: stloc.1 
+  IL_0019: ldloc.1 
+  IL_001a: ldc.i4.1 
+  IL_001b: conv.i8 
+  IL_001c: sub 
+  IL_001d: ldc.i4.1 
+  IL_001e: conv.i8 
+  IL_001f: bgt.un.s IL_0025
+  IL_0021: ldc.i4.1 
+  IL_0022: stloc.2 
+  IL_0023: br.s IL_0027
+  IL_0025: ldc.i4.0 
+  IL_0026: stloc.2 
+  IL_0027: ldloc.2 
+  IL_0028: brfalse.s IL_0058
+  IL_002a: ldarg.0 
+  IL_002b: ldloc.0 
+  IL_002c: callvirt Boolean IsPressed()
+  IL_0031: brtrue.s IL_003a
+  IL_0033: ldsfld Godot.StringName MouseReleased
+  IL_0038: br.s IL_003f
+  IL_003a: ldsfld Godot.StringName MousePressed
+  IL_003f: ldc.i4.1 
+  IL_0040: newarr Godot.Variant
+  IL_0045: dup 
+  IL_0046: ldc.i4.0 
+  IL_0047: ldarg.1 
+  IL_0048: call Godot.Variant op_Implicit(Godot.GodotObject)
+  IL_004d: stelem Godot.Variant
+  IL_0052: call Godot.Error EmitSignal(Godot.StringName, Godot.Variant[])
+  IL_0057: pop 
+  IL_0058: ldarg.1 
+  IL_0059: ldsfld Godot.StringName select
+  IL_005e: ldc.i4.0 
+  IL_005f: ldc.i4.0 
+  IL_0060: callvirt Boolean IsActionPressed(Godot.StringName, Boolean, Boolean)
+  IL_0065: brfalse.s IL_006e
+  IL_0067: ldarg.0 
+  IL_0068: call Void OnPressHandler()
+  IL_006d: ret 
+  IL_006e: ldarg.1 
+  IL_006f: ldsfld Godot.StringName select
+  IL_0074: ldc.i4.0 
+  IL_0075: callvirt Boolean IsActionReleased(Godot.StringName, Boolean)
+  IL_007a: brfalse.s IL_0082
+  IL_007c: ldarg.0 
+  IL_007d: call Void OnReleaseHandler()
+  IL_0082: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom.SetOptions
+  IL_0000: ldarg.0 
+  IL_0001: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0006: callvirt Void ClearOptions()
+  IL_000b: ldarg.1 
+  IL_000c: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Events.EventOption] get_CurrentOptions()
+  IL_0011: stloc.0 
+  IL_0012: ldarg.1 
+  IL_0013: callvirt Boolean get_IsFinished()
+  IL_0018: brfalse.s IL_004d
+  IL_001a: ldarg.1 
+  IL_001b: ldsfld System.Func`1[System.Threading.Tasks.Task] <0>__Proceed
+  IL_0020: dup 
+  IL_0021: brtrue.s IL_0036
+  IL_0023: pop 
+  IL_0024: ldnull 
+  IL_0025: ldftn System.Threading.Tasks.Task Proceed()
+  IL_002b: newobj Void .ctor(System.Object, IntPtr)
+  IL_0030: dup 
+  IL_0031: stsfld System.Func`1[System.Threading.Tasks.Task] <0>__Proceed
+  IL_0036: ldstr "PROCEED"
+  IL_003b: ldc.i4.0 
+  IL_003c: ldc.i4.1 
+  IL_003d: call MegaCrit.Sts2.Core.HoverTips.IHoverTip[] Empty[IHoverTip]()
+  IL_0042: newobj Void .ctor(MegaCrit.Sts2.Core.Models.EventModel, System.Func`1[System.Threading.Tasks.Task], System.String, Boolean, Boolean, MegaCrit.Sts2.Core.HoverTips.IHoverTip[])
+  IL_0047: newobj Void .ctor(MegaCrit.Sts2.Core.Events.EventOption)
+  IL_004c: stloc.0 
+  IL_004d: ldloc.0 
+  IL_004e: callvirt System.Collections.Generic.IEnumerator`1[MegaCrit.Sts2.Core.Events.EventOption] GetEnumerator()
+  IL_0053: stloc.1 
+  IL_0054: br.s IL_007b
+  IL_0056: ldloc.1 
+  IL_0057: callvirt MegaCrit.Sts2.Core.Events.EventOption get_Current()
+  IL_005c: stloc.2 
+  IL_005d: ldloc.2 
+  IL_005e: ldarg.0 
+  IL_005f: ldftn System.Threading.Tasks.Task BeforeOptionChosen(MegaCrit.Sts2.Core.Events.EventOption)
+  IL_0065: newobj Void .ctor(System.Object, IntPtr)
+  IL_006a: callvirt Void add_BeforeChosen(System.Func`2[MegaCrit.Sts2.Core.Events.EventOption,System.Threading.Tasks.Task])
+  IL_006f: ldarg.0 
+  IL_0070: ldfld System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Events.EventOption] _connectedOptions
+  IL_0075: ldloc.2 
+  IL_0076: callvirt Void Add(MegaCrit.Sts2.Core.Events.EventOption)
+  IL_007b: ldloc.1 
+  IL_007c: callvirt Boolean MoveNext()
+  IL_0081: brtrue.s IL_0056
+  IL_0083: leave.s IL_008f
+  IL_0085: ldloc.1 
+  IL_0086: brfalse.s IL_008e
+  IL_0088: ldloc.1 
+  IL_0089: callvirt Void Dispose()
+  IL_008e: endfinally 
+  IL_008f: ldarg.0 
+  IL_0090: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0095: ldloc.0 
+  IL_0096: callvirt Void AddOptions(System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Events.EventOption])
+  IL_009b: ldarg.0 
+  IL_009c: call Godot.Control get_DefaultFocusedControl()
+  IL_00a1: dup 
+  IL_00a2: brtrue.s IL_00a6
+  IL_00a4: pop 
+  IL_00a5: ret 
+  IL_00a6: call Void TryGrabFocus(Godot.Control)
+  IL_00ab: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom.SetPortrait
+  IL_0000: ldarg.0 
+  IL_0001: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0006: ldarg.1 
+  IL_0007: ldnull 
+  IL_0008: callvirt Void SetPortrait(Godot.Texture2D, Godot.Texture2D)
+  IL_000d: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom.SetupLayout
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldc.i4.m1 
+  IL_0017: stfld Int32 <>1__state
+  IL_001c: ldloca.s 0
+  IL_001e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0023: ldloca.s 0
+  IL_0025: call Void Start[<SetupLayout>d__25](<SetupLayout>d__25 ByRef)
+  IL_002a: ldloca.s 0
+  IL_002c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0031: call System.Threading.Tasks.Task get_Task()
+  IL_0036: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+<SetupLayout>d__25.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse IL_00d1
+  IL_0014: ldloc.1 
+  IL_0015: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_001a: callvirt MegaCrit.Sts2.Core.Entities.Players.Player get_Owner()
+  IL_001f: brtrue.s IL_002c
+  IL_0021: ldstr "Event must be started before passed to NEventRoom!"
+  IL_0026: newobj Void .ctor(System.String)
+  IL_002b: throw 
+  IL_002c: ldloc.1 
+  IL_002d: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0032: brtrue.s IL_0039
+  IL_0034: leave IL_0256
+  IL_0039: ldloc.1 
+  IL_003a: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_003f: ldloc.1 
+  IL_0040: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0045: callvirt Void SetEvent(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_004a: ldloc.1 
+  IL_004b: ldloc.1 
+  IL_004c: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0051: callvirt MegaCrit.Sts2.Core.Localization.LocString get_Title()
+  IL_0056: call Void SetTitle(MegaCrit.Sts2.Core.Localization.LocString)
+  IL_005b: ldloc.1 
+  IL_005c: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0061: ldloc.1 
+  IL_0062: ldftn Void RefreshEventState(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_0068: newobj Void .ctor(System.Object, IntPtr)
+  IL_006d: callvirt Void add_StateChanged(System.Action`1[MegaCrit.Sts2.Core.Models.EventModel])
+  IL_0072: ldloc.1 
+  IL_0073: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0078: ldloc.1 
+  IL_0079: ldftn Void OnEnteringEventCombat()
+  IL_007f: newobj Void .ctor(System.Object, IntPtr)
+  IL_0084: callvirt Void add_EnteringEventCombat(System.Action)
+  IL_0089: ldc.r4 0.2
+  IL_008e: ldloc.1 
+  IL_008f: ldfld System.Threading.CancellationTokenSource _cts
+  IL_0094: callvirt System.Threading.CancellationToken get_Token()
+  IL_0099: ldc.i4.0 
+  IL_009a: call System.Threading.Tasks.Task Wait(Single, System.Threading.CancellationToken, Boolean)
+  IL_009f: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_00a4: stloc.3 
+  IL_00a5: ldloca.s 3
+  IL_00a7: call Boolean get_IsCompleted()
+  IL_00ac: brtrue.s IL_00ed
+  IL_00ae: ldarg.0 
+  IL_00af: ldc.i4.0 
+  IL_00b0: dup 
+  IL_00b1: stloc.0 
+  IL_00b2: stfld Int32 <>1__state
+  IL_00b7: ldarg.0 
+  IL_00b8: ldloc.3 
+  IL_00b9: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00be: ldarg.0 
+  IL_00bf: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00c4: ldloca.s 3
+  IL_00c6: ldarg.0 
+  IL_00c7: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<SetupLayout>d__25](System.Runtime.CompilerServices.TaskAwaiter ByRef, <SetupLayout>d__25 ByRef)
+  IL_00cc: leave IL_0269
+  IL_00d1: ldarg.0 
+  IL_00d2: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00d7: stloc.3 
+  IL_00d8: ldarg.0 
+  IL_00d9: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00de: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_00e4: ldarg.0 
+  IL_00e5: ldc.i4.m1 
+  IL_00e6: dup 
+  IL_00e7: stloc.0 
+  IL_00e8: stfld Int32 <>1__state
+  IL_00ed: ldloca.s 3
+  IL_00ef: call Void GetResult()
+  IL_00f4: ldloc.1 
+  IL_00f5: ldloc.1 
+  IL_00f6: call MegaCrit.Sts2.Core.Localization.LocString GetDescriptionOrFallback()
+  IL_00fb: call Void SetDescription(MegaCrit.Sts2.Core.Localization.LocString)
+  IL_0100: ldloc.1 
+  IL_0101: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0106: isinst MegaCrit.Sts2.Core.Models.AncientEventModel
+  IL_010b: stloc.2 
+  IL_010c: ldloc.2 
+  IL_010d: brfalse IL_0224
+  IL_0112: ldloc.1 
+  IL_0113: ldfld Boolean _isPreFinished
+  IL_0118: brtrue IL_0224
+  IL_011d: ldloc.1 
+  IL_011e: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0123: callvirt MegaCrit.Sts2.Core.Entities.Players.Player get_Owner()
+  IL_0128: callvirt MegaCrit.Sts2.Core.Models.CharacterModel get_Character()
+  IL_012d: callvirt MegaCrit.Sts2.Core.Models.ModelId get_Id()
+  IL_0132: stloc.s 4
+  IL_0134: call MegaCrit.Sts2.Core.Saves.SaveManager get_Instance()
+  IL_0139: callvirt MegaCrit.Sts2.Core.Saves.ProgressState get_Progress()
+  IL_013e: ldloc.2 
+  IL_013f: callvirt MegaCrit.Sts2.Core.Models.ModelId get_Id()
+  IL_0144: callvirt MegaCrit.Sts2.Core.Saves.AncientStats GetStatsForAncient(MegaCrit.Sts2.Core.Models.ModelId)
+  IL_0149: stloc.s 5
+  IL_014b: ldloc.s 5
+  IL_014d: brtrue.s IL_0152
+  IL_014f: ldc.i4.0 
+  IL_0150: br.s IL_015b
+  IL_0152: ldloc.s 5
+  IL_0154: ldloc.s 4
+  IL_0156: call Int32 GetVisitsAs(MegaCrit.Sts2.Core.Models.ModelId)
+  IL_015b: stloc.s 6
+  IL_015d: ldloc.s 5
+  IL_015f: brtrue.s IL_0164
+  IL_0161: ldc.i4.0 
+  IL_0162: br.s IL_016b
+  IL_0164: ldloc.s 5
+  IL_0166: call Int32 get_TotalVisits()
+  IL_016b: stloc.s 7
+  IL_016d: ldloc.2 
+  IL_016e: callvirt MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueSet get_DialogueSet()
+  IL_0173: ldloc.s 4
+  IL_0175: ldloc.s 6
+  IL_0177: ldloc.s 7
+  IL_0179: ldloc.2 
+  IL_017a: callvirt System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.CharacterModel] get_AnyCharacterDialogueBlacklist()
+  IL_017f: ldloc.1 
+  IL_0180: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0185: callvirt MegaCrit.Sts2.Core.Entities.Players.Player get_Owner()
+  IL_018a: callvirt MegaCrit.Sts2.Core.Models.CharacterModel get_Character()
+  IL_018f: call Boolean Contains[CharacterModel](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.CharacterModel], MegaCrit.Sts2.Core.Models.CharacterModel)
+  IL_0194: ldc.i4.0 
+  IL_0195: ceq 
+  IL_0197: callvirt System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogue] GetValidDialogues(MegaCrit.Sts2.Core.Models.ModelId, Int32, Int32, Boolean)
+  IL_019c: stloc.s 8
+  IL_019e: call MegaCrit.Sts2.Core.Random.Rng get_Chaotic()
+  IL_01a3: ldloc.s 8
+  IL_01a5: callvirt MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogue NextItem[AncientDialogue](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogue])
+  IL_01aa: stloc.s 9
+  IL_01ac: ldloc.s 9
+  IL_01ae: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueLine] get_Lines()
+  IL_01b3: callvirt System.Collections.Generic.IEnumerator`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueLine] GetEnumerator()
+  IL_01b8: stloc.s 10
+  IL_01ba: br.s IL_01f2
+  IL_01bc: ldloc.s 10
+  IL_01be: callvirt MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueLine get_Current()
+  IL_01c3: stloc.s 11
+  IL_01c5: ldloc.s 11
+  IL_01c7: callvirt MegaCrit.Sts2.Core.Localization.LocString get_LineText()
+  IL_01cc: dup 
+  IL_01cd: brtrue.s IL_01d2
+  IL_01cf: pop 
+  IL_01d0: br.s IL_01f2
+  IL_01d2: ldstr "Act1Name"
+  IL_01d7: ldloc.1 
+  IL_01d8: ldfld MegaCrit.Sts2.Core.Runs.IRunState _runState
+  IL_01dd: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ActModel] get_Acts()
+  IL_01e2: ldc.i4.0 
+  IL_01e3: callvirt MegaCrit.Sts2.Core.Models.ActModel get_Item(Int32)
+  IL_01e8: callvirt MegaCrit.Sts2.Core.Localization.LocString get_Title()
+  IL_01ed: call Void Add(System.String, MegaCrit.Sts2.Core.Localization.LocString)
+  IL_01f2: ldloc.s 10
+  IL_01f4: callvirt Boolean MoveNext()
+  IL_01f9: brtrue.s IL_01bc
+  IL_01fb: leave.s IL_020d
+  IL_01fd: ldloc.0 
+  IL_01fe: ldc.i4.0 
+  IL_01ff: bge.s IL_020c
+  IL_0201: ldloc.s 10
+  IL_0203: brfalse.s IL_020c
+  IL_0205: ldloc.s 10
+  IL_0207: callvirt Void Dispose()
+  IL_020c: endfinally 
+  IL_020d: ldloc.1 
+  IL_020e: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0213: castclass MegaCrit.Sts2.Core.Nodes.Events.NAncientEventLayout
+  IL_0218: ldloc.s 9
+  IL_021a: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueLine] get_Lines()
+  IL_021f: callvirt Void SetDialogue(System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Ancients.AncientDialogueLine])
+  IL_0224: ldloc.1 
+  IL_0225: ldloc.1 
+  IL_0226: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_022b: call Void SetOptions(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_0230: ldloc.1 
+  IL_0231: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0236: callvirt Void OnSetupComplete()
+  IL_023b: leave.s IL_0256
+  IL_023d: stloc.s 12
+  IL_023f: ldarg.0 
+  IL_0240: ldc.i4.s -2
+  IL_0242: stfld Int32 <>1__state
+  IL_0247: ldarg.0 
+  IL_0248: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_024d: ldloc.s 12
+  IL_024f: call Void SetException(System.Exception)
+  IL_0254: leave.s IL_0269
+  IL_0256: ldarg.0 
+  IL_0257: ldc.i4.s -2
+  IL_0259: stfld Int32 <>1__state
+  IL_025e: ldarg.0 
+  IL_025f: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0264: call Void SetResult()
+  IL_0269: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom.BeforeOptionChosen
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldarg.1 
+  IL_0017: stfld MegaCrit.Sts2.Core.Events.EventOption option
+  IL_001c: ldloca.s 0
+  IL_001e: ldc.i4.m1 
+  IL_001f: stfld Int32 <>1__state
+  IL_0024: ldloca.s 0
+  IL_0026: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_002b: ldloca.s 0
+  IL_002d: call Void Start[<BeforeOptionChosen>d__31](<BeforeOptionChosen>d__31 ByRef)
+  IL_0032: ldloca.s 0
+  IL_0034: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0039: call System.Threading.Tasks.Task get_Task()
+  IL_003e: ret 
+
+IL MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom+<BeforeOptionChosen>d__31.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse.s IL_008f
+  IL_0011: ldloc.1 
+  IL_0012: ldfld MegaCrit.Sts2.Core.Models.EventModel _event
+  IL_0017: callvirt MegaCrit.Sts2.Core.Entities.Players.Player get_Owner()
+  IL_001c: callvirt MegaCrit.Sts2.Core.Runs.IRunState get_RunState()
+  IL_0021: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Players.Player] get_Players()
+  IL_0026: callvirt Int32 get_Count()
+  IL_002b: ldc.i4.1 
+  IL_002c: ble IL_00b4
+  IL_0031: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_0036: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_003b: callvirt Boolean get_IsShared()
+  IL_0040: brfalse.s IL_00b4
+  IL_0042: ldarg.0 
+  IL_0043: ldfld MegaCrit.Sts2.Core.Events.EventOption option
+  IL_0048: callvirt Boolean get_IsProceed()
+  IL_004d: brtrue.s IL_00b4
+  IL_004f: ldloc.1 
+  IL_0050: call MegaCrit.Sts2.Core.Nodes.Events.NEventLayout get_Layout()
+  IL_0055: ldarg.0 
+  IL_0056: ldfld MegaCrit.Sts2.Core.Events.EventOption option
+  IL_005b: callvirt System.Threading.Tasks.Task BeforeSharedOptionChosen(MegaCrit.Sts2.Core.Events.EventOption)
+  IL_0060: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0065: stloc.2 
+  IL_0066: ldloca.s 2
+  IL_0068: call Boolean get_IsCompleted()
+  IL_006d: brtrue.s IL_00ab
+  IL_006f: ldarg.0 
+  IL_0070: ldc.i4.0 
+  IL_0071: dup 
+  IL_0072: stloc.0 
+  IL_0073: stfld Int32 <>1__state
+  IL_0078: ldarg.0 
+  IL_0079: ldloc.2 
+  IL_007a: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_007f: ldarg.0 
+  IL_0080: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0085: ldloca.s 2
+  IL_0087: ldarg.0 
+  IL_0088: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<BeforeOptionChosen>d__31](System.Runtime.CompilerServices.TaskAwaiter ByRef, <BeforeOptionChosen>d__31 ByRef)
+  IL_008d: leave.s IL_00f3
+  IL_008f: ldarg.0 
+  IL_0090: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0095: stloc.2 
+  IL_0096: ldarg.0 
+  IL_0097: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_009c: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_00a2: ldarg.0 
+  IL_00a3: ldc.i4.m1 
+  IL_00a4: dup 
+  IL_00a5: stloc.0 
+  IL_00a6: stfld Int32 <>1__state
+  IL_00ab: ldloca.s 2
+  IL_00ad: call Void GetResult()
+  IL_00b2: br.s IL_00c7
+  IL_00b4: ldarg.0 
+  IL_00b5: ldfld MegaCrit.Sts2.Core.Events.EventOption option
+  IL_00ba: callvirt Boolean get_IsProceed()
+  IL_00bf: brtrue.s IL_00c7
+  IL_00c1: ldloc.1 
+  IL_00c2: call Void DisableOptionButtons()
+  IL_00c7: leave.s IL_00e0
+  IL_00c9: stloc.3 
+  IL_00ca: ldarg.0 
+  IL_00cb: ldc.i4.s -2
+  IL_00cd: stfld Int32 <>1__state
+  IL_00d2: ldarg.0 
+  IL_00d3: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00d8: ldloc.3 
+  IL_00d9: call Void SetException(System.Exception)
+  IL_00de: leave.s IL_00f3
+  IL_00e0: ldarg.0 
+  IL_00e1: ldc.i4.s -2
+  IL_00e3: stfld Int32 <>1__state
+  IL_00e8: ldarg.0 
+  IL_00e9: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00ee: call Void SetResult()
+  IL_00f3: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager.EnterRoomWithoutExitingCurrentRoom
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldarg.1 
+  IL_0017: stfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_001c: ldloca.s 0
+  IL_001e: ldarg.2 
+  IL_001f: stfld Boolean fadeToBlack
+  IL_0024: ldloca.s 0
+  IL_0026: ldc.i4.m1 
+  IL_0027: stfld Int32 <>1__state
+  IL_002c: ldloca.s 0
+  IL_002e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0033: ldloca.s 0
+  IL_0035: call Void Start[<EnterRoomWithoutExitingCurrentRoom>d__205](<EnterRoomWithoutExitingCurrentRoom>d__205 ByRef)
+  IL_003a: ldloca.s 0
+  IL_003c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0041: call System.Threading.Tasks.Task get_Task()
+  IL_0046: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager+<EnterRoomWithoutExitingCurrentRoom>d__205.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: ldc.i4.3 
+  IL_0010: ble.un.s IL_0046
+  IL_0012: ldloc.1 
+  IL_0013: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0018: brtrue.s IL_001f
+  IL_001a: leave IL_0275
+  IL_001f: ldloc.1 
+  IL_0020: call MegaCrit.Sts2.Core.GameActions.ActionExecutor get_ActionExecutor()
+  IL_0025: callvirt Void Pause()
+  IL_002a: ldloc.1 
+  IL_002b: call MegaCrit.Sts2.Core.Multiplayer.CombatStateSynchronizer get_CombatStateSynchronizer()
+  IL_0030: callvirt Void StartSync()
+  IL_0035: ldarg.0 
+  IL_0036: ldloc.1 
+  IL_0037: call MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService get_NetService()
+  IL_003c: newobj Void .ctor(MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService)
+  IL_0041: stfld MegaCrit.Sts2.Core.Multiplayer.Game.NetLoadingHandle <loadHandle>5__2
+  IL_0046: nop 
+  IL_0047: ldloc.0 
+  IL_0048: switch IL_009d,IL_0103,IL_01a9,IL_0217
+  IL_005d: ldarg.0 
+  IL_005e: ldfld Boolean fadeToBlack
+  IL_0063: brfalse.s IL_00c6
+  IL_0065: ldloc.1 
+  IL_0066: call System.Threading.Tasks.Task FadeOut()
+  IL_006b: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0070: stloc.2 
+  IL_0071: ldloca.s 2
+  IL_0073: call Boolean get_IsCompleted()
+  IL_0078: brtrue.s IL_00b9
+  IL_007a: ldarg.0 
+  IL_007b: ldc.i4.0 
+  IL_007c: dup 
+  IL_007d: stloc.0 
+  IL_007e: stfld Int32 <>1__state
+  IL_0083: ldarg.0 
+  IL_0084: ldloc.2 
+  IL_0085: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_008a: ldarg.0 
+  IL_008b: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0090: ldloca.s 2
+  IL_0092: ldarg.0 
+  IL_0093: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomWithoutExitingCurrentRoom>d__205](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomWithoutExitingCurrentRoom>d__205 ByRef)
+  IL_0098: leave IL_028f
+  IL_009d: ldarg.0 
+  IL_009e: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00a3: stloc.2 
+  IL_00a4: ldarg.0 
+  IL_00a5: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00aa: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_00b0: ldarg.0 
+  IL_00b1: ldc.i4.m1 
+  IL_00b2: dup 
+  IL_00b3: stloc.0 
+  IL_00b4: stfld Int32 <>1__state
+  IL_00b9: ldloca.s 2
+  IL_00bb: call Void GetResult()
+  IL_00c0: ldloc.1 
+  IL_00c1: call Void ClearScreens()
+  IL_00c6: ldloc.1 
+  IL_00c7: call MegaCrit.Sts2.Core.Multiplayer.CombatStateSynchronizer get_CombatStateSynchronizer()
+  IL_00cc: callvirt System.Threading.Tasks.Task WaitForSync()
+  IL_00d1: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_00d6: stloc.3 
+  IL_00d7: ldloca.s 3
+  IL_00d9: call Boolean get_IsCompleted()
+  IL_00de: brtrue.s IL_011f
+  IL_00e0: ldarg.0 
+  IL_00e1: ldc.i4.1 
+  IL_00e2: dup 
+  IL_00e3: stloc.0 
+  IL_00e4: stfld Int32 <>1__state
+  IL_00e9: ldarg.0 
+  IL_00ea: ldloc.3 
+  IL_00eb: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00f0: ldarg.0 
+  IL_00f1: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00f6: ldloca.s 3
+  IL_00f8: ldarg.0 
+  IL_00f9: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomWithoutExitingCurrentRoom>d__205](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomWithoutExitingCurrentRoom>d__205 ByRef)
+  IL_00fe: leave IL_028f
+  IL_0103: ldarg.0 
+  IL_0104: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0109: stloc.3 
+  IL_010a: ldarg.0 
+  IL_010b: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0110: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_0116: ldarg.0 
+  IL_0117: ldc.i4.m1 
+  IL_0118: dup 
+  IL_0119: stloc.0 
+  IL_011a: stfld Int32 <>1__state
+  IL_011f: ldloca.s 3
+  IL_0121: call Void GetResult()
+  IL_0126: ldloc.1 
+  IL_0127: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_012c: callvirt MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry get_CurrentMapPointHistoryEntry()
+  IL_0131: dup 
+  IL_0132: brtrue.s IL_0137
+  IL_0134: pop 
+  IL_0135: br.s IL_0168
+  IL_0137: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointRoomHistoryEntry] get_Rooms()
+  IL_013c: newobj Void .ctor()
+  IL_0141: dup 
+  IL_0142: ldarg.0 
+  IL_0143: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_0148: callvirt MegaCrit.Sts2.Core.Rooms.RoomType get_RoomType()
+  IL_014d: callvirt Void set_RoomType(MegaCrit.Sts2.Core.Rooms.RoomType)
+  IL_0152: dup 
+  IL_0153: ldarg.0 
+  IL_0154: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_0159: callvirt MegaCrit.Sts2.Core.Models.ModelId get_ModelId()
+  IL_015e: callvirt Void set_ModelId(MegaCrit.Sts2.Core.Models.ModelId)
+  IL_0163: callvirt Void Add(MegaCrit.Sts2.Core.Runs.History.MapPointRoomHistoryEntry)
+  IL_0168: ldloc.1 
+  IL_0169: ldarg.0 
+  IL_016a: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_016f: ldc.i4.0 
+  IL_0170: call System.Threading.Tasks.Task EnterRoomInternal(MegaCrit.Sts2.Core.Rooms.AbstractRoom, Boolean)
+  IL_0175: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_017a: stloc.s 4
+  IL_017c: ldloca.s 4
+  IL_017e: call Boolean get_IsCompleted()
+  IL_0183: brtrue.s IL_01c6
+  IL_0185: ldarg.0 
+  IL_0186: ldc.i4.2 
+  IL_0187: dup 
+  IL_0188: stloc.0 
+  IL_0189: stfld Int32 <>1__state
+  IL_018e: ldarg.0 
+  IL_018f: ldloc.s 4
+  IL_0191: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0196: ldarg.0 
+  IL_0197: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_019c: ldloca.s 4
+  IL_019e: ldarg.0 
+  IL_019f: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomWithoutExitingCurrentRoom>d__205](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomWithoutExitingCurrentRoom>d__205 ByRef)
+  IL_01a4: leave IL_028f
+  IL_01a9: ldarg.0 
+  IL_01aa: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_01af: stloc.s 4
+  IL_01b1: ldarg.0 
+  IL_01b2: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_01b7: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_01bd: ldarg.0 
+  IL_01be: ldc.i4.m1 
+  IL_01bf: dup 
+  IL_01c0: stloc.0 
+  IL_01c1: stfld Int32 <>1__state
+  IL_01c6: ldloca.s 4
+  IL_01c8: call Void GetResult()
+  IL_01cd: call MegaCrit.Sts2.Core.Nodes.Screens.ScreenContext.ActiveScreenContext get_Instance()
+  IL_01d2: callvirt Void Update()
+  IL_01d7: ldarg.0 
+  IL_01d8: ldfld Boolean fadeToBlack
+  IL_01dd: brfalse.s IL_023b
+  IL_01df: ldloc.1 
+  IL_01e0: ldc.i4.1 
+  IL_01e1: call System.Threading.Tasks.Task FadeIn(Boolean)
+  IL_01e6: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_01eb: stloc.s 5
+  IL_01ed: ldloca.s 5
+  IL_01ef: call Boolean get_IsCompleted()
+  IL_01f4: brtrue.s IL_0234
+  IL_01f6: ldarg.0 
+  IL_01f7: ldc.i4.3 
+  IL_01f8: dup 
+  IL_01f9: stloc.0 
+  IL_01fa: stfld Int32 <>1__state
+  IL_01ff: ldarg.0 
+  IL_0200: ldloc.s 5
+  IL_0202: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0207: ldarg.0 
+  IL_0208: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_020d: ldloca.s 5
+  IL_020f: ldarg.0 
+  IL_0210: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomWithoutExitingCurrentRoom>d__205](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomWithoutExitingCurrentRoom>d__205 ByRef)
+  IL_0215: leave.s IL_028f
+  IL_0217: ldarg.0 
+  IL_0218: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_021d: stloc.s 5
+  IL_021f: ldarg.0 
+  IL_0220: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0225: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_022b: ldarg.0 
+  IL_022c: ldc.i4.m1 
+  IL_022d: dup 
+  IL_022e: stloc.0 
+  IL_022f: stfld Int32 <>1__state
+  IL_0234: ldloca.s 5
+  IL_0236: call Void GetResult()
+  IL_023b: leave.s IL_0275
+  IL_023d: ldloc.0 
+  IL_023e: ldc.i4.0 
+  IL_023f: bge.s IL_0254
+  IL_0241: ldarg.0 
+  IL_0242: ldfld MegaCrit.Sts2.Core.Multiplayer.Game.NetLoadingHandle <loadHandle>5__2
+  IL_0247: brfalse.s IL_0254
+  IL_0249: ldarg.0 
+  IL_024a: ldfld MegaCrit.Sts2.Core.Multiplayer.Game.NetLoadingHandle <loadHandle>5__2
+  IL_024f: callvirt Void Dispose()
+  IL_0254: endfinally 
+  IL_0255: stloc.s 6
+  IL_0257: ldarg.0 
+  IL_0258: ldc.i4.s -2
+  IL_025a: stfld Int32 <>1__state
+  IL_025f: ldarg.0 
+  IL_0260: ldnull 
+  IL_0261: stfld MegaCrit.Sts2.Core.Multiplayer.Game.NetLoadingHandle <loadHandle>5__2
+  IL_0266: ldarg.0 
+  IL_0267: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_026c: ldloc.s 6
+  IL_026e: call Void SetException(System.Exception)
+  IL_0273: leave.s IL_028f
+  IL_0275: ldarg.0 
+  IL_0276: ldc.i4.s -2
+  IL_0278: stfld Int32 <>1__state
+  IL_027d: ldarg.0 
+  IL_027e: ldnull 
+  IL_027f: stfld MegaCrit.Sts2.Core.Multiplayer.Game.NetLoadingHandle <loadHandle>5__2
+  IL_0284: ldarg.0 
+  IL_0285: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_028a: call Void SetResult()
+  IL_028f: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager.EnterRoomInternal
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldarg.1 
+  IL_0017: stfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_001c: ldloca.s 0
+  IL_001e: ldarg.2 
+  IL_001f: stfld Boolean isRestoringRoomStackBase
+  IL_0024: ldloca.s 0
+  IL_0026: ldc.i4.m1 
+  IL_0027: stfld Int32 <>1__state
+  IL_002c: ldloca.s 0
+  IL_002e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0033: ldloca.s 0
+  IL_0035: call Void Start[<EnterRoomInternal>d__203](<EnterRoomInternal>d__203 ByRef)
+  IL_003a: ldloca.s 0
+  IL_003c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0041: call System.Threading.Tasks.Task get_Task()
+  IL_0046: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager+<EnterRoomInternal>d__203.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse IL_00f2
+  IL_0014: ldloc.0 
+  IL_0015: ldc.i4.1 
+  IL_0016: beq IL_0161
+  IL_001b: ldloc.1 
+  IL_001c: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0021: brtrue.s IL_0028
+  IL_0023: leave IL_0230
+  IL_0028: ldarg.0 
+  IL_0029: ldfld Boolean isRestoringRoomStackBase
+  IL_002e: stloc.2 
+  IL_002f: ldloc.2 
+  IL_0030: stloc.3 
+  IL_0031: ldloc.3 
+  IL_0032: brtrue.s IL_007d
+  IL_0034: ldarg.0 
+  IL_0035: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_003a: isinst MegaCrit.Sts2.Core.Rooms.CombatRoom
+  IL_003f: stloc.s 4
+  IL_0041: ldloc.s 4
+  IL_0043: brfalse.s IL_0054
+  IL_0045: ldloc.s 4
+  IL_0047: callvirt Boolean get_IsPreFinished()
+  IL_004c: stloc.s 5
+  IL_004e: ldloc.s 5
+  IL_0050: brtrue.s IL_0072
+  IL_0052: br.s IL_0077
+  IL_0054: ldarg.0 
+  IL_0055: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_005a: isinst MegaCrit.Sts2.Core.Rooms.EventRoom
+  IL_005f: stloc.s 6
+  IL_0061: ldloc.s 6
+  IL_0063: brfalse.s IL_0077
+  IL_0065: ldloc.s 6
+  IL_0067: callvirt Boolean get_IsPreFinished()
+  IL_006c: stloc.s 7
+  IL_006e: ldloc.s 7
+  IL_0070: brfalse.s IL_0077
+  IL_0072: ldc.i4.1 
+  IL_0073: stloc.s 8
+  IL_0075: br.s IL_007a
+  IL_0077: ldc.i4.0 
+  IL_0078: stloc.s 8
+  IL_007a: ldloc.s 8
+  IL_007c: stloc.3 
+  IL_007d: ldarg.0 
+  IL_007e: ldloc.3 
+  IL_007f: ldc.i4.0 
+  IL_0080: ceq 
+  IL_0082: stfld Boolean <runExternalEffects>5__2
+  IL_0087: ldloc.1 
+  IL_0088: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_008d: ldarg.0 
+  IL_008e: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_0093: callvirt Void PushRoom(MegaCrit.Sts2.Core.Rooms.AbstractRoom)
+  IL_0098: ldarg.0 
+  IL_0099: ldfld Boolean <runExternalEffects>5__2
+  IL_009e: brfalse.s IL_0116
+  IL_00a0: ldarg.0 
+  IL_00a1: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_00a6: isinst MegaCrit.Sts2.Core.Rooms.MapRoom
+  IL_00ab: brtrue.s IL_0116
+  IL_00ad: ldloc.1 
+  IL_00ae: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_00b3: ldarg.0 
+  IL_00b4: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_00b9: call System.Threading.Tasks.Task BeforeRoomEntered(MegaCrit.Sts2.Core.Runs.IRunState, MegaCrit.Sts2.Core.Rooms.AbstractRoom)
+  IL_00be: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_00c3: stloc.s 9
+  IL_00c5: ldloca.s 9
+  IL_00c7: call Boolean get_IsCompleted()
+  IL_00cc: brtrue.s IL_010f
+  IL_00ce: ldarg.0 
+  IL_00cf: ldc.i4.0 
+  IL_00d0: dup 
+  IL_00d1: stloc.0 
+  IL_00d2: stfld Int32 <>1__state
+  IL_00d7: ldarg.0 
+  IL_00d8: ldloc.s 9
+  IL_00da: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00df: ldarg.0 
+  IL_00e0: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00e5: ldloca.s 9
+  IL_00e7: ldarg.0 
+  IL_00e8: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomInternal>d__203](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomInternal>d__203 ByRef)
+  IL_00ed: leave IL_0243
+  IL_00f2: ldarg.0 
+  IL_00f3: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_00f8: stloc.s 9
+  IL_00fa: ldarg.0 
+  IL_00fb: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0100: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_0106: ldarg.0 
+  IL_0107: ldc.i4.m1 
+  IL_0108: dup 
+  IL_0109: stloc.0 
+  IL_010a: stfld Int32 <>1__state
+  IL_010f: ldloca.s 9
+  IL_0111: call Void GetResult()
+  IL_0116: ldarg.0 
+  IL_0117: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_011c: ldloc.1 
+  IL_011d: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0122: ldarg.0 
+  IL_0123: ldfld Boolean isRestoringRoomStackBase
+  IL_0128: callvirt System.Threading.Tasks.Task Enter(MegaCrit.Sts2.Core.Runs.IRunState, Boolean)
+  IL_012d: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0132: stloc.s 10
+  IL_0134: ldloca.s 10
+  IL_0136: call Boolean get_IsCompleted()
+  IL_013b: brtrue.s IL_017e
+  IL_013d: ldarg.0 
+  IL_013e: ldc.i4.1 
+  IL_013f: dup 
+  IL_0140: stloc.0 
+  IL_0141: stfld Int32 <>1__state
+  IL_0146: ldarg.0 
+  IL_0147: ldloc.s 10
+  IL_0149: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_014e: ldarg.0 
+  IL_014f: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0154: ldloca.s 10
+  IL_0156: ldarg.0 
+  IL_0157: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterRoomInternal>d__203](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterRoomInternal>d__203 ByRef)
+  IL_015c: leave IL_0243
+  IL_0161: ldarg.0 
+  IL_0162: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0167: stloc.s 10
+  IL_0169: ldarg.0 
+  IL_016a: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_016f: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_0175: ldarg.0 
+  IL_0176: ldc.i4.m1 
+  IL_0177: dup 
+  IL_0178: stloc.0 
+  IL_0179: stfld Int32 <>1__state
+  IL_017e: ldloca.s 10
+  IL_0180: call Void GetResult()
+  IL_0185: ldarg.0 
+  IL_0186: ldfld Boolean <runExternalEffects>5__2
+  IL_018b: brfalse.s IL_01c6
+  IL_018d: call MegaCrit.Sts2.Core.Nodes.Audio.NRunMusicController get_Instance()
+  IL_0192: dup 
+  IL_0193: brtrue.s IL_0198
+  IL_0195: pop 
+  IL_0196: br.s IL_019d
+  IL_0198: call Void UpdateTrack()
+  IL_019d: ldloc.1 
+  IL_019e: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_01a3: callvirt Int32 get_CurrentRoomCount()
+  IL_01a8: ldc.i4.1 
+  IL_01a9: bne.un.s IL_01c6
+  IL_01ab: ldloc.1 
+  IL_01ac: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_01b1: callvirt MegaCrit.Sts2.Core.Models.ActModel get_Act()
+  IL_01b6: ldarg.0 
+  IL_01b7: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_01bc: callvirt MegaCrit.Sts2.Core.Rooms.RoomType get_RoomType()
+  IL_01c1: callvirt Void MarkRoomVisited(MegaCrit.Sts2.Core.Rooms.RoomType)
+  IL_01c6: ldloc.1 
+  IL_01c7: call MegaCrit.Sts2.Core.Multiplayer.Game.RunLocationTargetedMessageBuffer get_RunLocationTargetedBuffer()
+  IL_01cc: ldloc.1 
+  IL_01cd: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_01d2: callvirt MegaCrit.Sts2.Core.Runs.RunLocation get_RunLocation()
+  IL_01d7: callvirt Void OnLocationChanged(MegaCrit.Sts2.Core.Runs.RunLocation)
+  IL_01dc: ldarg.0 
+  IL_01dd: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom room
+  IL_01e2: isinst MegaCrit.Sts2.Core.Rooms.CombatRoom
+  IL_01e7: brtrue.s IL_01f4
+  IL_01e9: ldloc.1 
+  IL_01ea: call MegaCrit.Sts2.Core.GameActions.ActionExecutor get_ActionExecutor()
+  IL_01ef: callvirt Void Unpause()
+  IL_01f4: call MegaCrit.Sts2.Core.Nodes.Audio.NRunMusicController get_Instance()
+  IL_01f9: dup 
+  IL_01fa: brtrue.s IL_01ff
+  IL_01fc: pop 
+  IL_01fd: br.s IL_0204
+  IL_01ff: call Void UpdateAmbience()
+  IL_0204: ldloc.1 
+  IL_0205: ldfld System.Action RoomEntered
+  IL_020a: dup 
+  IL_020b: brtrue.s IL_0210
+  IL_020d: pop 
+  IL_020e: br.s IL_0215
+  IL_0210: callvirt Void Invoke()
+  IL_0215: leave.s IL_0230
+  IL_0217: stloc.s 11
+  IL_0219: ldarg.0 
+  IL_021a: ldc.i4.s -2
+  IL_021c: stfld Int32 <>1__state
+  IL_0221: ldarg.0 
+  IL_0222: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0227: ldloc.s 11
+  IL_0229: call Void SetException(System.Exception)
+  IL_022e: leave.s IL_0243
+  IL_0230: ldarg.0 
+  IL_0231: ldc.i4.s -2
+  IL_0233: stfld Int32 <>1__state
+  IL_0238: ldarg.0 
+  IL_0239: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_023e: call Void SetResult()
+  IL_0243: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager.ToSave
+  IL_0000: call MegaCrit.Sts2.Core.Saves.SaveManager get_Instance()
+  IL_0005: callvirt Int32 GetLatestSchemaVersion[SerializableRun]()
+  IL_000a: stloc.0 
+  IL_000b: newobj Void .ctor()
+  IL_0010: stloc.1 
+  IL_0011: ldc.i4.0 
+  IL_0012: stloc.3 
+  IL_0013: br.s IL_006b
+  IL_0015: ldarg.0 
+  IL_0016: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_001b: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ActModel] get_Acts()
+  IL_0020: ldloc.3 
+  IL_0021: callvirt MegaCrit.Sts2.Core.Models.ActModel get_Item(Int32)
+  IL_0026: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel ToSave()
+  IL_002b: stloc.s 4
+  IL_002d: ldloc.3 
+  IL_002e: ldarg.0 
+  IL_002f: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0034: callvirt Int32 get_CurrentActIndex()
+  IL_0039: bne.un.s IL_005f
+  IL_003b: ldarg.0 
+  IL_003c: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0041: callvirt MegaCrit.Sts2.Core.Map.ActMap get_Map()
+  IL_0046: brfalse.s IL_005f
+  IL_0048: ldloc.s 4
+  IL_004a: ldarg.0 
+  IL_004b: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0050: callvirt MegaCrit.Sts2.Core.Map.ActMap get_Map()
+  IL_0055: call MegaCrit.Sts2.Core.Saves.Runs.SerializableActMap FromActMap(MegaCrit.Sts2.Core.Map.ActMap)
+  IL_005a: callvirt Void set_SavedMap(MegaCrit.Sts2.Core.Saves.Runs.SerializableActMap)
+  IL_005f: ldloc.1 
+  IL_0060: ldloc.s 4
+  IL_0062: callvirt Void Add(MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel)
+  IL_0067: ldloc.3 
+  IL_0068: ldc.i4.1 
+  IL_0069: add 
+  IL_006a: stloc.3 
+  IL_006b: ldloc.3 
+  IL_006c: ldarg.0 
+  IL_006d: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0072: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ActModel] get_Acts()
+  IL_0077: callvirt Int32 get_Count()
+  IL_007c: blt.s IL_0015
+  IL_007e: newobj Void .ctor()
+  IL_0083: dup 
+  IL_0084: ldloc.0 
+  IL_0085: callvirt Void set_SchemaVersion(Int32)
+  IL_008a: dup 
+  IL_008b: ldloc.1 
+  IL_008c: callvirt Void set_Acts(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel])
+  IL_0091: dup 
+  IL_0092: ldarg.0 
+  IL_0093: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0098: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ModifierModel] get_Modifiers()
+  IL_009d: ldsfld System.Func`2[MegaCrit.Sts2.Core.Models.ModifierModel,MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier] <>9__183_0
+  IL_00a2: dup 
+  IL_00a3: brtrue.s IL_00bc
+  IL_00a5: pop 
+  IL_00a6: ldsfld <>c <>9
+  IL_00ab: ldftn MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier <ToSave>b__183_0(MegaCrit.Sts2.Core.Models.ModifierModel)
+  IL_00b1: newobj Void .ctor(System.Object, IntPtr)
+  IL_00b6: dup 
+  IL_00b7: stsfld System.Func`2[MegaCrit.Sts2.Core.Models.ModifierModel,MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier] <>9__183_0
+  IL_00bc: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier] Select[ModifierModel,SerializableModifier](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ModifierModel], System.Func`2[MegaCrit.Sts2.Core.Models.ModifierModel,MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier])
+  IL_00c1: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier] ToList[SerializableModifier](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier])
+  IL_00c6: callvirt Void set_Modifiers(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier])
+  IL_00cb: dup 
+  IL_00cc: ldarg.0 
+  IL_00cd: call System.Nullable`1[System.DateTimeOffset] get_DailyTime()
+  IL_00d2: callvirt Void set_DailyTime(System.Nullable`1[System.DateTimeOffset])
+  IL_00d7: dup 
+  IL_00d8: ldarg.0 
+  IL_00d9: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_00de: callvirt Int32 get_CurrentActIndex()
+  IL_00e3: callvirt Void set_CurrentActIndex(Int32)
+  IL_00e8: dup 
+  IL_00e9: ldarg.0 
+  IL_00ea: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_00ef: callvirt System.Collections.Generic.IReadOnlySet`1[MegaCrit.Sts2.Core.Models.ModelId] get_VisitedEventIds()
+  IL_00f4: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Models.ModelId] ToList[ModelId](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ModelId])
+  IL_00f9: callvirt Void set_EventsSeen(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Models.ModelId])
+  IL_00fe: dup 
+  IL_00ff: ldarg.0 
+  IL_0100: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0105: callvirt MegaCrit.Sts2.Core.Runs.GameMode get_GameMode()
+  IL_010a: callvirt Void set_GameMode(MegaCrit.Sts2.Core.Runs.GameMode)
+  IL_010f: dup 
+  IL_0110: ldarg.0 
+  IL_0111: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0116: callvirt MegaCrit.Sts2.Core.Odds.RunOddsSet get_Odds()
+  IL_011b: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRunOddsSet ToSerializable()
+  IL_0120: callvirt Void set_SerializableOdds(MegaCrit.Sts2.Core.Saves.Runs.SerializableRunOddsSet)
+  IL_0125: dup 
+  IL_0126: ldarg.0 
+  IL_0127: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_012c: callvirt MegaCrit.Sts2.Core.Runs.RelicGrabBag get_SharedRelicGrabBag()
+  IL_0131: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRelicGrabBag ToSerializable()
+  IL_0136: callvirt Void set_SerializableSharedRelicGrabBag(MegaCrit.Sts2.Core.Saves.Runs.SerializableRelicGrabBag)
+  IL_013b: dup 
+  IL_013c: ldarg.0 
+  IL_013d: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0142: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Players.Player] get_Players()
+  IL_0147: ldsfld System.Func`2[MegaCrit.Sts2.Core.Entities.Players.Player,MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer] <>9__183_1
+  IL_014c: dup 
+  IL_014d: brtrue.s IL_0166
+  IL_014f: pop 
+  IL_0150: ldsfld <>c <>9
+  IL_0155: ldftn MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer <ToSave>b__183_1(MegaCrit.Sts2.Core.Entities.Players.Player)
+  IL_015b: newobj Void .ctor(System.Object, IntPtr)
+  IL_0160: dup 
+  IL_0161: stsfld System.Func`2[MegaCrit.Sts2.Core.Entities.Players.Player,MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer] <>9__183_1
+  IL_0166: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer] Select[Player,SerializablePlayer](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Entities.Players.Player], System.Func`2[MegaCrit.Sts2.Core.Entities.Players.Player,MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer])
+  IL_016b: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer] ToList[SerializablePlayer](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer])
+  IL_0170: callvirt Void set_Players(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer])
+  IL_0175: dup 
+  IL_0176: ldarg.0 
+  IL_0177: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_017c: callvirt MegaCrit.Sts2.Core.Runs.RunRngSet get_Rng()
+  IL_0181: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRunRngSet ToSerializable()
+  IL_0186: callvirt Void set_SerializableRng(MegaCrit.Sts2.Core.Saves.Runs.SerializableRunRngSet)
+  IL_018b: dup 
+  IL_018c: ldarg.0 
+  IL_018d: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0192: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Map.MapCoord] get_VisitedMapCoords()
+  IL_0197: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Map.MapCoord] ToList[MapCoord](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Map.MapCoord])
+  IL_019c: callvirt Void set_VisitedMapCoords(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Map.MapCoord])
+  IL_01a1: dup 
+  IL_01a2: ldarg.0 
+  IL_01a3: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_01a8: callvirt System.Collections.Generic.IReadOnlyList`1[System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] get_MapPointHistory()
+  IL_01ad: ldsfld System.Func`2[System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry],System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] <>9__183_2
+  IL_01b2: dup 
+  IL_01b3: brtrue.s IL_01cc
+  IL_01b5: pop 
+  IL_01b6: ldsfld <>c <>9
+  IL_01bb: ldftn System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry] <ToSave>b__183_2(System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry])
+  IL_01c1: newobj Void .ctor(System.Object, IntPtr)
+  IL_01c6: dup 
+  IL_01c7: stsfld System.Func`2[System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry],System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] <>9__183_2
+  IL_01cc: call System.Collections.Generic.IEnumerable`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] Select[IReadOnlyList`1,List`1](System.Collections.Generic.IEnumerable`1[System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]], System.Func`2[System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry],System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]])
+  IL_01d1: call System.Collections.Generic.List`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] ToList[List`1](System.Collections.Generic.IEnumerable`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]])
+  IL_01d6: callvirt Void set_MapPointHistory(System.Collections.Generic.List`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]])
+  IL_01db: dup 
+  IL_01dc: call System.DateTimeOffset get_UtcNow()
+  IL_01e1: stloc.s 5
+  IL_01e3: ldloca.s 5
+  IL_01e5: call Int64 ToUnixTimeSeconds()
+  IL_01ea: callvirt Void set_SaveTime(Int64)
+  IL_01ef: dup 
+  IL_01f0: ldarg.0 
+  IL_01f1: ldfld Int64 _startTime
+  IL_01f6: callvirt Void set_StartTime(Int64)
+  IL_01fb: dup 
+  IL_01fc: ldarg.0 
+  IL_01fd: call Int64 get_RunTime()
+  IL_0202: callvirt Void set_RunTime(Int64)
+  IL_0207: dup 
+  IL_0208: ldarg.0 
+  IL_0209: call Int64 get_WinTime()
+  IL_020e: callvirt Void set_WinTime(Int64)
+  IL_0213: dup 
+  IL_0214: ldarg.0 
+  IL_0215: ldfld Int32 _numReloads
+  IL_021a: callvirt Void set_NumReloads(Int32)
+  IL_021f: dup 
+  IL_0220: ldarg.0 
+  IL_0221: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0226: callvirt Int32 get_AscensionLevel()
+  IL_022b: callvirt Void set_Ascension(Int32)
+  IL_0230: dup 
+  IL_0231: ldarg.0 
+  IL_0232: call MegaCrit.Sts2.Core.Multiplayer.Game.INetGameService get_NetService()
+  IL_0237: callvirt MegaCrit.Sts2.Core.Platform.PlatformType get_Platform()
+  IL_023c: callvirt Void set_PlatformType(MegaCrit.Sts2.Core.Platform.PlatformType)
+  IL_0241: dup 
+  IL_0242: call MegaCrit.Sts2.Core.Nodes.NRun get_Instance()
+  IL_0247: dup 
+  IL_0248: brtrue.s IL_024e
+  IL_024a: pop 
+  IL_024b: ldnull 
+  IL_024c: br.s IL_0262
+  IL_024e: call MegaCrit.Sts2.Core.Nodes.CommonUi.NGlobalUi get_GlobalUi()
+  IL_0253: callvirt MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapScreen get_MapScreen()
+  IL_0258: callvirt MegaCrit.Sts2.Core.Nodes.Screens.Map.NMapDrawings get_Drawings()
+  IL_025d: callvirt MegaCrit.Sts2.Core.Saves.MapDrawing.SerializableMapDrawings GetSerializableMapDrawings()
+  IL_0262: callvirt Void set_MapDrawings(MegaCrit.Sts2.Core.Saves.MapDrawing.SerializableMapDrawings)
+  IL_0267: dup 
+  IL_0268: ldarg.0 
+  IL_0269: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_026e: callvirt MegaCrit.Sts2.Core.Runs.ExtraRunFields get_ExtraFields()
+  IL_0273: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableExtraRunFields ToSerializable()
+  IL_0278: callvirt Void set_ExtraFields(MegaCrit.Sts2.Core.Saves.Runs.SerializableExtraRunFields)
+  IL_027d: dup 
+  IL_027e: ldarg.1 
+  IL_027f: brtrue.s IL_0284
+  IL_0281: ldnull 
+  IL_0282: br.s IL_028a
+  IL_0284: ldarg.1 
+  IL_0285: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRoom ToSerializable()
+  IL_028a: callvirt Void set_PreFinishedRoom(MegaCrit.Sts2.Core.Saves.Runs.SerializableRoom)
+  IL_028f: stloc.2 
+  IL_0290: ldloc.2 
+  IL_0291: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager.ExitCurrentRoom
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldc.i4.m1 
+  IL_0017: stfld Int32 <>1__state
+  IL_001c: ldloca.s 0
+  IL_001e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_0023: ldloca.s 0
+  IL_0025: call Void Start[<ExitCurrentRoom>d__202](<ExitCurrentRoom>d__202 ByRef)
+  IL_002a: ldloca.s 0
+  IL_002c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_0031: call System.Threading.Tasks.Task`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] get_Task()
+  IL_0036: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager+<ExitCurrentRoom>d__202.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse.s IL_007c
+  IL_0011: ldloc.1 
+  IL_0012: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0017: brtrue.s IL_0020
+  IL_0019: ldnull 
+  IL_001a: stloc.2 
+  IL_001b: leave IL_00d9
+  IL_0020: ldloc.1 
+  IL_0021: call MegaCrit.Sts2.Core.Multiplayer.Game.RewardsSetSynchronizer get_RewardsSetSynchronizer()
+  IL_0026: callvirt Void BeforeLeavingRoom()
+  IL_002b: ldarg.0 
+  IL_002c: ldloc.1 
+  IL_002d: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0032: callvirt MegaCrit.Sts2.Core.Rooms.AbstractRoom PopCurrentRoom()
+  IL_0037: stfld MegaCrit.Sts2.Core.Rooms.AbstractRoom <currentRoom>5__2
+  IL_003c: ldarg.0 
+  IL_003d: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom <currentRoom>5__2
+  IL_0042: ldloc.1 
+  IL_0043: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0048: callvirt System.Threading.Tasks.Task Exit(MegaCrit.Sts2.Core.Runs.IRunState)
+  IL_004d: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0052: stloc.3 
+  IL_0053: ldloca.s 3
+  IL_0055: call Boolean get_IsCompleted()
+  IL_005a: brtrue.s IL_0098
+  IL_005c: ldarg.0 
+  IL_005d: ldc.i4.0 
+  IL_005e: dup 
+  IL_005f: stloc.0 
+  IL_0060: stfld Int32 <>1__state
+  IL_0065: ldarg.0 
+  IL_0066: ldloc.3 
+  IL_0067: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_006c: ldarg.0 
+  IL_006d: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_0072: ldloca.s 3
+  IL_0074: ldarg.0 
+  IL_0075: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<ExitCurrentRoom>d__202](System.Runtime.CompilerServices.TaskAwaiter ByRef, <ExitCurrentRoom>d__202 ByRef)
+  IL_007a: leave.s IL_00f4
+  IL_007c: ldarg.0 
+  IL_007d: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0082: stloc.3 
+  IL_0083: ldarg.0 
+  IL_0084: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0089: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_008f: ldarg.0 
+  IL_0090: ldc.i4.m1 
+  IL_0091: dup 
+  IL_0092: stloc.0 
+  IL_0093: stfld Int32 <>1__state
+  IL_0098: ldloca.s 3
+  IL_009a: call Void GetResult()
+  IL_009f: ldloc.1 
+  IL_00a0: ldfld System.Action RoomExited
+  IL_00a5: dup 
+  IL_00a6: brtrue.s IL_00ab
+  IL_00a8: pop 
+  IL_00a9: br.s IL_00b0
+  IL_00ab: callvirt Void Invoke()
+  IL_00b0: ldarg.0 
+  IL_00b1: ldfld MegaCrit.Sts2.Core.Rooms.AbstractRoom <currentRoom>5__2
+  IL_00b6: stloc.2 
+  IL_00b7: leave.s IL_00d9
+  IL_00b9: stloc.s 4
+  IL_00bb: ldarg.0 
+  IL_00bc: ldc.i4.s -2
+  IL_00be: stfld Int32 <>1__state
+  IL_00c3: ldarg.0 
+  IL_00c4: ldnull 
+  IL_00c5: stfld MegaCrit.Sts2.Core.Rooms.AbstractRoom <currentRoom>5__2
+  IL_00ca: ldarg.0 
+  IL_00cb: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_00d0: ldloc.s 4
+  IL_00d2: call Void SetException(System.Exception)
+  IL_00d7: leave.s IL_00f4
+  IL_00d9: ldarg.0 
+  IL_00da: ldc.i4.s -2
+  IL_00dc: stfld Int32 <>1__state
+  IL_00e1: ldarg.0 
+  IL_00e2: ldnull 
+  IL_00e3: stfld MegaCrit.Sts2.Core.Rooms.AbstractRoom <currentRoom>5__2
+  IL_00e8: ldarg.0 
+  IL_00e9: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>t__builder
+  IL_00ee: ldloc.2 
+  IL_00ef: call Void SetResult(MegaCrit.Sts2.Core.Rooms.AbstractRoom)
+  IL_00f4: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager.ExitCurrentRooms
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldc.i4.m1 
+  IL_0017: stfld Int32 <>1__state
+  IL_001c: ldloca.s 0
+  IL_001e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0023: ldloca.s 0
+  IL_0025: call Void Start[<ExitCurrentRooms>d__201](<ExitCurrentRooms>d__201 ByRef)
+  IL_002a: ldloca.s 0
+  IL_002c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0031: call System.Threading.Tasks.Task get_Task()
+  IL_0036: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunManager+<ExitCurrentRooms>d__201.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Runs.RunManager <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse.s IL_0053
+  IL_0011: ldloc.1 
+  IL_0012: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_0017: brtrue.s IL_0077
+  IL_0019: leave IL_00bd
+  IL_001e: ldloc.1 
+  IL_001f: call System.Threading.Tasks.Task`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] ExitCurrentRoom()
+  IL_0024: callvirt System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] GetAwaiter()
+  IL_0029: stloc.2 
+  IL_002a: ldloca.s 2
+  IL_002c: call Boolean get_IsCompleted()
+  IL_0031: brtrue.s IL_006f
+  IL_0033: ldarg.0 
+  IL_0034: ldc.i4.0 
+  IL_0035: dup 
+  IL_0036: stloc.0 
+  IL_0037: stfld Int32 <>1__state
+  IL_003c: ldarg.0 
+  IL_003d: ldloc.2 
+  IL_003e: stfld System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>u__1
+  IL_0043: ldarg.0 
+  IL_0044: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0049: ldloca.s 2
+  IL_004b: ldarg.0 
+  IL_004c: call Void AwaitUnsafeOnCompleted[TaskAwaiter`1,<ExitCurrentRooms>d__201](System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] ByRef, <ExitCurrentRooms>d__201 ByRef)
+  IL_0051: leave.s IL_00d0
+  IL_0053: ldarg.0 
+  IL_0054: ldfld System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>u__1
+  IL_0059: stloc.2 
+  IL_005a: ldarg.0 
+  IL_005b: ldflda System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom] <>u__1
+  IL_0060: initobj System.Runtime.CompilerServices.TaskAwaiter`1[MegaCrit.Sts2.Core.Rooms.AbstractRoom]
+  IL_0066: ldarg.0 
+  IL_0067: ldc.i4.m1 
+  IL_0068: dup 
+  IL_0069: stloc.0 
+  IL_006a: stfld Int32 <>1__state
+  IL_006f: ldloca.s 2
+  IL_0071: call MegaCrit.Sts2.Core.Rooms.AbstractRoom GetResult()
+  IL_0076: pop 
+  IL_0077: ldloc.1 
+  IL_0078: call MegaCrit.Sts2.Core.Runs.RunState get_State()
+  IL_007d: callvirt Int32 get_CurrentRoomCount()
+  IL_0082: ldc.i4.0 
+  IL_0083: bgt.s IL_001e
+  IL_0085: call MegaCrit.Sts2.Core.Nodes.NRun get_Instance()
+  IL_008a: dup 
+  IL_008b: brtrue.s IL_0090
+  IL_008d: pop 
+  IL_008e: br.s IL_00a4
+  IL_0090: call MegaCrit.Sts2.Core.Nodes.CommonUi.NGlobalUi get_GlobalUi()
+  IL_0095: callvirt MegaCrit.Sts2.Core.Nodes.CommonUi.NTopBar get_TopBar()
+  IL_009a: callvirt MegaCrit.sts2.Core.Nodes.TopBar.NTopBarRoomIcon get_RoomIcon()
+  IL_009f: callvirt Void DebugClearMapPointTypeOverride()
+  IL_00a4: leave.s IL_00bd
+  IL_00a6: stloc.3 
+  IL_00a7: ldarg.0 
+  IL_00a8: ldc.i4.s -2
+  IL_00aa: stfld Int32 <>1__state
+  IL_00af: ldarg.0 
+  IL_00b0: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00b5: ldloc.3 
+  IL_00b6: call Void SetException(System.Exception)
+  IL_00bb: leave.s IL_00d0
+  IL_00bd: ldarg.0 
+  IL_00be: ldc.i4.s -2
+  IL_00c0: stfld Int32 <>1__state
+  IL_00c5: ldarg.0 
+  IL_00c6: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_00cb: call Void SetResult()
+  IL_00d0: ret 
+
+IL MegaCrit.Sts2.Core.Runs.RunState.FromSerializable
+  IL_0000: ldarg.0 
+  IL_0001: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer] get_Players()
+  IL_0006: stloc.0 
+  IL_0007: ldloc.0 
+  IL_0008: ldsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer,MegaCrit.Sts2.Core.Entities.Players.Player] <0>__FromSerializable
+  IL_000d: dup 
+  IL_000e: brtrue.s IL_0023
+  IL_0010: pop 
+  IL_0011: ldnull 
+  IL_0012: ldftn MegaCrit.Sts2.Core.Entities.Players.Player FromSerializable(MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer)
+  IL_0018: newobj Void .ctor(System.Object, IntPtr)
+  IL_001d: dup 
+  IL_001e: stsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer,MegaCrit.Sts2.Core.Entities.Players.Player] <0>__FromSerializable
+  IL_0023: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Entities.Players.Player] Select[SerializablePlayer,Player](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer], System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializablePlayer,MegaCrit.Sts2.Core.Entities.Players.Player])
+  IL_0028: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Entities.Players.Player] ToList[Player](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Entities.Players.Player])
+  IL_002d: stloc.1 
+  IL_002e: ldarg.0 
+  IL_002f: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRunRngSet get_SerializableRng()
+  IL_0034: call MegaCrit.Sts2.Core.Runs.RunRngSet FromSave(MegaCrit.Sts2.Core.Saves.Runs.SerializableRunRngSet)
+  IL_0039: stloc.2 
+  IL_003a: ldloc.1 
+  IL_003b: ldarg.0 
+  IL_003c: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel] get_Acts()
+  IL_0041: ldsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel,MegaCrit.Sts2.Core.Models.ActModel] <1>__FromSave
+  IL_0046: dup 
+  IL_0047: brtrue.s IL_005c
+  IL_0049: pop 
+  IL_004a: ldnull 
+  IL_004b: ldftn MegaCrit.Sts2.Core.Models.ActModel FromSave(MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel)
+  IL_0051: newobj Void .ctor(System.Object, IntPtr)
+  IL_0056: dup 
+  IL_0057: stsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel,MegaCrit.Sts2.Core.Models.ActModel] <1>__FromSave
+  IL_005c: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ActModel] Select[SerializableActModel,ActModel](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel], System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableActModel,MegaCrit.Sts2.Core.Models.ActModel])
+  IL_0061: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Models.ActModel] ToList[ActModel](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ActModel])
+  IL_0066: ldarg.0 
+  IL_0067: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier] get_Modifiers()
+  IL_006c: ldsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier,MegaCrit.Sts2.Core.Models.ModifierModel] <2>__FromSerializable
+  IL_0071: dup 
+  IL_0072: brtrue.s IL_0087
+  IL_0074: pop 
+  IL_0075: ldnull 
+  IL_0076: ldftn MegaCrit.Sts2.Core.Models.ModifierModel FromSerializable(MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier)
+  IL_007c: newobj Void .ctor(System.Object, IntPtr)
+  IL_0081: dup 
+  IL_0082: stsfld System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier,MegaCrit.Sts2.Core.Models.ModifierModel] <2>__FromSerializable
+  IL_0087: call System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ModifierModel] Select[SerializableModifier,ModifierModel](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier], System.Func`2[MegaCrit.Sts2.Core.Saves.Runs.SerializableModifier,MegaCrit.Sts2.Core.Models.ModifierModel])
+  IL_008c: call System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Models.ModifierModel] ToList[ModifierModel](System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ModifierModel])
+  IL_0091: ldarg.0 
+  IL_0092: callvirt MegaCrit.Sts2.Core.Runs.GameMode get_GameMode()
+  IL_0097: ldarg.0 
+  IL_0098: callvirt Int32 get_CurrentActIndex()
+  IL_009d: ldloc.2 
+  IL_009e: ldarg.0 
+  IL_009f: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRunOddsSet get_SerializableOdds()
+  IL_00a4: ldloc.2 
+  IL_00a5: callvirt MegaCrit.Sts2.Core.Random.Rng get_UnknownMapPoint()
+  IL_00aa: call MegaCrit.Sts2.Core.Odds.RunOddsSet FromSerializable(MegaCrit.Sts2.Core.Saves.Runs.SerializableRunOddsSet, MegaCrit.Sts2.Core.Random.Rng)
+  IL_00af: ldarg.0 
+  IL_00b0: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableRelicGrabBag get_SerializableSharedRelicGrabBag()
+  IL_00b5: call MegaCrit.Sts2.Core.Runs.RelicGrabBag FromSerializable(MegaCrit.Sts2.Core.Saves.Runs.SerializableRelicGrabBag)
+  IL_00ba: ldarg.0 
+  IL_00bb: callvirt Int32 get_Ascension()
+  IL_00c0: call MegaCrit.Sts2.Core.Runs.RunState CreateShared(System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Entities.Players.Player], System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ActModel], System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.ModifierModel], MegaCrit.Sts2.Core.Runs.GameMode, Int32, MegaCrit.Sts2.Core.Runs.RunRngSet, MegaCrit.Sts2.Core.Odds.RunOddsSet, MegaCrit.Sts2.Core.Runs.RelicGrabBag, Int32)
+  IL_00c5: stloc.3 
+  IL_00c6: ldloc.3 
+  IL_00c7: ldfld System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Map.MapCoord] _visitedMapCoords
+  IL_00cc: ldarg.0 
+  IL_00cd: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Map.MapCoord] get_VisitedMapCoords()
+  IL_00d2: callvirt Void AddRange(System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Map.MapCoord])
+  IL_00d7: ldloc.3 
+  IL_00d8: ldfld System.Collections.Generic.HashSet`1[MegaCrit.Sts2.Core.Models.ModelId] _visitedEventIds
+  IL_00dd: ldarg.0 
+  IL_00de: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Models.ModelId] get_EventsSeen()
+  IL_00e3: callvirt Void UnionWith(System.Collections.Generic.IEnumerable`1[MegaCrit.Sts2.Core.Models.ModelId])
+  IL_00e8: ldloc.3 
+  IL_00e9: ldfld System.Collections.Generic.List`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] _mapPointHistory
+  IL_00ee: ldarg.0 
+  IL_00ef: callvirt System.Collections.Generic.List`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]] get_MapPointHistory()
+  IL_00f4: callvirt System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry][] ToArray()
+  IL_00f9: newobj Void .ctor(System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry][])
+  IL_00fe: callvirt Void AddRange(System.Collections.Generic.IEnumerable`1[System.Collections.Generic.List`1[MegaCrit.Sts2.Core.Runs.History.MapPointHistoryEntry]])
+  IL_0103: ldloc.3 
+  IL_0104: ldarg.0 
+  IL_0105: callvirt MegaCrit.Sts2.Core.Saves.Runs.SerializableExtraRunFields get_ExtraFields()
+  IL_010a: call MegaCrit.Sts2.Core.Runs.ExtraRunFields FromSerializable(MegaCrit.Sts2.Core.Saves.Runs.SerializableExtraRunFields)
+  IL_010f: callvirt Void set_ExtraFields(MegaCrit.Sts2.Core.Runs.ExtraRunFields)
+  IL_0114: ldloc.3 
+  IL_0115: ret 
+
+IL MegaCrit.Sts2.Core.Rooms.EventRoom.EnterInternal
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldarg.1 
+  IL_0017: stfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_001c: ldloca.s 0
+  IL_001e: ldarg.2 
+  IL_001f: stfld Boolean isRestoringRoomStackBase
+  IL_0024: ldloca.s 0
+  IL_0026: ldc.i4.m1 
+  IL_0027: stfld Int32 <>1__state
+  IL_002c: ldloca.s 0
+  IL_002e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0033: ldloca.s 0
+  IL_0035: call Void Start[<EnterInternal>d__18](<EnterInternal>d__18 ByRef)
+  IL_003a: ldloca.s 0
+  IL_003c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0041: call System.Threading.Tasks.Task get_Task()
+  IL_0046: ret 
+
+IL MegaCrit.Sts2.Core.Rooms.EventRoom+<EnterInternal>d__18.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: switch IL_008c,IL_01b3,IL_0252,IL_02b2
+  IL_0024: ldarg.0 
+  IL_0025: ldloc.1 
+  IL_0026: call MegaCrit.Sts2.Core.Models.EventModel get_CanonicalEvent()
+  IL_002b: callvirt MegaCrit.Sts2.Core.Events.EventLayoutType get_LayoutType()
+  IL_0030: ldc.i4.1 
+  IL_0031: ceq 
+  IL_0033: stfld Boolean <preloadsAfterCombatState>5__2
+  IL_0038: ldarg.0 
+  IL_0039: ldfld Boolean <preloadsAfterCombatState>5__2
+  IL_003e: brtrue.s IL_00af
+  IL_0040: ldloc.1 
+  IL_0041: call MegaCrit.Sts2.Core.Models.EventModel get_CanonicalEvent()
+  IL_0046: ldarg.0 
+  IL_0047: ldfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_004c: dup 
+  IL_004d: brtrue.s IL_0055
+  IL_004f: pop 
+  IL_0050: call MegaCrit.Sts2.Core.Runs.NullRunState get_Instance()
+  IL_0055: call System.Threading.Tasks.Task LoadRoomEventAssets(MegaCrit.Sts2.Core.Models.EventModel, MegaCrit.Sts2.Core.Runs.IRunState)
+  IL_005a: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_005f: stloc.2 
+  IL_0060: ldloca.s 2
+  IL_0062: call Boolean get_IsCompleted()
+  IL_0067: brtrue.s IL_00a8
+  IL_0069: ldarg.0 
+  IL_006a: ldc.i4.0 
+  IL_006b: dup 
+  IL_006c: stloc.0 
+  IL_006d: stfld Int32 <>1__state
+  IL_0072: ldarg.0 
+  IL_0073: ldloc.2 
+  IL_0074: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0079: ldarg.0 
+  IL_007a: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_007f: ldloca.s 2
+  IL_0081: ldarg.0 
+  IL_0082: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterInternal>d__18](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterInternal>d__18 ByRef)
+  IL_0087: leave IL_0312
+  IL_008c: ldarg.0 
+  IL_008d: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0092: stloc.2 
+  IL_0093: ldarg.0 
+  IL_0094: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0099: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_009f: ldarg.0 
+  IL_00a0: ldc.i4.m1 
+  IL_00a1: dup 
+  IL_00a2: stloc.0 
+  IL_00a3: stfld Int32 <>1__state
+  IL_00a8: ldloca.s 2
+  IL_00aa: call Void GetResult()
+  IL_00af: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_00b4: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_00b9: ldloc.1 
+  IL_00ba: call MegaCrit.Sts2.Core.Models.EventModel get_CanonicalEvent()
+  IL_00bf: ldloc.1 
+  IL_00c0: callvirt Boolean get_IsPreFinished()
+  IL_00c5: ldloc.1 
+  IL_00c6: call System.Action`1[MegaCrit.Sts2.Core.Models.EventModel] get_OnStart()
+  IL_00cb: callvirt Void BeginEvent(MegaCrit.Sts2.Core.Models.EventModel, Boolean, System.Action`1[MegaCrit.Sts2.Core.Models.EventModel])
+  IL_00d0: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_00d5: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_00da: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.EventModel] get_Events()
+  IL_00df: callvirt System.Collections.Generic.IEnumerator`1[MegaCrit.Sts2.Core.Models.EventModel] GetEnumerator()
+  IL_00e4: stloc.3 
+  IL_00e5: br.s IL_011b
+  IL_00e7: ldloc.3 
+  IL_00e8: callvirt MegaCrit.Sts2.Core.Models.EventModel get_Current()
+  IL_00ed: stloc.s 4
+  IL_00ef: ldloc.s 4
+  IL_00f1: ldloc.1 
+  IL_00f2: ldftn Void OnEventStateChanged(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_00f8: newobj Void .ctor(System.Object, IntPtr)
+  IL_00fd: callvirt Void add_StateChanged(System.Action`1[MegaCrit.Sts2.Core.Models.EventModel])
+  IL_0102: ldloc.s 4
+  IL_0104: callvirt Boolean get_IsFinished()
+  IL_0109: brfalse.s IL_011b
+  IL_010b: ldloc.1 
+  IL_010c: callvirt Boolean get_IsPreFinished()
+  IL_0111: brtrue.s IL_011b
+  IL_0113: ldloc.1 
+  IL_0114: ldloc.s 4
+  IL_0116: call Void OnEventStateChanged(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_011b: ldloc.3 
+  IL_011c: callvirt Boolean MoveNext()
+  IL_0121: brtrue.s IL_00e7
+  IL_0123: leave.s IL_0133
+  IL_0125: ldloc.0 
+  IL_0126: ldc.i4.0 
+  IL_0127: bge.s IL_0132
+  IL_0129: ldloc.3 
+  IL_012a: brfalse.s IL_0132
+  IL_012c: ldloc.3 
+  IL_012d: callvirt Void Dispose()
+  IL_0132: endfinally 
+  IL_0133: ldarg.0 
+  IL_0134: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_0139: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_013e: callvirt MegaCrit.Sts2.Core.Models.EventModel GetLocalEvent()
+  IL_0143: stfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_0148: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_014d: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_0152: ldarg.0 
+  IL_0153: ldfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_0158: callvirt Void GenerateInternalCombatStateIfNecessary(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_015d: ldarg.0 
+  IL_015e: ldfld Boolean <preloadsAfterCombatState>5__2
+  IL_0163: brfalse.s IL_01d7
+  IL_0165: ldarg.0 
+  IL_0166: ldfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_016b: ldarg.0 
+  IL_016c: ldfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_0171: dup 
+  IL_0172: brtrue.s IL_017a
+  IL_0174: pop 
+  IL_0175: call MegaCrit.Sts2.Core.Runs.NullRunState get_Instance()
+  IL_017a: call System.Threading.Tasks.Task LoadRoomEventAssets(MegaCrit.Sts2.Core.Models.EventModel, MegaCrit.Sts2.Core.Runs.IRunState)
+  IL_017f: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0184: stloc.s 5
+  IL_0186: ldloca.s 5
+  IL_0188: call Boolean get_IsCompleted()
+  IL_018d: brtrue.s IL_01d0
+  IL_018f: ldarg.0 
+  IL_0190: ldc.i4.1 
+  IL_0191: dup 
+  IL_0192: stloc.0 
+  IL_0193: stfld Int32 <>1__state
+  IL_0198: ldarg.0 
+  IL_0199: ldloc.s 5
+  IL_019b: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_01a0: ldarg.0 
+  IL_01a1: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_01a6: ldloca.s 5
+  IL_01a8: ldarg.0 
+  IL_01a9: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterInternal>d__18](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterInternal>d__18 ByRef)
+  IL_01ae: leave IL_0312
+  IL_01b3: ldarg.0 
+  IL_01b4: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_01b9: stloc.s 5
+  IL_01bb: ldarg.0 
+  IL_01bc: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_01c1: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_01c7: ldarg.0 
+  IL_01c8: ldc.i4.m1 
+  IL_01c9: dup 
+  IL_01ca: stloc.0 
+  IL_01cb: stfld Int32 <>1__state
+  IL_01d0: ldloca.s 5
+  IL_01d2: call Void GetResult()
+  IL_01d7: ldarg.0 
+  IL_01d8: ldfld Boolean isRestoringRoomStackBase
+  IL_01dd: brtrue.s IL_020a
+  IL_01df: ldarg.0 
+  IL_01e0: ldfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_01e5: ldarg.0 
+  IL_01e6: ldfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_01eb: ldloc.1 
+  IL_01ec: ldfld Boolean _isPreFinished
+  IL_01f1: call MegaCrit.Sts2.Core.Nodes.Rooms.NEventRoom Create(MegaCrit.Sts2.Core.Models.EventModel, MegaCrit.Sts2.Core.Runs.IRunState, Boolean)
+  IL_01f6: stloc.s 6
+  IL_01f8: call MegaCrit.Sts2.Core.Nodes.NRun get_Instance()
+  IL_01fd: dup 
+  IL_01fe: brtrue.s IL_0203
+  IL_0200: pop 
+  IL_0201: br.s IL_020a
+  IL_0203: ldloc.s 6
+  IL_0205: call Void SetCurrentRoom(Godot.Control)
+  IL_020a: ldarg.0 
+  IL_020b: ldfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_0210: brfalse.s IL_0276
+  IL_0212: ldarg.0 
+  IL_0213: ldfld MegaCrit.Sts2.Core.Runs.IRunState runState
+  IL_0218: ldloc.1 
+  IL_0219: call System.Threading.Tasks.Task AfterRoomEntered(MegaCrit.Sts2.Core.Runs.IRunState, MegaCrit.Sts2.Core.Rooms.AbstractRoom)
+  IL_021e: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0223: stloc.s 7
+  IL_0225: ldloca.s 7
+  IL_0227: call Boolean get_IsCompleted()
+  IL_022c: brtrue.s IL_026f
+  IL_022e: ldarg.0 
+  IL_022f: ldc.i4.2 
+  IL_0230: dup 
+  IL_0231: stloc.0 
+  IL_0232: stfld Int32 <>1__state
+  IL_0237: ldarg.0 
+  IL_0238: ldloc.s 7
+  IL_023a: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_023f: ldarg.0 
+  IL_0240: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0245: ldloca.s 7
+  IL_0247: ldarg.0 
+  IL_0248: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterInternal>d__18](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterInternal>d__18 ByRef)
+  IL_024d: leave IL_0312
+  IL_0252: ldarg.0 
+  IL_0253: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0258: stloc.s 7
+  IL_025a: ldarg.0 
+  IL_025b: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0260: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_0266: ldarg.0 
+  IL_0267: ldc.i4.m1 
+  IL_0268: dup 
+  IL_0269: stloc.0 
+  IL_026a: stfld Int32 <>1__state
+  IL_026f: ldloca.s 7
+  IL_0271: call Void GetResult()
+  IL_0276: ldarg.0 
+  IL_0277: ldfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_027c: callvirt System.Threading.Tasks.Task AfterEventStarted()
+  IL_0281: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0286: stloc.s 8
+  IL_0288: ldloca.s 8
+  IL_028a: call Boolean get_IsCompleted()
+  IL_028f: brtrue.s IL_02cf
+  IL_0291: ldarg.0 
+  IL_0292: ldc.i4.3 
+  IL_0293: dup 
+  IL_0294: stloc.0 
+  IL_0295: stfld Int32 <>1__state
+  IL_029a: ldarg.0 
+  IL_029b: ldloc.s 8
+  IL_029d: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_02a2: ldarg.0 
+  IL_02a3: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_02a8: ldloca.s 8
+  IL_02aa: ldarg.0 
+  IL_02ab: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<EnterInternal>d__18](System.Runtime.CompilerServices.TaskAwaiter ByRef, <EnterInternal>d__18 ByRef)
+  IL_02b0: leave.s IL_0312
+  IL_02b2: ldarg.0 
+  IL_02b3: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_02b8: stloc.s 8
+  IL_02ba: ldarg.0 
+  IL_02bb: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_02c0: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_02c6: ldarg.0 
+  IL_02c7: ldc.i4.m1 
+  IL_02c8: dup 
+  IL_02c9: stloc.0 
+  IL_02ca: stfld Int32 <>1__state
+  IL_02cf: ldloca.s 8
+  IL_02d1: call Void GetResult()
+  IL_02d6: leave.s IL_02f8
+  IL_02d8: stloc.s 9
+  IL_02da: ldarg.0 
+  IL_02db: ldc.i4.s -2
+  IL_02dd: stfld Int32 <>1__state
+  IL_02e2: ldarg.0 
+  IL_02e3: ldnull 
+  IL_02e4: stfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_02e9: ldarg.0 
+  IL_02ea: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_02ef: ldloc.s 9
+  IL_02f1: call Void SetException(System.Exception)
+  IL_02f6: leave.s IL_0312
+  IL_02f8: ldarg.0 
+  IL_02f9: ldc.i4.s -2
+  IL_02fb: stfld Int32 <>1__state
+  IL_0300: ldarg.0 
+  IL_0301: ldnull 
+  IL_0302: stfld MegaCrit.Sts2.Core.Models.EventModel <localEvent>5__3
+  IL_0307: ldarg.0 
+  IL_0308: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_030d: call Void SetResult()
+  IL_0312: ret 
+
+IL MegaCrit.Sts2.Core.Rooms.EventRoom.Exit
+  IL_0000: ldloca.s 0
+  IL_0002: call System.Runtime.CompilerServices.AsyncTaskMethodBuilder Create()
+  IL_0007: stfld System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_000c: ldloca.s 0
+  IL_000e: ldarg.0 
+  IL_000f: stfld MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this
+  IL_0014: ldloca.s 0
+  IL_0016: ldc.i4.m1 
+  IL_0017: stfld Int32 <>1__state
+  IL_001c: ldloca.s 0
+  IL_001e: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0023: ldloca.s 0
+  IL_0025: call Void Start[<Exit>d__19](<Exit>d__19 ByRef)
+  IL_002a: ldloca.s 0
+  IL_002c: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0031: call System.Threading.Tasks.Task get_Task()
+  IL_0036: ret 
+
+IL MegaCrit.Sts2.Core.Rooms.EventRoom+<Exit>d__19.MoveNext
+  IL_0000: ldarg.0 
+  IL_0001: ldfld Int32 <>1__state
+  IL_0006: stloc.0 
+  IL_0007: ldarg.0 
+  IL_0008: ldfld MegaCrit.Sts2.Core.Rooms.EventRoom <>4__this
+  IL_000d: stloc.1 
+  IL_000e: ldloc.0 
+  IL_000f: brfalse.s IL_0052
+  IL_0011: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_0016: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_001b: callvirt System.Threading.Tasks.Task AwaitPendingOptionTasks()
+  IL_0020: callvirt System.Runtime.CompilerServices.TaskAwaiter GetAwaiter()
+  IL_0025: stloc.3 
+  IL_0026: ldloca.s 3
+  IL_0028: call Boolean get_IsCompleted()
+  IL_002d: brtrue.s IL_006e
+  IL_002f: ldarg.0 
+  IL_0030: ldc.i4.0 
+  IL_0031: dup 
+  IL_0032: stloc.0 
+  IL_0033: stfld Int32 <>1__state
+  IL_0038: ldarg.0 
+  IL_0039: ldloc.3 
+  IL_003a: stfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_003f: ldarg.0 
+  IL_0040: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0045: ldloca.s 3
+  IL_0047: ldarg.0 
+  IL_0048: call Void AwaitUnsafeOnCompleted[TaskAwaiter,<Exit>d__19](System.Runtime.CompilerServices.TaskAwaiter ByRef, <Exit>d__19 ByRef)
+  IL_004d: leave IL_015b
+  IL_0052: ldarg.0 
+  IL_0053: ldfld System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_0058: stloc.3 
+  IL_0059: ldarg.0 
+  IL_005a: ldflda System.Runtime.CompilerServices.TaskAwaiter <>u__1
+  IL_005f: initobj System.Runtime.CompilerServices.TaskAwaiter
+  IL_0065: ldarg.0 
+  IL_0066: ldc.i4.m1 
+  IL_0067: dup 
+  IL_0068: stloc.0 
+  IL_0069: stfld Int32 <>1__state
+  IL_006e: ldloca.s 3
+  IL_0070: call Void GetResult()
+  IL_0075: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_007a: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_007f: callvirt MegaCrit.Sts2.Core.Models.EventModel GetLocalEvent()
+  IL_0084: stloc.2 
+  IL_0085: ldloc.2 
+  IL_0086: callvirt Boolean get_IsDeterministic()
+  IL_008b: brfalse.s IL_00c8
+  IL_008d: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_0092: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.ChecksumTracker get_ChecksumTracker()
+  IL_0097: ldc.i4.s 19
+  IL_0099: ldc.i4.1 
+  IL_009a: newobj Void .ctor(Int32, Int32)
+  IL_009f: stloc.s 4
+  IL_00a1: ldloca.s 4
+  IL_00a3: ldstr "Exiting event room "
+  IL_00a8: call Void AppendLiteral(System.String)
+  IL_00ad: ldloca.s 4
+  IL_00af: ldloc.2 
+  IL_00b0: callvirt MegaCrit.Sts2.Core.Models.ModelId get_Id()
+  IL_00b5: call Void AppendFormatted[ModelId](MegaCrit.Sts2.Core.Models.ModelId)
+  IL_00ba: ldloca.s 4
+  IL_00bc: call System.String ToStringAndClear()
+  IL_00c1: ldnull 
+  IL_00c2: callvirt MegaCrit.Sts2.Core.Entities.Multiplayer.NetChecksumData GenerateChecksum(System.String, MegaCrit.Sts2.Core.GameActions.GameAction)
+  IL_00c7: pop 
+  IL_00c8: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_00cd: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_00d2: callvirt Void BeforeExitingRoom()
+  IL_00d7: call MegaCrit.Sts2.Core.Runs.RunManager get_Instance()
+  IL_00dc: callvirt MegaCrit.Sts2.Core.Multiplayer.Game.EventSynchronizer get_EventSynchronizer()
+  IL_00e1: callvirt System.Collections.Generic.IReadOnlyList`1[MegaCrit.Sts2.Core.Models.EventModel] get_Events()
+  IL_00e6: callvirt System.Collections.Generic.IEnumerator`1[MegaCrit.Sts2.Core.Models.EventModel] GetEnumerator()
+  IL_00eb: stloc.s 5
+  IL_00ed: br.s IL_0112
+  IL_00ef: ldloc.s 5
+  IL_00f1: callvirt MegaCrit.Sts2.Core.Models.EventModel get_Current()
+  IL_00f6: stloc.s 6
+  IL_00f8: ldloc.s 6
+  IL_00fa: ldloc.1 
+  IL_00fb: ldftn Void OnEventStateChanged(MegaCrit.Sts2.Core.Models.EventModel)
+  IL_0101: newobj Void .ctor(System.Object, IntPtr)
+  IL_0106: callvirt Void remove_StateChanged(System.Action`1[MegaCrit.Sts2.Core.Models.EventModel])
+  IL_010b: ldloc.s 6
+  IL_010d: callvirt Void EnsureCleanup()
+  IL_0112: ldloc.s 5
+  IL_0114: callvirt Boolean MoveNext()
+  IL_0119: brtrue.s IL_00ef
+  IL_011b: leave.s IL_012d
+  IL_011d: ldloc.0 
+  IL_011e: ldc.i4.0 
+  IL_011f: bge.s IL_012c
+  IL_0121: ldloc.s 5
+  IL_0123: brfalse.s IL_012c
+  IL_0125: ldloc.s 5
+  IL_0127: callvirt Void Dispose()
+  IL_012c: endfinally 
+  IL_012d: leave.s IL_0148
+  IL_012f: stloc.s 7
+  IL_0131: ldarg.0 
+  IL_0132: ldc.i4.s -2
+  IL_0134: stfld Int32 <>1__state
+  IL_0139: ldarg.0 
+  IL_013a: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_013f: ldloc.s 7
+  IL_0141: call Void SetException(System.Exception)
+  IL_0146: leave.s IL_015b
+  IL_0148: ldarg.0 
+  IL_0149: ldc.i4.s -2
+  IL_014b: stfld Int32 <>1__state
+  IL_0150: ldarg.0 
+  IL_0151: ldflda System.Runtime.CompilerServices.AsyncTaskMethodBuilder <>t__builder
+  IL_0156: call Void SetResult()
+  IL_015b: ret 
+
+CANCEL-LIKE DECLARED METHODS

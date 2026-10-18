@@ -254,7 +254,7 @@ internal static class DemocritusArrangementChecks
             eligible with { HasRequiredRelic = false }, eligible with { HasPrerequisite = false },
             eligible with { RetainedEnding = true }, eligible with { IsSafeRoomStack = false },
             eligible with { CompletedCombatCount = 0 }, eligible with { RunInProgress = false },
-            eligible with { IsSingleplayer = false }, eligible with { CurrentRoomIsMap = false },
+            eligible with { IsSingleplayer = false }, eligible with { AtSafeMapBoundary = false },
             eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true },
             eligible with { HasSavedInstance = true, SavedInstanceUsable = true, SavedInstanceClosed = true },
         }) Check(!DemocritusArrangementTriggerPolicy.ShouldInsert(denied), "Wrong predecessor, consumed opportunity or unsafe map cannot create an instance.");

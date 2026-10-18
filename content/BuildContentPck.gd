@@ -111,6 +111,8 @@ func _initialize() -> void:
 	# background. Pack it under the event ModelId path without duplicating the
 	# binary source or imported texture.
 	for alias in [
+		["res://images/events/machiavelli_emergency_mandate.png", "res://images/events/philosophers_gaze.png"],
+		["res://images/events/machiavelli_emergency_mandate.png.import", "res://images/events/machiavelli_emergency_mandate.png.import"],
 		["res://images/events/democritus_arrangement.png", "res://images/events/philosophers_gaze.png"],
 		["res://images/events/democritus_arrangement.png.import", "res://images/events/democritus_arrangement.png.import"],
 		["res://images/events/aristotle_civic_inquiry.png", "res://images/events/philosophers_gaze.png"],

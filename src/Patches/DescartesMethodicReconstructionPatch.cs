@@ -9,26 +9,15 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
-[HarmonyPatch]
 internal static class DescartesMethodicReconstructionPatch
 {
-    private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(typeof(RunManager), "EnterRoomInternal", [typeof(AbstractRoom), typeof(bool)])
-        ?? throw new MissingMethodException(typeof(RunManager).FullName, "EnterRoomInternal(AbstractRoom, bool)");
-
-    private static void Postfix(AbstractRoom room, bool isRestoringRoomStackBase, ref Task __result)
+    internal static async Task InsertAtBoundaryAsync()
     {
-        if (room is MapRoom) __result = InsertAfterMapEntry(__result, isRestoringRoomStackBase);
-    }
-
-    private static async Task InsertAfterMapEntry(Task mapEntryTask, bool isRestoringRoomStackBase)
-    {
-        await mapEntryTask;
-        if (isRestoringRoomStackBase) return;
-
         RunManager manager = RunManager.Instance;
         RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
         if (run is null) return;
+
+        if (!RouteEventMapBoundary.IsSafe(run)) return;
 
         PhilosophyRunState philosophy = PhilosophyRunStateService.GetOrCreate(run);
         WesternJourneyState? journey = philosophy.WesternJourney;
@@ -39,7 +28,7 @@ internal static class DescartesMethodicReconstructionPatch
         var currentMapPoint = run.CurrentMapCoord is not null ? run.CurrentMapPoint : null;
         DescartesMethodicReconstructionTriggerContext context = new(
             manager.IsInProgress,
-            run.CurrentRoom is MapRoom,
+            RouteEventMapBoundary.IsSafe(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -63,12 +52,10 @@ internal static class DescartesMethodicReconstructionPatch
             if (journey is null || !WesternRouteGraph.LoadEmbedded().TryDecline(journey, "Fixed", 2)) return;
             philosophy.DescartesMethodicReconstruction = DescartesMethodicReconstructionState.Create(
                 $"DESCARTES_METHODIC_RECONSTRUCTION:{run.Rng.Seed}:2");
-            if (manager.ShouldSave) await SaveManager.Instance.SaveRun(null);
         }
 
         Log.Info("[STS2Philosophers] Presenting Descartes's methodic reconstruction at a natural map fork.");
-        NMapScreen.Instance?.Close(animateOut: false);
-        await manager.EnterRoomWithoutExitingCurrentRoom(new EventRoom(canonical!), fadeToBlack: false);
+        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
     }
 
     private static DescartesMethodicReconstruction? TryGetCanonicalEvent()

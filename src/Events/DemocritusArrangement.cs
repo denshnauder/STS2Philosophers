@@ -191,7 +191,7 @@ public sealed class DemocritusArrangement : EventModel
         && run.CurrentActIndex == 1
         && ReferenceEquals(RunManager.Instance.DebugOnlyGetState(), run)
         && run.CurrentRoom is EventRoom room && ReferenceEquals(room.LocalMutableEvent, this)
-        && (run.CurrentRoomCount == 2 && run.BaseRoom is MapRoom
+        && (run.CurrentRoomCount == 2 && run.BaseRoom is not null
             || run.CurrentRoomCount == 1 && ReferenceEquals(run.BaseRoom, room));
 
     private void ShowConfirmedState(DemocritusArrangementState state)
