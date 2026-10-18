@@ -12,6 +12,9 @@
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaximenesBreathInvitationState.cs" Link="AnaximenesBreathInvitationState.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaximenesBreathInvitationTriggerPolicy.cs" Link="AnaximenesBreathInvitationTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaximenesBreathPracticeState.cs" Link="AnaximenesBreathPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\AristotleCivicInquiryState.cs" Link="AristotleCivicInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AristotleCivicInquiryTriggerPolicy.cs" Link="AristotleCivicInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryTriggerPolicy.cs" Link="ParmenidesInquiryTriggerPolicy.cs" />

@@ -20,6 +20,7 @@ EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
 ParmenidesInquiryChecks.Run();
 AnaximanderOriginInquiryChecks.Run();
+AnaximenesBreathInvitationChecks.Run();
 AristotleCivicInquiryChecks.Run();
 DemocritusArrangementChecks.Run();
 DescartesMethodicReconstructionChecks.Run();

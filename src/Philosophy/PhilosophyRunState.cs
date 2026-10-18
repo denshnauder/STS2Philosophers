@@ -16,6 +16,7 @@ internal sealed class PhilosophyRunState
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
     public ParmenidesInquiryState? ParmenidesInquiry { get; set; }
     public AnaximanderOriginInquiryState? AnaximanderOriginInquiry { get; set; }
+    public AnaximenesBreathInvitationState? AnaximenesBreathInvitation { get; set; }
     public AristotleCivicInquiryState? AristotleCivicInquiry { get; set; }
     public DemocritusArrangementState? DemocritusArrangement { get; set; }
     public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
@@ -50,6 +51,7 @@ internal sealed class PhilosophyRunState
         || SextusOpposedAppearances is not null
         || ParmenidesInquiry is not null
         || AnaximanderOriginInquiry is not null
+        || AnaximenesBreathInvitation is not null
         || AristotleCivicInquiry is not null
         || DemocritusArrangement is not null
         || DescartesMethodicReconstruction is not null
@@ -217,6 +219,7 @@ internal sealed class PhilosophyRunState
         SextusOpposedAppearances?.NormalizeAfterLoad();
         ParmenidesInquiry?.NormalizeAfterLoad();
         AnaximanderOriginInquiry?.NormalizeAfterLoad();
+        AnaximenesBreathInvitation?.NormalizeAfterLoad();
         AristotleCivicInquiry?.NormalizeAfterLoad();
         DemocritusArrangement?.NormalizeAfterLoad();
         DescartesMethodicReconstruction?.NormalizeAfterLoad();

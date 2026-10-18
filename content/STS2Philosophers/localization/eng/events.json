@@ -767,5 +767,17 @@
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_STOPPED.options.LEAVE.description": "Close this stopped inquiry.",
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.description": "You decline the inquiry. Your current practice and Lyre and Bow remain; the second-act invitation will not return.",
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.title": "Return to the map.",
-  "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.description": "Close the declined inquiry."
+  "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.description": "Close the declined inquiry.",
+  "ANAXIMENES_BREATH_INVITATION.title": "Anaximenes: Breath in Motion",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.description": "Air may become different visible things through rarefaction and condensation. Try carrying one unused Energy into another turn: a change of timing, not a new source of power.",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.ACCEPT.title": "Practice condensation and release.",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.ACCEPT.description": "Gain Breath in Motion. Ending a turn with Energy unspent grants 1 Energy and 1 card next turn.",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.DECLINE.title": "Keep the present rhythm.",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.DECLINE.description": "Gain no relic. This invitation will not return.",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.description": "You take up Breath in Motion. Leave at least 1 Energy unspent at turn end to gain 1 Energy and draw 1 card next turn. Your Lyre and Bow remains in use.",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.options.LEAVE.title": "Return to the map.",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.options.LEAVE.description": "Keep this practice for the rest of the run.",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.description": "You keep your current rhythm and Lyre and Bow. This practice will not return in this run.",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.options.LEAVE.title": "Return to the map.",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.options.LEAVE.description": "Close the invitation."
 }

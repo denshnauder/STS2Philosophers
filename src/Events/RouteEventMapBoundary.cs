@@ -27,7 +27,8 @@ internal static class RouteEventMapBoundary
     internal static bool IsRegisteredEvent(EventModel? model) => model is
         ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
-        or ParmenidesInquiry or AnaximanderOriginInquiry or AristotleCivicInquiry or DemocritusArrangement;
+        or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
+        or AristotleCivicInquiry or DemocritusArrangement;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 
@@ -251,6 +252,7 @@ internal static class RouteEventMapBoundary
                 HanFeiPublicStandardPatch.InsertAtBoundaryAsync,
                 ParmenidesInquiryPatch.InsertAtBoundaryAsync,
                 AnaximanderOriginInquiryPatch.InsertAtBoundaryAsync,
+                AnaximenesBreathInvitationPatch.InsertAtBoundaryAsync,
                 AristotleCivicInquiryPatch.InsertAtBoundaryAsync,
                 DemocritusArrangementPatch.InsertAtBoundaryAsync,
             ];

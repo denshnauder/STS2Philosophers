@@ -72,5 +72,8 @@
   "YANGZHU_QUAN_SHENG_BI.flavor": "Keep one's nature whole and true, unburdened by external things.",
   "HUISHI_LI_WU_CHOU.title": "Enumeration Counters",
   "HUISHI_LI_WU_CHOU.description": "At the start of your turn, you and ALL enemies gain 8 Block. The first time each turn you break an enemy's Block, gain 1 Energy, draw 1 card, and deal 8 damage to ALL enemies.",
-  "HUISHI_LI_WU_CHOU.flavor": "Extend care to all things; Heaven and Earth are one body."
+  "HUISHI_LI_WU_CHOU.flavor": "Extend care to all things; Heaven and Earth are one body.",
+  "ANAXIMENES_BREATH.title": "Breath in Motion",
+  "ANAXIMENES_BREATH.description": "At turn end, if you have at least 1 unspent Energy, gain 1 Energy and draw 1 card next turn.",
+  "ANAXIMENES_BREATH.flavor": "One breath, different forms."
 }

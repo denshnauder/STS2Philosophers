@@ -72,5 +72,8 @@
   "YANGZHU_QUAN_SHENG_BI.flavor": "全性保真，不以物累形。",
   "HUISHI_LI_WU_CHOU.title": "历物筹",
   "HUISHI_LI_WU_CHOU.description": "你的回合开始时，你与所有敌人获得8点格挡。每回合第一次击破敌人的格挡时，获得1点能量，抽1张牌，并对所有敌人造成8点伤害。",
-  "HUISHI_LI_WU_CHOU.flavor": "泛爱万物，天地一体也。"
+  "HUISHI_LI_WU_CHOU.flavor": "泛爱万物，天地一体也。",
+  "ANAXIMENES_BREATH.title": "凝散之息",
+  "ANAXIMENES_BREATH.description": "回合结束时，若有至少1点未用能量，下回合获得1点能量并抽1张牌。",
+  "ANAXIMENES_BREATH.flavor": "同一气息，形态有别。"
 }

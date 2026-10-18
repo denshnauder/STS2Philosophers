@@ -31,6 +31,7 @@ public static class Entry
         ModHelper.AddModelToPool<EventRelicPool, YangzhuQuanShengBi>();
         ModHelper.AddModelToPool<EventRelicPool, HuishiLiWuChou>();
         ModHelper.AddModelToPool<EventRelicPool, HeraclitusLyre>();
+        ModHelper.AddModelToPool<EventRelicPool, AnaximenesBreath>();
         ModHelper.AddModelToPool<EventRelicPool, SocratesQuestionCup>();
         ModHelper.AddModelToPool<EventRelicPool, SocratesBalanceWeight>();
         ModHelper.AddModelToPool<EventRelicPool, PlatoCivicSeal>();

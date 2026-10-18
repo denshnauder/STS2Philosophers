@@ -767,5 +767,17 @@
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_STOPPED.options.LEAVE.description": "结束中止的追问。",
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.description": "你拒绝追问。当前实践与琴弓保持原样；第二幕不会再次邀请。",
   "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.title": "返回地图。",
-  "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.description": "结束拒绝的追问。"
+  "ANAXIMANDER_ORIGIN_INQUIRY.pages.RESULT_DECLINED.options.LEAVE.description": "结束拒绝的追问。",
+  "ANAXIMENES_BREATH_INVITATION.title": "阿那克西美尼：凝散之息",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.description": "气经稀散与凝聚，可呈现不同的可见形态。试着把未用的一点能量留到下一回合：改变时机，而非凭空生出力量。",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.ACCEPT.title": "实践凝聚与稀散。",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.ACCEPT.description": "获得凝散之息；回合结束留有能量，下回合获得1点能量并抽1张牌。",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.DECLINE.title": "保持现有节奏。",
+  "ANAXIMENES_BREATH_INVITATION.pages.INVITATION.options.DECLINE.description": "不获得遗物，本局不再邀请。",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.description": "你获得凝散之息。回合结束留有至少1点能量，下回合获得1点能量并抽1张牌。琴弓仍可使用。",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.options.LEAVE.title": "返回地图。",
+  "ANAXIMENES_BREATH_INVITATION.pages.ACCEPTED.options.LEAVE.description": "本局继续携带此实践。",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.description": "你保留现有节奏和琴弓。本局不再出现这项实践。",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.options.LEAVE.title": "返回地图。",
+  "ANAXIMENES_BREATH_INVITATION.pages.DECLINED.options.LEAVE.description": "结束邀请。"
 }
