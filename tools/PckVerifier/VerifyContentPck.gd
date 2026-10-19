@@ -2,6 +2,7 @@ extends SceneTree
 
 const REQUIRED_FILES := [
 	"res://images/events/democritus_arrangement.png",
+	"res://images/events/empedocles_roots_inquiry.png",
 	"res://images/events/parmenides_inquiry.png",
 	"res://images/events/aristotle_civic_inquiry.png",
 	"res://STS2Philosophers/localization/eng/events.json",
@@ -43,6 +44,7 @@ const REQUIRED_FILES := [
 
 const REQUIRED_TEXTURES := [
 	"res://images/events/democritus_arrangement.png",
+	"res://images/events/empedocles_roots_inquiry.png",
 	"res://images/events/parmenides_inquiry.png",
 	"res://images/events/aristotle_civic_inquiry.png",
 	"res://STS2Philosophers/images/heraclitus_lyre.svg",
