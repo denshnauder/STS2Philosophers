@@ -10,6 +10,7 @@ internal sealed class PhilosophyRunState
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
     public WesternJourneyState? WesternJourney { get; set; }
     public SocratesVirtueUpstreamRecord? SocratesVirtueUpstream { get; set; }
+    public DiogenesPracticeLedger? DiogenesPractice { get; set; }
     public ProtagorasSharedDeliberationState? ProtagorasSharedDeliberation { get; set; }
     public PlatoWholeArrangementState? PlatoWholeArrangement { get; set; }
     public EpicurusSharedMarginState? EpicurusSharedMargin { get; set; }
@@ -48,6 +49,7 @@ internal sealed class PhilosophyRunState
         || GeneratedCandidates.Count > 0
         || WesternJourney is not null
         || SocratesVirtueUpstream is not null
+        || DiogenesPractice is not null
         || ProtagorasSharedDeliberation is not null
         || PlatoWholeArrangement is not null
         || EpicurusSharedMargin is not null

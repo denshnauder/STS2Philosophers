@@ -4,6 +4,7 @@ internal enum DiogenesStaySwitchPage
 {
     RouteChoice,
     StatementReview,
+    PracticeReview,
     ConfirmStay,
     ZenoRelationReview,
     ConfirmSwitch,
@@ -14,6 +15,7 @@ internal enum DiogenesStaySwitchPage
 internal enum DiogenesStaySwitchPageOption
 {
     ReviewStatement,
+    ReviewPractice,
     Stay,
     LearnAboutZeno,
     BackToRouteChoice,
@@ -92,10 +94,13 @@ internal static class DiogenesStaySwitchPageFlow
             DiogenesStaySwitchPage.RouteChoice =>
                 [
                     DiogenesStaySwitchPageOption.ReviewStatement,
+                    DiogenesStaySwitchPageOption.ReviewPractice,
                     DiogenesStaySwitchPageOption.Stay,
                     DiogenesStaySwitchPageOption.LearnAboutZeno,
                 ],
             DiogenesStaySwitchPage.StatementReview =>
+                [DiogenesStaySwitchPageOption.BackToRouteChoice],
+            DiogenesStaySwitchPage.PracticeReview =>
                 [DiogenesStaySwitchPageOption.BackToRouteChoice],
             DiogenesStaySwitchPage.ConfirmStay =>
                 [
@@ -142,11 +147,14 @@ internal static class DiogenesStaySwitchPageFlow
         {
             (DiogenesStaySwitchPage.RouteChoice, DiogenesStaySwitchPageOption.ReviewStatement) =>
                 Navigate(DiogenesStaySwitchPage.StatementReview),
+            (DiogenesStaySwitchPage.RouteChoice, DiogenesStaySwitchPageOption.ReviewPractice) =>
+                Navigate(DiogenesStaySwitchPage.PracticeReview),
             (DiogenesStaySwitchPage.RouteChoice, DiogenesStaySwitchPageOption.Stay) =>
                 Navigate(DiogenesStaySwitchPage.ConfirmStay),
             (DiogenesStaySwitchPage.RouteChoice, DiogenesStaySwitchPageOption.LearnAboutZeno) =>
                 Navigate(DiogenesStaySwitchPage.ZenoRelationReview),
             (DiogenesStaySwitchPage.StatementReview, DiogenesStaySwitchPageOption.BackToRouteChoice) or
+            (DiogenesStaySwitchPage.PracticeReview, DiogenesStaySwitchPageOption.BackToRouteChoice) or
             (DiogenesStaySwitchPage.ConfirmStay, DiogenesStaySwitchPageOption.BackToRouteChoice) or
             (DiogenesStaySwitchPage.ZenoRelationReview, DiogenesStaySwitchPageOption.BackToRouteChoice) or
             (DiogenesStaySwitchPage.ConfirmSwitch, DiogenesStaySwitchPageOption.BackToRouteChoice) =>
@@ -170,6 +178,7 @@ internal static class DiogenesStaySwitchPageFlow
     {
         DiogenesStaySwitchPage.RouteChoice => "ROUTE_CHOICE",
         DiogenesStaySwitchPage.StatementReview => "STATEMENT_REVIEW",
+        DiogenesStaySwitchPage.PracticeReview => "PRACTICE_REVIEW",
         DiogenesStaySwitchPage.ConfirmStay => "CONFIRM_STAY",
         DiogenesStaySwitchPage.ZenoRelationReview => "ZENO_RELATION_REVIEW",
         DiogenesStaySwitchPage.ConfirmSwitch => "CONFIRM_SWITCH",
@@ -181,6 +190,7 @@ internal static class DiogenesStaySwitchPageFlow
     public static string OptionKey(DiogenesStaySwitchPageOption option) => option switch
     {
         DiogenesStaySwitchPageOption.ReviewStatement => "REVIEW_STATEMENT",
+        DiogenesStaySwitchPageOption.ReviewPractice => "REVIEW_PRACTICE",
         DiogenesStaySwitchPageOption.Stay => "STAY",
         DiogenesStaySwitchPageOption.LearnAboutZeno => "LEARN_ABOUT_ZENO",
         DiogenesStaySwitchPageOption.BackToRouteChoice => "BACK_TO_ROUTE_CHOICE",
@@ -198,6 +208,7 @@ internal static class DiogenesStaySwitchPageFlow
         ZenoRouteStage.Unresolved => page is
             DiogenesStaySwitchPage.RouteChoice or
             DiogenesStaySwitchPage.StatementReview or
+            DiogenesStaySwitchPage.PracticeReview or
             DiogenesStaySwitchPage.ConfirmStay or
             DiogenesStaySwitchPage.ZenoRelationReview or
             DiogenesStaySwitchPage.ConfirmSwitch,

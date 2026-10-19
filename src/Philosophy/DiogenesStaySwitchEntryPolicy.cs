@@ -18,7 +18,14 @@ internal sealed record DiogenesStaySwitchEntryRecord(
     int? SourceRoomId,
     SocratesVirtueMaterial? Facts,
     ZenoAssentMaterialSnapshot Material,
-    bool Closed = false);
+    bool Closed = false,
+    DiogenesPracticeSummary? Practice = null);
+
+internal sealed record DiogenesPracticeSummary(int Eligible, int Foregone, int Used)
+{
+    public bool IsValid() => Eligible >= 0 && Foregone >= 0 && Used >= 0
+        && Eligible == Foregone + Used && Eligible <= 128;
+}
 
 internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<DiogenesStaySwitchEntryRecord>
 {
@@ -71,7 +78,10 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
         [property: JsonRequired] int? SourceRoomId,
         [property: JsonRequired] FactsPayload? Facts,
         [property: JsonRequired] MaterialPayload Material,
-        [property: JsonRequired] bool Closed);
+        [property: JsonRequired] bool Closed)
+    {
+        public DiogenesPracticeSummary? Practice { get; init; }
+    }
 
     public override DiogenesStaySwitchEntryRecord Read(
         ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -92,7 +102,8 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
                 material.SourceVersion, material.SourceKind, material.ActionFactId, material.IsNoMaterial,
                 material.PublicHistoryIds, material.CurrentStatementId, material.NarrowStatementId,
                 material.LaterOutcomeId, material.Digest),
-            payload.Closed);
+            payload.Closed,
+            payload.Practice);
         return DiogenesStaySwitchEntryPolicy.IsValid(entry)
             ? entry
             : throw new JsonException("Invalid Diogenes entry payload.");
@@ -113,7 +124,7 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
                 material.SourceVersion, material.SourceKind, material.ActionFactId, material.IsNoMaterial,
                 material.PublicHistoryIds.ToArray(), material.CurrentStatementId, material.NarrowStatementId,
                 material.LaterOutcomeId, material.Digest),
-            value.Closed), options);
+            value.Closed) { Practice = value.Practice }, options);
     }
 }
 
@@ -137,6 +148,7 @@ internal static class DiogenesStaySwitchEntryPolicy
         if (context.ActIndex != 2 || context.PlayerCount != 1 || !context.IsMapRoom ||
             context.IsRestoringRoomStackBase || context.SourceRoomId is < 0 ||
             sharedState.PreservedSaveMarkerEntries.Count != 0 ||
+            sharedState.DiogenesPractice is { } ledger && !ledger.IsValid() ||
             !CanInitialize(sharedState.ZenoRoutePayload) ||
             sharedState.CurrentDoctrine?.ThinkerId != SocratesVirtueUpstreamRecord.SocratesThinkerId ||
             sharedState.CurrentDoctrine.DoctrineId !=
@@ -153,12 +165,15 @@ internal static class DiogenesStaySwitchEntryPolicy
             facts = observed;
         }
 
+        (int eligible, int foregone, int used) = sharedState.DiogenesPractice?.SummaryBefore(2) ?? default;
         entry = new DiogenesStaySwitchEntryRecord(
             CurrentVersion,
             RunIdPrefix + runSeed.ToString(CultureInfo.InvariantCulture),
             context.SourceRoomId,
             facts,
-            CreateMaterial(facts));
+            CreateMaterial(facts),
+            Practice: sharedState.DiogenesPractice is null
+                ? null : new DiogenesPracticeSummary(eligible, foregone, used));
         return IsValid(entry);
     }
 
@@ -166,6 +181,7 @@ internal static class DiogenesStaySwitchEntryPolicy
     {
         if (entry is null || entry.Version != CurrentVersion || entry.SourceRoomId is < 0 ||
             !IsValidRunId(entry.RunId) || entry.Material is null ||
+            entry.Practice is { } practice && !practice.IsValid() ||
             entry.Facts is not null && !IsValidFacts(entry.Facts))
         {
             return false;

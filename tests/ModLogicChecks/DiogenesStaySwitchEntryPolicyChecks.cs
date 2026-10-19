@@ -13,7 +13,34 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
         WrongRoutesAndUnsafeContextsCannotEnter();
         FrozenMaterialSurvivesRepeatedRestore();
         InvalidAndIncompletePayloadsCannotRestore();
+        PracticeObservationsRemainBoundedAndFrozen();
         Console.WriteLine("Diogenes entry policy checks passed: real branch eligibility, frozen facts and strict restore.");
+    }
+
+    private static void PracticeObservationsRemainBoundedAndFrozen()
+    {
+        DiogenesPracticeLedger ledger = new();
+        Assert(ledger.TryRecord(0, 11, 3, 0) && ledger.TryRecord(0, 11, 3, 0),
+            "Repeated callback for one observed choice must be idempotent.");
+        Assert(!ledger.TryRecord(0, 11, 3, 1) && ledger.TryRecord(1, 12, 2, 0)
+            && ledger.TryRecord(1, 13, 2, 1),
+            "Conflicting replay must fail while distinct battles retain their own decisions.");
+        PhilosophyRunState shared = Eligible();
+        shared.DiogenesPractice = ledger;
+        PhilosophyRunState restoredShared = PhilosophyRunStateCodec.Decode(PhilosophyRunStateCodec.Encode(shared));
+        Assert(restoredShared.DiogenesPractice?.Observations.SequenceEqual(ledger.Observations) == true,
+            "Real opening choices must survive the shared run-state save round trip.");
+        Assert(DiogenesStaySwitchEntryPolicy.TryCreate(shared, 42, Context, out var entry)
+            && entry?.Practice == new DiogenesPracticeSummary(3, 2, 1),
+            "The third-act entry must freeze two declined aids and one accepted aid.");
+        ledger.TryRecord(1, 14, 1, 1);
+        Assert(entry!.Practice == new DiogenesPracticeSummary(3, 2, 1)
+            && JsonSerializer.Deserialize<DiogenesStaySwitchEntryRecord>(JsonSerializer.Serialize(entry))?.Practice
+                == entry.Practice,
+            "Later mutations and save round trips must preserve the frozen observation summary.");
+        ledger.Observations.Add(new DiogenesPracticeObservation(-1, 15, 1, 0));
+        Assert(!DiogenesStaySwitchEntryPolicy.TryCreate(shared, 43, Context, out _),
+            "Malformed observations must not become new entry evidence.");
     }
 
     private static void RealActionsRemainDistinct()
@@ -122,12 +149,16 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
     {
         DiogenesStaySwitchEntryPolicy.TryCreate(Eligible(), 42, Context, out var entry);
         JsonObject original = JsonNode.Parse(JsonSerializer.Serialize(entry))!.AsObject();
-        foreach (string field in original.Select(pair => pair.Key).ToArray())
+        foreach (string field in original.Select(pair => pair.Key).Where(key => key != "Practice").ToArray())
         {
             JsonObject incomplete = original.DeepClone().AsObject();
             incomplete.Remove(field);
             AssertRejects(incomplete.ToJsonString(), "Every persisted entry field must be present, including Closed.");
         }
+        JsonObject legacy = original.DeepClone().AsObject();
+        legacy.Remove("Practice");
+        Assert(JsonSerializer.Deserialize<DiogenesStaySwitchEntryRecord>(legacy.ToJsonString())?.Practice is null,
+            "A pre-observation entry must restore without invented practice evidence.");
         JsonObject unknown = original.DeepClone().AsObject();
         unknown["Version"] = 2;
         AssertRejects(unknown.ToJsonString(), "An unknown entry version must remain isolated.");

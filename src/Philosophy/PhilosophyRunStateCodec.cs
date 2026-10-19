@@ -26,6 +26,7 @@ internal static class PhilosophyRunStateCodec
     internal static string Encode(PhilosophyRunState state, ZenoRouteValidationCatalog zenoCatalog)
     {
         ValidateDiogenesEntry(state);
+        ValidateDiogenesPractice(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -70,7 +71,14 @@ internal static class PhilosophyRunStateCodec
         ZenoRouteDecodeResult zenoResult = ZenoRouteStateCodec.Decode(zenoPayload, zenoCatalog);
         state.RestoreZenoRoutePayload(zenoResult, encoded);
         ValidateDiogenesEntry(state);
+        ValidateDiogenesPractice(state);
         return state;
+    }
+
+    private static void ValidateDiogenesPractice(PhilosophyRunState state)
+    {
+        if (state.DiogenesPractice is { } ledger && !ledger.IsValid())
+            throw new InvalidDataException("The Diogenes practice observations are invalid.");
     }
 
     private static void ValidateDiogenesEntry(PhilosophyRunState state)

@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace STS2Philosophers;
@@ -411,7 +412,8 @@ public abstract class WesternPracticeRelic : RelicModel
                 _practiceCard = selected.SingleOrDefault();
             }
 
-            Practice.TryCompleteOpeningChoice();
+            if (Practice.TryCompleteOpeningChoice() && ProblemId == WesternEntryPracticeState.VirtueAndHappiness)
+                RecordDiogenesPracticeObservation(eligible.Count, selected.Length);
             if (selected.Length > 0) Flash();
         }
         catch
@@ -423,6 +425,20 @@ public abstract class WesternPracticeRelic : RelicModel
         {
             InvokeDisplayAmountChanged();
         }
+    }
+
+    private void RecordDiogenesPracticeObservation(int eligibleCount, int selectedCount)
+    {
+        if (eligibleCount == 0 || RunManager.Instance.DebugOnlyGetState() is not { } run
+            || run.CurrentActIndex > 1 || run.CurrentRoom is not CombatRoom { Id: int roomId }
+            || run.Players.Count != 1 || !ReferenceEquals(run.Players[0], Owner)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.CurrentDoctrine?.ThinkerId != SocratesVirtueUpstreamRecord.SocratesThinkerId
+            || shared.WesternJourney?.CurrentNodeId != SocratesVirtueUpstreamRecord.VirtueRouteNodeId)
+            return;
+
+        shared.DiogenesPractice ??= new DiogenesPracticeLedger();
+        shared.DiogenesPractice.TryRecord(run.CurrentActIndex, roomId, eligibleCount, selectedCount);
     }
 
     private void ResolveTrackedCards()

@@ -13,7 +13,7 @@
   "SOCRATES_QUESTION_CUP.flavor": "The cup leaves room for an unanswered question.",
   "SOCRATES_BALANCE_WEIGHT.title": "Reflective Weight",
   "SOCRATES_BALANCE_WEIGHT.description": "On the first turn of each combat, you may choose 1 Attack or Skill. At each turn's end, Retain it and reduce its cost by 1 while it remains in hand. It Exhausts when played manually.",
-  "SOCRATES_BALANCE_WEIGHT.selection_prompt": "Choose up to 1 Attack or Skill as your practice card.",
+  "SOCRATES_BALANCE_WEIGHT.selection_prompt": "Choose up to 1 Attack or Skill to retain, or choose none and use your hand as it is.",
   "SOCRATES_BALANCE_WEIGHT.flavor": "The balance calls for repeated adjustment.",
   "PLATO_CIVIC_SEAL.title": "Civic Seal",
   "PLATO_CIVIC_SEAL.description": "The first Attack or Skill played manually each combat establishes its type as law. Each turn, the first matching card costs 1 less and the first opposing card costs 1 more.",

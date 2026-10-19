@@ -23,6 +23,7 @@ public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentit
         new[]
         {
             L10NLookup($"{LocalizationRoot}.pages.ROUTE_CHOICE.options.REVIEW_STATEMENT"),
+            L10NLookup($"{LocalizationRoot}.pages.ROUTE_CHOICE.options.REVIEW_PRACTICE"),
             L10NLookup($"{LocalizationRoot}.pages.ROUTE_CHOICE.options.STAY"),
             L10NLookup($"{LocalizationRoot}.pages.ROUTE_CHOICE.options.LEARN_ABOUT_ZENO"),
         };
@@ -136,7 +137,15 @@ public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentit
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(DiogenesStaySwitchPage page)
     {
-        string suffix = _entry is not null && page is
+        string suffix = page == DiogenesStaySwitchPage.PracticeReview
+            ? _entry?.Practice switch
+            {
+                { Foregone: >= 2 } => ".REPEATED",
+                { Foregone: 1 } => ".ONCE",
+                { Used: > 0 } => ".USED_SUPPORT",
+                _ => ".NO_OBSERVATION",
+            }
+            : _entry is not null && page is
             DiogenesStaySwitchPage.RouteChoice or DiogenesStaySwitchPage.StatementReview or
             DiogenesStaySwitchPage.ResultStay or DiogenesStaySwitchPage.ResultSwitch
             ? _entry.Facts?.Action switch
@@ -151,6 +160,12 @@ public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentit
         {
             description.AddObj("HitPointLoss", facts.RetainedHitPointLoss);
             description.AddObj("PotionCount", facts.ConsumedPotionCount);
+        }
+        if (_entry?.Practice is { } practice)
+        {
+            description.AddObj("EligibleCount", practice.Eligible);
+            description.AddObj("ForegoneCount", practice.Foregone);
+            description.AddObj("UsedCount", practice.Used);
         }
         return description;
     }

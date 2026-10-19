@@ -13,7 +13,7 @@
   "SOCRATES_QUESTION_CUP.flavor": "杯中留着尚未回答的空处。",
   "SOCRATES_BALANCE_WEIGHT.title": "审思砝码",
   "SOCRATES_BALANCE_WEIGHT.description": "每场战斗第一回合，可选择1张攻击牌或技能牌。每次回合结束它仍在手中，保留且费用降低1；手动打出时消耗。",
-  "SOCRATES_BALANCE_WEIGHT.selection_prompt": "选择至多1张攻击牌或技能牌作为实践牌。",
+  "SOCRATES_BALANCE_WEIGHT.selection_prompt": "选择至多1张攻击牌或技能牌作为实践牌；也可以不选，先用原有手牌应对。",
   "SOCRATES_BALANCE_WEIGHT.flavor": "两侧的重量需要反复校正。",
   "PLATO_CIVIC_SEAL.title": "城邦印章",
   "PLATO_CIVIC_SEAL.description": "本场第一张手动打出的攻击牌或技能牌立下同类规则。每回合首张同类牌费用降低1，首张异类牌费用增加1。",
