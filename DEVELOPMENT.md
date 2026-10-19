@@ -204,6 +204,8 @@ pwsh -NoProfile -File ./tools/SelectDeliveryIssue.ps1 -IssueSnapshotPath <临时
 
 12条完整路径、两次保存边界、已提交路线重入、非法阶段／版本、旧档、不同问题来源排除与双语检查通过。`VerifyMod.ps1`于本地10:31完成Release零警告零错误、PCK加载／纹理校验及游戏未运行时安全部署，三文件SHA256一致；报告留在 `bin/delivery/enc113/verification.md`，旧部署回退点 `bin/deploy_backups/enc113_20261016_103128/`。DLL为 `DA524FF7FD19E2882E2C85F6463D6E18C025DACDADC13B41C298EF927327BC6D`，PCK为 `6E5CA5B0C90572B7302F69714CD646570CD678167C9C42ED77981F5A6D79863B`，清单同ENC-106。范畴石板此前已部署，本票不改其规则或资源；未为其他问题面扩入口，也未接入其他未授权人物。构建使用本工作区，原有两份无关文档不嵌入产物，tmp的C#被项目排除；均保持原样。未修改玩家存档，未启动游戏或执行人工体验。
 
+2026年10月19日 Mac 复核：公共战后入口已采用原生 `NMapScreen.Open`，现行安全返图派发仍包含 `AristotleCivicInquiryPatch`；`WESTERN_EDGE_016` 仍启用且只从柏拉图制度节点进入。已验证的12条逻辑路径、原生房间身份往返与地图打开／奖励返图检查覆盖本事件；源码与这些能力未在0.5.8合批中改变。安装中的0.5.8三文件与本页合批记录的 SHA256 相同，包含亚里士多德制度事件和公共入口修复；既有0.5.7回退点 `bin/deploy_backups/enc108_enc111_mac_20261019_101526/` 可恢复前一安装。此次仅复核记录，不重复构建或部署，不把自动检查称为整局试玩。
+
 ## ENC-191 沉思镜原生费用链回归（2026年10月16日）
 
 原生`PlayCardAction.ExecuteAction`先`SpendResources`，后`OnPlayWrapper`设置`CurrentTarget`；旧费用钩子用后者判目标，导致非攻击分支在扣费前失效。现优先读取当前原生出牌行动及其卡牌实例的目标，牌面同步预览与`CanPlayTargeting`以有异常清理的同步作用域传递原生目标，未指定时仅对唯一存活敌人作确定预览。只给单体敌方目标优惠，己方召唤物不计为敌人；原有技能分支和预算不改。RitsuLib 0.6.2和原生钩子没有费用目标参数，因此补充这两个窄UI／可支付性补丁，没有新存档层。悬浮提示披露当前分支与一次性机会。
