@@ -24,6 +24,7 @@ AnaximenesBreathInvitationChecks.Run();
 AristotleCivicInquiryChecks.Run();
 DemocritusArrangementChecks.Run();
 EmpedoclesRootsInquiryChecks.Run();
+AnaxagorasMixtureInquiryChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
 HanFeiPublicStandardChecks.Run();

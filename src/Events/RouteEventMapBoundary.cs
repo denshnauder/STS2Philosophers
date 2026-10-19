@@ -28,7 +28,8 @@ internal static class RouteEventMapBoundary
         ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
-        or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry;
+        or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
+        or AnaxagorasMixtureInquiry;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 
@@ -256,6 +257,7 @@ internal static class RouteEventMapBoundary
                 AristotleCivicInquiryPatch.InsertAtBoundaryAsync,
                 DemocritusArrangementPatch.InsertAtBoundaryAsync,
                 EmpedoclesRootsInquiryPatch.InsertAtBoundaryAsync,
+                AnaxagorasMixtureInquiryPatch.InsertAtBoundaryAsync,
             ];
             foreach (Func<Task> entry in entries)
             {

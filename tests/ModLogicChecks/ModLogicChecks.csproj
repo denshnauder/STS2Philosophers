@@ -11,6 +11,8 @@
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementTriggerPolicy.cs" Link="DemocritusArrangementTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\EmpedoclesRootsInquiryState.cs" Link="EmpedoclesRootsInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\EmpedoclesRootsInquiryTriggerPolicy.cs" Link="EmpedoclesRootsInquiryTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaxagorasMixtureInquiryState.cs" Link="AnaxagorasMixtureInquiryState.cs" />
+    <Compile Include="..\..\src\Philosophy\AnaxagorasMixtureInquiryTriggerPolicy.cs" Link="AnaxagorasMixtureInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />
