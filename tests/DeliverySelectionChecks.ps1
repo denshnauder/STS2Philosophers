@@ -23,7 +23,7 @@ function NewSnapshot {
 function RunCase($snapshot, [string[]]$additionalArguments = @()) {
     $path = Join-Path $temporaryDirectory 'snapshot.json'
     $snapshot | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath $path -Encoding utf8
-    $raw = & (Get-Process -Id $PID).Path -NoProfile -File $selector -IssueSnapshotPath $path @additionalArguments
+    $raw = & (Get-Process -Id $PID).Path -NoProfile -File $selector -IssueSnapshotPath $path -OutputFormat Diagnostic @additionalArguments
     $code = $LASTEXITCODE
     $output = ($raw -join "`n") | ConvertFrom-Json
     if (($output.status -eq 'selected' -or $output.status -eq 'complete') -and $code -ne 0) { throw 'Successful selection returned a nonzero exit code.' }
@@ -35,6 +35,47 @@ function RunCase($snapshot, [string[]]$additionalArguments = @()) {
 function AssertCase($condition, [string]$message) {
     if (-not $condition) { throw $message }
     $script:caseCount++
+}
+
+function RunLiveCase($responses) {
+    $responsesPath = Join-Path $temporaryDirectory 'responses.json'
+    $bootstrapPath = Join-Path $temporaryDirectory 'live.ps1'
+    ConvertTo-Json -InputObject @($responses) -Depth 20 | Set-Content -LiteralPath $responsesPath -Encoding utf8
+    @'
+param($selector, $responsesPath)
+$ErrorActionPreference = 'Stop'
+$global:deliveryResponses = @(Get-Content -LiteralPath $responsesPath -Raw | ConvertFrom-Json)
+$global:deliveryCallIndex = 0
+$env:LINEAR_API_KEY = 'test_only_not_a_secret'
+function Invoke-RestMethod {
+    param($Uri, $Method, $ContentType, $TimeoutSec, $Headers, $Body)
+    if ($Uri -ne 'https://api.linear.app/graphql' -or $Method -ne 'Post') { throw 'Unexpected API request.' }
+    $request = $Body | ConvertFrom-Json
+    $fixture = $global:deliveryResponses[$global:deliveryCallIndex++]
+    if ($request.variables.after -ne $fixture.expectedAfter -or $request.query -notmatch $fixture.operation) {
+        throw 'Wrong pagination cursor or operation.'
+    }
+    return $fixture.response
+}
+& $selector -OutputFormat Json
+exit $LASTEXITCODE
+'@ | Set-Content -LiteralPath $bootstrapPath -Encoding utf8
+    $raw = & (Get-Process -Id $PID).Path -NoProfile -File $bootstrapPath $selector $responsesPath
+    $code = $LASTEXITCODE
+    $output = ($raw -join "`n") | ConvertFrom-Json
+    if ($output.status -eq 'invalidSnapshot' -and $code -ne 2) { throw 'Live failure exit code mismatch.' }
+    if ($output.status -eq 'selected' -and $code -ne 0) { throw 'Live success exit code mismatch.' }
+    return $output
+}
+function ProjectPage($nodes, $next = $false, $cursor = $null, $after = $null) {
+    @{ expectedAfter = $after; operation = 'DeliveryProject'; response = @{ data = @{ project = @{ id = 'project'; issues = @{
+        nodes = @($nodes); pageInfo = @{ hasNextPage = $next; endCursor = $cursor }
+    } } } } }
+}
+function DependencyPage($nodes = @(), $next = $false, $cursor = $null, $after = $null) {
+    @{ expectedAfter = $after; operation = 'DeliveryDependencies'; response = @{ data = @{ issue = @{ inverseRelations = @{
+        nodes = @($nodes); pageInfo = @{ hasNextPage = $next; endCursor = $cursor }
+    } } } } }
 }
 
 try {
@@ -163,6 +204,75 @@ try {
     $snapshot = NewSnapshot
     $output = RunCase $snapshot
     AssertCase ($output.status -eq 'complete' -and $null -eq $output.selectedIssue) 'A complete terminal queue was not reported without fabricating work.'
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'In Progress'
+    $snapshot.issues[1].description += "`n待部署提交：abcdef1234567"
+    $snapshot.issues[2].status = 'In Progress'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON3' -and $output.pendingDeployment.Count -eq 1) 'Verified pending deployment prevented continuation.'
+    $snapshot.issues[2].relations.blockedBy = @('PERSON2')
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'deployBatch' -and $null -eq $output.selectedIssue) 'Pending deployment incorrectly satisfied a real dependency.'
+    $snapshot.issues[2].relations.blockedBy = @()
+    $snapshot.issues[2].description += "`n待部署提交：0123456789abcdef"
+    $snapshot.issues[3].status = 'In Progress'
+    $snapshot.issues[3].description += "`n待部署提交：0123456789abcdef"
+    $snapshot.issues[4].status = 'Todo'
+    $output = RunCase $snapshot @('-BatchSize', '3')
+    AssertCase ($output.status -eq 'deployBatch' -and $output.pendingDeployment.Count -eq 3) 'Three-person batch did not trigger deployment.'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON5') 'Default four-person batch triggered too early.'
+    $snapshot.issues[4].status = 'In Progress'
+    $snapshot.issues[4].description += "`n待部署提交：0123456789abcdef"
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'deployBatch' -and $output.pendingDeployment.Count -eq 4) 'Four-person batch did not trigger deployment.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'In Progress'
+    $snapshot.issues[1].description += "`n待部署提交：abcdef1234567"
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'deployBatch') 'End-of-queue pending batch was reported complete.'
+    $snapshot.issues[1].description = '人物：阿那克西曼德' + "`n待部署提交：not_a_commit"
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2' -and $output.pendingDeployment.Count -eq 0) 'Malformed marker skipped unfinished work.'
+    $snapshot.issues[0].status = 'In Progress'
+    $snapshot.issues[0].description += "`n待部署提交：abcdef1234567"
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON1' -and $output.pendingDeployment.Count -eq 0) 'Research was treated as a gameplay deployment.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'In Progress'
+    $snapshot | ConvertTo-Json -Depth 15 | Set-Content -LiteralPath (Join-Path $temporaryDirectory 'snapshot.json') -Encoding utf8
+    $raw = & (Get-Process -Id $PID).Path -NoProfile -File $selector -IssueSnapshotPath (Join-Path $temporaryDirectory 'snapshot.json')
+    AssertCase (@($raw).Count -eq 6 -and ($raw -join '') -notmatch 'PERSON89|description|earliestUnfinished') 'Default output leaked the full project or verbose diagnostics.'
+    $raw = & (Get-Process -Id $PID).Path -NoProfile -File $selector -IssueSnapshotPath (Join-Path $temporaryDirectory 'snapshot.json') -OutputFormat Json
+    $short = ($raw -join '') | ConvertFrom-Json
+    AssertCase ($short.currentTask.id -eq 'PERSON2' -and $short.order -eq 2 -and $short.nextAction -match '继续') 'Compact JSON lost the task/order/action.'
+
+    $nodes = @($snapshot.issues | ForEach-Object { @{
+        identifier = $_.id; title = $_.title; description = $_.description
+        priority = $_.priority; createdAt = $_.createdAt; state = @{ name = $_.status }
+    } })
+    $pages = @((ProjectPage $nodes[0..39] $true 'page2'), (ProjectPage $nodes[40..88] $false $null 'page2'), (DependencyPage))
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'selected' -and $output.currentTask.id -eq 'PERSON2') "Live project pagination did not select the current candidate: $($output | ConvertTo-Json -Depth 8 -Compress)"
+    $pages[1] = ProjectPage $nodes[40..88] $true 'page2' 'page2'
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'invalidSnapshot' -and ($output.blockers -join '') -match 'cursor') 'Repeated cursor was accepted as a complete project.'
+    $pages[0].response.errors = @(@{ message = 'Partial response' })
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'invalidSnapshot' -and $null -eq $output.currentTask) 'GraphQL partial response authorized work.'
+    $external = @{ type = 'blocks'; issue = @{ identifier = 'EXTERNAL'; state = @{ name = 'Todo' } } }
+    $pages = @((ProjectPage $nodes), (DependencyPage @() $true 'deps2'), (DependencyPage @($external) $false $null 'deps2'))
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'blocked' -and ($output.blockers -join '') -match 'EXTERNAL') 'Second-page external prerequisite was ignored.'
+    $external.issue.state.name = 'Done'
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'selected') 'Completed external prerequisite failed to release the candidate.'
+    $pages = @((ProjectPage @($nodes + $nodes[0])))
+    $output = RunLiveCase $pages
+    AssertCase ($output.status -eq 'invalidSnapshot') 'Duplicate IDs across live pages were accepted.'
+
     "Delivery selection checks passed: $caseCount cases."
 } finally {
     # Remove only this test's fresh, absolute temporary directory.

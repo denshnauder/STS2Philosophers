@@ -1,12 +1,16 @@
 #requires -Version 7.0
 <##
-Read-only guard for a complete Linear project snapshot. It never changes Linear or
-certifies deployment; Done is still subject to the delivery evidence in the issue.
+Read-only Linear delivery selector: fetch live project pages or validate a supplied
+complete snapshot. Summary by default; Diagnostic preserves the original result.
+Never mutates Linear or certifies deployment; Done still requires delivery evidence.
 Exit codes: 0 selected/complete, 2 invalid snapshot, 3 blocked.
 ##>
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = 'Live')]
 param(
-    [Parameter(Mandatory)][string]$IssueSnapshotPath,
+    [Parameter(ParameterSetName = 'Snapshot', Mandatory)][string]$IssueSnapshotPath,
+    [Parameter(ParameterSetName = 'Live')][string]$ProjectId = 'b0a5ebc4-5f7b-4ac0-a5ef-a09c01f053f4',
+    [ValidateSet('Summary', 'Json', 'Diagnostic')][string]$OutputFormat = 'Summary',
+    [ValidateRange(3, 4)][int]$BatchSize = 4,
     [string[]]$AuthorizedEngineeringIssueId = @(),
     [string]$EngineeringAuthorizationScope
 )
@@ -26,8 +30,80 @@ function IssueSummary($issue) {
     [ordered]@{ id = $issue.id; title = $issue.title; status = $issue.status }
 }
 
+# The key stays in the process environment; neither responses nor credentials are logged.
+$live = $PSCmdlet.ParameterSetName -eq 'Live'
+function InvokeLinear([string]$query, [hashtable]$variables) {
+    if ([string]::IsNullOrWhiteSpace($env:LINEAR_API_KEY)) {
+        throw 'Live selection needs LINEAR_API_KEY in the environment; alternatively supply a fresh complete snapshot via IssueSnapshotPath (connected tools may export it without printing issue bodies).'
+    }
+    try {
+        $response = Invoke-RestMethod -Uri 'https://api.linear.app/graphql' -Method Post -ContentType 'application/json' -TimeoutSec 60 `
+            -Headers @{ Authorization = $env:LINEAR_API_KEY } -Body (@{ query = $query; variables = $variables } | ConvertTo-Json -Depth 10)
+    } catch { throw 'Linear request failed (HTTP/auth/network); no task selected.' }
+    if ($response.PSObject.Properties.Name -contains 'errors' -and @($response.errors).Count -gt 0) {
+        throw 'Linear returned GraphQL errors; partial data cannot authorize work.'
+    }
+    if ($null -eq $response.data) { throw 'Linear returned no data.' }
+    return $response.data
+}
+function NextCursor($connection, $seen) {
+    if ($connection.pageInfo.hasNextPage -isnot [bool]) { throw 'Invalid Linear pageInfo.' }
+    if (-not $connection.pageInfo.hasNextPage) { return $null }
+    $cursor = [string]$connection.pageInfo.endCursor
+    if ([string]::IsNullOrWhiteSpace($cursor) -or -not $seen.Add($cursor)) { throw 'Missing or repeated Linear pagination cursor.' }
+    return $cursor
+}
+function ReadLiveSnapshot {
+    $all = [Collections.Generic.List[object]]::new()
+    $cursor = $null
+    $seen = [Collections.Generic.HashSet[string]]::new()
+    do {
+        $data = InvokeLinear 'query DeliveryProject($project: String!, $after: String) {
+          project(id: $project) { id issues(first: 100, after: $after, includeArchived: true) {
+            nodes { identifier title description priority createdAt state { name } }
+            pageInfo { hasNextPage endCursor }
+          } }
+        }' @{ project = $ProjectId; after = $cursor }
+        if ($null -eq $data.project) { throw 'Linear project not found or inaccessible.' }
+        foreach ($node in $data.project.issues.nodes) {
+            $all.Add(@{ id = $node.identifier; title = $node.title; description = $node.description
+                priority = $node.priority; createdAt = $node.createdAt; status = $node.state.name })
+        }
+        $cursor = NextCursor $data.project.issues $seen
+    } while ($null -ne $cursor)
+    return @{ complete = $true; totalIssueCount = $all.Count; issues = @($all) }
+}
+function HydrateDependencies($candidate) {
+    if (-not $live -or $candidate.dependenciesKnown) { return }
+    $blockers = [Collections.Generic.List[string]]::new()
+    $cursor = $null
+    $seen = [Collections.Generic.HashSet[string]]::new()
+    do {
+        $data = InvokeLinear 'query DeliveryDependencies($id: String!, $after: String) {
+          issue(id: $id) { inverseRelations(first: 100, after: $after, includeArchived: true) {
+            nodes { type issue { identifier state { name } } }
+            pageInfo { hasNextPage endCursor }
+          } }
+        }' @{ id = $candidate.id; after = $cursor }
+        if ($null -eq $data.issue) { throw "Missing candidate: $($candidate.id)" }
+        foreach ($relation in $data.issue.inverseRelations.nodes) {
+            if ($relation.type -ne 'blocks') { continue }
+            $blockerId = [string]$relation.issue.identifier
+            if ([string]::IsNullOrWhiteSpace($blockerId)) { throw 'Incomplete dependency response.' }
+            $blockers.Add($blockerId)
+            if (-not $byId.ContainsKey($blockerId)) {
+                # External-project prerequisites participate in dependency checks only.
+                $byId[$blockerId] = @{ id = $blockerId; status = $relation.issue.state.name }
+            }
+        }
+        $cursor = NextCursor $data.issue.inverseRelations $seen
+    } while ($null -ne $cursor)
+    $candidate.blockerIds = @($blockers)
+    $candidate.dependenciesKnown = $true
+}
+
 try {
-    $snapshot = Get-Content -LiteralPath $IssueSnapshotPath -Raw | ConvertFrom-Json -AsHashtable
+    $snapshot = if ($live) { ReadLiveSnapshot } else { Get-Content -LiteralPath $IssueSnapshotPath -Raw | ConvertFrom-Json -AsHashtable }
     if ($snapshot.complete -isnot [bool] -or -not $snapshot.complete -or -not $snapshot.ContainsKey('issues')) {
         throw 'Snapshot must explicitly declare complete=true and contain the complete project issues array.'
     }
@@ -51,7 +127,7 @@ try {
     $byId = @{}
     $unmapped = [Collections.Generic.List[object]]::new()
     $validationProblems = [Collections.Generic.List[string]]::new()
-    $knownStatuses = @('Backlog', 'Todo', 'In Progress', 'In Review', 'Done', 'Canceled', 'Cancelled', 'Duplicate')
+    $knownStatuses = @('Backlog', 'Todo', 'In Progress', 'In Review', 'Done', 'Canceled', 'Cancelled', 'Duplicate', 'Triage')
     foreach ($issue in $issues) {
         foreach ($field in @('id', 'title', 'description', 'status', 'priority', 'createdAt')) {
             if (-not $issue.ContainsKey($field)) { throw "Issue is missing required field '$field'." }
@@ -119,11 +195,20 @@ try {
     $result.unmappedIssues = @($unmapped)
     if ($validationProblems.Count -gt 0) { throw ($validationProblems -join '; ') }
 
+    # A single line in the existing Linear description records a verified implementation
+    # commit. It is not Done, and does not satisfy another issue's deployment dependency.
+    $pending = @($issues | Where-Object {
+        $_.status -eq 'In Progress' -and $null -ne $_.personName -and
+        $people[$byName[$_.personName]].primary_use -ne '研究' -and
+        [regex]::IsMatch([string]$_.description, '(?m)^待部署提交[：:]\s*[0-9a-fA-F]{7,40}\s*$')
+    })
+    $pendingIds = @($pending | ForEach-Object { $_.id })
+    $result.pendingDeployment = @($pending | ForEach-Object { IssueSummary $_ })
     $earliestIssues = @()
     for ($index = 0; $index -lt $people.Count; $index++) {
         $person = $people[$index]
         $active = @($mapped[$person.display_name] | Where-Object { $_.status -notin @('Canceled', 'Cancelled', 'Duplicate') })
-        $unfinished = @($active | Where-Object { $_.status -ne 'Done' })
+        $unfinished = @($active | Where-Object { $_.status -ne 'Done' -and $_.id -notin $pendingIds })
         # Linear records completion under the baseline primary use. Research
         # delivery is authorized project-wide; titles do not require gameplay.
         if ($unfinished.Count -gt 0 -or $active.Count -eq 0) {
@@ -141,7 +226,7 @@ try {
         }
     }
     $result.lateInProgress = @($issues | Where-Object {
-        $_.status -eq 'In Progress' -and $null -ne $_.personName -and $null -ne $result.earliestUnfinished -and
+        $_.status -eq 'In Progress' -and $_.id -notin $pendingIds -and $null -ne $_.personName -and $null -ne $result.earliestUnfinished -and
         ($byName[$_.personName] + 1) -gt $result.earliestUnfinished.order
     } | ForEach-Object { IssueSummary $_ })
 
@@ -165,7 +250,9 @@ try {
         Sort-Object @{Expression = { if ($_.status -eq 'In Progress') { 0 } else { 1 } }},
             @{Expression = { if ($_.priority -eq 0) { 5 } else { $_.priority } }}, createdAt, id)
     $eligible = @()
-    foreach ($candidate in $orderedCandidates) {
+    $batchReady = $AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -ge $BatchSize
+    foreach ($candidate in $(if ($batchReady) { @() } else { $orderedCandidates })) {
+        HydrateDependencies $candidate
         if (-not $candidate.dependenciesKnown) {
             throw "Hydrate relations.blockedBy for candidate $($candidate.id); unknown dependencies are not an empty list."
         }
@@ -179,7 +266,10 @@ try {
             break
         }
     }
-    if ($eligible.Count -gt 0) {
+    if ($AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -gt 0 -and
+        ($pending.Count -ge $BatchSize -or $eligible.Count -eq 0)) {
+        $result.status = 'deployBatch'
+    } elseif ($eligible.Count -gt 0) {
         $selected = $eligible[0]
         $result.status = 'selected'
         $result.selectedIssue = [ordered]@{
@@ -205,6 +295,34 @@ try {
     $result.selectedIssue = $null
     $result.reasons += $_.Exception.Message
 }
-$result | ConvertTo-Json -Depth 12
+$pendingCount = if ($result.Contains('pendingDeployment')) { @($result.pendingDeployment).Count } else { 0 }
+$nextAction = switch ($result.status) {
+    'selected' { if ($result.selectedIssue.status -eq 'In Progress') { '继续当前任务实现' } else { '领取当前任务并执行' } }
+    'deployBatch' { '综合验证、构建并安全部署本批；通过后关闭对应任务' }
+    'complete' { '当前人物队列已完成' }
+    default { '处理上述阻塞；不领取后序人物' }
+}
+$summary = [ordered]@{
+    status = $result.status
+    currentTask = $result.selectedIssue
+    order = $(if ($null -ne $result.selectedIssue -and $null -ne $result.selectedIssue.personName) { $byName[$result.selectedIssue.personName] + 1 } else { $null })
+    primaryUse = $(if ($null -ne $result.selectedIssue -and $null -ne $result.selectedIssue.personName) { $people[$byName[$result.selectedIssue.personName]].primary_use } else { $null })
+    blockers = @($result.reasons)
+    pendingDeploymentCount = $pendingCount
+    pendingDeployment = @(if ($result.status -eq 'deployBatch') { $result.pendingDeployment })
+    nextAction = $nextAction
+}
+if ($OutputFormat -eq 'Diagnostic') { $result | ConvertTo-Json -Depth 12 }
+elseif ($OutputFormat -eq 'Json') { $summary | ConvertTo-Json -Depth 8 -Compress }
+else {
+    $task = if ($null -ne $result.selectedIssue) { "$($result.selectedIssue.id) $($result.selectedIssue.title)" } else { '无' }
+    "当前任务：$task"
+    "既定顺序：$(if ($null -ne $summary.order) { '第' + $summary.order + '位（' + $summary.primaryUse + '）' } else { '不适用' })"
+    "状态：$(if ($null -ne $result.selectedIssue) { $result.selectedIssue.status } else { $result.status })"
+    "阻塞：$(if ($result.reasons.Count -eq 0) { '无' } else { $result.reasons -join '; ' })"
+    "本批待部署：$pendingCount 人"
+    if ($result.status -eq 'deployBatch') { "待部署任务：$($pendingIds -join '、')" }
+    "下一动作：$nextAction"
+}
 if ($result.status -eq 'invalidSnapshot') { exit 2 }
 if ($result.status -eq 'blocked') { exit 3 }
