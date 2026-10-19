@@ -21,6 +21,7 @@ internal sealed class PhilosophyRunState
     public DemocritusArrangementState? DemocritusArrangement { get; set; }
     public EmpedoclesRootsInquiryState? EmpedoclesRootsInquiry { get; set; }
     public AnaxagorasMixtureInquiryState? AnaxagorasMixtureInquiry { get; set; }
+    public GorgiasSpeechInquiryState? GorgiasSpeechInquiry { get; set; }
     public DescartesMethodicReconstructionState? DescartesMethodicReconstruction { get; set; }
     public HanFeiPublicStandardState? HanFeiPublicStandard { get; set; }
     public DiogenesStaySwitchEntryRecord? DiogenesStaySwitchEntry { get; set; }
@@ -58,6 +59,7 @@ internal sealed class PhilosophyRunState
         || DemocritusArrangement is not null
         || EmpedoclesRootsInquiry is not null
         || AnaxagorasMixtureInquiry is not null
+        || GorgiasSpeechInquiry is not null
         || DescartesMethodicReconstruction is not null
         || HanFeiPublicStandard is not null
         || DiogenesStaySwitchEntry is not null
@@ -228,6 +230,7 @@ internal sealed class PhilosophyRunState
         DemocritusArrangement?.NormalizeAfterLoad();
         EmpedoclesRootsInquiry?.NormalizeAfterLoad();
         AnaxagorasMixtureInquiry?.NormalizeAfterLoad();
+        GorgiasSpeechInquiry?.NormalizeAfterLoad();
         DescartesMethodicReconstruction?.NormalizeAfterLoad();
         HanFeiPublicStandard?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
