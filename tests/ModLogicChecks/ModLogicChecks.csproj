@@ -21,6 +21,8 @@
     <Compile Include="..\..\src\Philosophy\EpictetusGuidePracticeTriggerPolicy.cs" Link="EpictetusGuidePracticeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MarcusAureliusCampPracticeState.cs" Link="MarcusAureliusCampPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\MarcusAureliusCampPracticeTriggerPolicy.cs" Link="MarcusAureliusCampPracticeTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\PyrrhoReportedCrossingState.cs" Link="PyrrhoReportedCrossingState.cs" />
+    <Compile Include="..\..\src\Philosophy\PyrrhoReportedCrossingTriggerPolicy.cs" Link="PyrrhoReportedCrossingTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />

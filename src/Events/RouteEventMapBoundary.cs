@@ -30,7 +30,7 @@ internal static class RouteEventMapBoundary
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
-        or EpictetusGuidePractice or MarcusAureliusCampPractice;
+        or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 
@@ -272,6 +272,7 @@ internal static class RouteEventMapBoundary
                 SenecaDailyReviewPatch.InsertAtBoundaryAsync,
                 EpictetusGuidePracticePatch.InsertAtBoundaryAsync,
                 MarcusAureliusCampPracticePatch.InsertAtBoundaryAsync,
+                PyrrhoReportedCrossingPatch.InsertAtBoundaryAsync,
             ];
             foreach (Func<Task> entry in entries)
             {

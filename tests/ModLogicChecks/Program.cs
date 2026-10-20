@@ -29,6 +29,7 @@ GorgiasSpeechInquiryChecks.Run();
 SenecaDailyReviewChecks.Run();
 EpictetusGuidePracticeChecks.Run();
 MarcusAureliusCampPracticeChecks.Run();
+PyrrhoReportedCrossingChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
 HanFeiPublicStandardChecks.Run();

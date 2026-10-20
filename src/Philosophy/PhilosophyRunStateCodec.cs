@@ -30,6 +30,7 @@ internal static class PhilosophyRunStateCodec
         ValidateSenecaReview(state);
         ValidateEpictetusPractice(state);
         ValidateMarcusPractice(state);
+        ValidatePyrrhoQuestion(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -78,7 +79,18 @@ internal static class PhilosophyRunStateCodec
         ValidateSenecaReview(state);
         ValidateEpictetusPractice(state);
         ValidateMarcusPractice(state);
+        ValidatePyrrhoQuestion(state);
         return state;
+    }
+
+    private static void ValidatePyrrhoQuestion(PhilosophyRunState state)
+    {
+        if (state.PyrrhoReportedCrossing is not { } crossing) return;
+        if (state.WesternJourney is not { } journey
+            || state.SextusOpposedAppearances is not { } sextus
+            || state.DescartesMethodicReconstruction is not { } descartes
+            || !PyrrhoReportedCrossingFlow.IsRouteConsistent(crossing, journey, sextus, descartes))
+            throw new InvalidDataException("The Pyrrho question conflicts with its frozen knowledge route.");
     }
 
     private static void ValidateMarcusPractice(PhilosophyRunState state)

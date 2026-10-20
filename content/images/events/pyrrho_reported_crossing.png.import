@@ -1,0 +1,25 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://pyrrhoreport21"
+path="res://.godot/imported/philosophers_gaze.png-9617f9e94d12a8b36acf902f8d63f123.ctex"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://images/events/pyrrho_reported_crossing.png"
+dest_files=["res://.godot/imported/philosophers_gaze.png-9617f9e94d12a8b36acf902f8d63f123.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
