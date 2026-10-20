@@ -17,6 +17,7 @@ SocratesVirtueUpstreamRecordChecks.Run();
 ProtagorasSharedDeliberationChecks.Run();
 PlatoWholeArrangementChecks.Run();
 PlotinusCommonGroundChecks.Run();
+PlotinusCombatPracticeChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();
 ParmenidesInquiryChecks.Run();

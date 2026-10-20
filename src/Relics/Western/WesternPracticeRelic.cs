@@ -114,7 +114,7 @@ public abstract class WesternPracticeRelic : RelicModel
     }
 
     // Also guards debug grants: a Western carrier cannot add a second major doctrine.
-    private bool IsSoleDoctrine => Owner.Relics.Count(relic => relic is WesternPracticeRelic) == 1
+    protected bool IsSoleDoctrine => Owner.Relics.Count(relic => relic is WesternPracticeRelic) == 1
         && !Owner.Relics.Any(relic => relic is KongziMuduo or KongziQingYuPei or MengziXiongZhang
             or XunziShengMo or MoziMoSeZhuJian or MoziShouChengTu or LaoziWuWeiShuJian
             or LaoziShuiYu or QinGuliShouChengXie or ZhuangziDaHu or YangzhuQuanShengBi or HuishiLiWuChou);

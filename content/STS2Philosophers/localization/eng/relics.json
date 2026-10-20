@@ -13,6 +13,8 @@
   "SOCRATES_QUESTION_CUP.flavor": "The cup leaves room for an unanswered question.",
   "SOCRATES_BALANCE_WEIGHT.title": "Reflective Weight",
   "SOCRATES_BALANCE_WEIGHT.description": "On the first turn of each combat, you may choose 1 Attack or Skill. At each turn's end, Retain it and reduce its cost by 1 while it remains in hand. It Exhausts when played manually.",
+  "SOCRATES_BALANCE_WEIGHT.plotinus.title": "Plotinus: distinct forms",
+  "SOCRATES_BALANCE_WEIGHT.plotinus.description": "On the Plotinus route, play exactly Skill, Attack, Skill manually in one turn, using two different Skill models. At turn end, gain 5 Block.",
   "SOCRATES_BALANCE_WEIGHT.selection_prompt": "Choose up to 1 Attack or Skill to retain, or choose none and use your hand as it is.",
   "SOCRATES_BALANCE_WEIGHT.flavor": "The balance calls for repeated adjustment.",
   "PLATO_CIVIC_SEAL.title": "Civic Seal",
