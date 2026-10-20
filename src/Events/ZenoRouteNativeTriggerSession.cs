@@ -382,6 +382,7 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         if (completed && closing.ResumeDestination == ZenoResumeDestination.Map)
         {
             NMapScreen.Instance?.SetTravelEnabled(true);
+            await RouteEventMapBoundary.AfterZenoClosedAsync(_runState);
         }
 
         return completed;

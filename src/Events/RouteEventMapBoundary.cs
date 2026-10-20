@@ -186,6 +186,11 @@ internal static class RouteEventMapBoundary
         _ = DispatchObservedAsync(run);
     }
 
+    // Zeno resumes its native map before its separate close checkpoint commits.
+    // Recheck the already observed map after that commit, without fabricating a
+    // new source/map receipt or bypassing IsSafe's travel and reward gates.
+    internal static Task AfterZenoClosedAsync(RunState run) => DispatchObservedAsync(run);
+
     internal static RouteEventMapBoundaryScope? BeginRestore(RunManager manager)
     {
         if (!manager.IsInProgress || manager.DebugOnlyGetState() is not { } run) return null;
@@ -239,7 +244,11 @@ internal static class RouteEventMapBoundary
     private static async Task DispatchObservedAsync(RunState run)
     {
         BoundaryRuntime runtime = Runtimes.GetValue(run, static _ => new());
-        if (Interlocked.Exchange(ref runtime.Dispatching, 1) != 0) return;
+        if (Interlocked.Exchange(ref runtime.Dispatching, 1) != 0)
+        {
+            Volatile.Write(ref runtime.ReplayRequested, 1);
+            return;
+        }
         try
         {
             if (!IsSafe(run) || run.CurrentRoom is not { } source) return;
@@ -274,6 +283,8 @@ internal static class RouteEventMapBoundary
         finally
         {
             Volatile.Write(ref runtime.Dispatching, 0);
+            if (Interlocked.Exchange(ref runtime.ReplayRequested, 0) != 0)
+                _ = DispatchObservedAsync(run);
         }
     }
 
@@ -305,6 +316,7 @@ internal static class RouteEventMapBoundary
         internal int Restoring;
         internal int RewardsProceeding;
         internal int Dispatching;
+        internal int ReplayRequested;
         internal bool Frozen;
     }
 
