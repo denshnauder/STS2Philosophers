@@ -15,6 +15,8 @@
     <Compile Include="..\..\src\Philosophy\AnaxagorasMixtureInquiryTriggerPolicy.cs" Link="AnaxagorasMixtureInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\GorgiasSpeechInquiryState.cs" Link="GorgiasSpeechInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\GorgiasSpeechInquiryTriggerPolicy.cs" Link="GorgiasSpeechInquiryTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\SenecaDailyReviewState.cs" Link="SenecaDailyReviewState.cs" />
+    <Compile Include="..\..\src\Philosophy\SenecaDailyReviewTriggerPolicy.cs" Link="SenecaDailyReviewTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />

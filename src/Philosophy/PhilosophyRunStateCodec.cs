@@ -27,6 +27,7 @@ internal static class PhilosophyRunStateCodec
     {
         ValidateDiogenesEntry(state);
         ValidateDiogenesPractice(state);
+        ValidateSenecaReview(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -72,7 +73,18 @@ internal static class PhilosophyRunStateCodec
         state.RestoreZenoRoutePayload(zenoResult, encoded);
         ValidateDiogenesEntry(state);
         ValidateDiogenesPractice(state);
+        ValidateSenecaReview(state);
         return state;
+    }
+
+    private static void ValidateSenecaReview(PhilosophyRunState state)
+    {
+        if (state.SenecaDailyReview is not { } review) return;
+        if (state.ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.Current
+            || state.ZenoRoutePayload.State?.Route is not { } route
+            || state.DiogenesStaySwitchEntry is not { } entry
+            || !SenecaDailyReviewFlow.IsRouteConsistent(review, route, entry))
+            throw new InvalidDataException("The Seneca review conflicts with its frozen route.");
     }
 
     private static void ValidateDiogenesPractice(PhilosophyRunState state)

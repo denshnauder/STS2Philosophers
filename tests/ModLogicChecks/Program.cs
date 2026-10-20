@@ -26,6 +26,7 @@ DemocritusArrangementChecks.Run();
 EmpedoclesRootsInquiryChecks.Run();
 AnaxagorasMixtureInquiryChecks.Run();
 GorgiasSpeechInquiryChecks.Run();
+SenecaDailyReviewChecks.Run();
 DescartesMethodicReconstructionChecks.Run();
 LaterActRelicEligibilityChecks.Run();
 HanFeiPublicStandardChecks.Run();
