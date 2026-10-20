@@ -14,6 +14,7 @@ internal sealed class PhilosophyRunState
     public ProtagorasSharedDeliberationState? ProtagorasSharedDeliberation { get; set; }
     public PlatoWholeArrangementState? PlatoWholeArrangement { get; set; }
     public EpicurusSharedMarginState? EpicurusSharedMargin { get; set; }
+    public PlotinusCommonGroundState? PlotinusCommonGround { get; set; }
     public SextusOpposedAppearancesState? SextusOpposedAppearances { get; set; }
     public ParmenidesInquiryState? ParmenidesInquiry { get; set; }
     public AnaximanderOriginInquiryState? AnaximanderOriginInquiry { get; set; }
@@ -57,6 +58,7 @@ internal sealed class PhilosophyRunState
         || ProtagorasSharedDeliberation is not null
         || PlatoWholeArrangement is not null
         || EpicurusSharedMargin is not null
+        || PlotinusCommonGround is not null
         || SextusOpposedAppearances is not null
         || ParmenidesInquiry is not null
         || AnaximanderOriginInquiry is not null
@@ -232,6 +234,7 @@ internal sealed class PhilosophyRunState
         ProtagorasSharedDeliberation?.NormalizeAfterLoad();
         PlatoWholeArrangement?.NormalizeAfterLoad();
         EpicurusSharedMargin?.NormalizeAfterLoad();
+        PlotinusCommonGround?.NormalizeAfterLoad();
         SextusOpposedAppearances?.NormalizeAfterLoad();
         ParmenidesInquiry?.NormalizeAfterLoad();
         AnaximanderOriginInquiry?.NormalizeAfterLoad();

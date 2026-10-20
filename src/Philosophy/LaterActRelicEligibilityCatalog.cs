@@ -12,6 +12,7 @@ internal static class LaterActCandidateIds
     public const string Descartes = "DESCARTES";
     public const string Democritus = "DEMOCRITUS";
     public const string Epicurus = "EPICURUS";
+    public const string Plotinus = "PLOTINUS";
     public const string Diogenes = "DIOGENES_OF_SINOPE";
     public const string Zeno = "ZENO_OF_CITIUM";
     public const string HanFei = "HAN_FEI";
@@ -53,6 +54,7 @@ internal static class LaterActRelicEligibilityCatalog
         Register(LaterActCandidateIds.Descartes, ActTwoIndex, RouteRelicIds.SocratesQuestionCup),
         Register(LaterActCandidateIds.Democritus, ActTwoIndex, RouteRelicIds.HeraclitusLyre),
         Register(LaterActCandidateIds.Epicurus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
+        Register(LaterActCandidateIds.Plotinus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Diogenes, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Zeno, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.HanFei, ActThreeIndex, RouteRelicIds.XunziShengMo),

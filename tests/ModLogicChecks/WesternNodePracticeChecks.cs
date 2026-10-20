@@ -35,6 +35,7 @@ internal static class WesternNodePracticeChecks
             (knowledge, "IMMANUEL_KANT", "ASP", "abc", "APS", "abc", new(Draw: 2)),
             (virtue, "PROTAGORAS", "ASSA", "abcd", "ASAS", "abcd", new(Draw: 1)),
             (virtue, "PLATO", "ASPS", "abcd", "APSS", "abcd", new(Draw: 1, Block: 4)),
+            (virtue, "PLOTINUS", "SAS", "abc", "SAS", "aba", new(Block: 5)),
             (virtue, "DIOGENES_OF_SINOPE", "S", "a", "SS", "ab", new(Block: 5)),
             (virtue, "ZENO_OF_CITIUM", "SSA", "abc", "SAA", "abc", new(Block: 6)),
             (freedom, "ARISTOTLE", "SSAP", "abcd", "SAAP", "abcd", new(Block: 7)),
@@ -95,10 +96,10 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(questionOnlyNode, Plays("ASA", "abc"), previous, 3) == default,
             "Anaximander's question-only node must grant no combat reward.");
         covered.Add(questionOnlyNode);
-        Check(covered.Count == 48 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 49 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
-            (self, "DESCARTES") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
+            (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
             or (freedom, "ZENO_OF_CITIUM") or (freedom, "IMMANUEL_KANT") or (freedom, "MARY_WOLLSTONECRAFT")
             or (self, "IMMANUEL_KANT") or (self, "SIMONE_DE_BEAUVOIR") or (history, "KARL_MARX")))
         {
@@ -127,6 +128,6 @@ internal static class WesternNodePracticeChecks
             "Same-problem node payloads cannot transfer rewards.");
         foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
             Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
-        Console.WriteLine("Western node practice checks passed: all 48 nodes, including one question-only node, wrong stages/problems, violations and manual-play boundaries.");
+        Console.WriteLine("Western node practice checks passed: all 49 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

@@ -11,8 +11,8 @@ internal static class WesternGraphChecks
             if (!condition) throw new InvalidOperationException(message);
         }
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        Check(graph.Samples.Count == 12 && graph.ExecutableSamples.Count() == 8,
-            "Preserve twelve source sequences, but execute only the eight not withdrawn by design review.");
+        Check(graph.Samples.Count == 13 && graph.ExecutableSamples.Count() == 9,
+            "Preserve twelve source sequences and the Plotinus continuation; withdrawn paths stay non-executable.");
         foreach (WesternGraphSample sample in graph.ExecutableSamples)
         {
             WesternJourneyState state = graph.Start(sample.EntryNodeId);
@@ -31,6 +31,19 @@ internal static class WesternGraphChecks
             Check(graph.IsComplete(state), "Each sequence must reach a legitimate third-act conclusion after save/restore at every step.");
             Check(graph.GetEligibleEdges(state, "Fixed").Count == 0, "Fourth-act echoes must remain unavailable.");
         }
+        WesternJourneyState plato = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
+        Check(graph.TryApply(plato, "WESTERN_EDGE_008") && graph.TryApply(plato, "WESTERN_EDGE_009"),
+            "Plotinus requires the completed Socrates-to-Plato sequence.");
+        Check(graph.GetEligibleEdges(plato, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_044"),
+            "The completed Plato branch exposes one legal third-act Plotinus edge.");
+        WesternJourneyState alternative = JsonSerializer.Deserialize<WesternJourneyState>(JsonSerializer.Serialize(plato))!;
+        Check(graph.TryApply(alternative, "WESTERN_EDGE_010")
+            && !graph.TryApply(alternative, "WESTERN_EDGE_044"),
+            "Switching to Diogenes must exclude Plotinus without rewriting prior history.");
+        Check(graph.TryApply(plato, "WESTERN_EDGE_044")
+            && plato.CurrentNodeId == "PLOTINUS__VIRTUE_AND_HAPPINESS__CORE"
+            && !graph.TryApply(plato, "WESTERN_EDGE_044"),
+            "Plotinus adoption consumes the third-act fixed opportunity exactly once.");
         WesternGraphSample first = graph.ExecutableSamples.First();
         WesternJourneyState unchallenged = graph.Start(first.EntryNodeId);
         Check(!graph.TryApply(unchallenged, first.EdgeIds[1]), "An intervening challenge cannot be erased into a direct succession edge.");
@@ -103,6 +116,6 @@ internal static class WesternGraphChecks
         try { WesternRouteGraph.ParseJson(promotion.ToJsonString()); }
         catch (InvalidDataException) { refusedPromotion = true; }
         Check(refusedPromotion, "Heraclitus and Parmenides cannot be promoted to a claimed direct influence.");
-        Console.WriteLine("Western graph checks passed: eight executable paths, twelve preserved source sequences, prerequisites and save/restore.");
+        Console.WriteLine("Western graph checks passed: nine executable paths, twelve preserved source sequences, prerequisites and save/restore.");
     }
 }

@@ -17,7 +17,7 @@ internal static class LaterActRelicEligibilityChecks
     {
         LaterActRelicEligibilityRegistration[] entries =
             LaterActRelicEligibilityCatalog.Registrations.ToArray();
-        Assert(entries.Length == 13
+        Assert(entries.Length == 14
                && entries.All(entry => !string.IsNullOrWhiteSpace(entry.CandidateId)
                    && entry.CurrentActIndex is LaterActRelicEligibilityCatalog.ActTwoIndex
                        or LaterActRelicEligibilityCatalog.ActThreeIndex
@@ -41,6 +41,10 @@ internal static class LaterActRelicEligibilityChecks
                && !LaterActRelicEligibilityCatalog.IsEligible(
                    LaterActCandidateIds.Epicurus,
                    LaterActRelicEligibilityCatalog.ActTwoIndex,
+                   [RouteRelicIds.SocratesBalanceWeight])
+               && LaterActRelicEligibilityCatalog.IsEligible(
+                   LaterActCandidateIds.Plotinus,
+                   LaterActRelicEligibilityCatalog.ActThreeIndex,
                    [RouteRelicIds.SocratesBalanceWeight]),
             "Only candidates registered for the current act and held relics may enter the pool.");
     }
@@ -101,6 +105,7 @@ internal static class LaterActRelicEligibilityChecks
                      "PlatoWholeArrangementPatch.cs",
                      "DescartesMethodicReconstructionPatch.cs",
                      "EpicurusSharedMarginPatch.cs",
+                     "PlotinusCommonGroundPatch.cs",
                      "HanFeiPublicStandardPatch.cs",
                  })
         {

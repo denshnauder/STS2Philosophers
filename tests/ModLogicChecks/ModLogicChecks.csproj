@@ -48,6 +48,8 @@
     <Compile Include="..\..\src\Philosophy\PlatoWholeArrangementTriggerPolicy.cs" Link="PlatoWholeArrangementTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\EpicurusSharedMarginState.cs" Link="EpicurusSharedMarginState.cs" />
     <Compile Include="..\..\src\Philosophy\EpicurusSharedMarginTriggerPolicy.cs" Link="EpicurusSharedMarginTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundState.cs" Link="PlotinusCommonGroundState.cs" />
+    <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundTriggerPolicy.cs" Link="PlotinusCommonGroundTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HanFeiPublicStandardState.cs" Link="HanFeiPublicStandardState.cs" />
     <Compile Include="..\..\src\Philosophy\HanFeiPublicStandardTriggerPolicy.cs" Link="HanFeiPublicStandardTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\SextusOpposedAppearancesState.cs" Link="SextusOpposedAppearancesState.cs" />

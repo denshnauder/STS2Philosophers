@@ -99,6 +99,14 @@
       "terminal": false
     },
     {
+      "node_id": "PLOTINUS__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "PLOTINUS",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "普罗提诺",
+      "terminal": true
+    },
+    {
       "node_id": "DIOGENES_OF_SINOPE__VIRTUE_AND_HAPPINESS__CORE",
       "thinker_id": "DIOGENES_OF_SINOPE",
       "problem_id": "VIRTUE_AND_HAPPINESS",
@@ -1727,6 +1735,34 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": ["13阿那克西曼德当前设计.md"]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_044",
+      "from_node_id": "PLATO__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "PLOTINUS__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "柏拉图传统的晚古代重释；从德性与教育追问共同根据与有差异的回归",
+      "source": "https://plato.stanford.edu/entries/plotinus/",
+      "required_edge_ids": ["WESTERN_EDGE_009"],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "VIRTUE_AND_HAPPINESS",
+        "relation_types": ["LaterReinterpretation", "InheritanceAndRevision"],
+        "compressed_mediators": "柏拉图文本与后世解读传统；不设历史人物面对面会晤。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "有限的结构核查与现场修订不评判玩家的灵魂等级，也不否定公共德性。",
+        "interpretation_boundary": "只表达普罗提诺对柏拉图的后世重释；共同根据不是可耗竭材料或把所有差异抹平的物理蓝图。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "https://plato.stanford.edu/entries/plotinus/",
+          "https://classics.mit.edu/Plotinus/enneads.5.fifth.html",
+          "docs/design/current/west/22普罗提诺当前设计.md"
+        ]
+      }
     }
   ],
   "samples": [
@@ -1766,6 +1802,18 @@
         "WESTERN_EDGE_011"
       ],
       "terminal_node_id": "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+      "disposition": "Executable",
+      "review_note": ""
+    },
+    {
+      "sample_id": "SAMPLE_13",
+      "entry_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "edge_ids": [
+        "WESTERN_EDGE_008",
+        "WESTERN_EDGE_009",
+        "WESTERN_EDGE_044"
+      ],
+      "terminal_node_id": "PLOTINUS__VIRTUE_AND_HAPPINESS__CORE",
       "disposition": "Executable",
       "review_note": ""
     },

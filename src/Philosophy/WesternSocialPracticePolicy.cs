@@ -18,6 +18,10 @@ internal static class WesternSocialPracticePolicy
         {
             ("VIRTUE_AND_HAPPINESS", "PROTAGORAS") when kinds.SequenceEqual([a, s, s, a]) => new(Draw: 1),
             ("VIRTUE_AND_HAPPINESS", "PLATO") when kinds.SequenceEqual([a, s, p, s]) => new(Draw: 1, Block: 4),
+            // Two distinct local responses share a kind without becoming the same card.
+            ("VIRTUE_AND_HAPPINESS", "PLOTINUS") when manual
+                && kinds.SequenceEqual([s, a, s])
+                && plays[0].CardModelId != plays[2].CardModelId => new(Block: 5),
             ("VIRTUE_AND_HAPPINESS", "DIOGENES_OF_SINOPE") when n == 1 && manual => new(Block: 5),
             ("VIRTUE_AND_HAPPINESS", "ZENO_OF_CITIUM") when n >= 3 && manual && skills >= 2 && attacks <= 1 => new(Block: 6),
             ("FREEDOM_AND_INSTITUTIONS", "ARISTOTLE") when n == 4 && skills == 2 && attacks == 1 && powers == 1 => new(Block: 7),
