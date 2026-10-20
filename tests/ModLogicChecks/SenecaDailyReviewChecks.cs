@@ -124,7 +124,7 @@ internal static class SenecaDailyReviewChecks
         }
     }
 
-    private static PhilosophyRunState Fixture(int[] selected)
+    internal static PhilosophyRunState Fixture(int[] selected)
     {
         PhilosophyRunState shared = new()
         {

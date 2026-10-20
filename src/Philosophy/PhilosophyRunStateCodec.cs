@@ -28,6 +28,7 @@ internal static class PhilosophyRunStateCodec
         ValidateDiogenesEntry(state);
         ValidateDiogenesPractice(state);
         ValidateSenecaReview(state);
+        ValidateEpictetusPractice(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -74,7 +75,18 @@ internal static class PhilosophyRunStateCodec
         ValidateDiogenesEntry(state);
         ValidateDiogenesPractice(state);
         ValidateSenecaReview(state);
+        ValidateEpictetusPractice(state);
         return state;
+    }
+
+    private static void ValidateEpictetusPractice(PhilosophyRunState state)
+    {
+        if (state.EpictetusGuidePractice is not { } practice) return;
+        if (state.ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.Current
+            || state.ZenoRoutePayload.State?.Route is not { } route
+            || state.SenecaDailyReview is not { } seneca
+            || !EpictetusGuidePracticeFlow.IsRouteConsistent(practice, route, seneca))
+            throw new InvalidDataException("The Epictetus practice conflicts with its frozen route.");
     }
 
     private static void ValidateSenecaReview(PhilosophyRunState state)

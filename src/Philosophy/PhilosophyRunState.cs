@@ -27,6 +27,7 @@ internal sealed class PhilosophyRunState
     public HanFeiPublicStandardState? HanFeiPublicStandard { get; set; }
     public DiogenesStaySwitchEntryRecord? DiogenesStaySwitchEntry { get; set; }
     public SenecaDailyReviewState? SenecaDailyReview { get; set; }
+    public EpictetusGuidePracticeState? EpictetusGuidePractice { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -67,6 +68,7 @@ internal sealed class PhilosophyRunState
         || HanFeiPublicStandard is not null
         || DiogenesStaySwitchEntry is not null
         || SenecaDailyReview is not null
+        || EpictetusGuidePractice is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -238,6 +240,7 @@ internal sealed class PhilosophyRunState
         DescartesMethodicReconstruction?.NormalizeAfterLoad();
         HanFeiPublicStandard?.NormalizeAfterLoad();
         SenecaDailyReview?.NormalizeAfterLoad();
+        EpictetusGuidePractice?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

@@ -34,7 +34,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type[] eventTypes =
         [
             typeof(DemocritusArrangement), typeof(EmpedoclesRootsInquiry), typeof(AnaxagorasMixtureInquiry),
-            typeof(GorgiasSpeechInquiry), typeof(SenecaDailyReview),
+            typeof(GorgiasSpeechInquiry), typeof(SenecaDailyReview), typeof(EpictetusGuidePractice),
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
@@ -72,7 +72,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         CheckPatchTarget("RouteEventMapBoundaryPatch", typeof(NMapScreen), nameof(NMapScreen.Open), [typeof(bool)]);
         CheckPatchTarget("RouteEventMapBoundaryRewardsProceedPatch", typeof(RunManager),
             nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes);
-        Console.WriteLine("ENC123 native map boundary checks passed: fifteen registered events, locked initial choices, stale callbacks and blocked pending recovery, native awaited start hook, exact native room round-trips and checkpoint rejection, explicit/no-run save prefix boundaries, rewards mounting/skip gates, current DLL rewards-to-map calls, and both shared patch targets; no rendered UI or actual run save.");
+        Console.WriteLine("ENC123 native map boundary checks passed: sixteen registered events, locked initial choices, stale callbacks and blocked pending recovery, native awaited start hook, exact native room round-trips and checkpoint rejection, explicit/no-run save prefix boundaries, rewards mounting/skip gates, current DLL rewards-to-map calls, and both shared patch targets; no rendered UI or actual run save.");
     }
 
     private static void InitializeLocalization()
@@ -146,7 +146,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type eventType = canonical.GetType();
         Type stateType = ModType(eventType.Name + "State");
         Type flowType = ModType(eventType.Name + "Flow");
-        MethodInfo? create = eventType == typeof(SenecaDailyReview) ? null
+        MethodInfo? create = eventType == typeof(SenecaDailyReview) || eventType == typeof(EpictetusGuidePractice) ? null
             : RequiredMethod(stateType, "Create", [typeof(string)]);
         MethodInfo generate = RequiredMethod(eventType, "GenerateOptions", [stateType]);
         PropertyInfo instance = stateType.GetProperty("InstanceId")!;
@@ -160,8 +160,9 @@ internal static class RouteEventMapBoundaryNativeChecks
             stateType.GetProperty("Version")!.SetValue(review, 1);
             instance.SetValue(review, id);
             stateType.GetProperty("RunId")!.SetValue(review, "DIOGENES_SOCRATES_42");
-            stateType.GetProperty("Outcome")!.SetValue(review, Enum.GetValues(
-                stateType.GetProperty("Outcome")!.PropertyType).GetValue(0));
+            PropertyInfo outcome = stateType.GetProperty("Outcome") ?? stateType.GetProperty("ZenoOutcome")!;
+            outcome.SetValue(review, Enum.GetValues(outcome.PropertyType).GetValue(0));
+            stateType.GetProperty("SenecaInstanceId")?.SetValue(review, "SENECA_DAILY_REVIEW:42:1");
             stage.SetValue(review, Enum.GetValues(stage.PropertyType).GetValue(0));
             pending.SetValue(review, Enum.GetValues(pending.PropertyType).GetValue(0));
             confirmed.SetValue(review, Activator.CreateInstance(confirmed.PropertyType));
