@@ -42,6 +42,31 @@ internal static class PhilosophyRunStateRitsuStore
                 "The loaded run has no verified native JSON snapshot."));
     }
 
+    // Bind the exact native store read to the final run DTO before
+    // FromSerializable runs. The generic migration hook did not execute in
+    // the live host, leaving every resumed run without a source receipt.
+    internal static void ObserveNativeRunLoad(
+        ReadSaveResult<SerializableRun> result, string? content, string? sourcePath)
+    {
+        if (result.SaveData is not { } save) return;
+        if (result.Status != ReadSaveStatus.Success)
+        {
+            LoadedSaves.Remove(save);
+            LoadedSaves.Add(save, new(PhilosophyRunStateRitsuSaveClassification.Invalid,
+                null, false, "The native run required save recovery before loading."));
+            return;
+        }
+        if (LoadedSaves.TryGetValue(save, out _)) return;
+        if (content is null || sourcePath is null)
+        {
+            LoadedSaves.Add(save, new(PhilosophyRunStateRitsuSaveClassification.Invalid,
+                null, false, "The native run load did not expose its JSON input."));
+            return;
+        }
+
+        ObserveLoadedSave(save, content, sourcePath);
+    }
+
     internal static bool IsIsolated(RunState run) => IsolatedRuns.TryGetValue(run, out _);
 
     internal static void Isolate(RunState run) => IsolatedRuns.GetValue(run, static _ => new object());

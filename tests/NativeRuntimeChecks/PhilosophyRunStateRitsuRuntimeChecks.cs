@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Saves.Managers;
+using MegaCrit.Sts2.Core.Saves.Migrations;
 using STS2Philosophers;
 using STS2RitsuLib.RunData;
 using static NativeRuntimeFixture;
@@ -47,9 +49,11 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
         MissingAndNewRunsStayAvailable();
         ValidStateContinuesSavingAfterResolution(valid);
         UnknownSourceAndBackupStayIsolated(valid);
+        NativeRunResultRetainsExactSource(valid);
         NonObjectSlotsRefuseSaving();
         IsolatedLegacyMarkersRemainPreserved();
-        SnapshotHookTargetsNativeJsonBoundary();
+        SaveReadHookTargetsNativeStores();
+        NativeLoaderPatchesObserveActualResult(valid);
         Console.WriteLine("Ritsu integration checks passed: real Import -> shared service -> real Export preserves invalid object slots, explicitly rejects unsafe native saves, keeps missing/new runs healthy, and saves later valid mutations; no player files or full game replay.");
         return Task.CompletedTask;
     }
@@ -133,6 +137,51 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
         CheckSaveGuard(Import(primaryJson, nativeJson: ValidJson("DIFFERENT_NATIVE_SNAPSHOT")), allowsSave: false);
     }
 
+    private static void NativeRunResultRetainsExactSource(string json)
+    {
+        Type captureType = Mod.GetType("STS2Philosophers.PhilosophyRunStateNativeLoadCapture")!;
+        object capture = Call(captureType, "Begin")!;
+        try
+        {
+            Call(captureType, "ObserveInput", "audit/current_run.save", json);
+            string content = (string)captureType.GetProperty("Content", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(capture)!;
+            string path = (string)captureType.GetProperty("SourcePath", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(capture)!;
+            SerializableRun intermediate = new();
+            Call(Store, "ObserveLoadedSave", intermediate, content, path);
+            SerializableRun final = new();
+            Call(Store, "ObserveNativeRunLoad", new ReadSaveResult<SerializableRun>(final), content, path);
+            Call(Registry, "AttachDocumentFromJson", final, json);
+            RunState run = NewRun();
+            Call(Registry, "Import", final, run);
+            Call(Store, "ObserveRestoredRun", final, run);
+            Check((bool)Call(Service, "IsAvailable", run)!,
+                "A final native DTO with a different identity must retain the exact load snapshot.");
+            CheckSaveGuard(run, allowsSave: true);
+        }
+        finally { Call(captureType, "End", capture); }
+
+        SerializableRun unavailable = new();
+        Call(Registry, "AttachDocumentFromJson", unavailable, json);
+        Call(Store, "ObserveNativeRunLoad", new ReadSaveResult<SerializableRun>(unavailable), null, null);
+        RunState isolated = NewRun();
+        Call(Registry, "Import", unavailable, isolated);
+        Call(Store, "ObserveRestoredRun", unavailable, isolated);
+        Check(!(bool)Call(Service, "IsAvailable", isolated)!,
+            "Missing migration input must not be guessed from a later save read.");
+        CheckSaveGuard(isolated, allowsSave: false);
+
+        SerializableRun recovered = new();
+        Call(Registry, "AttachDocumentFromJson", recovered, json);
+        Call(Store, "ObserveNativeRunLoad", new ReadSaveResult<SerializableRun>(
+            recovered, ReadSaveStatus.JsonRepaired, null), json, "audit/current_run.save");
+        RunState recoveredRun = NewRun();
+        Call(Registry, "Import", recovered, recoveredRun);
+        Call(Store, "ObserveRestoredRun", recovered, recoveredRun);
+        Check(!(bool)Call(Service, "IsAvailable", recoveredRun)!,
+            "A repaired native payload cannot authorize Ritsu's original import as an exact match.");
+        CheckSaveGuard(recoveredRun, allowsSave: false);
+    }
+
     private static void NonObjectSlotsRefuseSaving()
     {
         foreach (JsonNode? malformed in new JsonNode?[] { null, new JsonArray(1, 2), JsonValue.Create("corrupt") })
@@ -166,14 +215,14 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
         finally { Set(manager, "State", original); }
     }
 
-    private static void SnapshotHookTargetsNativeJsonBoundary()
+    private static void SaveReadHookTargetsNativeStores()
     {
-        Type patch = Mod.GetType("STS2Philosophers.PhilosophyRunStateLoadSnapshotPatch")!;
-        var method = (MethodInfo)Call(patch, "TargetMethod")!;
-        Check(method.DeclaringType?.Name == "MigrationManager" && method.Name == "LoadWithAggressiveRecovery"
-            && method.GetGenericArguments().Single() == typeof(SerializableRun)
-            && method.GetParameters().Select(parameter => parameter.Name).SequenceEqual(["filePath", "content"]),
-            "The snapshot must observe the exact JSON consumed by the native run deserializer, not reread a file later.");
+        Type patch = Mod.GetType("STS2Philosophers.PhilosophyRunStateSaveReadPatch")!;
+        var methods = ((IEnumerable<MethodBase>)Call(patch, "TargetMethods")!).ToArray();
+        Check(methods.Select(method => method.DeclaringType?.Name).ToHashSet().IsSupersetOf(
+            ["CloudSaveStore", "GodotFileIo", "SteamRemoteSaveStore"])
+            && methods.All(method => method.Name == nameof(ISaveStore.ReadFile)),
+            "The snapshot must observe native store ReadFile results, including cloud and local sources.");
         var harmony = new HarmonyLib.Harmony("STS2Philosophers.RitsuSnapshotChecks");
         RunState? original = RunManager.Instance.DebugOnlyGetState();
         Check(typeof(SaveManager).GetMethod(nameof(SaveManager.SaveRun), [typeof(AbstractRoom), typeof(bool)])?.ReturnType == typeof(Task),
@@ -189,6 +238,54 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
                 "The patched native SaveRun must return the explicit refusal before touching any save store.");
         }
         finally { Set(RunManager.Instance, "State", original); harmony.UnpatchAll(harmony.Id); }
+    }
+
+    private static void NativeLoaderPatchesObserveActualResult(string json)
+    {
+        var root = JsonNode.Parse(json)!.AsObject();
+        root["schema_version"] = 20;
+        var store = new InMemoryRunSaveStore(root.ToJsonString());
+        var migration = new MigrationManager(store);
+        var manager = new RunSaveManager(2, store, migration, false);
+        var harmony = new HarmonyLib.Harmony("STS2Philosophers.NativeLoadChecks");
+        try
+        {
+            Type patch = Mod.GetType("STS2Philosophers.PhilosophyRunStateSaveReadPatch")!;
+            harmony.CreateClassProcessor(patch).Patch();
+            harmony.Patch(typeof(InMemoryRunSaveStore).GetMethod(nameof(ISaveStore.ReadFile))!,
+                postfix: new HarmonyLib.HarmonyMethod(patch.GetMethod("Postfix", Static)!));
+            harmony.CreateClassProcessor(Mod.GetType("STS2Philosophers.PhilosophyRunStateNativeRunLoadPatch")!).Patch();
+            ReadSaveResult<SerializableRun> result = manager.LoadRunSave();
+            Check(result.Success && result.SaveData is not null,
+                $"The in-memory native run loader must return a DTO: {result.Status} {result.ErrorMessage}");
+            SerializableRun save = result.SaveData!;
+            Call(Registry, "AttachDocumentFromJson", save, root.ToJsonString());
+            RunState run = NewRun();
+            Call(Registry, "Import", save, run);
+            Call(Store, "ObserveRestoredRun", save, run);
+            bool available = (bool)Call(Service, "IsAvailable", run)!;
+            object?[] unsafeReason = [run, null];
+            Call(Store, "TryGetUnsafeSaveReason", unsafeReason);
+            Check(available,
+                $"The patched native loader must carry its exact JSON to the final DTO before run restoration. "
+                + $"status={result.Status}, reason={unsafeReason[1]}");
+            CheckSaveGuard(run, allowsSave: true);
+
+            var backupStore = new InMemoryRunSaveStore(null, root.ToJsonString());
+            var backupManager = new RunSaveManager(2, backupStore, new MigrationManager(backupStore), false);
+            ReadSaveResult<SerializableRun> backupResult = backupManager.LoadRunSave();
+            Check(backupResult.Success && backupResult.SaveData is not null,
+                "The native backup fallback fixture must actually restore a DTO.");
+            SerializableRun backupSave = backupResult.SaveData!;
+            Call(Registry, "AttachDocumentFromJson", backupSave, root.ToJsonString());
+            RunState backupRun = NewRun();
+            Call(Registry, "Import", backupSave, backupRun);
+            Call(Store, "ObserveRestoredRun", backupSave, backupRun);
+            Check(!(bool)Call(Service, "IsAvailable", backupRun)!,
+                "An exact backup read still cannot authorize Ritsu's later primary-file reread.");
+            CheckSaveGuard(backupRun, allowsSave: false);
+        }
+        finally { harmony.UnpatchAll(harmony.Id); }
     }
 
     private static void IsolatedLegacyMarkersRemainPreserved()
@@ -272,4 +369,29 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
 
     private static object? Call(Type type, string method, params object?[] arguments) =>
         type.GetMethod(method, Static)!.Invoke(null, arguments);
+}
+
+internal sealed class InMemoryRunSaveStore(string? primary, string? backup = null) : ISaveStore
+{
+    public string ReadFile(string path) => (path.EndsWith(".backup", StringComparison.Ordinal)
+        ? backup : primary) ?? throw new FileNotFoundException(path);
+    public Task<string> ReadFileAsync(string path) => Task.FromResult(ReadFile(path));
+    public bool FileExists(string path) => (path.EndsWith(".backup", StringComparison.Ordinal)
+        ? backup : primary) is not null;
+    public bool DirectoryExists(string path) => true;
+    public string GetFullPath(string path) => path;
+    public DateTimeOffset GetLastModifiedTime(string path) => DateTimeOffset.UtcNow;
+    public int GetFileSize(string path) => ReadFile(path).Length;
+    public string[] GetFilesInDirectory(string path) => [];
+    public string[] GetDirectoriesInDirectory(string path) => [];
+    public void WriteFile(string path, string content) => throw new InvalidOperationException("Read-only fixture");
+    public void WriteFile(string path, byte[] content) => throw new InvalidOperationException("Read-only fixture");
+    public Task WriteFileAsync(string path, string content) => throw new InvalidOperationException("Read-only fixture");
+    public Task WriteFileAsync(string path, byte[] content) => throw new InvalidOperationException("Read-only fixture");
+    public void DeleteFile(string path) => throw new InvalidOperationException("Read-only fixture");
+    public void RenameFile(string source, string destination) => throw new InvalidOperationException("Read-only fixture");
+    public void CreateDirectory(string path) => throw new InvalidOperationException("Read-only fixture");
+    public void DeleteDirectory(string path) => throw new InvalidOperationException("Read-only fixture");
+    public void DeleteTemporaryFiles(string path) => throw new InvalidOperationException("Read-only fixture");
+    public void SetLastModifiedTime(string path, DateTimeOffset value) => throw new InvalidOperationException("Read-only fixture");
 }

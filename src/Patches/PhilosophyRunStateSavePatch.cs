@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
-using MegaCrit.Sts2.Core.Saves.Migrations;
+using MegaCrit.Sts2.Core.Saves.Managers;
 using System.Reflection;
 
 namespace STS2Philosophers;
@@ -103,22 +103,71 @@ internal static class PhilosophyRunStateFromSavePatch
     }
 }
 
-// The native reader has already obtained these exact bytes. Capturing here
-// avoids a second disk read and never accesses Ritsu's private registry.
+// Capture the exact bytes returned to the native loader. The game's generic
+// migration method can share a runtime body with other save types; Harmony's
+// closed-generic patch is not invoked reliably on that body.
 [HarmonyPatch]
-internal static class PhilosophyRunStateLoadSnapshotPatch
+internal static class PhilosophyRunStateSaveReadPatch
 {
-    private static MethodBase TargetMethod() =>
-        (AccessTools.DeclaredMethod(typeof(MigrationManager), "LoadWithAggressiveRecovery")
-            ?? throw new MissingMethodException(typeof(MigrationManager).FullName, "LoadWithAggressiveRecovery"))
-        .MakeGenericMethod(typeof(SerializableRun));
+    private static IEnumerable<MethodBase> TargetMethods() =>
+        typeof(ISaveStore).Assembly.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract && typeof(ISaveStore).IsAssignableFrom(type))
+            .Select(type => AccessTools.DeclaredMethod(type, nameof(ISaveStore.ReadFile), [typeof(string)]))
+            .Where(method => method is not null)!;
 
-    private static void Postfix(string filePath, string content, object __result)
+    private static void Postfix(string __0, string __result) =>
+        PhilosophyRunStateNativeLoadCapture.ObserveInput(__0, __result);
+}
+
+// Scope file reads to the non-generic native run loader. If native falls back
+// to a backup, the last successfully read path is that backup and stays unsafe.
+internal sealed class PhilosophyRunStateNativeLoadCapture
+{
+    [ThreadStatic] private static PhilosophyRunStateNativeLoadCapture? _active;
+
+    private PhilosophyRunStateNativeLoadCapture(PhilosophyRunStateNativeLoadCapture? previous) =>
+        Previous = previous;
+
+    internal PhilosophyRunStateNativeLoadCapture? Previous { get; }
+    internal string? SourcePath { get; private set; }
+    internal string? Content { get; private set; }
+
+    internal static PhilosophyRunStateNativeLoadCapture Begin() =>
+        _active = new PhilosophyRunStateNativeLoadCapture(_active);
+
+    internal static void ObserveInput(string sourcePath, string content)
     {
-        // Reference-type generic instantiations can share native code. Ignore
-        // other save kinds even if Harmony shares this closed generic patch.
-        if (__result is ReadSaveResult<SerializableRun> { SaveData: { } save })
-            PhilosophyRunStateRitsuStore.ObserveLoadedSave(save, content, filePath);
+        if (_active is { } capture)
+        {
+            capture.SourcePath = sourcePath;
+            capture.Content = content;
+        }
+    }
+
+    internal static void End(PhilosophyRunStateNativeLoadCapture? capture)
+    {
+        if (capture is not null) _active = capture.Previous;
+    }
+}
+
+[HarmonyPatch(typeof(RunSaveManager), nameof(RunSaveManager.LoadRunSave))]
+internal static class PhilosophyRunStateNativeRunLoadPatch
+{
+    private static void Prefix(out PhilosophyRunStateNativeLoadCapture __state) =>
+        __state = PhilosophyRunStateNativeLoadCapture.Begin();
+
+    private static void Postfix(
+        ReadSaveResult<SerializableRun> __result,
+        PhilosophyRunStateNativeLoadCapture __state) =>
+        PhilosophyRunStateRitsuStore.ObserveNativeRunLoad(
+            __result, __state.Content, __state.SourcePath);
+
+    private static Exception? Finalizer(
+        Exception? __exception,
+        PhilosophyRunStateNativeLoadCapture? __state)
+    {
+        PhilosophyRunStateNativeLoadCapture.End(__state);
+        return __exception;
     }
 }
 
