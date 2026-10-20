@@ -129,6 +129,8 @@ func _initialize() -> void:
 		["res://images/events/seneca_daily_review.png.import", "res://images/events/seneca_daily_review.png.import"],
 		["res://images/events/epictetus_guide_practice.png", "res://images/events/philosophers_gaze.png"],
 		["res://images/events/epictetus_guide_practice.png.import", "res://images/events/epictetus_guide_practice.png.import"],
+		["res://images/events/marcus_aurelius_camp_practice.png", "res://images/events/philosophers_gaze.png"],
+		["res://images/events/marcus_aurelius_camp_practice.png.import", "res://images/events/marcus_aurelius_camp_practice.png.import"],
 		[
 			"res://images/events/descartes_methodic_reconstruction.png",
 			"res://images/events/philosophers_gaze.png",

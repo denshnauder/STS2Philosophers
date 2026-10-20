@@ -29,6 +29,7 @@ internal static class PhilosophyRunStateCodec
         ValidateDiogenesPractice(state);
         ValidateSenecaReview(state);
         ValidateEpictetusPractice(state);
+        ValidateMarcusPractice(state);
         if (state.ZenoRoutePayload.Classification is not (
                 ZenoRoutePayloadClassification.PreFeatureLegacy or
                 ZenoRoutePayloadClassification.Current))
@@ -76,7 +77,18 @@ internal static class PhilosophyRunStateCodec
         ValidateDiogenesPractice(state);
         ValidateSenecaReview(state);
         ValidateEpictetusPractice(state);
+        ValidateMarcusPractice(state);
         return state;
+    }
+
+    private static void ValidateMarcusPractice(PhilosophyRunState state)
+    {
+        if (state.MarcusAureliusCampPractice is not { } practice) return;
+        if (state.ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.Current
+            || state.ZenoRoutePayload.State?.Route is not { } route
+            || state.EpictetusGuidePractice is not { } epictetus
+            || !MarcusAureliusCampPracticeFlow.IsRouteConsistent(practice, route, epictetus))
+            throw new InvalidDataException("The Marcus Aurelius practice conflicts with its frozen route.");
     }
 
     private static void ValidateEpictetusPractice(PhilosophyRunState state)

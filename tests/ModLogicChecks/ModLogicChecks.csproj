@@ -19,6 +19,8 @@
     <Compile Include="..\..\src\Philosophy\SenecaDailyReviewTriggerPolicy.cs" Link="SenecaDailyReviewTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\EpictetusGuidePracticeState.cs" Link="EpictetusGuidePracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\EpictetusGuidePracticeTriggerPolicy.cs" Link="EpictetusGuidePracticeTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\MarcusAureliusCampPracticeState.cs" Link="MarcusAureliusCampPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\MarcusAureliusCampPracticeTriggerPolicy.cs" Link="MarcusAureliusCampPracticeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ParmenidesInquiryState.cs" Link="ParmenidesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryState.cs" Link="AnaximanderOriginInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\AnaximanderOriginInquiryTriggerPolicy.cs" Link="AnaximanderOriginInquiryTriggerPolicy.cs" />

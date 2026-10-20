@@ -91,7 +91,7 @@ internal static class EpictetusGuidePracticeChecks
         Console.WriteLine("Epictetus practice checks passed: five complete paths, two saved actions around an external response, strict predecessors and bilingual pages.");
     }
 
-    private static PhilosophyRunState Fixture()
+    internal static PhilosophyRunState Fixture()
     {
         PhilosophyRunState shared = SenecaDailyReviewChecks.Fixture([]);
         foreach (SenecaDailyReviewAction action in new[]
