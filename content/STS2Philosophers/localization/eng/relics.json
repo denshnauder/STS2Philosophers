@@ -81,5 +81,11 @@
   "HUISHI_LI_WU_CHOU.flavor": "Extend care to all things; Heaven and Earth are one body.",
   "ANAXIMENES_BREATH.title": "Breath in Motion",
   "ANAXIMENES_BREATH.description": "At turn end, if you have at least 1 unspent Energy, gain 1 Energy and draw 1 card next turn.",
-  "ANAXIMENES_BREATH.flavor": "One breath, different forms."
+  "ANAXIMENES_BREATH.flavor": "One breath, different forms.",
+  "SOCRATES_QUESTION_CUP.anselm.published.title": "Public Reply",
+  "SOCRATES_QUESTION_CUP.anselm.published.description": "Your recorded reply grants 1 Energy on the first turn of each later combat.",
+  "SOCRATES_QUESTION_CUP.anselm.revised.title": "Unfinished Draft",
+  "SOCRATES_QUESTION_CUP.anselm.revised.description": "Your revised draft grants 6 Block on the first turn of each later combat.",
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.title": "Recorded Withdrawal",
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "Your withdrawal grants 8 Block on the second turn of each later combat."
 }

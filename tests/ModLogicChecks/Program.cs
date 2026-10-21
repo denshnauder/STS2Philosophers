@@ -19,6 +19,7 @@ PlatoWholeArrangementChecks.Run();
 PlotinusCommonGroundChecks.Run();
 ZenoCivicChallengeChecks.Run();
 AugustinePromiseChecks.Run();
+AnselmUnfinishedProofChecks.Run();
 PlotinusCombatPracticeChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();

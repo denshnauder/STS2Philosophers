@@ -26,7 +26,7 @@ internal static class RouteEventMapBoundary
 
     internal static bool IsRegisteredEvent(EventModel? model) => model is
         ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
-        or ZenoCivicChallenge or AugustinePromise
+        or ZenoCivicChallenge or AugustinePromise or AnselmUnfinishedProof
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
@@ -277,6 +277,7 @@ internal static class RouteEventMapBoundary
                 EpictetusGuidePracticePatch.InsertAtBoundaryAsync,
                 MarcusAureliusCampPracticePatch.InsertAtBoundaryAsync,
                 PyrrhoReportedCrossingPatch.InsertAtBoundaryAsync,
+                AnselmUnfinishedProofPatch.InsertAtBoundaryAsync,
             ];
             foreach (Func<Task> entry in entries)
             {

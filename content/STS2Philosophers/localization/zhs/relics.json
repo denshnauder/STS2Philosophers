@@ -81,5 +81,11 @@
   "HUISHI_LI_WU_CHOU.flavor": "泛爱万物，天地一体也。",
   "ANAXIMENES_BREATH.title": "凝散之息",
   "ANAXIMENES_BREATH.description": "回合结束时，若有至少1点未用能量，下回合获得1点能量并抽1张牌。",
-  "ANAXIMENES_BREATH.flavor": "同一气息，形态有别。"
+  "ANAXIMENES_BREATH.flavor": "同一气息，形态有别。",
+  "SOCRATES_QUESTION_CUP.anselm.published.title": "公开答辩",
+  "SOCRATES_QUESTION_CUP.anselm.published.description": "已记录的公开答辩使以后每场战斗首回合额外获得 1 能量。",
+  "SOCRATES_QUESTION_CUP.anselm.revised.title": "未完草稿",
+  "SOCRATES_QUESTION_CUP.anselm.revised.description": "修订草稿使以后每场战斗首回合额外获得 6 格挡。",
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.title": "有记录的撤回",
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "撤回记录使以后每场战斗第二回合额外获得 8 格挡。"
 }
