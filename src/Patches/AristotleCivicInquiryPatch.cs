@@ -32,7 +32,8 @@ internal static class AristotleCivicInquiryPatch
             saved is not null,
             saved?.IsUsable() == true,
             saved?.Closed == true,
-            canonical is not null);
+            canonical is not null,
+            journey?.CompletedEdgeIds.Contains(AugustinePromiseState.RequiredEdgeId) == true);
         if (!AristotleCivicInquiryTriggerPolicy.ShouldInsert(context)) return;
 
         if (saved is null)

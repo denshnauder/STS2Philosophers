@@ -50,6 +50,11 @@
     <Compile Include="..\..\src\Philosophy\EpicurusSharedMarginTriggerPolicy.cs" Link="EpicurusSharedMarginTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundState.cs" Link="PlotinusCommonGroundState.cs" />
     <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundTriggerPolicy.cs" Link="PlotinusCommonGroundTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoCivicChallengeState.cs" Link="ZenoCivicChallengeState.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoCivicChallengeTriggerPolicy.cs" Link="ZenoCivicChallengeTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\AugustinePromiseState.cs" Link="AugustinePromiseState.cs" />
+    <Compile Include="..\..\src\Philosophy\AugustinePromiseTriggerPolicy.cs" Link="AugustinePromiseTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\AugustineCombatPracticeState.cs" Link="AugustineCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\PlotinusCombatPracticeState.cs" Link="PlotinusCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\HanFeiPublicStandardState.cs" Link="HanFeiPublicStandardState.cs" />
     <Compile Include="..\..\src\Philosophy\HanFeiPublicStandardTriggerPolicy.cs" Link="HanFeiPublicStandardTriggerPolicy.cs" />

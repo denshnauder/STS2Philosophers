@@ -38,9 +38,10 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(MarcusAureliusCampPractice),
             typeof(PyrrhoReportedCrossing),
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
-            typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry),
+            typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
             typeof(PlotinusCommonGround),
+            typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];
         Check(!IsRegistered(null), "ENC123: a missing event is not registered for the map boundary.");
@@ -75,7 +76,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         CheckPatchTarget("RouteEventMapBoundaryPatch", typeof(NMapScreen), nameof(NMapScreen.Open), [typeof(bool)]);
         CheckPatchTarget("RouteEventMapBoundaryRewardsProceedPatch", typeof(RunManager),
             nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes);
-        Console.WriteLine("ENC123 native map boundary checks passed: nineteen registered events, locked initial choices, stale callbacks and blocked pending recovery, native awaited start hook, exact native room round-trips and checkpoint rejection, explicit/no-run save prefix boundaries, rewards mounting/skip gates, current DLL rewards-to-map calls, and both shared patch targets; no rendered UI or actual run save.");
+        Console.WriteLine("ENC123 native map boundary checks passed: twenty-one registered events, locked initial choices, stale callbacks and blocked pending recovery, native awaited start hook, exact native room round-trips and checkpoint rejection, explicit/no-run save prefix boundaries, rewards mounting/skip gates, current DLL rewards-to-map calls, and both shared patch targets; no rendered UI or actual run save.");
     }
 
     private static void InitializeLocalization()

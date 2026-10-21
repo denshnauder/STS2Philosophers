@@ -4,3 +4,4 @@ await DemocritusArrangementRuntimeChecks.Run();
 await RouteEventMapBoundaryNativeChecks.Run();
 await PhilosophyRunStateRitsuRuntimeChecks.Run();
 await PlotinusCombatPracticeNativeChecks.Run();
+await AugustinePromiseNativeChecks.Run();

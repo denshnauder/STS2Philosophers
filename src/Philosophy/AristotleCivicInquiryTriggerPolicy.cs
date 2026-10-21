@@ -3,7 +3,8 @@ namespace STS2Philosophers;
 internal sealed record AristotleCivicInquiryTriggerContext(
     bool RunInProgress, bool AtSafeMapBoundary, bool IsSingleplayer, int CurrentActIndex,
     int CompletedCombatCount, string? CurrentNodeId, int LastFixedAct, bool HasRequiredRelic,
-    bool HasSavedInstance, bool SavedInstanceUsable, bool SavedInstanceClosed, bool ModelAvailable);
+    bool HasSavedInstance, bool SavedInstanceUsable, bool SavedInstanceClosed, bool ModelAvailable,
+    bool AugustinePrerequisiteCompleted = false);
 
 internal static class AristotleCivicInquiryTriggerPolicy
 {
@@ -14,7 +15,8 @@ internal static class AristotleCivicInquiryTriggerPolicy
         if (context.HasSavedInstance) return context.SavedInstanceUsable && !context.SavedInstanceClosed
             && context.LastFixedAct is 1 or 2 && context.CurrentNodeId is
                 AristotleCivicInquiryState.RequiredNodeId or AristotleCivicInquiryState.AdoptedNodeId;
-        return context.CompletedCombatCount >= 1 && context.LastFixedAct == 1
+        return !context.AugustinePrerequisiteCompleted
+            && context.CompletedCombatCount >= 1 && context.LastFixedAct == 1
             && context.CurrentNodeId == AristotleCivicInquiryState.RequiredNodeId && context.HasRequiredRelic;
     }
 }
