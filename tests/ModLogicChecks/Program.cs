@@ -21,6 +21,7 @@ ZenoCivicChallengeChecks.Run();
 AugustinePromiseChecks.Run();
 AquinasBridgeNoticeChecks.Run();
 AnselmUnfinishedProofChecks.Run();
+OckhamNamesInquiryChecks.Run();
 PlotinusCombatPracticeChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();

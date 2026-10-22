@@ -1,4 +1,6 @@
 {
+  "ARISTOTLE_CATEGORY_TABLET.ockham.title": "Verified list",
+  "ARISTOTLE_CATEGORY_TABLET.ockham.description": "Replaces the tablet’s printed cost-category rule. Each turn, the first manual non-X Attack, Skill or Power names a card model. The next 2 manually played non-X cards of that model cost 2 less (minimum 0). A zero-cost first card gives no discount this turn. Other names do not qualify.",
   "HERACLITUS_LYRE.title": "Lyre and Bow",
   "HERACLITUS_LYRE.description": "Each turn, the first non-Exhaust Attack or Skill drawn at turn start has Retain this turn. If you have manually played the opposite type this turn, manually playing the marked card Exhausts it and draws 1 card. Otherwise, it resolves normally.",
   "HERACLITUS_LYRE.flavor": "Opposing pulls make one bow.",

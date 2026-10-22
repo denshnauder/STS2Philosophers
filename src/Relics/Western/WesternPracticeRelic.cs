@@ -26,6 +26,7 @@ public abstract class WesternPracticeRelic : RelicModel
 
     protected abstract string ProblemId { get; }
     protected abstract string ResourceName { get; }
+    protected virtual bool UseNamedCategory => false;
 
     private WesternEntryPracticeState? _practice;
     private HashSet<object>? _callbacks;
@@ -223,7 +224,8 @@ public abstract class WesternPracticeRelic : RelicModel
             card.EnergyCost.CostsX,
             trackedPractice,
             (ProblemId == WesternEntryPracticeState.SelfAndOther
-                ? DescartesThinkingLensTargetContext.Resolve(card) : card.CurrentTarget)?.CombatId);
+                ? DescartesThinkingLensTargetContext.Resolve(card) : card.CurrentTarget)?.CombatId,
+            UseNamedCategory);
         _costQuotes[card] = new(cost, card.EnergyCost.CostsX, change.Effect);
         modifiedCost = change.Apply(cost);
         return change.Effect != WesternEntryCostEffect.None && modifiedCost != cost;
@@ -270,7 +272,8 @@ public abstract class WesternPracticeRelic : RelicModel
             trackedPractice,
             target?.CombatId,
             isSingleLivingEnemyTarget,
-            quote.Effect);
+            quote.Effect,
+            UseNamedCategory);
 
         ClearPlayedTrackedCards(trackedCurrent, trackedPractice);
         _costQuotes.Clear();

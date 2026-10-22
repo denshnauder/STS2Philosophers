@@ -34,6 +34,7 @@ internal sealed class PhilosophyRunState
     public EpictetusGuidePracticeState? EpictetusGuidePractice { get; set; }
     public MarcusAureliusCampPracticeState? MarcusAureliusCampPractice { get; set; }
     public PyrrhoReportedCrossingState? PyrrhoReportedCrossing { get; set; }
+    public OckhamNamesInquiryState? OckhamNamesInquiry { get; set; }
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
 
     [JsonIgnore]
@@ -82,6 +83,7 @@ internal sealed class PhilosophyRunState
         || EpictetusGuidePractice is not null
         || MarcusAureliusCampPractice is not null
         || PyrrhoReportedCrossing is not null
+        || OckhamNamesInquiry is not null
         || AnselmUnfinishedProof is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
@@ -261,6 +263,7 @@ internal sealed class PhilosophyRunState
         EpictetusGuidePractice?.NormalizeAfterLoad();
         MarcusAureliusCampPractice?.NormalizeAfterLoad();
         PyrrhoReportedCrossing?.NormalizeAfterLoad();
+        OckhamNamesInquiry?.NormalizeAfterLoad();
         AnselmUnfinishedProof?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {

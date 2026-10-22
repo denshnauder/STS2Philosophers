@@ -1,4 +1,6 @@
 {
+  "ARISTOTLE_CATEGORY_TABLET.ockham.title": "核实名单",
+  "ARISTOTLE_CATEGORY_TABLET.ockham.description": "替换泥板原有费用档位规则。每回合首张手动非X攻击、技能或能力牌确定一个牌名，接着两张手动同模型非X牌费用减2，最低0。首张零费时本回合无折扣；其他牌名不匹配。",
   "HERACLITUS_LYRE.title": "琴弓",
   "HERACLITUS_LYRE.description": "每回合起手抽牌中，首张非消耗攻击牌或技能牌本回合获得保留。先手动打出相反类型，再打出它时，改为消耗并抽1张牌；否则正常结算。",
   "HERACLITUS_LYRE.flavor": "相反的牵引，共成一张弓。",

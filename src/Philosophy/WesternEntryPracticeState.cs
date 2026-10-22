@@ -81,6 +81,7 @@ internal sealed class WesternEntryPracticeState
     public bool? OtherIntendsAttack { get; set; }
     public bool OtherResponseUsed { get; set; }
 
+    public string CategoryCardModelId { get; set; } = string.Empty;
     public int CategoryBucket { get; set; } = -1;
     public int CategoryDiscountsRemaining { get; set; }
 
@@ -116,6 +117,7 @@ internal sealed class WesternEntryPracticeState
         OtherIntentTurn = 0;
         OtherIntendsAttack = null;
         OtherResponseUsed = false;
+        CategoryCardModelId = string.Empty;
         CategoryBucket = -1;
         CategoryDiscountsRemaining = 0;
         ConventionUsed = false;
@@ -224,7 +226,8 @@ internal sealed class WesternEntryPracticeState
         decimal costBeforeThisRelic,
         bool costsX,
         bool trackedPractice,
-        uint? targetCombatId = null)
+        uint? targetCombatId = null,
+        bool namedCategory = false)
     {
         if (!CanAct() || string.IsNullOrWhiteSpace(cardModelId) || !Enum.IsDefined(kind)
             || costBeforeThisRelic < 0m || costsX) return default;
@@ -253,8 +256,10 @@ internal sealed class WesternEntryPracticeState
 
         if (ProblemId == LanguageAndMeaning && CategoryBucket > 0 && CategoryDiscountsRemaining > 0
             && kind is WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill or WesternPracticeCardKind.Power
-            && CostBucket(costBeforeThisRelic) == CategoryBucket)
-            return new(-1m, WesternEntryCostEffect.CategoryDiscount);
+            && costBeforeThisRelic > 0m
+            && (namedCategory ? CategoryCardModelId == cardModelId
+                : CostBucket(costBeforeThisRelic) == CategoryBucket))
+            return new(namedCategory ? -2m : -1m, WesternEntryCostEffect.CategoryDiscount);
 
         if (ProblemId == HistoryAndPower && !ConventionUsed && ConventionFormedTurn < Turn
             && ConventionCardModelId == cardModelId && costBeforeThisRelic > 0m)
@@ -273,14 +278,15 @@ internal sealed class WesternEntryPracticeState
         bool trackedPractice,
         uint? targetCombatId = null,
         bool isSingleLivingEnemyTarget = false,
-        WesternEntryCostEffect appliedCostEffect = WesternEntryCostEffect.None)
+        WesternEntryCostEffect appliedCostEffect = WesternEntryCostEffect.None,
+        bool namedCategory = false)
     {
         if (!CanAct() || string.IsNullOrWhiteSpace(playId) || string.IsNullOrWhiteSpace(cardModelId)
             || !Enum.IsDefined(kind) || RecordedPlayIds.Contains(playId, StringComparer.Ordinal)) return default;
         RecordedPlayIds.Add(playId);
 
         WesternEntryCostEffect expectedEffect = GetCostChange(cardModelId, kind, costBeforeThisRelic,
-            costsX, trackedPractice, targetCombatId).Effect;
+            costsX, trackedPractice, targetCombatId, namedCategory).Effect;
         bool consumeCostEffect = appliedCostEffect != WesternEntryCostEffect.None
             && appliedCostEffect == expectedEffect;
         bool applyEnemyStrength = false;
@@ -333,6 +339,7 @@ internal sealed class WesternEntryPracticeState
         if (ProblemId == LanguageAndMeaning && CategoryBucket < 0 && !costsX && costBeforeThisRelic >= 0m
             && kind is WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill or WesternPracticeCardKind.Power)
         {
+            CategoryCardModelId = cardModelId;
             CategoryBucket = CostBucket(costBeforeThisRelic);
             CategoryDiscountsRemaining = CategoryBucket == 0 ? 0 : 2;
         }
@@ -410,7 +417,7 @@ internal sealed class WesternEntryPracticeState
             || Turn < 0 || RetainsResolvedTurn < 0 || RetainsResolvedTurn > Turn
             || PracticeWaits < 0 || OtherBoundTurn < 0 || OtherIntentTurn < 0
             || OtherBoundTurn > Turn || OtherIntentTurn > Turn
-            || CategoryBucket is < -1 or > 2 || CategoryDiscountsRemaining is < 0 or > 2
+            || CategoryCardModelId is null || CategoryBucket is < -1 or > 2 || CategoryDiscountsRemaining is < 0 or > 2
             || ConventionFormedTurn < 0 || ConventionFormedTurn > Turn
             || !Enum.IsDefined(OpeningStage) || !Enum.IsDefined(LawKind)
             || OpeningCardModelIds is null || RecordedPlayIds is null || TurnCardCounts is null
@@ -444,12 +451,13 @@ internal sealed class WesternEntryPracticeState
                 && FlowRuleVersion is null && !FlowDrawClaimed && FlowPlayedKinds == 0
                 && LawKind == WesternPracticeCardKind.Other && !LawDiscountUsed && !LawSurchargeUsed
                 && OtherCombatId is null && OtherBoundTurn == 0 && OtherIntentTurn == 0 && OtherIntendsAttack is null
-                && !OtherResponseUsed && CategoryBucket == -1 && CategoryDiscountsRemaining == 0
+                && !OtherResponseUsed && CategoryCardModelId.Length == 0 && CategoryBucket == -1 && CategoryDiscountsRemaining == 0
                 && ConventionCardModelId.Length == 0 && ConventionFormedTurn == 0 && !ConventionUsed
                 && TurnCardCounts.Count == 0 && RecordedPlayIds.Count == 0;
 
         return (Turn > 0 || !TurnClosed)
             && (LawKind is WesternPracticeCardKind.Other or WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill)
+            && (CategoryCardModelId.Length == 0 || CategoryBucket >= 0)
             && (CategoryBucket >= 0 || CategoryDiscountsRemaining == 0)
             && (CategoryBucket != 0 || CategoryDiscountsRemaining == 0)
             && (OtherCombatId is not null || (OtherBoundTurn == 0 && OtherIntentTurn == 0 && OtherIntendsAttack is null))
@@ -486,6 +494,7 @@ internal sealed class WesternEntryPracticeState
         OtherIntentTurn = 0;
         OtherIntendsAttack = null;
         OtherResponseUsed = false;
+        CategoryCardModelId = string.Empty;
         CategoryBucket = -1;
         CategoryDiscountsRemaining = 0;
         ConventionCardModelId = string.Empty;

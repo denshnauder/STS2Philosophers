@@ -7,3 +7,4 @@ await PlotinusCombatPracticeNativeChecks.Run();
 await AugustinePromiseNativeChecks.Run();
 await AquinasBridgeNoticeNativeChecks.Run();
 await AnselmUnfinishedProofNativeChecks.Run();
+await OckhamNamesInquiryNativeChecks.Run();

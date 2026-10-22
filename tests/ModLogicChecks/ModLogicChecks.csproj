@@ -58,6 +58,8 @@
     <Compile Include="..\..\src\Philosophy\AquinasBridgeNoticeState.cs" Link="AquinasBridgeNoticeState.cs" />
     <Compile Include="..\..\src\Philosophy\AquinasBridgeNoticeTriggerPolicy.cs" Link="AquinasBridgeNoticeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AquinasCombatPracticeState.cs" Link="AquinasCombatPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\OckhamNamesInquiryState.cs" Link="OckhamNamesInquiryState.cs" />
+    <Compile Include="..\..\src\Philosophy\OckhamNamesInquiryTriggerPolicy.cs" Link="OckhamNamesInquiryTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AnselmUnfinishedProofState.cs" Link="AnselmUnfinishedProofState.cs" />
     <Compile Include="..\..\src\Philosophy\AnselmUnfinishedProofTriggerPolicy.cs" Link="AnselmUnfinishedProofTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AnselmCombatPracticeState.cs" Link="AnselmCombatPracticeState.cs" />
