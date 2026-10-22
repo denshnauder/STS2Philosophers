@@ -17,6 +17,8 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     protected override string ProblemId => "FREEDOM_AND_INSTITUTIONS";
     protected override string ResourceName => "plato_civic_seal";
 
+    internal bool CanOfferLuther => IsMutable && Owner is not null && IsSoleDoctrine;
+
     private AugustineCombatPracticeState? _augustinePractice;
     private string? _invalidAugustinePayload;
     // Canonical models are copied to mutable relics. Keep the canonical field
@@ -60,6 +62,9 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     {
         get
         {
+            if (HasLutherSwitch()) return base.ExtraHoverTips.Concat([new HoverTip(
+                new LocString("relics", "PLATO_CIVIC_SEAL.luther.title"),
+                new LocString("relics", "PLATO_CIVIC_SEAL.luther.description"))]);
             if (_invalidAugustinePayload is null && TryGetAugustineWork(out AugustineWork work))
             {
                 string branch = work == AugustineWork.Public ? "public" : "private";
@@ -114,6 +119,18 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
                 cardPlay: null, fast: true);
         else
             await PlayerCmd.GainEnergy(1m, Owner);
+    }
+
+    private bool HasLutherSwitch()
+    {
+        if (!CanOfferLuther) return false;
+        RunManager manager = RunManager.Instance;
+        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
+        return run is not null && run.Players.Count == 1 && ReferenceEquals(run.Players[0], Owner)
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.WesternJourney is { } journey && shared.AugustinePromise is { } predecessor
+            && shared.LutherSignedCare is { Closed: true, EdgeCommitted: true } state
+            && LutherSignedCareFlow.IsRouteConsistent(state, journey, predecessor);
     }
 
     private bool TryGetAugustineWork(out AugustineWork work)

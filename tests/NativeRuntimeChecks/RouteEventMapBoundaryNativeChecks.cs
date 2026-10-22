@@ -40,7 +40,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
-            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation),
+            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(LutherSignedCare),
             typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];
@@ -152,7 +152,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type flowType = ModType(eventType.Name + "Flow");
         MethodInfo? create = eventType == typeof(SenecaDailyReview) || eventType == typeof(EpictetusGuidePractice)
             || eventType == typeof(MarcusAureliusCampPractice) || eventType == typeof(PyrrhoReportedCrossing)
-            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) ? null
+            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) ? null
             : RequiredMethod(stateType, "Create", [typeof(string)]);
         MethodInfo generate = RequiredMethod(eventType, "GenerateOptions", [stateType]);
         PropertyInfo instance = stateType.GetProperty("InstanceId")!;
@@ -173,6 +173,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             stateType.GetProperty("EpictetusInstanceId")?.SetValue(review, "EPICTETUS_GUIDE_PRACTICE:42:1");
             stateType.GetProperty("SextusInstanceId")?.SetValue(review, "SEXTUS_OPPOSED_APPEARANCES:42:1");
             stateType.GetProperty("DescartesInstanceId")?.SetValue(review, "DESCARTES_METHODIC_RECONSTRUCTION:42:2");
+            stateType.GetProperty("AugustineInstanceId")?.SetValue(review, "AUGUSTINE_PROMISE:42:2");
             stateType.GetProperty("GorgiasInstanceId")?.SetValue(review, "GORGIAS_SPEECH_INQUIRY:42:1");
             stateType.GetProperty("PyrrhoInstanceId")?.SetValue(review, "PYRRHO_REPORTED_CROSSING:42:2");
             stateType.GetProperty("QuestionSlotReserved")?.SetValue(review, true);

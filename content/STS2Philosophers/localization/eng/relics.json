@@ -1,4 +1,6 @@
 {
+  "PLATO_CIVIC_SEAL.luther.title": "Care for a Neighbor",
+  "PLATO_CIVIC_SEAL.luther.description": "You helped your companion and switched to Luther's Self and Other. Augustine's first-turn 6 Block or 1 Energy no longer applies. The Civic Seal's base practice remains. Help purchases no salvation and adds no religious score or combat reward.",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "Bank preparation",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.description": "Replaces convention discounts and their enemy Strength cost. Each combat, if your first manual card on turn 1 is a Skill, gain 8 Block at the start of turn 2. A different first card forfeits the benefit. Automatic cards do not count. Counter: 2 waiting, 1 prepared, 0 spent or missed.",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.title": "Evacuation coordination",

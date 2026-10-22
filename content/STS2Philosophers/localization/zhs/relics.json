@@ -1,4 +1,6 @@
 {
+  "PLATO_CIVIC_SEAL.luther.title": "邻人的照料",
+  "PLATO_CIVIC_SEAL.luther.description": "你已实际帮助旅伴，转到路德的「主体与他者」。奥古斯丁每场首回合6格挡或1能量已停用；城邦印章基础实践保留。帮助不兑换得救，也不增加宗教分数或战斗奖励。",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "河岸准备",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.description": "替换原惯例折扣及其敌方力量代价。每场首回合第一张手动牌若为技能，第二回合开始获得8格挡；先打其他牌便失去本场收益。自动牌不占位。计数2待准备、1已准备、0已用或错过。",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.title": "撤离协调",

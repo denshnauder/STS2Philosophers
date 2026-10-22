@@ -9,3 +9,4 @@ await AquinasBridgeNoticeNativeChecks.Run();
 await AnselmUnfinishedProofNativeChecks.Run();
 await OckhamNamesInquiryNativeChecks.Run();
 await MachiavelliFloodPreparationNativeChecks.Run();
+await LutherSignedCareNativeChecks.Run();

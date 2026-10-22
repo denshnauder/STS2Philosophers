@@ -3,7 +3,7 @@
   "name": "STS2 Philosophers",
   "author": "Local Developer",
   "description": "A single-player philosophy route prototype with randomized Eastern and Western thinker invitations, six Eastern relic paths, seven Western entry practices, and relic-gated route events across Acts 1-3.",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "min_game_version": "0.111.0",
   "has_pck": true,
   "has_dll": true,

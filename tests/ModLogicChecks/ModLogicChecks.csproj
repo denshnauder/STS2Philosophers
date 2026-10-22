@@ -61,6 +61,7 @@
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationState.cs" Link="MachiavelliFloodPreparationState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationTriggerPolicy.cs" Link="MachiavelliFloodPreparationTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliCombatPreparationState.cs" Link="MachiavelliCombatPreparationState.cs" />
+    <Compile Include="..\..\src\Philosophy\LutherSignedCareTriggerPolicy.cs" Link="LutherSignedCareTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\LutherSignedCareState.cs" Link="LutherSignedCareState.cs" />
     <Compile Include="..\..\src\Philosophy\OckhamNamesInquiryState.cs" Link="OckhamNamesInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\OckhamNamesInquiryTriggerPolicy.cs" Link="OckhamNamesInquiryTriggerPolicy.cs" />
