@@ -23,6 +23,7 @@ AquinasBridgeNoticeChecks.Run();
 AnselmUnfinishedProofChecks.Run();
 OckhamNamesInquiryChecks.Run();
 MachiavelliFloodPreparationChecks.Run();
+LutherSignedCareChecks.Run();
 PlotinusCombatPracticeChecks.Run();
 EpicurusSharedMarginChecks.Run();
 SextusOpposedAppearancesChecks.Run();

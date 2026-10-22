@@ -104,7 +104,11 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(machiavelli, Plays("SASP", "abcd"), previous, 3) == default,
             "Machiavelli uses the real relic's selected preparation, not an unrelated abstract node reward.");
         covered.Add(machiavelli);
-        Check(covered.Count == 51 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        const string luther = "MARTIN_LUTHER__SELF_AND_OTHER__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(luther, Plays("SASP", "abcd"), previous, 3) == default,
+            "Luther's route switch grants no invented generic combat or faith reward.");
+        covered.Add(luther);
+        Check(covered.Count == 52 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
@@ -136,6 +140,6 @@ internal static class WesternNodePracticeChecks
             "Same-problem node payloads cannot transfer rewards.");
         foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
             Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
-        Console.WriteLine("Western node practice checks passed: all 51 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
+        Console.WriteLine("Western node practice checks passed: all 52 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

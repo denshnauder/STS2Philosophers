@@ -409,6 +409,14 @@
       "stage_id": "CORE",
       "display_name": "马基雅维利",
       "terminal": false
+    },
+    {
+      "node_id": "MARTIN_LUTHER__SELF_AND_OTHER__CORE",
+      "thinker_id": "MARTIN_LUTHER",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "路德",
+      "terminal": false
     }
   ],
   "edges": [
@@ -1835,6 +1843,39 @@
         "evidence_sources": [
           "https://www.gutenberg.org/files/57037/57037-h/57037-h.htm",
           "docs/design/current/west/27马基雅维利当前设计.md"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_047",
+      "from_node_id": "AUGUSTINE_OF_HIPPO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "MARTIN_LUTHER__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "Medium",
+      "relation_summary": "经奥古斯丁传统的重新阐释，从共同体承诺转向信仰自由与自愿服务邻人；不等同现代个人权利",
+      "source": "https://www.gutenberg.org/cache/epub/1911/pg1911-images.html",
+      "required_edge_ids": [
+        "WESTERN_EDGE_019",
+        "WESTERN_EDGE_020"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "TraditionResponse",
+          "ProblemShift"
+        ],
+        "compressed_mediators": "中世纪奥古斯丁传统、修道院与宗教改革语境；不设直接会面。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "记录署名范围和帮助行动，不裁定信仰、救赎或人格；无宗教分数。",
+        "interpretation_boundary": "必须有实际019/020前驱和独立帮助动作；不绕过奥古斯丁，不把拒署本身当转线。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "https://www.gutenberg.org/cache/epub/1911/pg1911-images.html",
+          "docs/design/current/west/28路德当前设计.md"
         ]
       }
     }
