@@ -30,7 +30,7 @@ internal static class RouteEventMapBoundary
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
-        or AquinasBridgeNotice or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare
+        or AquinasBridgeNotice or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
         or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing;
 
@@ -283,6 +283,7 @@ internal static class RouteEventMapBoundary
                 OckhamNamesInquiryPatch.InsertAtBoundaryAsync,
                 MachiavelliFloodPreparationPatch.InsertAtBoundaryAsync,
                 LutherSignedCarePatch.InsertAtBoundaryAsync,
+                BaconSampleLedgerPatch.InsertAtBoundaryAsync,
             ];
             foreach (Func<Task> entry in entries)
             {

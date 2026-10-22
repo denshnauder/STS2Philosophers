@@ -1,4 +1,10 @@
 {
+  "ARISTOTLE_CATEGORY_TABLET.bacon.limited.title": "Limited Report",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.limited.description": "Replaces the Tablet's old cost discount. On each combat's first turn, if the first two manual cards are Attacks, Skills, or Powers of different types, draw 2 after the second resolves. Matching types, other types, or fewer than two grant nothing. Autoplay does not count; once per combat. The report covers only the sampled area and grants no immunity to bias.",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.control.title": "Wait for a Control",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.control.description": "Replaces the Tablet's old cost discount. On each combat's second turn, if the first two manual cards are Attacks, Skills, or Powers of different types, draw 3 after the second resolves. Matching types, other types, or fewer than two grant nothing. Autoplay does not count; once per combat. An ambient-temperature, poor-ore control is recorded; generalization remains deferred.",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.unavailable.title": "Ledger Needs Checking",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.unavailable.description": "Bacon's record is unavailable. The new draw practice is inactive and grants no retroactive benefit. No samples are rewritten and no plan is chosen automatically.",
   "PLATO_CIVIC_SEAL.luther.title": "Care for a Neighbor",
   "PLATO_CIVIC_SEAL.luther.description": "You helped your companion and switched to Luther's Self and Other. Augustine's first-turn 6 Block or 1 Energy no longer applies. The Civic Seal's base practice remains. Help purchases no salvation and adds no religious score or combat reward.",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "Bank preparation",

@@ -58,6 +58,9 @@
     <Compile Include="..\..\src\Philosophy\AquinasBridgeNoticeState.cs" Link="AquinasBridgeNoticeState.cs" />
     <Compile Include="..\..\src\Philosophy\AquinasBridgeNoticeTriggerPolicy.cs" Link="AquinasBridgeNoticeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AquinasCombatPracticeState.cs" Link="AquinasCombatPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\BaconSampleLedgerState.cs" Link="BaconSampleLedgerState.cs" />
+    <Compile Include="..\..\src\Philosophy\BaconSampleLedgerTriggerPolicy.cs" Link="BaconSampleLedgerTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\BaconCombatComparisonState.cs" Link="BaconCombatComparisonState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationState.cs" Link="MachiavelliFloodPreparationState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationTriggerPolicy.cs" Link="MachiavelliFloodPreparationTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliCombatPreparationState.cs" Link="MachiavelliCombatPreparationState.cs" />

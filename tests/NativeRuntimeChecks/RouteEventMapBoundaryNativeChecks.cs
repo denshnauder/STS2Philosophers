@@ -40,7 +40,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
-            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(LutherSignedCare),
+            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(LutherSignedCare), typeof(BaconSampleLedger),
             typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];
@@ -152,7 +152,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type flowType = ModType(eventType.Name + "Flow");
         MethodInfo? create = eventType == typeof(SenecaDailyReview) || eventType == typeof(EpictetusGuidePractice)
             || eventType == typeof(MarcusAureliusCampPractice) || eventType == typeof(PyrrhoReportedCrossing)
-            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) ? null
+            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) || eventType == typeof(BaconSampleLedger) ? null
             : RequiredMethod(stateType, "Create", [typeof(string)]);
         MethodInfo generate = RequiredMethod(eventType, "GenerateOptions", [stateType]);
         PropertyInfo instance = stateType.GetProperty("InstanceId")!;
@@ -161,6 +161,8 @@ internal static class RouteEventMapBoundaryNativeChecks
         PropertyInfo pending = stateType.GetProperty("PendingAction")!;
         object NewState(string id)
         {
+            if (eventType == typeof(BaconSampleLedger))
+                return RequiredMethod(stateType, "Create", [typeof(string), typeof(string)]).Invoke(null, [id, "OCKHAM:NATIVE:2"])!;
             if (create is not null) return create.Invoke(null, [id])!;
             object review = Activator.CreateInstance(stateType, nonPublic: true)!;
             stateType.GetProperty("Version")!.SetValue(review, 1);

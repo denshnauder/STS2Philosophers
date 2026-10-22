@@ -10,3 +10,4 @@ await AnselmUnfinishedProofNativeChecks.Run();
 await OckhamNamesInquiryNativeChecks.Run();
 await MachiavelliFloodPreparationNativeChecks.Run();
 await LutherSignedCareNativeChecks.Run();
+await BaconSampleLedgerNativeChecks.Run();

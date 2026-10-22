@@ -1,4 +1,10 @@
 {
+  "ARISTOTLE_CATEGORY_TABLET.bacon.limited.title": "受限报告",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.limited.description": "替换泥板原有费用折扣。每场首回合前两张手动牌均为攻击、技能或能力且类型不同，第二张结算后抽2张牌。相同类型、其他牌型或不足两张无收益，自动牌不计，每场一次。报告只限已取样区域，不免疫偏差。",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.control.title": "等待对照",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.control.description": "替换泥板原有费用折扣。每场第二回合前两张手动牌均为攻击、技能或能力且类型不同，第二张结算后抽3张牌。相同类型、其他牌型或不足两张无收益，自动牌不计，每场一次。已补常温贫矿对照，推广结论仍暂缓。",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.unavailable.title": "矿账待核对",
+  "ARISTOTLE_CATEGORY_TABLET.bacon.unavailable.description": "培根记录不可用，新抽牌实践停用且不补发。不会据此改写样本或自动选择方案。",
   "PLATO_CIVIC_SEAL.luther.title": "邻人的照料",
   "PLATO_CIVIC_SEAL.luther.description": "你已实际帮助旅伴，转到路德的「主体与他者」。奥古斯丁每场首回合6格挡或1能量已停用；城邦印章基础实践保留。帮助不兑换得救，也不增加宗教分数或战斗奖励。",
   "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "河岸准备",

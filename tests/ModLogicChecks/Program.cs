@@ -22,6 +22,7 @@ AugustinePromiseChecks.Run();
 AquinasBridgeNoticeChecks.Run();
 AnselmUnfinishedProofChecks.Run();
 OckhamNamesInquiryChecks.Run();
+BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();
 LutherSignedCareChecks.Run();
 PlotinusCombatPracticeChecks.Run();

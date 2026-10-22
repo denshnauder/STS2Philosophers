@@ -417,6 +417,14 @@
       "stage_id": "CORE",
       "display_name": "路德",
       "terminal": false
+    },
+    {
+      "node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "FRANCIS_BACON",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "培根：受限取样与比较",
+      "terminal": true
     }
   ],
   "edges": [
@@ -1876,6 +1884,36 @@
         "evidence_sources": [
           "https://www.gutenberg.org/cache/epub/1911/pg1911-images.html",
           "docs/design/current/west/28路德当前设计.md"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_048",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "以培根对词语、范畴与先定结论的文本批评，从语言判断转向取样比较的问题；不声称奥卡姆或亚里士多德直接影响本场景。",
+      "source": "docs/design/current/west/29培根当前设计.md",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "TextualCritique",
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "反例不证明完全免疫偏差，不将自然支配或殖民关系奖励化。",
+        "interpretation_boundary": "仅为具体问题的游戏转译；生产门另校验真实高尔吉亚与奥卡姆实例和Fixed3。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "docs/design/current/west/29培根当前设计.md",
+          "https://history.hanover.edu/texts/bacon/aphor.html"
         ]
       }
     }

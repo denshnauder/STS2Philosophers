@@ -35,6 +35,7 @@ internal sealed class PhilosophyRunState
     public MarcusAureliusCampPracticeState? MarcusAureliusCampPractice { get; set; }
     public PyrrhoReportedCrossingState? PyrrhoReportedCrossing { get; set; }
     public MachiavelliFloodPreparationState? MachiavelliFloodPreparation { get; set; }
+    public BaconSampleLedgerState? BaconSampleLedger { get; set; }
     public LutherSignedCareState? LutherSignedCare { get; set; }
     public OckhamNamesInquiryState? OckhamNamesInquiry { get; set; }
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
@@ -86,6 +87,7 @@ internal sealed class PhilosophyRunState
         || MarcusAureliusCampPractice is not null
         || PyrrhoReportedCrossing is not null
         || MachiavelliFloodPreparation is not null
+        || BaconSampleLedger is not null
         || LutherSignedCare is not null
         || OckhamNamesInquiry is not null
         || AnselmUnfinishedProof is not null
@@ -268,6 +270,7 @@ internal sealed class PhilosophyRunState
         MarcusAureliusCampPractice?.NormalizeAfterLoad();
         PyrrhoReportedCrossing?.NormalizeAfterLoad();
         MachiavelliFloodPreparation?.NormalizeAfterLoad();
+        BaconSampleLedger?.NormalizeAfterLoad();
         LutherSignedCare?.NormalizeAfterLoad();
         OckhamNamesInquiry?.NormalizeAfterLoad();
         AnselmUnfinishedProof?.NormalizeAfterLoad();

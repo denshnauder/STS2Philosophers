@@ -27,6 +27,7 @@ public abstract class WesternPracticeRelic : RelicModel
     protected abstract string ProblemId { get; }
     protected abstract string ResourceName { get; }
     protected virtual bool UseNamedCategory => false;
+    protected virtual bool UseCategoryDiscount => true;
     protected virtual bool UseConventionDiscount => true;
 
     private WesternEntryPracticeState? _practice;
@@ -215,6 +216,7 @@ public abstract class WesternPracticeRelic : RelicModel
     {
         modifiedCost = cost;
         if (card.Owner != Owner || !IsSoleDoctrine
+            || ProblemId == WesternEntryPracticeState.LanguageAndMeaning && !UseCategoryDiscount
             || ProblemId == WesternEntryPracticeState.HistoryAndPower && !UseConventionDiscount) return false;
 
         ResolveTrackedCards();
