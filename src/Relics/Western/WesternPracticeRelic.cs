@@ -27,6 +27,7 @@ public abstract class WesternPracticeRelic : RelicModel
     protected abstract string ProblemId { get; }
     protected abstract string ResourceName { get; }
     protected virtual bool UseNamedCategory => false;
+    protected virtual bool UseConventionDiscount => true;
 
     private WesternEntryPracticeState? _practice;
     private HashSet<object>? _callbacks;
@@ -213,7 +214,8 @@ public abstract class WesternPracticeRelic : RelicModel
         out decimal modifiedCost)
     {
         modifiedCost = cost;
-        if (card.Owner != Owner || !IsSoleDoctrine) return false;
+        if (card.Owner != Owner || !IsSoleDoctrine
+            || ProblemId == WesternEntryPracticeState.HistoryAndPower && !UseConventionDiscount) return false;
 
         ResolveTrackedCards();
         bool trackedPractice = ReferenceEquals(card, _practiceCard);

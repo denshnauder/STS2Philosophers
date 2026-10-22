@@ -13,6 +13,7 @@ internal static class LaterActCandidateIds
     public const string Democritus = "DEMOCRITUS";
     public const string Epicurus = "EPICURUS";
     public const string Plotinus = "PLOTINUS";
+    public const string Machiavelli = "NICCOLO_MACHIAVELLI";
     public const string Aquinas = "THOMAS_AQUINAS";
     public const string Diogenes = "DIOGENES_OF_SINOPE";
     public const string Zeno = "ZENO_OF_CITIUM";
@@ -27,6 +28,7 @@ internal static class RouteRelicIds
     public const string MoziShouChengTu = "MOZI_SHOU_CHENG_TU";
     public const string LaoziWuWeiShuJian = "LAOZI_WU_WEI_SHU_JIAN";
     public const string LaoziShuiYu = "LAOZI_SHUI_YU";
+    public const string RousseauUncarvedStone = "ROUSSEAU_UNCARVED_STONE";
     public const string SocratesQuestionCup = "SOCRATES_QUESTION_CUP";
     public const string HeraclitusLyre = "HERACLITUS_LYRE";
     public const string SocratesBalanceWeight = "SOCRATES_BALANCE_WEIGHT";
@@ -57,6 +59,7 @@ internal static class LaterActRelicEligibilityCatalog
         Register(LaterActCandidateIds.Democritus, ActTwoIndex, RouteRelicIds.HeraclitusLyre),
         Register(LaterActCandidateIds.Epicurus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Plotinus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
+        Register(LaterActCandidateIds.Machiavelli, ActTwoIndex, RouteRelicIds.RousseauUncarvedStone),
         Register(LaterActCandidateIds.Aquinas, ActThreeIndex, RouteRelicIds.PlatoCivicSeal),
         Register(LaterActCandidateIds.Diogenes, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Zeno, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),

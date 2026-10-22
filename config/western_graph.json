@@ -401,6 +401,14 @@
       "stage_id": "CORE",
       "display_name": "波伏瓦",
       "terminal": true
+    },
+    {
+      "node_id": "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+      "thinker_id": "NICCOLO_MACHIAVELLI",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "马基雅维利",
+      "terminal": false
     }
   ],
   "edges": [
@@ -1797,6 +1805,36 @@
           "https://www.newadvent.org/summa/2090.htm",
           "https://www.newadvent.org/summa/2096.htm",
           "docs/design/current/west/25阿奎那当前设计.md"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_046",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "后世读者对读历史形成、政治行动与运势；不主张卢梭影响更早的马基雅维利",
+      "source": "https://www.gutenberg.org/files/57037/57037-h/57037-h.htm",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ParallelComparison",
+          "ProblemShift"
+        ],
+        "compressed_mediators": "读者比较《论不平等》与《君主论》的不同历史问题，不构造历史师承或直接会面。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "准备与效果不保证道德正当；不奖励伤害群体或把灾害责任归给受害者。",
+        "interpretation_boundary": "第二幕历史固定与制度017问号分开；046与040竞争同一Fixed，不满足017/018。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "https://www.gutenberg.org/files/57037/57037-h/57037-h.htm",
+          "docs/design/current/west/27马基雅维利当前设计.md"
         ]
       }
     }

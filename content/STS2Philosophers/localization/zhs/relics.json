@@ -1,4 +1,10 @@
 {
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "河岸准备",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.description": "替换原惯例折扣及其敌方力量代价。每场首回合第一张手动牌若为技能，第二回合开始获得8格挡；先打其他牌便失去本场收益。自动牌不占位。计数2待准备、1已准备、0已用或错过。",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.title": "撤离协调",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.description": "替换原惯例折扣及其敌方力量代价。每场首回合第一张手动牌若为攻击，第二回合开始获得2能量；先打其他牌便失去本场收益。自动牌不占位。计数2待准备、1已准备、0已用或错过。",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.unavailable.title": "准备中断",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.unavailable.description": "本场准备记录无法确认，准备收益暂停。",
   "ARISTOTLE_CATEGORY_TABLET.ockham.title": "核实名单",
   "ARISTOTLE_CATEGORY_TABLET.ockham.description": "替换泥板原有费用档位规则。每回合首张手动非X攻击、技能或能力牌确定一个牌名，接着两张手动同模型非X牌费用减2，最低0。首张零费时本回合无折扣；其他牌名不匹配。",
   "HERACLITUS_LYRE.title": "琴弓",

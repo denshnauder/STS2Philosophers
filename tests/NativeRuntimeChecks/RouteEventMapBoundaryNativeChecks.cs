@@ -40,7 +40,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
-            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry),
+            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation),
             typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];

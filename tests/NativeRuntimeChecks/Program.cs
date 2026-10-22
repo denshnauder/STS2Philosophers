@@ -8,3 +8,4 @@ await AugustinePromiseNativeChecks.Run();
 await AquinasBridgeNoticeNativeChecks.Run();
 await AnselmUnfinishedProofNativeChecks.Run();
 await OckhamNamesInquiryNativeChecks.Run();
+await MachiavelliFloodPreparationNativeChecks.Run();

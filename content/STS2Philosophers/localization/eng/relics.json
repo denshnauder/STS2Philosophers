@@ -1,4 +1,10 @@
 {
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.title": "Bank preparation",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.bank.description": "Replaces convention discounts and their enemy Strength cost. Each combat, if your first manual card on turn 1 is a Skill, gain 8 Block at the start of turn 2. A different first card forfeits the benefit. Automatic cards do not count. Counter: 2 waiting, 1 prepared, 0 spent or missed.",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.title": "Evacuation coordination",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.coordination.description": "Replaces convention discounts and their enemy Strength cost. Each combat, if your first manual card on turn 1 is an Attack, gain 2 Energy at the start of turn 2. A different first card forfeits the benefit. Automatic cards do not count. Counter: 2 waiting, 1 prepared, 0 spent or missed.",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.unavailable.title": "Preparation interrupted",
+  "ROUSSEAU_UNCARVED_STONE.machiavelli.unavailable.description": "This combat’s preparation cannot be confirmed. Its benefit is suspended.",
   "ARISTOTLE_CATEGORY_TABLET.ockham.title": "Verified list",
   "ARISTOTLE_CATEGORY_TABLET.ockham.description": "Replaces the tablet’s printed cost-category rule. Each turn, the first manual non-X Attack, Skill or Power names a card model. The next 2 manually played non-X cards of that model cost 2 less (minimum 0). A zero-cost first card gives no discount this turn. Other names do not qualify.",
   "HERACLITUS_LYRE.title": "Lyre and Bow",
