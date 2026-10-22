@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
@@ -77,6 +78,10 @@ internal static class AugustinePromiseNativeChecks
             await fixture.Relic.AfterPlayerTurnStartLate(null!, fixture.Player);
             Check(fixture.Player.Creature.Block == 6,
                 "Reloaded first-turn receipt cannot grant the public reward twice.");
+            var separateRelic = (PlatoCivicSeal)ModelDb.GetById<RelicModel>(
+                ModelDb.GetId<PlatoCivicSeal>()).ToMutable();
+            Check(separateRelic.AugustinePracticePayload == string.Empty,
+                "Separate civic relics cannot share mutable Augustine combat receipts through the canonical model.");
 
             object privateJourney = graphType.GetMethod("Start")!.Invoke(graph,
                 ["PLATO__FREEDOM_AND_INSTITUTIONS__CORE"])!;

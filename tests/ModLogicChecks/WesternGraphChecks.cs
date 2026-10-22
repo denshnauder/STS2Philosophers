@@ -11,8 +11,8 @@ internal static class WesternGraphChecks
             if (!condition) throw new InvalidOperationException(message);
         }
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        Check(graph.Samples.Count == 13 && graph.ExecutableSamples.Count() == 9,
-            "Preserve twelve source sequences and the Plotinus continuation; withdrawn paths stay non-executable.");
+        Check(graph.Samples.Count == 14 && graph.ExecutableSamples.Count() == 10,
+            "Preserve twelve source sequences and the Plotinus/Aquinas continuations; withdrawn paths stay non-executable.");
         foreach (WesternGraphSample sample in graph.ExecutableSamples)
         {
             WesternJourneyState state = graph.Start(sample.EntryNodeId);

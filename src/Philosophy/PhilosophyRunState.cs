@@ -22,6 +22,7 @@ internal sealed class PhilosophyRunState
     public AnaximanderOriginInquiryState? AnaximanderOriginInquiry { get; set; }
     public AnaximenesBreathInvitationState? AnaximenesBreathInvitation { get; set; }
     public AristotleCivicInquiryState? AristotleCivicInquiry { get; set; }
+    public AquinasBridgeNoticeState? AquinasBridgeNotice { get; set; }
     public DemocritusArrangementState? DemocritusArrangement { get; set; }
     public EmpedoclesRootsInquiryState? EmpedoclesRootsInquiry { get; set; }
     public AnaxagorasMixtureInquiryState? AnaxagorasMixtureInquiry { get; set; }
@@ -69,6 +70,7 @@ internal sealed class PhilosophyRunState
         || AnaximanderOriginInquiry is not null
         || AnaximenesBreathInvitation is not null
         || AristotleCivicInquiry is not null
+        || AquinasBridgeNotice is not null
         || DemocritusArrangement is not null
         || EmpedoclesRootsInquiry is not null
         || AnaxagorasMixtureInquiry is not null
@@ -248,6 +250,7 @@ internal sealed class PhilosophyRunState
         AnaximanderOriginInquiry?.NormalizeAfterLoad();
         AnaximenesBreathInvitation?.NormalizeAfterLoad();
         AristotleCivicInquiry?.NormalizeAfterLoad();
+        AquinasBridgeNotice?.NormalizeAfterLoad();
         DemocritusArrangement?.NormalizeAfterLoad();
         EmpedoclesRootsInquiry?.NormalizeAfterLoad();
         AnaxagorasMixtureInquiry?.NormalizeAfterLoad();

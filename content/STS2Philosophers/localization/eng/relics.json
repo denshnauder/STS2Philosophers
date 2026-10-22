@@ -87,5 +87,9 @@
   "SOCRATES_QUESTION_CUP.anselm.revised.title": "Unfinished Draft",
   "SOCRATES_QUESTION_CUP.anselm.revised.description": "Your revised draft grants 6 Block on the first turn of each later combat.",
   "SOCRATES_QUESTION_CUP.anselm.withdrawn.title": "Recorded Withdrawal",
-  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "Your withdrawal grants 8 Block on the second turn of each later combat."
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "Your withdrawal grants 8 Block on the second turn of each later combat.",
+  "PLATO_CIVIC_SEAL.aquinas.published.title": "Published Revision",
+  "PLATO_CIVIC_SEAL.aquinas.published.description": "If your first manually played card each combat is a Skill, gain 5 Block after it resolves. Another card type spends the chance.",
+  "PLATO_CIVIC_SEAL.aquinas.emergency.title": "Narrow Exception",
+  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "If your first manually played card each combat is an Attack, gain 1 Energy after it resolves. Another card type spends the chance."
 }

@@ -30,6 +30,7 @@ internal static class RouteEventMapBoundary
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
+        or AquinasBridgeNotice
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
         or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing;
 
@@ -269,6 +270,7 @@ internal static class RouteEventMapBoundary
                 AnaximenesBreathInvitationPatch.InsertAtBoundaryAsync,
                 AugustinePromisePatch.InsertAtBoundaryAsync,
                 AristotleCivicInquiryPatch.InsertAtBoundaryAsync,
+                AquinasBridgeNoticePatch.InsertAtBoundaryAsync,
                 DemocritusArrangementPatch.InsertAtBoundaryAsync,
                 EmpedoclesRootsInquiryPatch.InsertAtBoundaryAsync,
                 AnaxagorasMixtureInquiryPatch.InsertAtBoundaryAsync,

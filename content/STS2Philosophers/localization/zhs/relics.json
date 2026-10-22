@@ -87,5 +87,9 @@
   "SOCRATES_QUESTION_CUP.anselm.revised.title": "未完草稿",
   "SOCRATES_QUESTION_CUP.anselm.revised.description": "修订草稿使以后每场战斗首回合额外获得 6 格挡。",
   "SOCRATES_QUESTION_CUP.anselm.withdrawn.title": "有记录的撤回",
-  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "撤回记录使以后每场战斗第二回合额外获得 8 格挡。"
+  "SOCRATES_QUESTION_CUP.anselm.withdrawn.description": "撤回记录使以后每场战斗第二回合额外获得 8 格挡。",
+  "PLATO_CIVIC_SEAL.aquinas.published.title": "公开修订",
+  "PLATO_CIVIC_SEAL.aquinas.published.description": "每场战斗第一张手动牌若为技能，结算后获得5格挡；其他牌型会用掉本场机会。",
+  "PLATO_CIVIC_SEAL.aquinas.emergency.title": "狭窄例外",
+  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "每场战斗第一张手动牌若为攻击，结算后获得1能量；其他牌型会用掉本场机会。"
 }

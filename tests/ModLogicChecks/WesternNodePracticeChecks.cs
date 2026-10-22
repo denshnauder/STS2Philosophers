@@ -96,7 +96,11 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(questionOnlyNode, Plays("ASA", "abc"), previous, 3) == default,
             "Anaximander's question-only node must grant no combat reward.");
         covered.Add(questionOnlyNode);
-        Check(covered.Count == 49 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        const string aquinas = "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(aquinas, Plays("SASP", "abcd"), previous, 3) == default,
+            "Aquinas's event-selected first-card practice must not inherit the unrelated language exercise.");
+        covered.Add(aquinas);
+        Check(covered.Count == 50 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
@@ -128,6 +132,6 @@ internal static class WesternNodePracticeChecks
             "Same-problem node payloads cannot transfer rewards.");
         foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
             Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
-        Console.WriteLine("Western node practice checks passed: all 49 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
+        Console.WriteLine("Western node practice checks passed: all 50 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

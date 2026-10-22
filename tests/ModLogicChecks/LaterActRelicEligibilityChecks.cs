@@ -17,7 +17,7 @@ internal static class LaterActRelicEligibilityChecks
     {
         LaterActRelicEligibilityRegistration[] entries =
             LaterActRelicEligibilityCatalog.Registrations.ToArray();
-        Assert(entries.Length == 14
+        Assert(entries.Length == 15
                && entries.All(entry => !string.IsNullOrWhiteSpace(entry.CandidateId)
                    && entry.CurrentActIndex is LaterActRelicEligibilityCatalog.ActTwoIndex
                        or LaterActRelicEligibilityCatalog.ActThreeIndex
@@ -106,6 +106,7 @@ internal static class LaterActRelicEligibilityChecks
                      "DescartesMethodicReconstructionPatch.cs",
                      "EpicurusSharedMarginPatch.cs",
                      "PlotinusCommonGroundPatch.cs",
+                     "AquinasBridgeNoticePatch.cs",
                      "HanFeiPublicStandardPatch.cs",
                  })
         {

@@ -179,6 +179,14 @@
       "terminal": false
     },
     {
+      "node_id": "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "THOMAS_AQUINAS",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "阿奎那",
+      "terminal": true
+    },
+    {
       "node_id": "NICCOLO_MACHIAVELLI__FREEDOM_AND_INSTITUTIONS__CORE",
       "thinker_id": "NICCOLO_MACHIAVELLI",
       "problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -1763,6 +1771,34 @@
           "docs/design/current/west/22普罗提诺当前设计.md"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_045",
+      "from_node_id": "ARISTOTLE__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "经翻译注释网络重构亚里士多德政治思想；从具体共同体转向法律的理性、共同善、权限与公布",
+      "source": "https://www.newadvent.org/summa/2090.htm",
+      "required_edge_ids": ["WESTERN_EDGE_016"],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": ["InheritanceAndRevision", "TextualCritique"],
+        "compressed_mediators": "晚期古代与中世纪阿拉伯语、希伯来语、拉丁语翻译及注释网络；不设历史人物直接会面。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "只记录公布、权限及具体例外的行动；不由程序判定法律、人格或信仰的终极正当性。",
+        "interpretation_boundary": "第三幕制度固定分支不替代第二幕语言029；已完成017的局保留霍布斯018所需机会。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "https://www.newadvent.org/summa/2090.htm",
+          "https://www.newadvent.org/summa/2096.htm",
+          "docs/design/current/west/25阿奎那当前设计.md"
+        ]
+      }
     }
   ],
   "samples": [
@@ -1814,6 +1850,14 @@
         "WESTERN_EDGE_044"
       ],
       "terminal_node_id": "PLOTINUS__VIRTUE_AND_HAPPINESS__CORE",
+      "disposition": "Executable",
+      "review_note": ""
+    },
+    {
+      "sample_id": "SAMPLE_14",
+      "entry_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "edge_ids": ["WESTERN_EDGE_016", "WESTERN_EDGE_045"],
+      "terminal_node_id": "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE",
       "disposition": "Executable",
       "review_note": ""
     },
