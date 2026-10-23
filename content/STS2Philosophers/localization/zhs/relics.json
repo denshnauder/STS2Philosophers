@@ -107,5 +107,11 @@
   "PLATO_CIVIC_SEAL.aquinas.published.title": "公开修订",
   "PLATO_CIVIC_SEAL.aquinas.published.description": "每场战斗第一张手动牌若为技能，结算后获得5格挡；其他牌型会用掉本场机会。",
   "PLATO_CIVIC_SEAL.aquinas.emergency.title": "狭窄例外",
-  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "每场战斗第一张手动牌若为攻击，结算后获得1能量；其他牌型会用掉本场机会。"
+  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "每场战斗第一张手动牌若为攻击，结算后获得1能量；其他牌型会用掉本场机会。",
+  "PLATO_CIVIC_SEAL.zeno.public.title": "公开的规则",
+  "PLATO_CIVIC_SEAL.zeno.public.description": "每回合首次手动沿用已立规则的牌结算后，获得3格挡。立规则的第一张牌不计；原有费用规则保留。",
+  "PLATO_CIVIC_SEAL.zeno.conditional.title": "可申诉的例外",
+  "PLATO_CIVIC_SEAL.zeno.conditional.description": "每回合首次手动打出异类牌后，抽1张。立规则的第一张牌不计；原有异类加费保留。",
+  "PLATO_CIVIC_SEAL.zeno.unavailable.title": "印章改良待恢复",
+  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "无法确认已保存的印章改良。其记录已保留，暂不触发改良效果；原有费用规则保留。"
 }
