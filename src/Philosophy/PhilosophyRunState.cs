@@ -35,6 +35,7 @@ internal sealed class PhilosophyRunState
     public MarcusAureliusCampPracticeState? MarcusAureliusCampPractice { get; set; }
     public PyrrhoReportedCrossingState? PyrrhoReportedCrossing { get; set; }
     public MachiavelliFloodPreparationState? MachiavelliFloodPreparation { get; set; }
+    public GalileoMeasuredPracticeState? GalileoMeasuredPractice { get; set; }
     public CopernicusShiftedCenterState? CopernicusShiftedCenter { get; set; }
     public BaconSampleLedgerState? BaconSampleLedger { get; set; }
     public LutherSignedCareState? LutherSignedCare { get; set; }
@@ -88,6 +89,7 @@ internal sealed class PhilosophyRunState
         || MarcusAureliusCampPractice is not null
         || PyrrhoReportedCrossing is not null
         || MachiavelliFloodPreparation is not null
+        || GalileoMeasuredPractice is not null
         || CopernicusShiftedCenter is not null
         || BaconSampleLedger is not null
         || LutherSignedCare is not null
@@ -272,6 +274,7 @@ internal sealed class PhilosophyRunState
         MarcusAureliusCampPractice?.NormalizeAfterLoad();
         PyrrhoReportedCrossing?.NormalizeAfterLoad();
         MachiavelliFloodPreparation?.NormalizeAfterLoad();
+        GalileoMeasuredPractice?.NormalizeAfterLoad();
         CopernicusShiftedCenter?.NormalizeAfterLoad();
         BaconSampleLedger?.NormalizeAfterLoad();
         LutherSignedCare?.NormalizeAfterLoad();

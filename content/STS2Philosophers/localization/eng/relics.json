@@ -113,5 +113,11 @@
   "PLATO_CIVIC_SEAL.zeno.conditional.title": "An Appealable Exception",
   "PLATO_CIVIC_SEAL.zeno.conditional.description": "After the first manual card each turn of the other type, draw 1 card. The card establishing the rule does not count; its existing cost increase remains.",
   "PLATO_CIVIC_SEAL.zeno.unavailable.title": "Seal Improvement Unconfirmed",
-  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "The saved improvement could not be confirmed. Its record is preserved and its effect is inactive; existing cost rules remain."
+  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "The saved improvement could not be confirmed. Its record is preserved and its effect is inactive; existing cost rules remain.",
+  "HERACLITUS_LYRE.galileo.title": "Repeat Under the Same Conditions",
+  "HERACLITUS_LYRE.galileo.description": "The lyre’s change is saved. Its original draw 1 per release is replaced by one draw 3 per combat: match the model and actual positive Energy spent by the combat’s first manually played non-X Attack or Skill, then complete a marked release into Exhaust on a later turn. Marking, Retain and the opposing-type preparation still apply.",
+  "HERACLITUS_LYRE.galileo.unavailable": "The measurement payload cannot be verified. Repeated-measurement draws are suspended; the original release draw is not restored.",
+  "HERACLITUS_LYRE.galileo.sample.title": "This Combat’s Reference Sample",
+  "HERACLITUS_LYRE.galileo.sample.pending": "The reference card below actually spent {Energy} Energy on turn {Turn}. On a later turn, release a marked card of that model with the same payment into Exhaust to draw 3, once this combat.",
+  "HERACLITUS_LYRE.galileo.sample.claimed": "The sample spent {Energy} Energy on turn {Turn}. This combat’s draw 3 has been claimed. The original release draw 1 does not return."
 }

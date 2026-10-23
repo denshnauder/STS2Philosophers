@@ -113,5 +113,11 @@
   "PLATO_CIVIC_SEAL.zeno.conditional.title": "可申诉的例外",
   "PLATO_CIVIC_SEAL.zeno.conditional.description": "每回合首次手动打出异类牌后，抽1张。立规则的第一张牌不计；原有异类加费保留。",
   "PLATO_CIVIC_SEAL.zeno.unavailable.title": "印章改良待恢复",
-  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "无法确认已保存的印章改良。其记录已保留，暂不触发改良效果；原有费用规则保留。"
+  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "无法确认已保存的印章改良。其记录已保留，暂不触发改良效果；原有费用规则保留。",
+  "HERACLITUS_LYRE.galileo.title": "同条件复测",
+  "HERACLITUS_LYRE.galileo.description": "竖琴改良已保存：取消原每回合松弦抽1；按本场首张实际正付费非X手动攻击或技能定样，在之后回合以同模型、相同实际支付完成真正松弦消耗时抽3，本场一次。追踪、保留与异类准备条件仍在。",
+  "HERACLITUS_LYRE.galileo.unavailable": "复测载荷无法核验，本局不发放复测抽牌；原松弦抽1不恢复。",
+  "HERACLITUS_LYRE.galileo.sample.title": "本场复测样本",
+  "HERACLITUS_LYRE.galileo.sample.pending": "下方样本牌在第{Turn}回合实际支付{Energy}能量。之后回合用同模型、同实际支付的追踪牌真正松弦消耗，可抽3，本场一次。",
+  "HERACLITUS_LYRE.galileo.sample.claimed": "样本在第{Turn}回合实际支付{Energy}能量；本场复测抽3已领取，不再恢复原松弦抽1。"
 }

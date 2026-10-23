@@ -7,6 +7,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/augustine_promise.png",
 	"res://images/events/bacon_sample_ledger.png",
 	"res://images/events/copernicus_shifted_center.png",
+	"res://images/events/galileo_measured_practice.png",
 	"res://images/events/diogenes_stay_switch.png",
 	"res://images/events/luther_signed_care.png",
 	"res://images/events/machiavelli_flood_preparation.png",

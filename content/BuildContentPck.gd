@@ -219,7 +219,7 @@ func _initialize() -> void:
 	for name in [
 		"anaximenes_breath_invitation", "anselm_unfinished_proof", "aquinas_bridge_notice",
 		"augustine_promise", "diogenes_stay_switch", "luther_signed_care",
-		"bacon_sample_ledger", "copernicus_shifted_center",
+		"bacon_sample_ledger", "copernicus_shifted_center", "galileo_measured_practice",
 		"machiavelli_flood_preparation", "ockham_names_inquiry", "plotinus_common_ground",
 		"zeno_civic_challenge",
 	]:

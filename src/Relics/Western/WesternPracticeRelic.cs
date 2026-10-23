@@ -241,6 +241,10 @@ public abstract class WesternPracticeRelic : RelicModel
         return change.Effect != WesternEntryCostEffect.None && modifiedCost != cost;
     }
 
+    // Called only for the exact manually played tracked card and actual Exhaust result.
+    protected virtual Task ResolveFlowRelease(PlayerChoiceContext context, CardPlay play) =>
+        CardPileCmd.Draw(context, 1m, Owner);
+
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (cardPlay.Player != Owner || !IsSoleDoctrine || Owner.PlayerCombatState is not { } state)
@@ -296,7 +300,7 @@ public abstract class WesternPracticeRelic : RelicModel
         if (resolution.DrawOne && flowReleasePrepared)
         {
             Flash();
-            await CardPileCmd.Draw(choiceContext, 1m, Owner);
+            await ResolveFlowRelease(choiceContext, cardPlay);
         }
 
         if (resolution.ApplyEnemyStrength && Owner.Creature.CombatState is { } combatState)

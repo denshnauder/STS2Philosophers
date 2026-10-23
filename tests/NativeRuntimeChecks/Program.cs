@@ -6,6 +6,11 @@ if (portraitsMode >= 0)
     EventPortraitNativeChecks.Run(args[1]);
     return;
 }
+if (args.Contains("--galileo-only"))
+{
+    await GalileoMeasuredPracticeNativeChecks.Run();
+    return;
+}
 if (args.Contains("--copernicus-only"))
 {
     await CopernicusShiftedCenterNativeChecks.Run();
@@ -36,5 +41,6 @@ await MachiavelliFloodPreparationNativeChecks.Run();
 await LutherSignedCareNativeChecks.Run();
 await BaconSampleLedgerNativeChecks.Run();
 await CopernicusShiftedCenterNativeChecks.Run();
+await GalileoMeasuredPracticeNativeChecks.Run();
 await NativeQuestionNodeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();

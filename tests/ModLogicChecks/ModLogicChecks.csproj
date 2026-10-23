@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Philosophy\GalileoMeasuredPracticeState.cs" Link="GalileoMeasuredPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\GalileoRepeatedPaymentState.cs" Link="GalileoRepeatedPaymentState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementState.cs" Link="DemocritusArrangementState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementTriggerPolicy.cs" Link="DemocritusArrangementTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\EmpedoclesRootsInquiryState.cs" Link="EmpedoclesRootsInquiryState.cs" />
