@@ -14,6 +14,8 @@ internal static class AnaxagorasMixtureInquiryPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
         WesternJourneyState? journey = shared.WesternJourney;
         AnaxagorasMixtureInquiryState? saved = shared.AnaxagorasMixtureInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         AnaxagorasMixtureInquiry? canonical = TryGetCanonicalEvent();
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         bool priorClosed = shared.DemocritusArrangement is { Closed: true } prior
@@ -36,12 +38,6 @@ internal static class AnaxagorasMixtureInquiryPatch
             canonical is not null);
         if (!AnaxagorasMixtureInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !graph.TryReserveQuestion(journey, 2)) return;
-            shared.AnaxagorasMixtureInquiry = AnaxagorasMixtureInquiryState.Create(
-                $"ANAXAGORAS_MIXTURE_INQUIRY:{run.Rng.Seed}:2");
-        }
         if (shared.AnaxagorasMixtureInquiry is not { } active || journey is null
             || !AnaxagorasMixtureInquiryFlow.IsJourneyConsistent(active, journey))
             throw new InvalidDataException("The Anaxagoras boundary conflicts with its route.");

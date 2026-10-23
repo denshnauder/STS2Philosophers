@@ -16,6 +16,8 @@ internal static class AnselmUnfinishedProofPatch
         WesternJourneyState? journey = shared.WesternJourney;
         PyrrhoReportedCrossingState? pyrrho = shared.PyrrhoReportedCrossing;
         AnselmUnfinishedProofState? saved = shared.AnselmUnfinishedProof;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         AnselmUnfinishedProof? canonical = TryGetCanonicalEvent();
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
@@ -49,9 +51,6 @@ internal static class AnselmUnfinishedProofPatch
             canonical is not null);
         if (!AnselmUnfinishedProofTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-            shared.AnselmUnfinishedProof = AnselmUnfinishedProofState.Create(
-                $"ANSELM_UNFINISHED_PROOF:{run.Rng.Seed}:3", pyrrho!.InstanceId);
 
         Log.Info("[STS2Philosophers] Presenting Anselm's third-act textual inquiry.");
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);

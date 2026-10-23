@@ -17,6 +17,8 @@ internal static class PyrrhoReportedCrossingPatch
         SextusOpposedAppearancesState? sextus = shared.SextusOpposedAppearances;
         DescartesMethodicReconstructionState? descartes = shared.DescartesMethodicReconstruction;
         PyrrhoReportedCrossingState? saved = shared.PyrrhoReportedCrossing;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         PyrrhoReportedCrossing? canonical = TryGetCanonicalEvent();
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         PyrrhoReportedCrossingTriggerContext context = new(
@@ -41,12 +43,6 @@ internal static class PyrrhoReportedCrossingPatch
         if (journey is null || sextus is null || descartes is null
             || !sextus.IsUsable() || !descartes.IsUsable()) return;
 
-        if (saved is null)
-        {
-            if (!WesternRouteGraph.LoadEmbedded().TryReserveQuestion(journey, PyrrhoReportedCrossingState.QuestionAct)) return;
-            shared.PyrrhoReportedCrossing = PyrrhoReportedCrossingState.Create(
-                $"PYRRHO_REPORTED_CROSSING:{run.Rng.Seed}:{PyrrhoReportedCrossingState.QuestionAct}", sextus, descartes);
-        }
         if (shared.PyrrhoReportedCrossing is not { } active
             || !PyrrhoReportedCrossingFlow.IsRouteConsistent(active, journey, sextus, descartes))
             throw new InvalidDataException("The Pyrrho question conflicts with its saved knowledge route.");

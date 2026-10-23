@@ -16,6 +16,8 @@ internal static class OckhamNamesInquiryPatch
         WesternJourneyState? journey = shared.WesternJourney;
         GorgiasSpeechInquiryState? gorgias = shared.GorgiasSpeechInquiry;
         OckhamNamesInquiryState? saved = shared.OckhamNamesInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         OckhamNamesInquiry? canonical = TryGetCanonicalEvent();
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
@@ -44,9 +46,6 @@ internal static class OckhamNamesInquiryPatch
             canonical is not null);
         if (!OckhamNamesInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-            shared.OckhamNamesInquiry = OckhamNamesInquiryState.Create(
-                $"OCKHAM_NAMES_INQUIRY:{run.Rng.Seed}:2", gorgias!.InstanceId);
 
         Log.Info("[STS2Philosophers] Presenting Ockham's second-act language critique.");
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);

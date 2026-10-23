@@ -18,6 +18,8 @@ internal static class SextusOpposedAppearancesPatch
         WesternJourneyState? journey = philosophy.WesternJourney;
         SextusOpposedAppearances? canonical = TryGetCanonicalEvent();
         SextusOpposedAppearancesState? saved = philosophy.SextusOpposedAppearances;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         var currentMapPoint = run.CurrentMapCoord is not null ? run.CurrentMapPoint : null;
@@ -39,12 +41,6 @@ internal static class SextusOpposedAppearancesPatch
             canonical is not null);
         if (!SextusOpposedAppearancesTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !WesternRouteGraph.LoadEmbedded().TryReserveQuestion(journey, 1)) return;
-            philosophy.SextusOpposedAppearances = SextusOpposedAppearancesState.Create(
-                $"SEXTUS_OPPOSED_APPEARANCES:{run.Rng.Seed}:1");
-        }
 
         Log.Info("[STS2Philosophers] Presenting Sextus's opposed appearances at a natural map fork.");
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);

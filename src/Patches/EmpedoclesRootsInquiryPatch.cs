@@ -14,6 +14,8 @@ internal static class EmpedoclesRootsInquiryPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
         WesternJourneyState? journey = shared.WesternJourney;
         EmpedoclesRootsInquiryState? saved = shared.EmpedoclesRootsInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         EmpedoclesRootsInquiry? canonical = TryGetCanonicalEvent();
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         bool priorClosed = shared.DemocritusArrangement is { Closed: true } prior
@@ -37,12 +39,6 @@ internal static class EmpedoclesRootsInquiryPatch
             canonical is not null);
         if (!EmpedoclesRootsInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !graph.TryReserveQuestion(journey, 2)) return;
-            shared.EmpedoclesRootsInquiry = EmpedoclesRootsInquiryState.Create(
-                $"EMPEDOCLES_ROOTS_INQUIRY:{run.Rng.Seed}:2");
-        }
         if (shared.EmpedoclesRootsInquiry is not { } active || journey is null
             || !EmpedoclesRootsInquiryFlow.IsJourneyConsistent(active, journey, graph))
             throw new InvalidDataException("The Empedocles boundary conflicts with its route.");

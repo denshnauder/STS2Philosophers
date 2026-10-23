@@ -18,6 +18,8 @@ internal static class ParmenidesInquiryPatch
         WesternJourneyState? journey = philosophy.WesternJourney;
         ParmenidesInquiry? canonical = TryGetCanonicalEvent();
         ParmenidesInquiryState? saved = philosophy.ParmenidesInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         ParmenidesInquiryTriggerContext context = new(
@@ -36,12 +38,6 @@ internal static class ParmenidesInquiryPatch
             canonical is not null);
         if (!ParmenidesInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !WesternRouteGraph.LoadEmbedded().TryReserveQuestion(journey, 1)) return;
-            philosophy.ParmenidesInquiry = ParmenidesInquiryState.Create(
-                $"PARMENIDES_INQUIRY:{run.Rng.Seed}:1");
-        }
 
         Log.Info("[STS2Philosophers] Presenting Parmenides inquiry after combat.");
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);

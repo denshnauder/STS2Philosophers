@@ -16,6 +16,8 @@ internal static class LutherSignedCarePatch
         var journey = shared.WesternJourney;
         var predecessor = shared.AugustinePromise;
         var saved = shared.LutherSignedCare;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         LutherSignedCare? canonical;
         try { canonical = ModelDb.Event<LutherSignedCare>(); }
         catch (Exception exception) { Log.Error($"[STS2Philosophers] Luther event unavailable: {exception}"); return; }
@@ -34,8 +36,7 @@ internal static class LutherSignedCarePatch
             saved is not null && journey is not null && predecessor is not null
                 && LutherSignedCareFlow.IsRouteConsistent(saved, journey, predecessor), canonical is not null);
         if (!LutherSignedCareTriggerPolicy.ShouldInsert(context)) return;
-        if (saved is null) shared.LutherSignedCare = LutherSignedCareState.Create(
-            $"LUTHER_SIGNED_CARE:{run.Rng.Seed}:2", predecessor!.InstanceId);
+
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
     }
 }

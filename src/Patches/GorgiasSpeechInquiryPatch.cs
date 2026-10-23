@@ -14,6 +14,8 @@ internal static class GorgiasSpeechInquiryPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
         WesternJourneyState? journey = shared.WesternJourney;
         GorgiasSpeechInquiryState? saved = shared.GorgiasSpeechInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         GorgiasSpeechInquiry? canonical = TryGetCanonicalEvent();
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
@@ -33,12 +35,6 @@ internal static class GorgiasSpeechInquiryPatch
             canonical is not null);
         if (!GorgiasSpeechInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !WesternRouteGraph.LoadEmbedded().TryReserveQuestion(journey, 1)) return;
-            shared.GorgiasSpeechInquiry = GorgiasSpeechInquiryState.Create(
-                $"GORGIAS_SPEECH_INQUIRY:{run.Rng.Seed}:1");
-        }
         if (shared.GorgiasSpeechInquiry is not { } active || journey is null
             || !GorgiasSpeechInquiryFlow.IsJourneyConsistent(active, journey))
             throw new InvalidDataException("The Gorgias boundary conflicts with its route.");

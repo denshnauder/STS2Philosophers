@@ -22,6 +22,8 @@ internal static class ProtagorasSharedDeliberationPatch
         ProtagorasSharedDeliberation? canonical = TryGetCanonicalEvent();
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         ProtagorasSharedDeliberationState? saved = philosophy.ProtagorasSharedDeliberation;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         ProtagorasSharedDeliberationTriggerContext context = new(
             manager.IsInProgress,
             RouteEventMapBoundary.IsSafe(run),
@@ -41,12 +43,6 @@ internal static class ProtagorasSharedDeliberationPatch
             return;
         }
 
-        if (saved is null)
-        {
-            philosophy.ProtagorasSharedDeliberation =
-                ProtagorasSharedDeliberationState.Create(
-                    $"PROTAGORAS_SHARED_DELIBERATION:{run.Rng.Seed}:1");
-        }
 
         Log.Info(
             "[STS2Philosophers] Presenting the first-act Protagoras shared deliberation after a completed combat.");

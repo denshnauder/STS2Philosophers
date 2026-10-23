@@ -18,6 +18,8 @@ internal static class AnaximanderOriginInquiryPatch
         WesternJourneyState? journey = philosophy.WesternJourney;
         AnaximanderOriginInquiry? canonical = TryGetCanonicalEvent();
         AnaximanderOriginInquiryState? saved = philosophy.AnaximanderOriginInquiry;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
@@ -41,13 +43,6 @@ internal static class AnaximanderOriginInquiryPatch
             canonical is not null);
         if (!AnaximanderOriginInquiryTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !graph.TryDecline(journey, "Fixed", 2)
-                || !graph.TryReserveQuestion(journey, 2)) return;
-            philosophy.AnaximanderOriginInquiry = AnaximanderOriginInquiryState.Create(
-                $"ANAXIMANDER_ORIGIN_INQUIRY:{run.Rng.Seed}:2");
-        }
 
         Log.Info("[STS2Philosophers] Presenting Anaximander origin inquiry after combat.");
         await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);

@@ -16,6 +16,8 @@ internal static class ZenoCivicChallengePatch
 
         WesternJourneyState? journey = shared.WesternJourney;
         ZenoCivicChallengeState? saved = shared.ZenoCivicChallenge;
+        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
+        if (saved is null) return;
         ZenoCivicChallenge? canonical = TryGetCanonicalEvent();
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
@@ -43,13 +45,6 @@ internal static class ZenoCivicChallengePatch
             canonical is not null);
         if (!ZenoCivicChallengeTriggerPolicy.ShouldInsert(context)) return;
 
-        if (saved is null)
-        {
-            if (journey is null || !WesternRouteGraph.LoadEmbedded()
-                .TryReserveQuestion(journey, ZenoCivicChallengeState.QuestionAct)) return;
-            shared.ZenoCivicChallenge = ZenoCivicChallengeState.Create(
-                $"ZENO_CIVIC_CHALLENGE:{run.Rng.Seed}:1");
-        }
         if (shared.ZenoCivicChallenge is not { } active || journey is null
             || !ZenoCivicChallengeFlow.IsRouteConsistent(active, journey))
             throw new InvalidDataException("The civic challenge conflicts with its reserved question.");
