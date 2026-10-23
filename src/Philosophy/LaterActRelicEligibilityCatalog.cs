@@ -13,6 +13,7 @@ internal static class LaterActCandidateIds
     public const string Democritus = "DEMOCRITUS";
     public const string Epicurus = "EPICURUS";
     public const string Plotinus = "PLOTINUS";
+    public const string Copernicus = "NICOLAUS_COPERNICUS";
     public const string Bacon = "FRANCIS_BACON";
     public const string Machiavelli = "NICCOLO_MACHIAVELLI";
     public const string Aquinas = "THOMAS_AQUINAS";
@@ -62,6 +63,7 @@ internal static class LaterActRelicEligibilityCatalog
         Register(LaterActCandidateIds.Epicurus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Plotinus, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Machiavelli, ActTwoIndex, RouteRelicIds.RousseauUncarvedStone),
+        Register(LaterActCandidateIds.Copernicus, ActTwoIndex, RouteRelicIds.HeraclitusLyre),
         Register(LaterActCandidateIds.Bacon, ActThreeIndex, RouteRelicIds.AristotleCategoryTablet),
         Register(LaterActCandidateIds.Aquinas, ActThreeIndex, RouteRelicIds.PlatoCivicSeal),
         Register(LaterActCandidateIds.Diogenes, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
