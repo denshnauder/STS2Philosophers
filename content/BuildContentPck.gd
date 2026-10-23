@@ -7,6 +7,29 @@ func add_file_or_fail(packer: PCKPacker, virtual_path: String, source_path: Stri
 	return error
 
 
+func add_portrait_alias(packer: PCKPacker, alias_path: String, source_path: String) -> int:
+	var metadata := ConfigFile.new()
+	var error := metadata.load(source_path + ".import")
+	if error != OK:
+		return error
+	# Reuse the imported texture, while keeping each public ModelId path valid.
+	# The cache filename comes from Godot's current import, never a copied hash.
+	metadata.erase_section_key("remap", "uid")
+	metadata.set_value("deps", "source_file", alias_path)
+	var directory := ProjectSettings.globalize_path("res://.godot/portrait_aliases")
+	error = DirAccess.make_dir_recursive_absolute(directory)
+	if error != OK:
+		return error
+	var metadata_path := directory.path_join(alias_path.get_file() + ".import")
+	error = metadata.save(metadata_path)
+	if error != OK:
+		return error
+	error = add_file_or_fail(packer, alias_path, ProjectSettings.globalize_path(source_path))
+	if error != OK:
+		return error
+	return add_file_or_fail(packer, alias_path + ".import", metadata_path)
+
+
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() != 1:
@@ -188,6 +211,22 @@ func _initialize() -> void:
 			ProjectSettings.globalize_path(alias[1])
 		)
 		if error != OK:
+			quit(error)
+			return
+
+	# These events use the same existing background as the other route events.
+	# Omitting their default native portrait path makes EventRoom fail to open.
+	for name in [
+		"anaximenes_breath_invitation", "anselm_unfinished_proof", "aquinas_bridge_notice",
+		"augustine_promise", "diogenes_stay_switch", "luther_signed_care",
+		"bacon_sample_ledger", "copernicus_shifted_center",
+		"machiavelli_flood_preparation", "ockham_names_inquiry", "plotinus_common_ground",
+		"zeno_civic_challenge",
+	]:
+		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",
+			"res://images/events/philosophers_gaze.png")
+		if error != OK:
+			push_error("Could not pack event portrait %s: %s" % [name, error_string(error)])
 			quit(error)
 			return
 
