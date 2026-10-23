@@ -25,6 +25,42 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     // empty so separate copies never share a mutable first-card receipt.
     private AquinasCombatPracticeState? _aquinasPractice;
     private string? _invalidAquinasPayload;
+    private ZenoCivicSealUpgradeState? _zenoUpgrade;
+    private string? _invalidZenoPayload;
+    private HashSet<CardPlay>? _zenoCallbacks;
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public string ZenoCivicUpgradePayload
+    {
+        get => _invalidZenoPayload ?? _zenoUpgrade?.Encode() ?? string.Empty;
+        private set
+        {
+            AssertMutable();
+            // A bad/unknown native saved property remains verbatim and inert.
+            if (_invalidZenoPayload is not null) return;
+            if (ZenoCivicSealUpgradeState.TryRestore(value, out var restored)) _zenoUpgrade = restored;
+            else _invalidZenoPayload = value;
+        }
+    }
+
+    internal bool HasZenoCivicUpgrade(string instanceId, ZenoCivicUpgradeBranch branch) =>
+        _invalidZenoPayload is null && _zenoUpgrade?.Matches(instanceId, branch) == true;
+
+    internal bool CanGrantZenoCivicUpgrade(string instanceId, ZenoCivicUpgradeBranch branch) =>
+        CanOfferLuther && _invalidZenoPayload is null && (_zenoUpgrade is not null
+            ? _zenoUpgrade.Matches(instanceId, branch)
+            : ZenoCivicSealUpgradeState.Create(instanceId, branch).IsUsable());
+
+    internal bool TryGrantZenoCivicUpgrade(string instanceId, ZenoCivicUpgradeBranch branch)
+    {
+        if (!CanGrantZenoCivicUpgrade(instanceId, branch)) return false;
+        if (_zenoUpgrade is not null) return true;
+        var grant = ZenoCivicSealUpgradeState.Create(instanceId, branch);
+        _zenoUpgrade = grant;
+        Flash();
+        InvokeDisplayAmountChanged();
+        return true;
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string AugustinePracticePayload
@@ -62,30 +98,50 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     {
         get
         {
-            if (HasLutherSwitch()) return base.ExtraHoverTips.Concat([new HoverTip(
+            List<IHoverTip> tips = base.ExtraHoverTips.ToList();
+            if (HasLutherSwitch()) tips.Add(new HoverTip(
                 new LocString("relics", "PLATO_CIVIC_SEAL.luther.title"),
-                new LocString("relics", "PLATO_CIVIC_SEAL.luther.description"))]);
-            if (_invalidAugustinePayload is null && TryGetAugustineWork(out AugustineWork work))
+                new LocString("relics", "PLATO_CIVIC_SEAL.luther.description")));
+            else if (_invalidAugustinePayload is null && TryGetAugustineWork(out AugustineWork work))
             {
                 string branch = work == AugustineWork.Public ? "public" : "private";
-                return base.ExtraHoverTips.Concat([new HoverTip(
+                tips.Add(new HoverTip(
                     new LocString("relics", $"PLATO_CIVIC_SEAL.augustine.{branch}.title"),
-                    new LocString("relics", $"PLATO_CIVIC_SEAL.augustine.{branch}.description"))]);
+                    new LocString("relics", $"PLATO_CIVIC_SEAL.augustine.{branch}.description")));
             }
-            if (_invalidAquinasPayload is null && TryGetAquinasRule(out AquinasRule rule))
+            else if (_invalidAquinasPayload is null && TryGetAquinasRule(out AquinasRule rule))
             {
                 string branch = rule == AquinasRule.Published ? "published" : "emergency";
-                return base.ExtraHoverTips.Concat([new HoverTip(
+                tips.Add(new HoverTip(
                     new LocString("relics", $"PLATO_CIVIC_SEAL.aquinas.{branch}.title"),
-                    new LocString("relics", $"PLATO_CIVIC_SEAL.aquinas.{branch}.description"))]);
+                    new LocString("relics", $"PLATO_CIVIC_SEAL.aquinas.{branch}.description")));
             }
-            return base.ExtraHoverTips;
+            string? zeno = _invalidZenoPayload is not null ? "unavailable"
+                : TryGetZenoUpgrade(out var upgrade) ? upgrade.Branch == ZenoCivicUpgradeBranch.Public
+                    ? "public" : "conditional" : null;
+            if (zeno is not null) tips.Add(new HoverTip(
+                new LocString("relics", $"PLATO_CIVIC_SEAL.zeno.{zeno}.title"),
+                new LocString("relics", $"PLATO_CIVIC_SEAL.zeno.{zeno}.description")));
+            return tips;
         }
+    }
+
+    public override Task BeforeCombatStart()
+    {
+        _zenoCallbacks = null;
+        return base.BeforeCombatStart();
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // Capture the already established law before the base hook can establish
+        // it with this combat's first manual Attack/Skill. Also remember that
+        // first callback: replaying it must never turn lawmaking into a reward.
+        WesternPracticeCardKind lawBefore = CurrentLawKind;
+        bool freshZenoCallback = cardPlay.Player == Owner
+            && (_zenoCallbacks ??= new(ReferenceEqualityComparer.Instance)).Add(cardPlay);
         await base.AfterCardPlayed(choiceContext, cardPlay);
+        if (freshZenoCallback) await ResolveZenoUpgrade(choiceContext, cardPlay, lawBefore);
         if (cardPlay.Player != Owner || cardPlay.IsAutoPlay || _invalidAquinasPayload is not null
             || !TryGetAquinasRule(out AquinasRule rule)) return;
         RunManager manager = RunManager.Instance;
@@ -101,6 +157,45 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
                 cardPlay: null, fast: true);
         else
             await PlayerCmd.GainEnergy(1m, Owner);
+    }
+
+    private async Task ResolveZenoUpgrade(PlayerChoiceContext context, CardPlay play,
+        WesternPracticeCardKind lawBefore)
+    {
+        if (play.IsAutoPlay || lawBefore is not (WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill)
+            || play.Card.Type is not (CardType.Attack or CardType.Skill)
+            || Owner.PlayerCombatState is not { } combat || combat.TurnNumber <= 0
+            || !TryGetZenoUpgrade(out var upgrade)) return;
+        WesternPracticeCardKind kind = play.Card.Type == CardType.Attack
+            ? WesternPracticeCardKind.Attack : WesternPracticeCardKind.Skill;
+        bool matches = upgrade.Branch == ZenoCivicUpgradeBranch.Public ? kind == lawBefore : kind != lawBefore;
+        RunState? run = RunManager.Instance.DebugOnlyGetState();
+        if (!matches || run?.CurrentRoom is not CombatRoom { Id: int roomId }) return;
+        string key = $"{run.CurrentActIndex}:{run.ActFloor}:{roomId}";
+        // Persist the claim before an awaited native command can cause callbacks.
+        if (!upgrade.TryClaim(key, combat.TurnNumber)) return;
+        Flash();
+        if (upgrade.Branch == ZenoCivicUpgradeBranch.Public)
+            await CreatureCmd.GainBlock(Owner.Creature, 3, ValueProp.Unpowered, cardPlay: null, fast: true);
+        else await CardPileCmd.Draw(context, 1m, Owner);
+    }
+
+    private bool TryGetZenoUpgrade(out ZenoCivicSealUpgradeState upgrade)
+    {
+        upgrade = null!;
+        RunManager manager = RunManager.Instance;
+        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
+        if (!CanOfferLuther || _invalidZenoPayload is not null || _zenoUpgrade?.IsUsable() != true
+            || run is null || run.Players.Count != 1 || !ReferenceEquals(run.Players[0], Owner)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.WesternJourney is not { } journey
+            || shared.ZenoCivicChallenge is not { Closed: true, EdgeCommitted: true,
+                SealUpgradeVersion: 1, SealUpgradeGranted: true } state || !state.IsUsable()
+            || !_zenoUpgrade.Matches(state.InstanceId, state.SealUpgradeBranch)
+            || !journey.ResolvedQuestionActs.Contains(1)
+            || !journey.CompletedEdgeIds.Contains(ZenoCivicChallengeState.EdgeId)) return false;
+        upgrade = _zenoUpgrade;
+        return true;
     }
 
     public override async Task AfterPlayerTurnStartLate(PlayerChoiceContext choiceContext, Player player)
