@@ -107,5 +107,11 @@
   "PLATO_CIVIC_SEAL.aquinas.published.title": "Published Revision",
   "PLATO_CIVIC_SEAL.aquinas.published.description": "If your first manually played card each combat is a Skill, gain 5 Block after it resolves. Another card type spends the chance.",
   "PLATO_CIVIC_SEAL.aquinas.emergency.title": "Narrow Exception",
-  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "If your first manually played card each combat is an Attack, gain 1 Energy after it resolves. Another card type spends the chance."
+  "PLATO_CIVIC_SEAL.aquinas.emergency.description": "If your first manually played card each combat is an Attack, gain 1 Energy after it resolves. Another card type spends the chance.",
+  "PLATO_CIVIC_SEAL.zeno.public.title": "A Public Rule",
+  "PLATO_CIVIC_SEAL.zeno.public.description": "After the first manual card each turn that follows an established rule, gain 3 Block. The card establishing the rule does not count; existing cost rules remain.",
+  "PLATO_CIVIC_SEAL.zeno.conditional.title": "An Appealable Exception",
+  "PLATO_CIVIC_SEAL.zeno.conditional.description": "After the first manual card each turn of the other type, draw 1 card. The card establishing the rule does not count; its existing cost increase remains.",
+  "PLATO_CIVIC_SEAL.zeno.unavailable.title": "Seal Improvement Unconfirmed",
+  "PLATO_CIVIC_SEAL.zeno.unavailable.description": "The saved improvement could not be confirmed. Its record is preserved and its effect is inactive; existing cost rules remain."
 }
