@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace STS2Philosophers;
 
 internal enum ZenoCivicStage
@@ -41,11 +43,22 @@ internal sealed class ZenoCivicChallengeState
     public bool QuestionReserved { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool Closed { get; set; }
+    // Null/null is an old encounter. A closed old record cannot acquire a grant.
+    public int? SealUpgradeVersion { get; set; }
+    public bool? SealUpgradeGranted { get; set; }
+    [JsonIgnore] public ZenoCivicUpgradeBranch SealUpgradeBranch => Stage switch
+    {
+        ZenoCivicStage.ResultPublicObjection => ZenoCivicUpgradeBranch.Public,
+        ZenoCivicStage.ResultConditionalObjection => ZenoCivicUpgradeBranch.Conditional,
+        _ => ZenoCivicUpgradeBranch.None,
+    };
 
     public static ZenoCivicChallengeState Create(string instanceId) => new()
     {
         InstanceId = instanceId,
         QuestionReserved = true,
+        SealUpgradeVersion = 1,
+        SealUpgradeGranted = false,
     };
 
     public void NormalizeAfterLoad()
@@ -62,7 +75,11 @@ internal sealed class ZenoCivicChallengeState
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
             || Closed && PendingAction != ZenoCivicAction.None
             || PendingAction != ZenoCivicAction.None
-                && !ZenoCivicChallengeFlow.Options(Stage).Contains(PendingAction)) return false;
+                && !ZenoCivicChallengeFlow.Options(Stage).Contains(PendingAction)
+            || (SealUpgradeVersion is null
+                ? SealUpgradeGranted is not null
+                : SealUpgradeVersion != 1 || !SealUpgradeGranted.HasValue
+                    || SealUpgradeGranted.Value != (Closed && EdgeCommitted))) return false;
 
         ZenoCivicAction[] history = Closed
             ? ConfirmedActions.Take(ConfirmedActions.Count - 1).ToArray()
@@ -88,6 +105,15 @@ internal sealed class ZenoCivicChallengeState
         bool adopted = Stage is ZenoCivicStage.ResultPublicObjection or ZenoCivicStage.ResultConditionalObjection;
         return history.SequenceEqual(expected) && EdgeCommitted == adopted
             && (!Closed || Stage >= ZenoCivicStage.ResultDeclined);
+    }
+
+    public bool TryEnableSealUpgrade()
+    {
+        if (!IsUsable() || Closed) return false;
+        if (SealUpgradeVersion == 1) return true;
+        SealUpgradeVersion = 1;
+        SealUpgradeGranted = false;
+        return true;
     }
 }
 
@@ -143,6 +169,7 @@ internal static class ZenoCivicChallengeFlow
         };
         state.EdgeCommitted |= publishes;
         state.Closed = action == ZenoCivicAction.Leave;
+        if (state.SealUpgradeVersion == 1) state.SealUpgradeGranted = state.Closed && state.EdgeCommitted;
         state.ConfirmedActions.Add(action);
         state.PendingAction = ZenoCivicAction.None;
         return IsRouteConsistent(state, journey);
@@ -150,6 +177,10 @@ internal static class ZenoCivicChallengeFlow
 
     public static string StageKey(ZenoCivicStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(ZenoCivicAction action) => UpperSnake(action.ToString());
+    public static string DescriptionKey(ZenoCivicChallengeState state) => StageKey(state.Stage)
+        + (state.Closed && state.SealUpgradeBranch != ZenoCivicUpgradeBranch.None
+            ? state.SealUpgradeVersion == 1 && state.SealUpgradeGranted == true ? "_CONFIRMED" : "_LEGACY"
+            : string.Empty);
     private static string UpperSnake(string value) => string.Concat(value.SelectMany((character, index) =>
         index > 0 && char.IsUpper(character) ? new[] { '_', character } : new[] { char.ToUpperInvariant(character) }));
 }
