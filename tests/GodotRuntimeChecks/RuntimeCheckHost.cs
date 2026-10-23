@@ -30,6 +30,16 @@ public partial class RuntimeCheckHost : Node
             Assembly checks = context.LoadFromAssemblyPath(assemblyPath);
             MethodInfo entry = checks.EntryPoint
                 ?? throw new InvalidOperationException("NativeRuntimeChecks has no entry point.");
+            // C# wraps an async top-level program in a synchronous <Main> that
+            // calls GetResult. Invoking that wrapper blocks Godot's main thread
+            // and prevents deferred calls or frame signals from completing.
+            if (entry.Name == "<Main>" && !typeof(Task).IsAssignableFrom(entry.ReturnType))
+            {
+                MethodInfo? asyncEntry = entry.DeclaringType?.GetMethod("<Main>$",
+                    BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+                    null, entry.GetParameters().Select(parameter => parameter.ParameterType).ToArray(), null);
+                if (asyncEntry is not null && typeof(Task).IsAssignableFrom(asyncEntry.ReturnType)) entry = asyncEntry;
+            }
             object? result = entry.Invoke(null, entry.GetParameters().Length == 0
                 ? null : [arguments.Skip(2).ToArray()]);
             if (result is Task task) await task;
