@@ -1,5 +1,18 @@
 extends SceneTree
 
+const ADDITIONAL_EVENT_TEXTURES := [
+	"res://images/events/anaximenes_breath_invitation.png",
+	"res://images/events/anselm_unfinished_proof.png",
+	"res://images/events/aquinas_bridge_notice.png",
+	"res://images/events/augustine_promise.png",
+	"res://images/events/diogenes_stay_switch.png",
+	"res://images/events/luther_signed_care.png",
+	"res://images/events/machiavelli_flood_preparation.png",
+	"res://images/events/ockham_names_inquiry.png",
+	"res://images/events/plotinus_common_ground.png",
+	"res://images/events/zeno_civic_challenge.png",
+]
+
 const REQUIRED_FILES := [
 	"res://images/events/democritus_arrangement.png",
 	"res://images/events/empedocles_roots_inquiry.png",
@@ -118,13 +131,13 @@ func _initialize() -> void:
 		quit(3)
 		return
 
-	for path in REQUIRED_FILES:
+	for path in REQUIRED_FILES + ADDITIONAL_EVENT_TEXTURES:
 		if not FileAccess.file_exists(path):
 			push_error("Missing packed file: %s" % path)
 			quit(4)
 			return
 
-	for path in REQUIRED_TEXTURES:
+	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		var texture := ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
 		if texture == null:
 			push_error("Packed texture is not loadable: %s" % path)
