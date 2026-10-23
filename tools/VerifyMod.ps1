@@ -57,6 +57,11 @@ try {
     & $godot --headless --path (Join-Path $PSScriptRoot 'PckVerifier') --script (Join-Path $PSScriptRoot 'PckVerifier/VerifyContentPck.gd') -- $pck
     if ($LASTEXITCODE -ne 0) { throw "PCK verification failed: $LASTEXITCODE" }
 
+    $stage = 'Native event portrait checks'
+    $nativeChecks = Join-Path $repository 'tests/NativeRuntimeChecks/bin/Release/net9.0/NativeRuntimeChecks.dll'
+    & $godot --headless --path (Join-Path $repository 'tests/GodotRuntimeChecks') -- $nativeChecks $repository --portraits-only $pck
+    if ($LASTEXITCODE -ne 0) { throw "Native event portrait checks failed: $LASTEXITCODE" }
+
     $sources = @((Join-Path $outputDirectory 'STS2Philosophers.dll'), $pck, (Join-Path $repository 'STS2Philosophers.json'))
     $stage = 'Deployment'
     $deployment = 'Skipped by request'
