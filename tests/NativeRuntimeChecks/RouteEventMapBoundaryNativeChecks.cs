@@ -25,6 +25,21 @@ internal static class RouteEventMapBoundaryNativeChecks
 
     public static async Task Run()
     {
+        FieldInfo formatter = typeof(LocManager).GetField("_smartFormatter", BindingFlags.NonPublic | BindingFlags.Static)!;
+        PropertyInfo defaultFormatter = formatter.FieldType.Assembly.GetType("SmartFormat.Smart")!
+            .GetProperty("Default", BindingFlags.Public | BindingFlags.Static)!;
+        object? priorFormatter = formatter.GetValue(null);
+        object? priorDefault = defaultFormatter.GetValue(null);
+        try { await RunCore(); }
+        finally
+        {
+            formatter.SetValue(null, priorFormatter);
+            defaultFormatter.SetValue(null, priorDefault);
+        }
+    }
+
+    private static async Task RunCore()
+    {
         InitializeLocalization();
         Type boundary = ModType("RouteEventMapBoundary");
         MethodInfo registered = RequiredMethod(boundary, "IsRegisteredEvent", [typeof(EventModel)]);
@@ -40,7 +55,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
-            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(LutherSignedCare), typeof(BaconSampleLedger),
+            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(LutherSignedCare), typeof(BaconSampleLedger), typeof(CopernicusShiftedCenter),
             typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];
@@ -90,6 +105,8 @@ internal static class RouteEventMapBoundaryNativeChecks
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null,
             ["events", translations, null], null)!;
         var manager = (LocManager)RuntimeHelpers.GetUninitializedObject(typeof(LocManager));
+        typeof(LocManager).GetMethod("LoadLocFormatters", BindingFlags.NonPublic | BindingFlags.Instance)!
+            .Invoke(manager, null);
         var tables = new Dictionary<string, LocTable> { ["events"] = table };
         Set(manager, "_tables", tables);
         Set(manager, "_engTables", tables);
@@ -152,7 +169,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type flowType = ModType(eventType.Name + "Flow");
         MethodInfo? create = eventType == typeof(SenecaDailyReview) || eventType == typeof(EpictetusGuidePractice)
             || eventType == typeof(MarcusAureliusCampPractice) || eventType == typeof(PyrrhoReportedCrossing)
-            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) || eventType == typeof(BaconSampleLedger) ? null
+            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) || eventType == typeof(BaconSampleLedger) || eventType == typeof(CopernicusShiftedCenter) ? null
             : RequiredMethod(stateType, "Create", [typeof(string)]);
         MethodInfo generate = RequiredMethod(eventType, "GenerateOptions", [stateType]);
         PropertyInfo instance = stateType.GetProperty("InstanceId")!;
@@ -161,6 +178,13 @@ internal static class RouteEventMapBoundaryNativeChecks
         PropertyInfo pending = stateType.GetProperty("PendingAction")!;
         object NewState(string id)
         {
+            if (eventType == typeof(CopernicusShiftedCenter))
+            {
+                Type forkType = stateType.GetProperty("Fork")!.PropertyType;
+                object fork = JsonSerializer.Deserialize("""{"RunSeed":"42","ActIndex":1,"SourceRow":2,"SourceColumn":1,"SourceRoomId":10,"VisitedCount":3,"HistoryCount":3,"Exits":[{"Row":3,"Column":0,"PointType":"Monster"},{"Row":3,"Column":2,"PointType":"RestSite"}]}""", forkType)!;
+                return RequiredMethod(stateType, "Create", [typeof(string), typeof(string), typeof(string), forkType])
+                    .Invoke(null, [id, "DEMOCRITUS:NATIVE:2", "EMPEDOCLES:NATIVE:2", fork])!;
+            }
             if (eventType == typeof(BaconSampleLedger))
                 return RequiredMethod(stateType, "Create", [typeof(string), typeof(string)]).Invoke(null, [id, "OCKHAM:NATIVE:2"])!;
             if (create is not null) return create.Invoke(null, [id])!;
@@ -224,6 +248,18 @@ internal static class RouteEventMapBoundaryNativeChecks
         Check(Snapshot(pendingState) == pendingBefore
             && !(bool)eventType.GetField("_ready", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(blocked)!,
             $"ENC123: {eventType.Name} leaves a prepared choice unchanged and locked when callbacks or startup repeat after recovery was blocked.");
+        if (eventType == typeof(CopernicusShiftedCenter))
+        {
+            object travel = NewState("native-travel-intention");
+            MethodInfo apply = RequiredMethod(flowType, "Apply", [stateType, pending.PropertyType]);
+            foreach (string action in new[] { "AcceptInvitation", "KeepOldTable", "RecordResidual", "FollowTable" })
+                apply.Invoke(null, [travel, Enum.Parse(pending.PropertyType, action)]);
+            EventModel lockedTravel = canonical.ToMutable();
+            RequiredMethod(eventType, "ShowConfirmedState", [stateType]).Invoke(lockedTravel, [travel]);
+            Check(!lockedTravel.IsFinished && lockedTravel.CurrentOptions.Count == 1
+                && Callback(lockedTravel.CurrentOptions[0]) is null,
+                "A saved travel intention keeps the native event unfinished and locked, so Proceed cannot bypass a failed travel's freeze.");
+        }
     }
 
     private static void CheckNativeCheckpoint(EventModel canonical, MethodInfo matches)
