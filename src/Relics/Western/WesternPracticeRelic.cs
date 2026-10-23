@@ -29,6 +29,12 @@ public abstract class WesternPracticeRelic : RelicModel
     protected virtual bool UseNamedCategory => false;
     protected virtual bool UseCategoryDiscount => true;
     protected virtual bool UseConventionDiscount => true;
+    private protected WesternPracticeCardKind CurrentLawKind => Practice.LawKind;
+    internal bool CanOfferNativeQuestion => IsMutable && Owner is not null && IsSoleDoctrine
+        && Owner.Relics.Any(relic => ReferenceEquals(relic, this));
+
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
 
     private WesternEntryPracticeState? _practice;
     private HashSet<object>? _callbacks;
