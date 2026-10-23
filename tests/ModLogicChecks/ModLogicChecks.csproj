@@ -51,6 +51,8 @@
     <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundState.cs" Link="PlotinusCommonGroundState.cs" />
     <Compile Include="..\..\src\Philosophy\PlotinusCommonGroundTriggerPolicy.cs" Link="PlotinusCommonGroundTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoCivicChallengeState.cs" Link="ZenoCivicChallengeState.cs" />
+    <Compile Include="..\..\src\Philosophy\ZenoCivicSealUpgradeState.cs" Link="ZenoCivicSealUpgradeState.cs" />
+    <Compile Include="..\..\src\Philosophy\WesternQuestionNodePolicy.cs" Link="WesternQuestionNodePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ZenoCivicChallengeTriggerPolicy.cs" Link="ZenoCivicChallengeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\AugustinePromiseState.cs" Link="AugustinePromiseState.cs" />
     <Compile Include="..\..\src\Philosophy\AugustinePromiseTriggerPolicy.cs" Link="AugustinePromiseTriggerPolicy.cs" />

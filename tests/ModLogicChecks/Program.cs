@@ -18,6 +18,8 @@ ProtagorasSharedDeliberationChecks.Run();
 PlatoWholeArrangementChecks.Run();
 PlotinusCommonGroundChecks.Run();
 ZenoCivicChallengeChecks.Run();
+ZenoCivicSealUpgradeChecks.Run();
+WesternQuestionNodeChecks.Run();
 AugustinePromiseChecks.Run();
 AquinasBridgeNoticeChecks.Run();
 AnselmUnfinishedProofChecks.Run();
