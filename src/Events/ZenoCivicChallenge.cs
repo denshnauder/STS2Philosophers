@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
@@ -36,7 +37,7 @@ public sealed class ZenoCivicChallenge : EventModel
             Block("ZenoCivicChallenge cannot restore its saved event state.");
             return;
         }
-        SetEventState(PageDescription(state.Stage), LockedOptions());
+        SetEventState(PageDescription(state), LockedOptions());
     }
 
     public override Task AfterEventStarted() => ResumeAfterEntryAsync();
@@ -57,14 +58,21 @@ public sealed class ZenoCivicChallenge : EventModel
                 Block("ZenoCivicChallenge saved event state is unavailable.");
                 return;
             }
-            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            // Old unfinished pages explicitly opt into the new closing reward
+            // before buttons appear. Closed old records retain their old result.
+            if (!state.Closed && !state.TryEnableSealUpgrade())
+            {
+                Block("ZenoCivicChallenge cannot enable its closing grant protocol.");
+                return;
+            }
+            if (!await PersistCivicAsync(run, shared, state))
             {
                 Block("ZenoCivicChallenge entry persistence is unknown.");
                 return;
             }
             if (state.PendingAction != ZenoCivicAction.None
                 && (!CommitPending(shared, state)
-                    || !await RouteEventMapBoundary.PersistEventAsync(run, shared)))
+                    || !await PersistCivicAsync(run, shared, state)))
             {
                 Block("The saved ZenoCivicChallenge choice remains blocked for recovery.");
                 return;
@@ -102,8 +110,8 @@ public sealed class ZenoCivicChallenge : EventModel
                 || state.PendingAction != ZenoCivicAction.None || state.Closed
                 || !ZenoCivicChallengeFlow.TryPrepare(state, action)) return;
             _ready = false;
-            SetEventState(PageDescription(state.Stage), LockedOptions());
-            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            SetEventState(PageDescription(state), LockedOptions());
+            if (!await PersistCivicAsync(run, shared, state))
             {
                 Block($"ZenoCivicChallenge prepared choice persistence is unknown: {action}.");
                 return;
@@ -113,7 +121,7 @@ public sealed class ZenoCivicChallenge : EventModel
                 Block($"ZenoCivicChallenge choice could not commit: {action}.");
                 return;
             }
-            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            if (!await PersistCivicAsync(run, shared, state))
             {
                 Block($"ZenoCivicChallenge committed choice persistence is unknown: {action}.");
                 return;
@@ -130,17 +138,53 @@ public sealed class ZenoCivicChallenge : EventModel
         }
     }
 
-    private static bool CommitPending(PhilosophyRunState shared, ZenoCivicChallengeState state) =>
-        ReferenceEquals(shared.ZenoCivicChallenge, state) && shared.WesternJourney is { } journey
-        && ZenoCivicChallengeFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
+    private bool CommitPending(PhilosophyRunState shared, ZenoCivicChallengeState state)
+    {
+        if (!ReferenceEquals(shared.ZenoCivicChallenge, state) || shared.WesternJourney is not { } journey
+            || !ZenoCivicChallengeFlow.IsRouteConsistent(state, journey)) return false;
+        bool grants = state.PendingAction == ZenoCivicAction.Leave && state.SealUpgradeVersion == 1
+            && state.SealUpgradeBranch != ZenoCivicUpgradeBranch.None;
+        PlatoCivicSeal? seal = grants ? Owner?.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) as PlatoCivicSeal : null;
+        if (grants && (seal is null || !seal.CanGrantZenoCivicUpgrade(state.InstanceId, state.SealUpgradeBranch))) return false;
+        if (!ZenoCivicChallengeFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded())) return false;
+        return !grants || seal!.TryGrantZenoCivicUpgrade(state.InstanceId, state.SealUpgradeBranch);
+    }
+
+    private async Task<bool> PersistCivicAsync(RunState run, PhilosophyRunState shared, ZenoCivicChallengeState state)
+    {
+        bool granted = state.SealUpgradeVersion == 1 && state.SealUpgradeGranted == true;
+        PlatoCivicSeal? seal = granted ? Owner?.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) as PlatoCivicSeal : null;
+        // A closed new record with a missing/mismatched native grant is blocked,
+        // not repaired by replaying historical choices or inventing another seal.
+        if (granted && (seal is null || !seal.HasZenoCivicUpgrade(state.InstanceId, state.SealUpgradeBranch))) return false;
+        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared)) return false;
+        if (!granted) return true;
+        var loaded = SaveManager.Instance.LoadRunSave();
+        return loaded.Status == ReadSaveStatus.Success && loaded.SaveData is { } saved
+            && SavedSealUpgradeMatches(saved, Owner!.NetId, seal!.ZenoCivicUpgradePayload,
+                state.InstanceId, state.SealUpgradeBranch);
+    }
+
+    internal static bool SavedSealUpgradeMatches(SerializableRun save, ulong ownerId, string expectedPayload,
+        string instanceId, ZenoCivicUpgradeBranch branch)
+    {
+        if (string.IsNullOrEmpty(expectedPayload) || save.Players is not { Count: 1 }
+            || save.Players[0].NetId != ownerId) return false;
+        var seals = save.Players[0].Relics.Where(relic => Equals(relic.Id, ModelDb.GetId<PlatoCivicSeal>())).ToArray();
+        if (seals.Length != 1 || RelicModel.FromSerializable(seals[0]) is not PlatoCivicSeal restored) return false;
+        // This native deserialization creates a detached verification copy; it
+        // never replaces an active player's relic or rebinds shared run state.
+        return restored.ZenoCivicUpgradePayload == expectedPayload
+            && restored.HasZenoCivicUpgrade(instanceId, branch);
+    }
 
     private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(ZenoCivicChallengeState state)
     {
         _ready = !state.Closed;
-        if (state.Closed) SetEventFinished(PageDescription(state.Stage));
-        else SetEventState(PageDescription(state.Stage), GenerateOptions(state));
+        if (state.Closed) SetEventFinished(PageDescription(state));
+        else SetEventState(PageDescription(state), GenerateOptions(state));
     }
 
     private IReadOnlyList<EventOption> LockedOptions() =>
@@ -183,4 +227,6 @@ public sealed class ZenoCivicChallenge : EventModel
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(ZenoCivicStage stage) =>
         L10NLookup($"{LocalizationRoot}.pages.{ZenoCivicChallengeFlow.StageKey(stage)}.description");
+    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(ZenoCivicChallengeState state) =>
+        L10NLookup($"{LocalizationRoot}.pages.{ZenoCivicChallengeFlow.DescriptionKey(state)}.description");
 }
