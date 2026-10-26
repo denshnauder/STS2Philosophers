@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
 
 namespace STS2Philosophers;
 
@@ -34,6 +33,12 @@ internal static class NeowProceedPatch
                 : null;
             if (runState is not null && !PhilosophyRunStateService.IsAvailable(runState)) return true;
             EventRoom? eventRoom = runState?.CurrentRoom as EventRoom;
+            if (eventRoom?.LocalMutableEvent is PhilosophersGaze { IsFinished: true } gaze
+                && !gaze.HasConfirmedCompletion)
+            {
+                __result = gaze.ConfirmCompletionAsync();
+                return false;
+            }
             CurrentEventKind currentEvent = eventRoom?.LocalMutableEvent switch
             {
                 Neow => CurrentEventKind.Neow,
@@ -86,13 +91,16 @@ internal static class NeowProceedPatch
     {
         neowRoom.MarkPreFinished();
         PhilosophyRunStateService.GetOrGenerateActOneCandidates(runState);
-        if (runManager.ShouldSave)
+        EventRoom room = new(canonicalEvent);
+        if (runManager.ShouldSave && (!PhilosophyRunStateService.TryGet(runState, out var shared) || shared is null
+            || !await RouteEventMapBoundary.PersistEventAsync(runState, shared, room)))
         {
-            await SaveManager.Instance.SaveRun(null);
+            RouteEventMapBoundary.Freeze(runState, "PhilosophersGaze entry checkpoint could not be confirmed.");
+            return;
         }
 
         await runManager.EnterRoomWithoutExitingCurrentRoom(
-            new EventRoom(canonicalEvent),
+            room,
             fadeToBlack: true);
     }
 

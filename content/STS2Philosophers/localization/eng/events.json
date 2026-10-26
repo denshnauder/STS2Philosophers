@@ -1626,5 +1626,7 @@
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_KEPT.options.LEAVE.title": "Return to the map",
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_KEPT.options.LEAVE.description": "Finish the practice; keep the old lyre.",
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.title": "Return to the map",
-  "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.description": "Finish the practice; keep the old lyre."
+  "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.description": "Finish the practice; keep the old lyre.",
+  "PHILOSOPHERS_GAZE.pages.RESTORED_RESOLVED.description": "This reflection has ended. Keep your choice and current relics, and continue onward.",
+  "PHILOSOPHERS_GAZE.pages.RECOVERY_BLOCKED.description": "This reflection contains conflicting choices, and its reward cannot be confirmed. Your current state is preserved pending review."
 }

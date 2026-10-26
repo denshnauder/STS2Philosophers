@@ -52,10 +52,11 @@ internal static class PhilosophersGazeActOneCandidatePolicy
         Contains(candidates, thinkerId)
         && WesternRouteCatalog.IsEntryProblem(thinkerId, problemId);
 
-    private static bool IsValid(GeneratedCandidates candidates)
+    internal static bool IsValid(GeneratedCandidates? candidates)
     {
-        return string.Equals(candidates.GenerationKey, GenerationKey, StringComparison.Ordinal)
-            && candidates.CandidateIds.Count == CandidateCount
+        return candidates is not null
+            && string.Equals(candidates.GenerationKey, GenerationKey, StringComparison.Ordinal)
+            && candidates.CandidateIds is { Count: CandidateCount }
             && candidates.CandidateIds.Distinct(StringComparer.Ordinal).Count() == CandidateCount
             && candidates.CandidateIds.All(candidate =>
                 RegisteredThinkerIds.Contains(candidate, StringComparer.Ordinal));

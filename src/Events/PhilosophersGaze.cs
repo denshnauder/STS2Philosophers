@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
-using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Rooms;
 
 namespace STS2Philosophers;
 
@@ -13,6 +13,26 @@ public sealed partial class PhilosophersGaze : EventModel
 {
     private const string LocalizationPrefix = "PHILOSOPHERS_GAZE.pages";
     private readonly PhilosophersGazeResolutionGate _resolutionGate = new();
+    private Task? _completionSaveTask;
+    internal bool HasConfirmedCompletion { get; private set; }
+
+    protected override void SetInitialEventState(bool isPreFinished)
+    {
+        // Ordinary native events cannot call the base implementation with true.
+        // Inventory/business facts also close legacy checkpoints saved mid-resolution.
+        if (isPreFinished || Owner is { } owner && PhilosophersGazeSaveRecovery.IsResolved(owner))
+        {
+            SetEventFinished(L10NLookup($"{LocalizationPrefix}.RESTORED_RESOLVED.description"));
+            return;
+        }
+        if (Owner is { } ambiguousOwner && PhilosophersGazeSaveRecovery.HasAmbiguousResolution(ambiguousOwner))
+        {
+            SetEventState(L10NLookup($"{LocalizationPrefix}.RECOVERY_BLOCKED.description"),
+                [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())]);
+            return;
+        }
+        base.SetInitialEventState(false);
+    }
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
         GetCurrentActIndex(Owner) == 1
@@ -604,7 +624,8 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private bool IsActOne()
     {
-        return !IsFinished && Owner is { } owner && GetCurrentActIndex(owner) == 0;
+        return !IsFinished && Owner is { } owner && GetCurrentActIndex(owner) == 0
+            && !PhilosophersGazeSaveRecovery.HasAmbiguousResolution(owner);
     }
 
     private bool CanGrantActOneRelic(string thinkerId)
@@ -640,6 +661,7 @@ public sealed partial class PhilosophersGaze : EventModel
     {
         Player? owner = Owner;
         return owner is not null
+            && !IsFinished
             && GetCurrentActIndex(owner) == 1
             && PhilosophersGazeContinuationPolicy.CanGrant(
                 choice,
@@ -768,16 +790,42 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private bool TryBeginResolution() =>
         (Owner?.RunState is not RunState run || PhilosophyRunStateService.IsAvailable(run))
+        && (Owner is not { } owner || !PhilosophersGazeSaveRecovery.HasAmbiguousResolution(owner))
         && _resolutionGate.TryBegin();
 
     private void EndResolution() => _resolutionGate.End();
 
-    private static async Task SaveRunAfterResolution()
+    private Task SaveRunAfterResolution() => ConfirmCompletionAsync();
+
+    internal Task ConfirmCompletionAsync()
     {
-        if (RunManager.Instance.ShouldSave)
+        if (_completionSaveTask is { IsCompleted: false }) return _completionSaveTask;
+        return _completionSaveTask = PersistCompletionAsync();
+    }
+
+    private async Task PersistCompletionAsync()
+    {
+        if (!IsFinished || HasConfirmedCompletion) return;
+        if (Owner?.RunState is not RunState run
+            || run.CurrentRoom is not EventRoom room || !ReferenceEquals(room.LocalMutableEvent, this)) return;
+        // Native EventRoom and EventModel completion flags are independent.
+        room.MarkPreFinished();
+        if (!RunManager.Instance.ShouldSave)
         {
-            await SaveManager.Instance.SaveRun(null);
+            HasConfirmedCompletion = true;
+            return;
         }
+        try
+        {
+            HasConfirmedCompletion = PhilosophyRunStateService.TryGet(run, out var shared) && shared is not null
+                && await RouteEventMapBoundary.PersistEventAsync(run, shared, room);
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] PhilosophersGaze completion save failed: {exception}");
+        }
+        if (!HasConfirmedCompletion)
+            Log.Error("[STS2Philosophers] PhilosophersGaze completion remains unconfirmed; Proceed retries saving without granting another reward.");
     }
 
     private readonly record struct ContinuationResolutionSnapshot(

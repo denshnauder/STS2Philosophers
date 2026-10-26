@@ -25,7 +25,7 @@ internal static class RouteEventMapBoundary
     private static readonly ConditionalWeakTable<RunState, BoundaryRuntime> Runtimes = new();
 
     internal static bool IsRegisteredEvent(EventModel? model) => model is
-        ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
+        PhilosophersGaze or ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
         or ZenoCivicChallenge or AugustinePromise or AnselmUnfinishedProof
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation

@@ -1555,9 +1555,10 @@ string waterJadeSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "R
 string wholeLifeBiSource = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Relics", "Yangzhu", "YangzhuQuanShengBi.cs"))
     .ReplaceLineEndings("\n");
 Check(eventSource.Contains("SetEventState(", StringComparison.Ordinal)
-      && !eventSource.Contains("MarkPreFinished", StringComparison.Ordinal)
+      && !eventSource[..eventSource.IndexOf("private async Task PersistCompletionAsync()", StringComparison.Ordinal)]
+          .Contains("MarkPreFinished", StringComparison.Ordinal)
       && !eventSource.Contains("isProceed", StringComparison.Ordinal),
-    "Navigation must use SetEventState without MarkPreFinished or a fabricated proceed option.");
+    "Navigation must use SetEventState; only completed-event persistence may mark the native room finished.");
 Check(eventSource.Contains("GetActOneCandidates()", StringComparison.Ordinal)
       && eventSource.Contains("IsActOneCandidate(thinkerId)", StringComparison.Ordinal),
     "The act one event must display and authorize only the generated thinker candidates.");
@@ -1566,10 +1567,11 @@ Check(!eventSource.Contains("ShowWesternInvitations", StringComparison.Ordinal)
       && !westernEventSource.Contains("WesternInvitations", StringComparison.Ordinal)
       && westernEventSource.Contains("ReturnToUnifiedInvitations", StringComparison.Ordinal),
     "Act one must show one unified thinker list without a second Western invitation page.");
-Check(neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
+Check(neowPatchSource.IndexOf("PersistEventAsync(runState, shared, room)", StringComparison.Ordinal) >= 0
+      && neowPatchSource.IndexOf("PersistEventAsync(runState, shared, room)", StringComparison.Ordinal)
         < neowPatchSource.IndexOf("EnterRoomWithoutExitingCurrentRoom(", StringComparison.Ordinal)
       && neowPatchSource.IndexOf("neowRoom.MarkPreFinished()", StringComparison.Ordinal)
-        < neowPatchSource.IndexOf("SaveManager.Instance.SaveRun(null)", StringComparison.Ordinal)
+        < neowPatchSource.IndexOf("PersistEventAsync(runState, shared, room)", StringComparison.Ordinal)
       && runStateSavePatchSource.Contains("nameof(RunManager.ToSave)", StringComparison.Ordinal)
       && runStateSavePatchSource.Contains("nameof(RunState.FromSerializable)", StringComparison.Ordinal),
     "Finished Neow and act one candidates must be saved before the event is entered and restored on load.");

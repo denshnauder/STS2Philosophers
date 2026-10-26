@@ -1626,5 +1626,7 @@
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_KEPT.options.LEAVE.title": "返回地图",
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_KEPT.options.LEAVE.description": "关闭实践，保留原有竖琴。",
   "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.title": "返回地图",
-  "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.description": "关闭实践，保留原有竖琴。"
+  "GALILEO_MEASURED_PRACTICE.pages.RESULT_DECLINED.options.LEAVE.description": "关闭实践，保留原有竖琴。",
+  "PHILOSOPHERS_GAZE.pages.RESTORED_RESOLVED.description": "这次观照已经结束。保留你作出的选择与现有遗物，继续前行。",
+  "PHILOSOPHERS_GAZE.pages.RECOVERY_BLOCKED.description": "这次观照留下了互相冲突的选择记录，无法确认奖励是否已结算。暂时保留现状，等待核查。"
 }

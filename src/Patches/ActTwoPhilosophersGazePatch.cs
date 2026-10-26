@@ -74,6 +74,14 @@ internal static class ActTwoPhilosophersGazePatch
             return;
         }
 
+        EventRoom gazeRoom = new(canonicalEvent!);
+        if (runManager.ShouldSave && (!PhilosophyRunStateService.TryGet(runState, out var shared) || shared is null
+            || !await RouteEventMapBoundary.PersistEventAsync(runState, shared, gazeRoom)))
+        {
+            RouteEventMapBoundary.Freeze(runState, "PhilosophersGaze continuation entry checkpoint could not be confirmed.");
+            return;
+        }
+
         Log.Info("[STS2Philosophers] Closing the act two map screen before presenting the PhilosophersGaze continuation.");
         PhilosophersGazeContinuationEntryPlan entryPlan =
             PhilosophersGazeContinuationPolicy.CreateEntryPlan(
@@ -84,7 +92,7 @@ internal static class ActTwoPhilosophersGazePatch
         }
 
         await runManager.EnterRoomWithoutExitingCurrentRoom(
-            new EventRoom(canonicalEvent!),
+            gazeRoom,
             fadeToBlack: entryPlan.FadeToBlack);
     }
 
