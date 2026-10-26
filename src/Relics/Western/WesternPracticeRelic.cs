@@ -43,6 +43,7 @@ public abstract class WesternPracticeRelic : RelicModel
     private CardModel? _flowReleasePrepared;
     private bool _restoreTrackedCards;
     private readonly Dictionary<CardModel, CostQuote> _costQuotes = new(ReferenceEqualityComparer.Instance);
+    private Dictionary<CardPlay, CostQuote>? _paidCostQuotes;
 
     private WesternEntryPracticeState Practice =>
         _practice ??= new WesternEntryPracticeState { ProblemId = ProblemId };
@@ -151,6 +152,7 @@ public abstract class WesternPracticeRelic : RelicModel
             _currentCard = null;
             _flowReleasePrepared = null;
             _costQuotes.Clear();
+            _paidCostQuotes = null;
             InvokeDisplayAmountChanged();
         }
 
@@ -241,6 +243,20 @@ public abstract class WesternPracticeRelic : RelicModel
         return change.Effect != WesternEntryCostEffect.None && modifiedCost != cost;
     }
 
+    public override Task BeforeCardPlayed(CardPlay cardPlay)
+    {
+        if (!cardPlay.IsAutoPlay && cardPlay.Player == Owner && IsSoleDoctrine
+            && _costQuotes.TryGetValue(cardPlay.Card, out CostQuote quote))
+        {
+            // Payment has finished. OnPlay may start automatic children, including
+            // a replay of this same CardModel, before the parent's AfterCardPlayed.
+            // Freeze only its receipt here; lawmaking still happens after manual play.
+            _paidCostQuotes ??= new(ReferenceEqualityComparer.Instance);
+            _paidCostQuotes.TryAdd(cardPlay, quote);
+        }
+        return Task.CompletedTask;
+    }
+
     // Called only for the exact manually played tracked card and actual Exhaust result.
     protected virtual Task ResolveFlowRelease(PlayerChoiceContext context, CardPlay play) =>
         CardPileCmd.Draw(context, 1m, Owner);
@@ -271,8 +287,10 @@ public abstract class WesternPracticeRelic : RelicModel
             return;
         }
 
-        CostQuote quote = _costQuotes.GetValueOrDefault(cardPlay.Card,
-            new(cardPlay.Resources.EnergyValue, cardPlay.Card.EnergyCost.CostsX, WesternEntryCostEffect.None));
+        CostQuote quote = _paidCostQuotes is not null && _paidCostQuotes.Remove(cardPlay, out CostQuote paidQuote)
+            ? paidQuote
+            : _costQuotes.GetValueOrDefault(cardPlay.Card,
+                new(cardPlay.Resources.EnergyValue, cardPlay.Card.EnergyCost.CostsX, WesternEntryCostEffect.None));
         Creature? target = cardPlay.Target;
         bool isSingleLivingEnemyTarget = cardPlay.Card.TargetType == TargetType.AnyEnemy
             && target is { IsAlive: true, IsEnemy: true };
@@ -502,6 +520,7 @@ public abstract class WesternPracticeRelic : RelicModel
         _flowReleasePrepared = null;
         _restoreTrackedCards = restoreTrackedCards;
         _costQuotes.Clear();
+        _paidCostQuotes = null;
     }
 
     private static string CardId(CardModel card) => card.Id.ToString();
