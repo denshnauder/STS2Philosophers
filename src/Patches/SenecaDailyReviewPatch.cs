@@ -6,20 +6,22 @@ namespace STS2Philosophers;
 
 internal static class SenecaDailyReviewPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         ZenoRouteFeatureState? feature = shared.ZenoRoutePayload.State;
         ZenoRouteState? route = feature?.Route;
         DiogenesStaySwitchEntryRecord? entry = shared.DiogenesStaySwitchEntry;
         SenecaDailyReviewState? saved = shared.SenecaDailyReview;
         SenecaDailyReview? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         SenecaDailyReviewTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             shared.ZenoRoutePayload.Classification == ZenoRoutePayloadClassification.Current
@@ -30,18 +32,16 @@ internal static class SenecaDailyReviewPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!SenecaDailyReviewTriggerPolicy.ShouldInsert(context)) return;
+        if (!SenecaDailyReviewTriggerPolicy.ShouldInsert(context)) return null;
         if (route is null || entry is null || route.RunId != entry.RunId
-            || route.Outcome is null || !DiogenesStaySwitchEntryPolicy.IsValid(entry)) return;
+            || route.Outcome is null || !DiogenesStaySwitchEntryPolicy.IsValid(entry)) return null;
 
-        if (saved is null)
-            shared.SenecaDailyReview = SenecaDailyReviewState.Create(
-                $"SENECA_DAILY_REVIEW:{run.Rng.Seed}:1", route, entry);
-        if (shared.SenecaDailyReview is not { } active
-            || !SenecaDailyReviewFlow.IsRouteConsistent(active, route, entry))
-            throw new InvalidDataException("The Seneca review conflicts with its saved Zeno route.");
-        Log.Info("[STS2Philosophers] Presenting Seneca daily review at the map boundary.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        var candidate = saved ?? SenecaDailyReviewState.Create(
+            $"SENECA_DAILY_REVIEW:{run.Rng.Seed}:1", route, entry);
+        if (!SenecaDailyReviewFlow.IsRouteConsistent(candidate, route, entry)) return null;
+        shared.SenecaDailyReview = candidate;
+        Log.Info("[STS2Philosophers] Presenting Seneca daily review at a native question node.");
+        return canonical;
     }
 
     private static SenecaDailyReview? TryGetCanonicalEvent()

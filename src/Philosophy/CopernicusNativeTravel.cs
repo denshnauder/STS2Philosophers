@@ -34,6 +34,53 @@ internal static class CopernicusNativeTravel
         return true;
     }
 
+    internal static bool TryCaptureQuestion(RunState run, out CopernicusForkSnapshot? fork)
+    {
+        fork = null;
+        if (!NativeQuestionNodeEvents.IsEntry(run) || run.CurrentActIndex != 1
+            || run.CurrentMapCoord is not { } coord || run.MapPointHistory.Count <= 1
+            || !TryExits(run, run.CurrentMapPoint!, out List<CopernicusForkExit> exits)) return false;
+        var pending = new CopernicusForkSnapshot(Seed(run), 1, coord.row, coord.col, 0,
+            run.VisitedMapCoords.Count, run.MapPointHistory[1].Count + 1, exits)
+            { Source = CopernicusForkSource.QuestionPending };
+        if (!pending.IsUsable()) return false;
+        fork = pending;
+        return true;
+    }
+
+    internal static bool MatchesPendingQuestion(RunState run, CopernicusForkSnapshot fork) =>
+        fork.Source == CopernicusForkSource.QuestionPending && fork.IsUsable()
+        && NativeQuestionNodeEvents.IsEntry(run) && Seed(run) == fork.RunSeed
+        && run.CurrentActIndex == fork.ActIndex && run.CurrentMapCoord is { } coord
+        && coord.row == fork.SourceRow && coord.col == fork.SourceColumn
+        && run.VisitedMapCoords.Count == fork.VisitedCount && run.MapPointHistory.Count > fork.ActIndex
+        && run.MapPointHistory[fork.ActIndex].Count + 1 == fork.HistoryCount
+        && TryExits(run, run.CurrentMapPoint!, out var exits) && exits.SequenceEqual(fork.Exits);
+
+    internal static bool TryBindQuestion(RunState run, CopernicusShiftedCenterState state)
+    {
+        if (state.Fork.Source != CopernicusForkSource.QuestionPending) return true;
+        if (!state.IsUsable() || !MatchesQuestionLocation(run, state.Fork)
+            || run.CurrentRoom is not EventRoom room) return false;
+        state.Fork = state.Fork with { Source = CopernicusForkSource.QuestionEvent, SourceRoomId = room.Id ?? 0 };
+        return state.IsUsable();
+    }
+
+    private static bool MatchesQuestionLocation(RunState run, CopernicusForkSnapshot fork) =>
+        run.CurrentRoomCount == 1 && run.CurrentRoom is EventRoom { CanonicalEvent: CopernicusShiftedCenter } room
+        && ReferenceEquals(run.BaseRoom, room) && run.CurrentMapPoint is { PointType: MapPointType.Unknown } point
+        && run.CurrentMapCoord is { } coord && coord.row == fork.SourceRow && coord.col == fork.SourceColumn
+        && run.CurrentActIndex == fork.ActIndex && Seed(run) == fork.RunSeed
+        && run.VisitedMapCoords.Count == fork.VisitedCount && run.MapPointHistory.Count > fork.ActIndex
+        && run.MapPointHistory[fork.ActIndex].Count == fork.HistoryCount
+        && run.CurrentMapPointHistoryEntry is { } history
+        && history.Rooms.Any(record => record.RoomType == RoomType.Event
+            && Equals(record.ModelId, ModelDb.GetId<CopernicusShiftedCenter>()))
+        && TryExits(run, point, out var exits) && exits.SequenceEqual(fork.Exits)
+        && PhilosophyRunStateService.TryGet(run, out var shared)
+        && shared?.CopernicusShiftedCenter is { } current && ReferenceEquals(current.Fork, fork)
+        && current.InstanceId == $"COPERNICUS_SHIFTED_CENTER:{run.Rng.Seed}:2";
+
     private static bool TryExits(RunState run, MapPoint source, out List<CopernicusForkExit> exits)
     {
         exits = [];
@@ -50,6 +97,9 @@ internal static class CopernicusNativeTravel
 
     public static bool MatchesSource(RunState run, CopernicusForkSnapshot saved)
     {
+        if (saved.Source != CopernicusForkSource.LegacyCombat)
+            return saved.Source == CopernicusForkSource.QuestionEvent && saved.IsUsable()
+                && MatchesQuestionLocation(run, saved);
         if (!saved.IsUsable() || run.CurrentActIndex != saved.ActIndex || Seed(run) != saved.RunSeed
             || run.CurrentMapCoord is not { } coord || coord.row != saved.SourceRow || coord.col != saved.SourceColumn
             || run.VisitedMapCoords.Count != saved.VisitedCount || run.MapPointHistory.Count <= saved.ActIndex

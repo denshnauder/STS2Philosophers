@@ -45,6 +45,7 @@ public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentit
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
     {
+        if (_entry?.Closed == true) return [];
         DiogenesStaySwitchPageView view = RestoreViewOrThrow();
         _currentView = view;
         return GenerateOptions(view);
@@ -52,12 +53,22 @@ public sealed class DiogenesStaySwitch : EventModel, IZenoRouteEventSceneIdentit
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
+        if (_entry?.Closed == true)
         {
-            throw new InvalidOperationException("DiogenesStaySwitch cannot start as a pre-finished event.");
+            FinishResolvedEntry();
+            return;
         }
+        if (isPreFinished) throw new InvalidOperationException("An unresolved Diogenes record cannot be pre-finished.");
 
         SetPage(RestoreViewOrThrow());
+    }
+
+    internal void FinishResolvedEntry()
+    {
+        if (IsFinished) return;
+        DiogenesStaySwitchPage page = _stateHost?.CurrentState.Route?.Stage == ZenoRouteStage.DiogenesClosed
+            ? DiogenesStaySwitchPage.ResultStay : DiogenesStaySwitchPage.ResultSwitch;
+        SetEventFinished(PageDescription(page));
     }
 
     private async Task Choose(DiogenesStaySwitchPageOption option)

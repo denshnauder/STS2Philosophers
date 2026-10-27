@@ -107,11 +107,12 @@ internal static class NativeQuestionNodeChecks
                 Check(ReferenceEquals(fixture.Relic.ModifyNextEvent(original), original)
                     && Encoded(CurrentShared(run)) == once,
                     "Repeated entry cannot refresh an already initialized question or its budget.");
+                CheckAllocatedRecordRecovery(item.Person, item.Act, fixture, run, pool, original, chosen);
                 CheckLegacyPatchHasNoFactory(item.Person);
             }
             CheckNativeNonEvent();
             CheckBindings();
-            Console.WriteLine("Native question node checks passed: all 12 real person initializations through native PullNextEvent/public relic hook, exact visited IDs and unchanged RNG/event queue, actual sole-carrier/current-run/room/Unknown gates, native room round-trips and one/two-room recovery, legacy factory removal, unchanged native Shop roll/creation, and save/Roll/CreateRoom/history ordering. No rendered UI, full map travel, or player-save access.");
+            Console.WriteLine("Native question node checks passed: all 12 real person initializations through native PullNextEvent/public relic hook, exact visited IDs and unchanged RNG/event queue, actual sole-carrier/current-run/room/Unknown gates, native room round-trips and one/two-room recovery, shared-only allocated record recovery without factory/budget refresh, wrong-act/visited/corrupt/absent-record rejection, legacy entry/factory removal, unchanged native Shop roll/creation, and save/Roll/CreateRoom/history ordering. No rendered UI, full map travel, or player-save access.");
             return Task.CompletedTask;
         }
         finally
@@ -121,6 +122,66 @@ internal static class NativeQuestionNodeChecks
             Set(manager, "NetService", priorNetwork);
             Set(CombatManager.Instance, "_turnState", priorTurn); TestMode.IsOn = priorTest;
         }
+    }
+
+    private static void CheckAllocatedRecordRecovery(string personName, int actIndex,
+        NativeRuntimeFixture fixture, RunState run, RoomSet pool, EventModel original, EventModel chosen)
+    {
+        MethodInfo selector = TypeOf(personName + "Patch").GetMethod("TrySelectExistingNative", Methods)!;
+        MethodBase[] calls = References(selector).ToArray();
+        Check(!calls.Any(method => method.Name is "Create" or "TryReserveQuestion" or "TryDecline"
+                or "TryStart" or "EnterAsync" or "EnterRoomWithoutExitingCurrentRoom"),
+            "An allocated record selector cannot fabricate an instance, budget or room.");
+        object shared = CurrentShared(run);
+        object person = Get(shared, personName);
+        string checkpoint = Encoded(shared), instanceId = (string)Get(person, "InstanceId");
+        string actions = JsonSerializer.Serialize(Get(person, "ConfirmedActions"));
+        string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
+        int queue = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
+        Check(selector.Invoke(null, [run]) is null && Encoded(CurrentShared(run)) == checkpoint,
+            "An already visited allocated question cannot be offered again.");
+
+        // This is the old shared-only checkpoint: the person has already been
+        // allocated, but there is neither a saved EventRoom nor a visited event.
+        ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+        Call("PhilosophyRunStateService", "Restore", run, Reload(shared));
+        shared = CurrentShared(run); person = Get(shared, personName);
+        Set(run, "_currentActIndex", (actIndex + 1) % 3);
+        Check(selector.Invoke(null, [run]) is null && Encoded(CurrentShared(run)) == checkpoint,
+            "A saved person cannot migrate its invitation into another act.");
+        Set(run, "_currentActIndex", actIndex);
+
+        List<RelicModel> held = (List<RelicModel>)fixture.Player.Relics;
+        held.Remove(fixture.Relic);
+        Check(selector.Invoke(null, [run]) is null && Encoded(CurrentShared(run)) == checkpoint,
+            "A saved person still requires its actual original doctrine carrier.");
+        held.Add(fixture.Relic);
+
+        int version = (int)Get(person, "Version");
+        Put(person, "Version", version + 100);
+        string corrupt = JsonSerializer.Serialize(person, person.GetType());
+        Check(selector.Invoke(null, [run]) is null
+            && ReferenceEquals(fixture.Relic.ModifyNextEvent(original), original)
+            && JsonSerializer.Serialize(Get(CurrentShared(run), personName), person.GetType()) == corrupt,
+            "A corrupt allocated record remains untouched and cannot reopen or start another encounter.");
+        Put(person, "Version", version);
+
+        EventModel resumed = run.Act.PullNextEvent(run);
+        object recovered = Get(CurrentShared(run), personName);
+        Check(resumed.GetType() == chosen.GetType() && Equals(resumed.Id, chosen.Id)
+            && (string)Get(recovered, "InstanceId") == instanceId
+            && JsonSerializer.Serialize(Get(recovered, "ConfirmedActions")) == actions
+            && Encoded(CurrentShared(run)) == checkpoint
+            && JsonSerializer.Serialize(run.Rng.ToSerializable()) == rng
+            && (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)! == queue
+            && run.VisitedEventIds.SetEquals([chosen.Id]),
+            "The next real native question resumes the exact allocated instance without touching actions, budget, RNG or queue.");
+
+        // The compatibility path itself never supplies a factory for an absent record.
+        ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+        Put(shared, personName, null!);
+        Check(selector.Invoke(null, [run]) is null, "An absent saved record cannot be created by compatibility selection.");
+        Put(shared, personName, recovered);
     }
 
     private static (NativeRuntimeFixture Fixture, RunState Run, QuestionMap Map, RoomSet Pool, EventModel Original) Fixture(Type relic, int actIndex)
@@ -234,8 +295,8 @@ internal static class NativeQuestionNodeChecks
         MethodInfo patch = TypeOf(person + "Patch").GetMethod("InsertAtBoundaryAsync", Methods)!;
         MethodBase[] calls = References(patch).ToArray();
         Check(!calls.Any(method => method.Name is "Create" or "TryReserveQuestion" or "TryDecline")
-            && calls.Any(method => method.DeclaringType == TypeOf("RouteEventMapBoundary") && method.Name == "EnterAsync"),
-            "Legacy boundary patches retain recovery entry but contain no new invitation or budget factory.");
+            && !calls.Any(method => method.Name is "EnterAsync" or "EnterRoomWithoutExitingCurrentRoom"),
+            "Legacy boundary patches cannot insert even a saved business record as an extra room; exact saved EventRooms restore natively.");
     }
 
     private static void CheckBindings()

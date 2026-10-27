@@ -6,23 +6,24 @@ namespace STS2Philosophers;
 
 internal static class AristotleCivicInquiryPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null) return;
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         AristotleCivicInquiry? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         AristotleCivicInquiryState? saved = philosophy.AristotleCivicInquiry;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         AristotleCivicInquiryTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -34,17 +35,15 @@ internal static class AristotleCivicInquiryPatch
             saved?.Closed == true,
             canonical is not null,
             journey?.CompletedEdgeIds.Contains(AugustinePromiseState.RequiredEdgeId) == true);
-        if (!AristotleCivicInquiryTriggerPolicy.ShouldInsert(context)) return;
+        if (!AristotleCivicInquiryTriggerPolicy.ShouldInsert(context)) return null;
 
-        if (saved is null)
-        {
-            if (journey is null) return;
-            philosophy.AristotleCivicInquiry = AristotleCivicInquiryState.Create(
-                $"ARISTOTLE_CIVIC_INQUIRY:{run.Rng.Seed}:2");
-        }
+        var candidate = saved ?? AristotleCivicInquiryState.Create(
+            $"ARISTOTLE_CIVIC_INQUIRY:{run.Rng.Seed}:2");
+        if (journey is null || !candidate.IsUsable()) return null;
+        philosophy.AristotleCivicInquiry = candidate;
 
-        Log.Info("[STS2Philosophers] Presenting Aristotle civic inquiry after combat.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        Log.Info("[STS2Philosophers] Presenting Aristotle civic inquiry at a native question node.");
+        return canonical;
     }
 
     private static AristotleCivicInquiry? TryGetCanonicalEvent()

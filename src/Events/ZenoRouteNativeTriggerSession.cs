@@ -4,6 +4,9 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace STS2Philosophers;
@@ -20,12 +23,78 @@ internal static class ZenoRouteNativeTriggerRegistry
     private static readonly object Gate = new();
     private static readonly ConditionalWeakTable<RunState, ZenoRouteNativeTriggerSession> Sessions = new();
 
+    internal static EventModel? TrySelectNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run) || run.CurrentActIndex != 2
+            || run.Players[0].GetRelicById(ModelDb.GetId<SocratesBalanceWeight>()) is not SocratesBalanceWeight
+            || !PhilosophyRunStateService.TryGet(run, out var shared) || shared is null
+            || shared.DiogenesStaySwitchEntry is not { Closed: true }
+            || shared.ZenoRoutePayload.State is not { PendingOperation: null, Route.Stage: ZenoRouteStage.ReadyToClaim } state
+            || !ZenoRouteStateCodec.IsValidFeature(state, shared.ZenoRouteValidationCatalog)
+            || !TryGet(RunManager.Instance, out var session) || session is null || !session.CanSelectNative) return null;
+        try
+        {
+            var canonical = ModelDb.Event<ZenoAssentBoundary>();
+            return run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+        }
+        catch { return null; }
+    }
+
+    internal static string NativeDestinationId(RunState run)
+    {
+        if (run.CurrentMapCoord is not { } coord) throw new InvalidOperationException("Missing native question coordinate.");
+        return FormattableString.Invariant($"NATIVE_QUESTION_{run.Rng.Seed}_ACT_{run.CurrentActIndex}_ROW_{coord.row}_COL_{coord.col}");
+    }
+
+    internal static bool IsNativeDestination(string? id) => id?.StartsWith("NATIVE_QUESTION_", StringComparison.Ordinal) == true;
+
+    internal static bool MatchesNativeDestination(RunState run, string? id)
+    {
+        if (id is null || run.CurrentMapCoord is null || run.CurrentActIndex != 2
+            || run.CurrentMapPoint is not { PointType: MapPointType.Unknown }) return false;
+        string[] parts = id.Split('_');
+        return parts.Length == 9 && parts[0] == "NATIVE" && parts[1] == "QUESTION"
+            && ulong.TryParse(parts[2], NumberStyles.None, CultureInfo.InvariantCulture, out ulong seed) && seed == run.Rng.Seed
+            && parts[3] == "ACT" && parts[4] == "2" && parts[5] == "ROW" && parts[7] == "COL"
+            && int.TryParse(parts[6], NumberStyles.None, CultureInfo.InvariantCulture, out int row) && row >= 0
+            && int.TryParse(parts[8], NumberStyles.None, CultureInfo.InvariantCulture, out int col) && col >= 0
+            && id == NativeDestinationId(run);
+    }
+
+    // Native exit awaits option tasks; never await it from that same option.
+    internal static void QueueLegacyExit(RunState run, EventModel owner, Func<Task> resume, Action? completed = null)
+    {
+        Godot.Callable.From(() => { _ = DrainAndResumeAsync(); }).CallDeferred();
+        async Task DrainAndResumeAsync()
+        {
+            try
+            {
+                await RunManager.Instance.EventSynchronizer.AwaitPendingOptionTasks();
+                if (!ReferenceEquals(RunManager.Instance.DebugOnlyGetState(), run)
+                    || run.CurrentRoom is not EventRoom room || !ReferenceEquals(room.LocalMutableEvent, owner)) return;
+                await resume();
+            }
+            catch (Exception error) { RouteEventMapBoundary.Freeze(run, $"Legacy Stoic exit requires recovery: {error}"); }
+            finally { completed?.Invoke(); }
+        }
+    }
+
+    internal static async Task ResumePreviousRoomAsync(RunState run, EventModel owner)
+    {
+        if (run.CurrentRoomCount != 2 || run.CurrentRoom is not EventRoom room || !ReferenceEquals(room.LocalMutableEvent, owner))
+            throw new InvalidOperationException("The old Stoic room stack changed before exit.");
+        var method = AccessTools.DeclaredMethod(typeof(RunManager), "ResumePreviousRoom", Type.EmptyTypes)
+            ?? throw new MissingMethodException("RunManager.ResumePreviousRoom()");
+        await (Task)method.Invoke(RunManager.Instance, null)!;
+        if (run.CurrentRoomCount != 1) throw new InvalidOperationException("The old Stoic base room was not restored.");
+    }
+
     public static bool TryGet(
         RunManager runManager,
         out ZenoRouteNativeTriggerSession? session)
     {
         session = null;
-        if (!runManager.IsInProgress ||
+        if (!runManager.IsInProgress || runManager.NetService?.Type != NetGameType.Singleplayer ||
             runManager.DebugOnlyGetState() is not { Players.Count: 1 } runState ||
             !PhilosophyRunStateService.TryGet(runState, out PhilosophyRunState? sharedState) ||
             sharedState?.ZenoRoutePayload is not
@@ -82,6 +151,27 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
     private Task<bool>? _closeTask;
     private AbstractRoom? _destinationRoom;
     private ZenoRouteObservedDestination? _destination;
+    private bool _legacyCloseQueued;
+
+    internal bool CanResumeLegacyClaim => (_runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route) is
+        { Stage: ZenoRouteStage.OpeningClaimed or ZenoRouteStage.EventActive, ResumeDestinationId: { } destination }
+        && !ZenoRouteNativeTriggerRegistry.IsNativeDestination(destination);
+
+    internal bool CanSelectNative => _runtime.CurrentState is { PendingOperation: null, Route.Stage: ZenoRouteStage.ReadyToClaim }
+        && _runtime.PendingRequestId is null;
+
+    internal bool NeedsIntervalObservation => _runtime.CurrentState.Route?.Stage == ZenoRouteStage.WaitingInterval;
+    internal bool HasIntervalRecovery => _runtime.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.IntervalCompleted
+        || _runtime.CurrentState.Route?.Stage == ZenoRouteStage.ReadyToClaim && _runtime.PendingRequestId is not null;
+
+    internal async Task<bool> ObserveIntervalAsync(string? receipt)
+    {
+        if (HasIntervalRecovery)
+            return (await _runtime.RetryAsync()).Status == ZenoRoutePersistenceCoordinationStatus.Completed;
+        if (receipt is null || _runtime.CurrentState is not { PendingOperation: null, Route.Stage: ZenoRouteStage.WaitingInterval }) return true;
+        return (await _scheduler.ExecuteAsync(new ZenoRouteSchedulingContext(CompletedRoomReceiptId: receipt))).Status
+            == ZenoRouteSchedulingExecutionStatus.Completed;
+    }
 
     public ZenoRouteNativeTriggerSession(
         RunManager runManager,
@@ -145,13 +235,13 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
                 return active;
             }
 
-            _activeTask = TriggerCoreAsync(plan, destinationRoom, cancellationToken);
-            _ = _activeTask.ContinueWith(
+            Task<ZenoRouteNativeTriggerStatus> task = _activeTask = TriggerCoreAsync(plan, destinationRoom, cancellationToken);
+            _ = task.ContinueWith(
                 completed => ClearActiveTask(completed),
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
                 TaskScheduler.Default);
-            return _activeTask;
+            return task;
         }
     }
 
@@ -169,18 +259,37 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
     {
         lock (_taskGate)
         {
+            ZenoRouteState? route = _runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route;
+            if (route?.ResumeDestinationId is { } destination && !ZenoRouteNativeTriggerRegistry.IsNativeDestination(destination)
+                && _runState.CurrentRoom is EventRoom { LocalMutableEvent: ZenoAssentBoundary } legacyRoom)
+            {
+                if (!_legacyCloseQueued)
+                {
+                    _legacyCloseQueued = true;
+                    ZenoRouteNativeTriggerRegistry.QueueLegacyExit(_runState, legacyRoom.LocalMutableEvent, async () =>
+                    {
+                        try
+                        {
+                            if (!await CloseAndResumeCoreAsync(eventInstanceId, cancellationToken))
+                                RouteEventMapBoundary.Freeze(_runState, "The original Zeno destination has not been confirmed.");
+                        }
+                        finally { lock (_taskGate) _legacyCloseQueued = false; }
+                    }, () => { lock (_taskGate) _legacyCloseQueued = false; });
+                }
+                return Task.FromResult(true);
+            }
             if (_closeTask is { IsCompleted: false } active)
             {
                 return active;
             }
 
-            _closeTask = CloseAndResumeCoreAsync(eventInstanceId, cancellationToken);
-            _ = _closeTask.ContinueWith(
+            Task<bool> task = _closeTask = CloseAndResumeCoreAsync(eventInstanceId, cancellationToken);
+            _ = task.ContinueWith(
                 completed => ClearCloseTask(completed),
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
                 TaskScheduler.Default);
-            return _closeTask;
+            return task;
         }
     }
 
@@ -189,7 +298,25 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(eventRoom);
-        if (_runtime.CurrentState.PendingOperation is { Kind: not ZenoRouteOperationKind.EventClosed })
+        if (_runState.CurrentRoom is not EventRoom currentRoom || !ReferenceEquals(currentRoom, eventRoom)
+            || eventRoom.CanonicalEvent is not ZenoAssentBoundary
+            || _runState.CurrentRoomCount is not (1 or 2)) return false;
+        if (_runtime.CurrentState is { PendingOperation: null, Route: { Stage: ZenoRouteStage.ReadyToClaim } ready })
+        {
+            if (_runState.CurrentRoomCount != 1 || _runState.CurrentActIndex != 2
+                || _runState.CurrentMapPoint is not { PointType: MapPointType.Unknown }
+                || _runState.Players.Count != 1
+                || _runState.Players[0].GetRelicById(ModelDb.GetId<SocratesBalanceWeight>()) is not SocratesBalanceWeight
+                || !PhilosophyRunStateService.TryGet(_runState, out var shared) || shared is null
+                || !await RouteEventMapBoundary.PersistEventAsync(_runState, shared, eventRoom)) return false;
+            var claim = await _runtime.ExecuteAsync(ZenoRouteStateService.PrepareOpeningClaim(
+                _runtime.CurrentState, ready.Revision, ZenoOpeningTrigger.SafeBoundary, ZenoResumeDestination.Map,
+                ZenoRouteNativeTriggerRegistry.NativeDestinationId(_runState),
+                ZenoRouteSchedulingPolicy.CreateEventInstanceId(ready), _catalog), cancellationToken);
+            if (claim.Status != ZenoRoutePersistenceCoordinationStatus.Completed) return false;
+        }
+        if (_runtime.CurrentState.PendingOperation is { Kind: not ZenoRouteOperationKind.EventClosed }
+            || _runtime.CurrentState.PendingOperation is null && _runtime.PendingRequestId is not null)
         {
             ZenoRoutePersistenceCoordinationResult retry =
                 await _runtime.RetryAsync(cancellationToken);
@@ -199,15 +326,23 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             }
         }
 
+        if (_runtime.CurrentState.Route?.Stage == ZenoRouteStage.OpeningClaimed
+            && !(await _factory.EstablishAsync(cancellationToken)).IsReady) return false;
         ZenoRouteState? route = _runtime.CurrentState.Route;
         if (route is not
             {
-                Stage: ZenoRouteStage.EventActive or ZenoRouteStage.OutcomeCommitted,
+                Stage: ZenoRouteStage.EventActive or ZenoRouteStage.OutcomeCommitted or ZenoRouteStage.ZenoClosed,
                 EventInstanceId: { } eventInstanceId,
             })
         {
             return false;
         }
+        if (ZenoRouteNativeTriggerRegistry.IsNativeDestination(route.ResumeDestinationId)
+            && !ZenoRouteNativeTriggerRegistry.MatchesNativeDestination(_runState, route.ResumeDestinationId)) return false;
+        if (eventRoom.IsPreFinished && route.Stage is not (ZenoRouteStage.OutcomeCommitted or ZenoRouteStage.ZenoClosed)) return false;
+        if (route.Stage == ZenoRouteStage.ZenoClosed) eventRoom.MarkPreFinished();
+        if (!PhilosophyRunStateService.TryGet(_runState, out var latest) || latest is null
+            || !await RouteEventMapBoundary.PersistEventAsync(_runState, latest, eventRoom)) return false;
 
         Action<MegaCrit.Sts2.Core.Models.EventModel> configure = mutableEvent =>
         {
@@ -236,13 +371,18 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         AbstractRoom destinationRoom,
         CancellationToken cancellationToken)
     {
-        if (!_runManager.IsInProgress ||
+        if (!CanResumeLegacyClaim || !_runManager.IsInProgress ||
             !ReferenceEquals(_runManager.DebugOnlyGetState(), _runState) ||
             _runState.CurrentRoomCount != 1 ||
             !ReferenceEquals(_runState.BaseRoom, destinationRoom))
         {
             return ZenoRouteNativeTriggerStatus.NotHandled;
         }
+
+        ZenoRouteState? expected = _runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route;
+        if (expected is null || plan.Destination.Kind != expected.ResumeDestination
+            || !string.Equals(plan.Destination.Id, expected.ResumeDestinationId, StringComparison.Ordinal))
+            return ZenoRouteNativeTriggerStatus.Blocked;
 
         if (_runtime.CurrentState.PendingOperation is { Kind: not ZenoRouteOperationKind.EventClosed })
         {
@@ -254,6 +394,16 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             }
         }
 
+        ZenoRouteState frozen = _runtime.CurrentState.Route!;
+        if (!ReferenceEquals(_runManager.DebugOnlyGetState(), _runState)
+            || _runState.CurrentRoomCount != 1 || !ReferenceEquals(_runState.BaseRoom, destinationRoom)
+            || plan.Destination.Kind != frozen.ResumeDestination
+            || !string.Equals(plan.Destination.Id, frozen.ResumeDestinationId, StringComparison.Ordinal))
+        {
+            // The old claim belongs to its original base/destination. Never
+            // relabel a different current room with that frozen identity.
+            return ZenoRouteNativeTriggerStatus.Blocked;
+        }
         lock (_taskGate)
         {
             _destinationRoom = destinationRoom;
@@ -334,6 +484,10 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             return false;
         }
 
+        ZenoRouteState? origin = _runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route;
+        if (ZenoRouteNativeTriggerRegistry.IsNativeDestination(origin?.ResumeDestinationId))
+            return await CloseNativeQuestionAsync(eventInstanceId, cancellationToken);
+
         ZenoRouteFeatureState current = _runtime.CurrentState;
         ZenoRouteState? effective = current.PendingOperation?.Candidate ?? current.Route;
         if (effective is null ||
@@ -342,6 +496,16 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
         {
             return false;
         }
+
+        if (current.PendingOperation is null && _runtime.PendingRequestId is not null)
+        {
+            if ((await _runtime.RetryAsync(cancellationToken)).Status != ZenoRoutePersistenceCoordinationStatus.Completed) return false;
+            current = _runtime.CurrentState;
+        }
+        if (current.Route?.Stage == ZenoRouteStage.ZenoClosed)
+            return await ConfirmLegacyClosedRoomAsync();
+        if (_runState.CurrentRoom is EventRoom { LocalMutableEvent: ZenoAssentBoundary } closingRoom)
+            closingRoom.MarkPreFinished();
 
         if (current.PendingOperation is null)
         {
@@ -381,11 +545,52 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
                          committed.State.PendingOperation is null;
         if (completed && closing.ResumeDestination == ZenoResumeDestination.Map)
         {
+            if (!await ConfirmLegacyClosedRoomAsync()) return false;
             NMapScreen.Instance?.SetTravelEnabled(true);
             await RouteEventMapBoundary.AfterZenoClosedAsync(_runState);
         }
 
         return completed;
+    }
+
+    private async Task<bool> ConfirmLegacyClosedRoomAsync()
+    {
+        if (_runState.CurrentRoom is not EventRoom { LocalMutableEvent: ZenoAssentBoundary local } room) return true;
+        room.MarkPreFinished();
+        if (!PhilosophyRunStateService.TryGet(_runState, out var shared) || shared is null
+            || !await RouteEventMapBoundary.PersistEventAsync(_runState, shared, room)) return false;
+        local.FinishResolvedRoute();
+        return true;
+    }
+
+    private async Task<bool> CloseNativeQuestionAsync(string instanceId, CancellationToken token)
+    {
+        ZenoRouteState? route = _runtime.CurrentState.PendingOperation?.Candidate ?? _runtime.CurrentState.Route;
+        if (route is null || route.EventInstanceId != instanceId
+            || route.Stage is not (ZenoRouteStage.OutcomeCommitted or ZenoRouteStage.ZenoClosed)
+            || !ZenoRouteNativeTriggerRegistry.MatchesNativeDestination(_runState, route.ResumeDestinationId)
+            || _runState.CurrentRoomCount != 1 || _runState.CurrentRoom is not EventRoom
+                { LocalMutableEvent: ZenoAssentBoundary local } room || !ReferenceEquals(_runState.BaseRoom, room)
+            || ((IZenoRouteEventSceneIdentity)local).RouteEventInstanceId != instanceId) return false;
+        room.MarkPreFinished();
+        if (_runtime.CurrentState.PendingOperation is not null || _runtime.PendingRequestId is not null)
+        {
+            var retry = _runtime.HasConfirmedExternalPreparation
+                ? await _runtime.CommitExternalAsync(token) : await _runtime.RetryAsync(token);
+            if (retry.Status != ZenoRoutePersistenceCoordinationStatus.Completed) return false;
+        }
+        if (_runtime.CurrentState.Route is { Stage: ZenoRouteStage.OutcomeCommitted } outcome)
+        {
+            var closed = await _runtime.ExecuteAsync(ZenoRouteStateService.PrepareClose(
+                _runtime.CurrentState, outcome.Revision, _catalog), token);
+            if (closed.Status != ZenoRoutePersistenceCoordinationStatus.Completed) return false;
+        }
+        if (_runtime.CurrentState is not { PendingOperation: null, Route.Stage: ZenoRouteStage.ZenoClosed }
+            || !PhilosophyRunStateService.TryGet(_runState, out var shared) || shared is null
+            || !await RouteEventMapBoundary.PersistEventAsync(_runState, shared, room)) return false;
+        local.FinishResolvedRoute();
+        await NEventRoom.Proceed();
+        return true;
     }
 
     private async Task<bool> ResumeFrozenDestinationAsync(
@@ -405,7 +610,10 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
                 return false;
             }
 
-            await NEventRoom.Proceed();
+            if (_runState.CurrentRoomCount == 2)
+                await ZenoRouteNativeTriggerRegistry.ResumePreviousRoomAsync(_runState, eventRoom.LocalMutableEvent);
+            else if (_runState.CurrentRoomCount != 1) return false;
+            if (closing.ResumeDestination == ZenoResumeDestination.Map) await NEventRoom.Proceed();
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -429,14 +637,21 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             current.row == coordinate.row &&
             current.col == coordinate.col)
         {
-            return true;
+            return IsAtBoss(coordinate);
         }
 
+        if (_runState.CurrentMapPoint is not { } source
+            || !MapTravel.GetTravelablePointsFrom(_runState, source).Any(point => Equals(point.coord, coordinate))) return false;
+
         await _runManager.EnterMapCoord(coordinate);
-        return _runState.CurrentMapCoord is { } entered &&
-               entered.row == coordinate.row &&
-               entered.col == coordinate.col;
+        return IsAtBoss(coordinate);
     }
+
+    private bool IsAtBoss(MapCoord coordinate) => Equals(_runState.CurrentMapCoord, coordinate)
+        && _runState.CurrentRoomCount == 1 && ReferenceEquals(_runState.BaseRoom, _runState.CurrentRoom)
+        && _runState.CurrentRoom is { RoomType: RoomType.Boss } room
+        && _runState.CurrentMapPointHistoryEntry?.Rooms.Any(record => record.RoomType == RoomType.Boss
+            && Equals(record.ModelId, room.ModelId)) == true;
 
     private async Task<bool> ResumeActExitAsync()
     {
@@ -445,7 +660,8 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             return true;
         }
 
-        if (_runState.CurrentActIndex != 2)
+        if (_runState.CurrentActIndex != 2 || _runState.CurrentRoom is not CombatRoom
+            { RoomType: RoomType.Boss, IsPreFinished: true } || _runState.CurrentRoomCount != 1)
         {
             return false;
         }
@@ -475,7 +691,7 @@ internal sealed class ZenoRouteNativeTriggerSession : IZenoRouteRoomDestinationR
             return false;
         }
 
-        coordinate = new MapCoord(row, column);
+        coordinate = new MapCoord(column, row);
         return true;
     }
 

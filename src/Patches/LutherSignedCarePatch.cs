@@ -1,30 +1,33 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class LutherSignedCarePatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)
-            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) is not PlatoCivicSeal { CanOfferNativeQuestion: true } carrier
+            || shared.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         var journey = shared.WesternJourney;
         var predecessor = shared.AugustinePromise;
         var saved = shared.LutherSignedCare;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
         LutherSignedCare? canonical;
         try { canonical = ModelDb.Event<LutherSignedCare>(); }
-        catch (Exception exception) { Log.Error($"[STS2Philosophers] Luther event unavailable: {exception}"); return; }
-        var player = run.Players.Count == 1 ? run.Players[0] : null;
+        catch (Exception exception) { Log.Error($"[STS2Philosophers] Luther event unavailable: {exception}"); return null; }
+        if (run.VisitedEventIds.Contains(canonical.Id)) return null;
         var context = new LutherSignedCareTriggerContext(
-            manager.IsInProgress, RouteEventMapBoundary.IsSafe(run), run.Players.Count == 1, run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false, RoomType: not RoomType.Boss },
+            manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1, run.CurrentActIndex,
+            NativeQuestionNodeEvents.IsEntry(run),
             shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0, journey?.ResolvedQuestionActs.Contains(2) == true,
             player?.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) is PlatoCivicSeal { CanOfferLuther: true },
@@ -35,8 +38,8 @@ internal static class LutherSignedCarePatch
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && predecessor is not null
                 && LutherSignedCareFlow.IsRouteConsistent(saved, journey, predecessor), canonical is not null);
-        if (!LutherSignedCareTriggerPolicy.ShouldInsert(context)) return;
+        if (!LutherSignedCareTriggerPolicy.ShouldInsert(context)) return null;
 
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 }

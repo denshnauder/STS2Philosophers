@@ -13,6 +13,9 @@ namespace STS2Philosophers;
 
 public sealed class XunziShengMo : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private XunziShengMoState _xunziShengMo;
 
     public override RelicRarity Rarity => RelicRarity.None;

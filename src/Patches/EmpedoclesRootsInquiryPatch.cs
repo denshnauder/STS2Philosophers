@@ -6,24 +6,29 @@ namespace STS2Philosophers;
 
 internal static class EmpedoclesRootsInquiryPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<HeraclitusLyre>()) is not HeraclitusLyre { CanOfferNativeQuestion: true } carrier
+            || shared.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         EmpedoclesRootsInquiryState? saved = shared.EmpedoclesRootsInquiry;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
         EmpedoclesRootsInquiry? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         bool priorClosed = shared.DemocritusArrangement is { Closed: true } prior
             && journey is not null && DemocritusArrangementFlow.IsJourneyConsistent(prior, journey, graph)
             && prior.ConfirmedActions.Contains(DemocritusArrangementAction.AdoptAtoms);
         EmpedoclesRootsInquiryTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             journey?.CurrentNodeId,
@@ -37,13 +42,12 @@ internal static class EmpedoclesRootsInquiryPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!EmpedoclesRootsInquiryTriggerPolicy.ShouldInsert(context)) return;
+        if (!EmpedoclesRootsInquiryTriggerPolicy.ShouldInsert(context)) return null;
 
         if (shared.EmpedoclesRootsInquiry is not { } active || journey is null
             || !EmpedoclesRootsInquiryFlow.IsJourneyConsistent(active, journey, graph))
-            throw new InvalidDataException("The Empedocles boundary conflicts with its route.");
-        Log.Info("[STS2Philosophers] Presenting Empedocles roots inquiry at the map boundary.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+            return null;
+        return canonical;
     }
 
     private static EmpedoclesRootsInquiry? TryGetCanonicalEvent()

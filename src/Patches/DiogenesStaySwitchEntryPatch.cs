@@ -7,51 +7,8 @@ using System.Reflection;
 
 namespace STS2Philosophers;
 
-[HarmonyPatch]
-internal static class DiogenesStaySwitchActEntryPatch
-{
-    private static MethodBase TargetMethod() => AccessTools.DeclaredMethod(
-        typeof(RunManager), "EnterRoomInternal", [typeof(AbstractRoom), typeof(bool)])
-        ?? throw new MissingMethodException("RunManager.EnterRoomInternal");
-
-    private static void Postfix(AbstractRoom room, bool isRestoringRoomStackBase, ref Task __result)
-    {
-        if (room is MapRoom && !isRestoringRoomStackBase)
-        {
-            __result = ContinueAsync(__result);
-        }
-    }
-
-    internal static async Task ContinueAsync(Task nativeEntry)
-    {
-        await nativeEntry;
-        try
-        {
-            if (DiogenesStaySwitchEntrySession.Get(RunManager.Instance) is { } session)
-            {
-                await session.EnterAtActMapAsync();
-            }
-        }
-        catch (Exception exception)
-        {
-            Log.Error($"[STS2Philosophers] Diogenes entry remains blocked for recovery: {exception}");
-        }
-    }
-}
-
-// Run after the *whole* native restore, not while its base MapRoom is being restored.
-// Otherwise a saved nested event would acquire a duplicate overlay.
-[HarmonyPatch]
-internal static class DiogenesStaySwitchLoadedMapPatch
-{
-    private static MethodBase TargetMethod() => AccessTools.DeclaredMethod(
-        typeof(RunManager), "LoadIntoLatestMapCoord", [typeof(AbstractRoom)])
-        ?? throw new MissingMethodException("RunManager.LoadIntoLatestMapCoord");
-
-    private static void Postfix(ref Task __result) =>
-        __result = DiogenesStaySwitchActEntryPatch.ContinueAsync(__result);
-}
-
+// Prepare only a room that native travel/load has already selected. MapRoom
+// entry and loaded maps never create an additional Diogenes room.
 [HarmonyPatch]
 internal static class DiogenesStaySwitchRestoredRoomPatch
 {

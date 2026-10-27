@@ -19,7 +19,15 @@ internal sealed record DiogenesStaySwitchEntryRecord(
     SocratesVirtueMaterial? Facts,
     ZenoAssentMaterialSnapshot Material,
     bool Closed = false,
-    DiogenesPracticeSummary? Practice = null);
+    DiogenesPracticeSummary? Practice = null,
+    DiogenesNativeQuestionNode? NativeNode = null);
+
+// Absent on version 1: its original act-entry source is retained verbatim.
+internal sealed record DiogenesNativeQuestionNode(
+    [property: JsonRequired] int ActIndex, [property: JsonRequired] int Row, [property: JsonRequired] int Column)
+{
+    public bool IsValid() => ActIndex == 2 && Row >= 0 && Column >= 0;
+}
 
 internal sealed record DiogenesPracticeSummary(int Eligible, int Foregone, int Used)
 {
@@ -81,6 +89,7 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
         [property: JsonRequired] bool Closed)
     {
         public DiogenesPracticeSummary? Practice { get; init; }
+        public DiogenesNativeQuestionNode? NativeNode { get; init; }
     }
 
     public override DiogenesStaySwitchEntryRecord Read(
@@ -103,7 +112,7 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
                 material.PublicHistoryIds, material.CurrentStatementId, material.NarrowStatementId,
                 material.LaterOutcomeId, material.Digest),
             payload.Closed,
-            payload.Practice);
+            payload.Practice, payload.NativeNode);
         return DiogenesStaySwitchEntryPolicy.IsValid(entry)
             ? entry
             : throw new JsonException("Invalid Diogenes entry payload.");
@@ -124,7 +133,7 @@ internal sealed class DiogenesStaySwitchEntryRecordConverter : JsonConverter<Dio
                 material.SourceVersion, material.SourceKind, material.ActionFactId, material.IsNoMaterial,
                 material.PublicHistoryIds.ToArray(), material.CurrentStatementId, material.NarrowStatementId,
                 material.LaterOutcomeId, material.Digest),
-            value.Closed) { Practice = value.Practice }, options);
+            value.Closed) { Practice = value.Practice, NativeNode = value.NativeNode }, options);
     }
 }
 
@@ -141,11 +150,20 @@ internal static class DiogenesStaySwitchEntryPolicy
         ulong runSeed,
         DiogenesStaySwitchEntryContext context,
         out DiogenesStaySwitchEntryRecord? entry)
+        => TryCreateCore(sharedState, runSeed, context, null, out entry);
+
+    public static bool TryCreateNative(PhilosophyRunState sharedState, ulong runSeed,
+        DiogenesNativeQuestionNode node, out DiogenesStaySwitchEntryRecord? entry) =>
+        TryCreateCore(sharedState, runSeed, new(2, 1, false, false, null), node, out entry);
+
+    private static bool TryCreateCore(PhilosophyRunState sharedState, ulong runSeed,
+        DiogenesStaySwitchEntryContext context, DiogenesNativeQuestionNode? node,
+        out DiogenesStaySwitchEntryRecord? entry)
     {
         ArgumentNullException.ThrowIfNull(sharedState);
         ArgumentNullException.ThrowIfNull(context);
         entry = null;
-        if (context.ActIndex != 2 || context.PlayerCount != 1 || !context.IsMapRoom ||
+        if (context.ActIndex != 2 || context.PlayerCount != 1 || (node is null ? !context.IsMapRoom : !node.IsValid()) ||
             context.IsRestoringRoomStackBase || context.SourceRoomId is < 0 ||
             sharedState.PreservedSaveMarkerEntries.Count != 0 ||
             sharedState.DiogenesPractice is { } ledger && !ledger.IsValid() ||
@@ -167,19 +185,21 @@ internal static class DiogenesStaySwitchEntryPolicy
 
         (int eligible, int foregone, int used) = sharedState.DiogenesPractice?.SummaryBefore(2) ?? default;
         entry = new DiogenesStaySwitchEntryRecord(
-            CurrentVersion,
+            node is null ? CurrentVersion : 2,
             RunIdPrefix + runSeed.ToString(CultureInfo.InvariantCulture),
             context.SourceRoomId,
             facts,
             CreateMaterial(facts),
             Practice: sharedState.DiogenesPractice is null
-                ? null : new DiogenesPracticeSummary(eligible, foregone, used));
+                ? null : new DiogenesPracticeSummary(eligible, foregone, used), NativeNode: node);
         return IsValid(entry);
     }
 
     public static bool IsValid(DiogenesStaySwitchEntryRecord? entry)
     {
-        if (entry is null || entry.Version != CurrentVersion || entry.SourceRoomId is < 0 ||
+        if (entry is null || (entry.Version == 1 ? entry.NativeNode is not null
+                : entry.Version != 2 || entry.NativeNode?.IsValid() != true || entry.SourceRoomId is not null)
+            || entry.SourceRoomId is < 0 ||
             !IsValidRunId(entry.RunId) || entry.Material is null ||
             entry.Practice is { } practice && !practice.IsValid() ||
             entry.Facts is not null && !IsValidFacts(entry.Facts))

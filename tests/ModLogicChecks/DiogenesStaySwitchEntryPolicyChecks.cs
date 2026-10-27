@@ -13,6 +13,7 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
         WrongRoutesAndUnsafeContextsCannotEnter();
         FrozenMaterialSurvivesRepeatedRestore();
         InvalidAndIncompletePayloadsCannotRestore();
+        NativeQuestionRecordsKeepTheirOwnVersion();
         PracticeObservationsRemainBoundedAndFrozen();
         Console.WriteLine("Diogenes entry policy checks passed: real branch eligibility, frozen facts and strict restore.");
     }
@@ -149,7 +150,7 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
     {
         DiogenesStaySwitchEntryPolicy.TryCreate(Eligible(), 42, Context, out var entry);
         JsonObject original = JsonNode.Parse(JsonSerializer.Serialize(entry))!.AsObject();
-        foreach (string field in original.Select(pair => pair.Key).Where(key => key != "Practice").ToArray())
+        foreach (string field in original.Select(pair => pair.Key).Where(key => key is not ("Practice" or "NativeNode")).ToArray())
         {
             JsonObject incomplete = original.DeepClone().AsObject();
             incomplete.Remove(field);
@@ -157,10 +158,11 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
         }
         JsonObject legacy = original.DeepClone().AsObject();
         legacy.Remove("Practice");
+        legacy.Remove("NativeNode");
         Assert(JsonSerializer.Deserialize<DiogenesStaySwitchEntryRecord>(legacy.ToJsonString())?.Practice is null,
             "A pre-observation entry must restore without invented practice evidence.");
         JsonObject unknown = original.DeepClone().AsObject();
-        unknown["Version"] = 2;
+        unknown["Version"] = 3;
         AssertRejects(unknown.ToJsonString(), "An unknown entry version must remain isolated.");
         JsonObject changed = original.DeepClone().AsObject();
         changed["Material"]!["Digest"] = "changed";
@@ -173,6 +175,38 @@ internal static class DiogenesStaySwitchEntryPolicyChecks
         AssertRejects(incompleteFacts.ToJsonString(), "Omitted costs must not silently restore as zero.");
         Assert(!DiogenesStaySwitchEntryPolicy.IsValid(entry! with { RunId = "unrelated" }),
             "An entry must use its own deterministic run identity.");
+    }
+
+    private static void NativeQuestionRecordsKeepTheirOwnVersion()
+    {
+        PhilosophyRunState shared = Eligible();
+        shared.SocratesVirtueUpstream = Committed(SocratesVirtueAction.Retreated);
+        Assert(DiogenesStaySwitchEntryPolicy.TryCreateNative(shared, 42, new(2, 3, 1), out var entry)
+            && entry is { Version: 2, SourceRoomId: null, NativeNode: { ActIndex: 2, Row: 3, Column: 1 } },
+            "The native question record keeps its actual node and distinct version, without a legacy map ID.");
+        string json = JsonSerializer.Serialize(entry);
+        for (int i = 0; i < 3; i++)
+        {
+            var restored = JsonSerializer.Deserialize<DiogenesStaySwitchEntryRecord>(json)!;
+            Assert(DiogenesStaySwitchEntryPolicy.IsValid(restored) && restored.NativeNode == entry!.NativeNode
+                && restored.Facts!.RetainedHitPointLoss == 7 && restored.Material.Digest == entry.Material.Digest,
+                "Native record restore preserves its original node, actual costs and frozen material.");
+            json = JsonSerializer.Serialize(restored);
+        }
+        JsonObject original = JsonNode.Parse(json)!.AsObject();
+        foreach (string field in new[] { "ActIndex", "Row", "Column" })
+        {
+            JsonObject incomplete = original.DeepClone().AsObject();
+            incomplete["NativeNode"]!.AsObject().Remove(field);
+            AssertRejects(incomplete.ToJsonString(), "All three native node fields must be explicit, not default coordinates.");
+        }
+        JsonObject noNode = original.DeepClone().AsObject(); noNode.Remove("NativeNode");
+        AssertRejects(noNode.ToJsonString(), "A version-two record cannot fall back to a legacy entry when its node is missing.");
+        JsonObject mixed = original.DeepClone().AsObject(); mixed["SourceRoomId"] = 17;
+        AssertRejects(mixed.ToJsonString(), "Native node and legacy map identity cannot be mixed.");
+        Assert(!DiogenesStaySwitchEntryPolicy.TryCreateNative(Eligible(), 42, new(1, 3, 1), out _)
+            && !DiogenesStaySwitchEntryPolicy.TryCreateNative(Eligible(), 42, new(2, -1, 1), out _),
+            "A non-third-act or invalid coordinate cannot create a native invitation.");
     }
 
     private static PhilosophyRunState Eligible() => new()

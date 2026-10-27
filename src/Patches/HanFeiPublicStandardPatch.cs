@@ -6,26 +6,24 @@ namespace STS2Philosophers;
 
 internal static class HanFeiPublicStandardPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null)
-        {
-            return;
-        }
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
         HanFeiPublicStandard? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         HanFeiPublicStandardState? saved = philosophy.HanFeiPublicStandard;
         ActBehaviorState? behavior =
             philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         HanFeiPublicStandardTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -39,17 +37,16 @@ internal static class HanFeiPublicStandardPatch
             canonical is not null);
         if (!HanFeiPublicStandardTriggerPolicy.ShouldInsert(context))
         {
-            return;
+            return null;
         }
 
-        if (saved is null)
-        {
-            philosophy.HanFeiPublicStandard = HanFeiPublicStandardState.Create(
-                $"HAN_FEI_PUBLIC_STANDARD:{run.Rng.Seed}:3");
-        }
+        var candidate = saved ?? HanFeiPublicStandardState.Create(
+            $"HAN_FEI_PUBLIC_STANDARD:{run.Rng.Seed}:3");
+        if (!candidate.IsUsable()) return null;
+        philosophy.HanFeiPublicStandard = candidate;
 
         Log.Info("[STS2Philosophers] Presenting Han Fei's act-three public standard.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static HanFeiPublicStandard? TryGetCanonicalEvent()

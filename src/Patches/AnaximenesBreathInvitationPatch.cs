@@ -6,30 +6,34 @@ namespace STS2Philosophers;
 
 internal static class AnaximenesBreathInvitationPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)
+        if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy)
-            || philosophy is null) return;
+            || philosophy is null) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         AnaximenesBreathInvitation? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         AnaximenesBreathInvitationState? saved = philosophy.AnaximenesBreathInvitation;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         AnaximenesBreathInvitationTriggerContext context = new(
-            manager.IsInProgress, RouteEventMapBoundary.IsSafe(run), run.Players.Count == 1,
+            manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, behavior?.CompletedCombatCount ?? 0, journey?.CurrentNodeId,
             player?.GetRelicById(ModelDb.GetId<HeraclitusLyre>()) is not null,
             player?.GetRelicById(ModelDb.GetId<AnaximenesBreath>()) is not null,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             canonical is not null);
-        if (!AnaximenesBreathInvitationTriggerPolicy.ShouldInsert(context)) return;
-        philosophy.AnaximenesBreathInvitation ??= AnaximenesBreathInvitationState.Create(
+        if (!AnaximenesBreathInvitationTriggerPolicy.ShouldInsert(context)) return null;
+        var candidate = saved ?? AnaximenesBreathInvitationState.Create(
             $"ANAXIMENES_BREATH_INVITATION:{run.Rng.Seed}:3");
-        Log.Info("[STS2Philosophers] Presenting Anaximenes breath practice after combat.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        if (!candidate.IsUsable()) return null;
+        philosophy.AnaximenesBreathInvitation = candidate;
+        Log.Info("[STS2Philosophers] Presenting Anaximenes breath practice at a native question node.");
+        return canonical;
     }
 
     private static AnaximenesBreathInvitation? TryGetCanonicalEvent()

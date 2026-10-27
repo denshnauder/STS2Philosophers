@@ -14,6 +14,9 @@ namespace STS2Philosophers;
 
 public sealed class LaoziWuWeiShuJian : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private const int MaximumCardsPlayed = 2;
     private const int EnergyReward = 2;
     private const int DexterityReward = 2;

@@ -21,6 +21,26 @@ if (args.Contains("--enc198-only"))
     await SlyCostReceiptNativeChecks.Run();
     return;
 }
+if (args.Contains("--enc199-special-only"))
+{
+    await StoicQuestionEntryNativeChecks.Run();
+    return;
+}
+if (args.Contains("--enc199-legacy-only"))
+{
+    await LegacyStoicQuestionExitNativeChecks.Run();
+    return;
+}
+if (args.Contains("--enc199-only"))
+{
+    await NativeQuestionNodeChecks.Run();
+    await AllRouteQuestionNodeChecks.Run();
+    await CopernicusQuestionEntryNativeChecks.Run();
+    await EasternQuestionEntryNativeChecks.Run();
+    await StoicQuestionEntryNativeChecks.Run();
+    await LegacyStoicQuestionExitNativeChecks.Run();
+    return;
+}
 if (args.Contains("--copernicus-only"))
 {
     await CopernicusShiftedCenterNativeChecks.Run();
@@ -56,3 +76,9 @@ await NativeQuestionNodeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();
 await SlyCostReceiptNativeChecks.Run();
+await AllRouteQuestionNodeChecks.Run();
+await CopernicusQuestionEntryNativeChecks.Run();
+await EasternQuestionEntryNativeChecks.Run();
+
+await StoicQuestionEntryNativeChecks.Run();
+await LegacyStoicQuestionExitNativeChecks.Run();

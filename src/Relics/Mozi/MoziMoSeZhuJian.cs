@@ -14,6 +14,9 @@ namespace STS2Philosophers;
 
 public sealed class MoziMoSeZhuJian : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private MoziMoSeZhuJianState _moziMoSeZhuJian;
     private bool _hasResolvedPhilosophersGazeContinuation;
 

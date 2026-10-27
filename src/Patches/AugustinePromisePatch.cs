@@ -1,22 +1,23 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class AugustinePromisePatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
         AugustinePromiseState? saved = shared.AugustinePromise;
         AugustinePromise? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
@@ -24,11 +25,10 @@ internal static class AugustinePromisePatch
             .Any(edge => edge.EdgeId == AugustinePromiseState.CompletionEdgeId);
         AugustinePromiseTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false,
-                RoomType: not RoomType.Boss },
+            NativeQuestionNodeEvents.HasCompletedCombat(run),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
@@ -41,14 +41,15 @@ internal static class AugustinePromisePatch
             saved is not null && journey is not null
                 && AugustinePromiseFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
-        if (!AugustinePromiseTriggerPolicy.ShouldInsert(context)) return;
+        if (!AugustinePromiseTriggerPolicy.ShouldInsert(context)) return null;
 
-        if (saved is null)
-            shared.AugustinePromise = AugustinePromiseState.Create(
-                $"AUGUSTINE_PROMISE:{run.Rng.Seed}:2");
+        var candidate = saved ?? AugustinePromiseState.Create(
+            $"AUGUSTINE_PROMISE:{run.Rng.Seed}:2");
+        if (journey is null || !AugustinePromiseFlow.IsRouteConsistent(candidate, journey)) return null;
+        shared.AugustinePromise = candidate;
 
         Log.Info("[STS2Philosophers] Presenting Augustine's act-two promise inquiry.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static AugustinePromise? TryGetCanonicalEvent()

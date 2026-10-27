@@ -4,13 +4,17 @@ namespace STS2Philosophers;
 
 internal sealed record CopernicusForkExit([property: JsonRequired] int Row,
     [property: JsonRequired] int Column, [property: JsonRequired] string PointType);
+internal enum CopernicusForkSource { LegacyCombat, QuestionPending, QuestionEvent }
 internal sealed record CopernicusForkSnapshot([property: JsonRequired] string RunSeed, [property: JsonRequired] int ActIndex,
     [property: JsonRequired] int SourceRow, [property: JsonRequired] int SourceColumn,
     [property: JsonRequired] int SourceRoomId, [property: JsonRequired] int VisitedCount,
     [property: JsonRequired] int HistoryCount, [property: JsonRequired] List<CopernicusForkExit> Exits)
 {
-    public bool IsUsable() => !string.IsNullOrWhiteSpace(RunSeed) && ActIndex == 1
+    // Missing in version-one saves means the original combat fork; never rebind it.
+    public CopernicusForkSource Source { get; init; }
+    public bool IsUsable() => Enum.IsDefined(Source) && !string.IsNullOrWhiteSpace(RunSeed) && ActIndex == 1
         && SourceRow >= 0 && SourceColumn >= 0 && SourceRoomId >= 0 && VisitedCount > 0 && HistoryCount > 0
+        && (Source != CopernicusForkSource.QuestionPending || SourceRoomId == 0)
         && Exits is { Count: 2 } && Exits.All(e => e is not null && e.Row > SourceRow && e.Column >= 0
             && !string.IsNullOrWhiteSpace(e.PointType) && e.PointType is not ("Boss" or "Unassigned"))
         && (Exits[0].Column < Exits[1].Column || Exits[0].Column == Exits[1].Column && Exits[0].Row < Exits[1].Row);
@@ -49,7 +53,7 @@ internal sealed class CopernicusShiftedCenterState : IJsonOnDeserialized
     [JsonIgnore] public bool TravelPending => Closed && SelectedExitIndex >= 0;
     public static CopernicusShiftedCenterState Create(string id, string democritusId, string empedoclesId, CopernicusForkSnapshot fork) => new()
     {
-        Version = 1, InstanceId = id, DemocritusInstanceId = democritusId, EmpedoclesInstanceId = empedoclesId, Fork = fork,
+        Version = fork.Source == CopernicusForkSource.LegacyCombat ? 1 : 2, InstanceId = id, DemocritusInstanceId = democritusId, EmpedoclesInstanceId = empedoclesId, Fork = fork,
         Stage = CopernicusShiftedCenterStage.Invitation, PendingAction = CopernicusShiftedCenterAction.None,
         ConfirmedActions = [], Order = [CopernicusObservation.Apparent, CopernicusObservation.Planet, CopernicusObservation.Observer], Closed = false,
     };
@@ -61,10 +65,14 @@ internal sealed class CopernicusShiftedCenterState : IJsonOnDeserialized
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
     public bool IsUsable()
     {
-        if (Version != 1 || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(DemocritusInstanceId)
+        if ((Version != 1 || Fork?.Source != CopernicusForkSource.LegacyCombat)
+                && (Version != 2 || Fork?.Source is not (CopernicusForkSource.QuestionPending or CopernicusForkSource.QuestionEvent))
+            || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(DemocritusInstanceId)
             || string.IsNullOrWhiteSpace(EmpedoclesInstanceId) || Fork?.IsUsable() != true || !_closed.HasValue
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || ConfirmedActions is null
-            || ConfirmedActions.Count > 8 || Order is null) return false;
+            || ConfirmedActions.Count > 8 || Order is null
+            || Fork.Source == CopernicusForkSource.QuestionPending
+                && (ConfirmedActions.Count != 0 || PendingAction != CopernicusShiftedCenterAction.None || Closed)) return false;
         var replay = Create(InstanceId, DemocritusInstanceId, EmpedoclesInstanceId, Fork);
         foreach (var action in ConfirmedActions)
         {

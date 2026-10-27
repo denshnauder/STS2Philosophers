@@ -32,7 +32,8 @@ internal static class RouteEventMapBoundary
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
         or AquinasBridgeNotice or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger or CopernicusShiftedCenter or GalileoMeasuredPractice
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
-        or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing;
+        or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing
+        or DiogenesStaySwitch or ZenoAssentBoundary;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 
@@ -190,8 +191,7 @@ internal static class RouteEventMapBoundary
     }
 
     // Zeno resumes its native map before its separate close checkpoint commits.
-    // Recheck the already observed map after that commit, without fabricating a
-    // new source/map receipt or bypassing IsSafe's travel and reward gates.
+    // Preserve the close notification without starting another event at the map.
     internal static Task AfterZenoClosedAsync(RunState run) => DispatchObservedAsync(run);
 
     internal static RouteEventMapBoundaryScope? BeginRestore(RunManager manager)
@@ -244,66 +244,10 @@ internal static class RouteEventMapBoundary
         await DispatchObservedAsync(scope.Run);
     }
 
-    private static async Task DispatchObservedAsync(RunState run)
-    {
-        BoundaryRuntime runtime = Runtimes.GetValue(run, static _ => new());
-        if (Interlocked.Exchange(ref runtime.Dispatching, 1) != 0)
-        {
-            Volatile.Write(ref runtime.ReplayRequested, 1);
-            return;
-        }
-        try
-        {
-            if (!IsSafe(run) || run.CurrentRoom is not { } source) return;
-            Func<Task>[] entries =
-            [
-                ProtagorasSharedDeliberationPatch.InsertAtBoundaryAsync,
-                ZenoCivicChallengePatch.InsertAtBoundaryAsync,
-                PlatoWholeArrangementPatch.InsertAtBoundaryAsync,
-                EpicurusSharedMarginPatch.InsertAtBoundaryAsync,
-                PlotinusCommonGroundPatch.InsertAtBoundaryAsync,
-                SextusOpposedAppearancesPatch.InsertAtBoundaryAsync,
-                DescartesMethodicReconstructionPatch.InsertAtBoundaryAsync,
-                HanFeiPublicStandardPatch.InsertAtBoundaryAsync,
-                ParmenidesInquiryPatch.InsertAtBoundaryAsync,
-                AnaximanderOriginInquiryPatch.InsertAtBoundaryAsync,
-                AnaximenesBreathInvitationPatch.InsertAtBoundaryAsync,
-                AugustinePromisePatch.InsertAtBoundaryAsync,
-                AristotleCivicInquiryPatch.InsertAtBoundaryAsync,
-                AquinasBridgeNoticePatch.InsertAtBoundaryAsync,
-                DemocritusArrangementPatch.InsertAtBoundaryAsync,
-                EmpedoclesRootsInquiryPatch.InsertAtBoundaryAsync,
-                AnaxagorasMixtureInquiryPatch.InsertAtBoundaryAsync,
-                GorgiasSpeechInquiryPatch.InsertAtBoundaryAsync,
-                SenecaDailyReviewPatch.InsertAtBoundaryAsync,
-                EpictetusGuidePracticePatch.InsertAtBoundaryAsync,
-                MarcusAureliusCampPracticePatch.InsertAtBoundaryAsync,
-                PyrrhoReportedCrossingPatch.InsertAtBoundaryAsync,
-                AnselmUnfinishedProofPatch.InsertAtBoundaryAsync,
-                OckhamNamesInquiryPatch.InsertAtBoundaryAsync,
-                MachiavelliFloodPreparationPatch.InsertAtBoundaryAsync,
-                LutherSignedCarePatch.InsertAtBoundaryAsync,
-                BaconSampleLedgerPatch.InsertAtBoundaryAsync,
-                CopernicusShiftedCenterPatch.InsertAtBoundaryAsync,
-                GalileoMeasuredPracticePatch.InsertAtBoundaryAsync,
-            ];
-            foreach (Func<Task> entry in entries)
-            {
-                if (!ReferenceEquals(run.CurrentRoom, source) || !IsSafe(run)) break;
-                await entry();
-            }
-        }
-        catch (Exception exception)
-        {
-            Freeze(run, $"Route event dispatch failed: {exception}");
-        }
-        finally
-        {
-            Volatile.Write(ref runtime.Dispatching, 0);
-            if (Interlocked.Exchange(ref runtime.ReplayRequested, 0) != 0)
-                _ = DispatchObservedAsync(run);
-        }
-    }
+    // Map/reward/restore observations never manufacture an event room. A saved
+    // room restores through the native stack; all new non-opening claims happen
+    // only in ModifyNextEvent after a real Unknown node has rolled Event.
+    private static Task DispatchObservedAsync(RunState run) => Task.CompletedTask;
 
     private static bool IsCurrentRun(RunManager manager, RunState run) =>
         manager.IsInProgress && manager.ShouldSave && run.Players.Count == 1
@@ -332,8 +276,6 @@ internal static class RouteEventMapBoundary
         internal AbstractRoom? EnteringSource;
         internal int Restoring;
         internal int RewardsProceeding;
-        internal int Dispatching;
-        internal int ReplayRequested;
         internal bool Frozen;
     }
 

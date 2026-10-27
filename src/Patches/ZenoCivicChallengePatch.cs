@@ -1,36 +1,38 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class ZenoCivicChallengePatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) is not PlatoCivicSeal { CanOfferNativeQuestion: true } carrier
+            || shared.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
         ZenoCivicChallengeState? saved = shared.ZenoCivicChallenge;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
         ZenoCivicChallenge? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        var player = run.Players.Count == 1 ? run.Players[0] : null;
         bool eligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")
             .Any(edge => edge.EdgeId == ZenoCivicChallengeState.EdgeId);
         ZenoCivicChallengeTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false,
-                RoomType: not RoomType.Boss },
+            NativeQuestionNodeEvents.IsEntry(run),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
@@ -43,14 +45,13 @@ internal static class ZenoCivicChallengePatch
             saved is not null && journey is not null
                 && ZenoCivicChallengeFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
-        if (!ZenoCivicChallengeTriggerPolicy.ShouldInsert(context)) return;
+        if (!ZenoCivicChallengeTriggerPolicy.ShouldInsert(context)) return null;
 
         if (shared.ZenoCivicChallenge is not { } active || journey is null
             || !ZenoCivicChallengeFlow.IsRouteConsistent(active, journey))
-            throw new InvalidDataException("The civic challenge conflicts with its reserved question.");
+            return null;
 
-        Log.Info("[STS2Philosophers] Presenting Zeno's first-act civic challenge.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static ZenoCivicChallenge? TryGetCanonicalEvent()

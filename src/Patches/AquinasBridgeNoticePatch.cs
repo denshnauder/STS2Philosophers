@@ -1,32 +1,32 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class AquinasBridgeNoticePatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
         AquinasBridgeNoticeState? saved = shared.AquinasBridgeNotice;
         AquinasBridgeNotice? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         bool eligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == AquinasBridgeNoticeState.CompletionEdgeId);
         AquinasBridgeNoticeTriggerContext context = new(
-            manager.IsInProgress, RouteEventMapBoundary.IsSafe(run), run.Players.Count == 1,
+            manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false,
-                RoomType: not RoomType.Boss },
+            NativeQuestionNodeEvents.HasCompletedCombat(run),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(AquinasBridgeNoticeState.RequiredEdgeId) == true,
@@ -40,13 +40,14 @@ internal static class AquinasBridgeNoticePatch
             saved is not null && journey is not null
                 && AquinasBridgeNoticeFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
-        if (!AquinasBridgeNoticeTriggerPolicy.ShouldInsert(context)) return;
-        if (saved is null)
-            shared.AquinasBridgeNotice = AquinasBridgeNoticeState.Create(
-                $"AQUINAS_BRIDGE_NOTICE:{run.Rng.Seed}:3");
+        if (!AquinasBridgeNoticeTriggerPolicy.ShouldInsert(context)) return null;
+        var candidate = saved ?? AquinasBridgeNoticeState.Create(
+            $"AQUINAS_BRIDGE_NOTICE:{run.Rng.Seed}:3");
+        if (journey is null || !AquinasBridgeNoticeFlow.IsRouteConsistent(candidate, journey)) return null;
+        shared.AquinasBridgeNotice = candidate;
 
         Log.Info("[STS2Philosophers] Presenting Aquinas's public bridge notice.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static AquinasBridgeNotice? TryGetCanonicalEvent()

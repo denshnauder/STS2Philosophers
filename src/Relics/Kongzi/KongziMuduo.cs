@@ -13,6 +13,9 @@ namespace STS2Philosophers;
 
 public sealed class KongziMuduo : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private const int StrengthCap = 5;
 
     private KongziMuduoState _kongziMuduo;

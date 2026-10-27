@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Managers;
 using System.Runtime.CompilerServices;
@@ -49,7 +50,7 @@ internal sealed class ZenoRouteGameSaveGateway : IZenoRouteSaveGateway
     {
         RunManager runManager = RunManager.Instance;
         if (!runManager.ShouldSave ||
-            runManager.NetService.Type != NetGameType.Singleplayer ||
+            runManager.NetService?.Type != NetGameType.Singleplayer ||
             !ReferenceEquals(runManager.DebugOnlyGetState(), _runState) ||
             !PhilosophyRunStateService.TryGet(_runState, out PhilosophyRunState? currentSharedState) ||
             !ReferenceEquals(currentSharedState, _sharedState))
@@ -63,7 +64,12 @@ internal sealed class ZenoRouteGameSaveGateway : IZenoRouteSaveGateway
 
     public Task SaveRunAsync()
     {
-        return SaveManager.Instance.SaveRun(null);
+        // Entry transactions run before EventRoom creates its local mutable
+        // event. Saving its already selected canonical room needs no Owner or
+        // EventSynchronizer lookup, and preserves both new and legacy slots.
+        AbstractRoom? exact = _runState.CurrentRoom is EventRoom
+            { CanonicalEvent: DiogenesStaySwitch or ZenoAssentBoundary } room ? room : null;
+        return SaveManager.Instance.SaveRun(exact);
     }
 
     public ZenoRouteSaveReadBack ReadCurrentRunSave()

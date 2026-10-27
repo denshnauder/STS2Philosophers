@@ -6,20 +6,22 @@ namespace STS2Philosophers;
 
 internal static class EpictetusGuidePracticePatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         ZenoRouteFeatureState? feature = shared.ZenoRoutePayload.State;
         ZenoRouteState? route = feature?.Route;
         SenecaDailyReviewState? seneca = shared.SenecaDailyReview;
         EpictetusGuidePracticeState? saved = shared.EpictetusGuidePractice;
         EpictetusGuidePractice? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         EpictetusGuidePracticeTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             shared.ZenoRoutePayload.Classification == ZenoRoutePayloadClassification.Current
@@ -30,18 +32,16 @@ internal static class EpictetusGuidePracticePatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!EpictetusGuidePracticeTriggerPolicy.ShouldInsert(context)) return;
+        if (!EpictetusGuidePracticeTriggerPolicy.ShouldInsert(context)) return null;
         if (route is null || seneca is null || shared.DiogenesStaySwitchEntry is not { } entry
-            || !SenecaDailyReviewFlow.IsRouteConsistent(seneca, route, entry)) return;
+            || !SenecaDailyReviewFlow.IsRouteConsistent(seneca, route, entry)) return null;
 
-        if (saved is null)
-            shared.EpictetusGuidePractice = EpictetusGuidePracticeState.Create(
-                $"EPICTETUS_GUIDE_PRACTICE:{run.Rng.Seed}:1", route, seneca);
-        if (shared.EpictetusGuidePractice is not { } active
-            || !EpictetusGuidePracticeFlow.IsRouteConsistent(active, route, seneca))
-            throw new InvalidDataException("The Epictetus practice conflicts with its saved Stoic route.");
-        Log.Info("[STS2Philosophers] Presenting Epictetus guide practice at the map boundary.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        var candidate = saved ?? EpictetusGuidePracticeState.Create(
+            $"EPICTETUS_GUIDE_PRACTICE:{run.Rng.Seed}:1", route, seneca);
+        if (!EpictetusGuidePracticeFlow.IsRouteConsistent(candidate, route, seneca)) return null;
+        shared.EpictetusGuidePractice = candidate;
+        Log.Info("[STS2Philosophers] Presenting Epictetus guide practice at a native question node.");
+        return canonical;
     }
 
     private static EpictetusGuidePractice? TryGetCanonicalEvent()

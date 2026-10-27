@@ -15,6 +15,9 @@ namespace STS2Philosophers;
 
 public sealed class MoziShouChengTu : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private MoziShouChengTuState _moziShouChengTu;
     private bool _hasResolvedPhilosophersGazeContinuation;
 

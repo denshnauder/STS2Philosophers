@@ -13,6 +13,9 @@ namespace STS2Philosophers;
 
 public sealed class LaoziShuiYu : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private LaoziShuiYuState _laoziShuiYu;
     private bool _hasResolvedPhilosophersGazeContinuation;
 

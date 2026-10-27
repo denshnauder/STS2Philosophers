@@ -1,37 +1,39 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class AnselmUnfinishedProofPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<SocratesQuestionCup>()) is not SocratesQuestionCup { CanOfferNativeQuestion: true } carrier
+            || shared.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         PyrrhoReportedCrossingState? pyrrho = shared.PyrrhoReportedCrossing;
         AnselmUnfinishedProofState? saved = shared.AnselmUnfinishedProof;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
         AnselmUnfinishedProof? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        var player = run.Players.Count == 1 ? run.Players[0] : null;
         bool pyrrhoConsistent = journey is not null && pyrrho is not null
             && shared.SextusOpposedAppearances is { } sextus
             && shared.DescartesMethodicReconstruction is { } descartes
             && PyrrhoReportedCrossingFlow.IsRouteConsistent(pyrrho, journey, sextus, descartes);
         AnselmUnfinishedProofTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false,
-                RoomType: not RoomType.Boss },
+            NativeQuestionNodeEvents.IsEntry(run),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
@@ -49,11 +51,10 @@ internal static class AnselmUnfinishedProofPatch
             saved is not null && journey is not null && pyrrho is not null
                 && AnselmUnfinishedProofFlow.IsRouteConsistent(saved, journey, pyrrho),
             canonical is not null);
-        if (!AnselmUnfinishedProofTriggerPolicy.ShouldInsert(context)) return;
+        if (!AnselmUnfinishedProofTriggerPolicy.ShouldInsert(context)) return null;
 
 
-        Log.Info("[STS2Philosophers] Presenting Anselm's third-act textual inquiry.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static AnselmUnfinishedProof? TryGetCanonicalEvent()

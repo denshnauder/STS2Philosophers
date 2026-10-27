@@ -66,6 +66,8 @@ public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentit
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
     {
+        if (_stateHost?.CurrentState.Route?.Stage == ZenoRouteStage.ZenoClosed) return [];
+        if (_stateHost?.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed) return LockedOptions();
         ZenoAssentPageView view = RestoreViewOrFallback();
         _currentView = view;
         return GenerateOptions(view);
@@ -73,12 +75,37 @@ public sealed class ZenoAssentBoundary : EventModel, IZenoRouteEventSceneIdentit
 
     protected override void SetInitialEventState(bool isPreFinished)
     {
-        if (isPreFinished)
+        if (_stateHost?.CurrentState.Route?.Stage == ZenoRouteStage.ZenoClosed)
         {
-            throw new InvalidOperationException("ZenoAssentBoundary cannot start as a pre-finished event.");
+            FinishResolvedRoute();
+            return;
         }
+        if (_stateHost?.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed)
+        {
+            SetEventState(InitialDescription, LockedOptions());
+            return;
+        }
+        if (isPreFinished && _stateHost?.CurrentState.Route?.Stage != ZenoRouteStage.OutcomeCommitted)
+            throw new InvalidOperationException("An unresolved Zeno record cannot be pre-finished.");
 
         SetPage(RestoreViewOrFallback());
+    }
+
+    public override async Task AfterEventStarted()
+    {
+        if (_stateHost?.CurrentState.PendingOperation?.Kind == ZenoRouteOperationKind.EventClosed)
+            await _stateHost.CloseAndResumeAsync();
+    }
+
+    private IReadOnlyList<EventOption> LockedOptions() =>
+        [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())];
+
+    internal void FinishResolvedRoute()
+    {
+        if (_stateHost?.CurrentState.Route is not { Stage: ZenoRouteStage.ZenoClosed, Outcome: { } outcome })
+            throw new InvalidOperationException("Zeno completion has not been committed.");
+        if (IsFinished) return;
+        SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.{ZenoAssentPageFlow.PageKey(ZenoAssentPageFlow.ResultPage(outcome))}.description"));
     }
 
     private async Task Choose(ZenoAssentPageOption option)

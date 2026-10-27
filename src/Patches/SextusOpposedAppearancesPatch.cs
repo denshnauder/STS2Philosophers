@@ -6,27 +6,33 @@ namespace STS2Philosophers;
 
 internal static class SextusOpposedAppearancesPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null) return;
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<SocratesQuestionCup>()) is not SocratesQuestionCup { CanOfferNativeQuestion: true } carrier
+            || philosophy.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         SextusOpposedAppearances? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         SextusOpposedAppearancesState? saved = philosophy.SextusOpposedAppearances;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        if (journey is null || journey.RetainedEnding || journey.LastFixedAct != 1
+            || journey.CurrentNodeId != SextusOpposedAppearancesState.RequiredNodeId
+            || !journey.ResolvedQuestionActs.Contains(1)) return null;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        var player = run.Players.Count == 1 ? run.Players[0] : null;
         var currentMapPoint = run.CurrentMapCoord is not null ? run.CurrentMapPoint : null;
         bool hasNaturalFork = currentMapPoint?.Children.Count >= 2;
         SextusOpposedAppearancesTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -39,11 +45,10 @@ internal static class SextusOpposedAppearancesPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!SextusOpposedAppearancesTriggerPolicy.ShouldInsert(context)) return;
+        if (!SextusOpposedAppearancesTriggerPolicy.ShouldInsert(context)) return null;
 
 
-        Log.Info("[STS2Philosophers] Presenting Sextus's opposed appearances at a natural map fork.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static SextusOpposedAppearances? TryGetCanonicalEvent()

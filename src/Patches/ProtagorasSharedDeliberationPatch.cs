@@ -6,27 +6,33 @@ namespace STS2Philosophers;
 
 internal static class ProtagorasSharedDeliberationPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null)
-        {
-            return;
-        }
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<SocratesBalanceWeight>()) is not SocratesBalanceWeight { CanOfferNativeQuestion: true } carrier
+            || philosophy.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         ProtagorasSharedDeliberation? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         ProtagorasSharedDeliberationState? saved = philosophy.ProtagorasSharedDeliberation;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        if (journey is null || journey.RetainedEnding || journey.LastFixedAct != 1
+            || journey.CurrentNodeId != ProtagorasSharedDeliberationState.SourceNodeId
+            || journey.ResolvedQuestionActs.Contains(1) != saved.QuestionReserved
+            || journey.CompletedEdgeIds.Contains(ProtagorasSharedDeliberationState.CompletionEdgeId) != saved.EdgeCommitted)
+            return null;
         ProtagorasSharedDeliberationTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -40,13 +46,11 @@ internal static class ProtagorasSharedDeliberationPatch
             canonical is not null);
         if (!ProtagorasSharedDeliberationTriggerPolicy.ShouldInsert(context))
         {
-            return;
+            return null;
         }
 
 
-        Log.Info(
-            "[STS2Philosophers] Presenting the first-act Protagoras shared deliberation after a completed combat.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static ProtagorasSharedDeliberation? TryGetCanonicalEvent()

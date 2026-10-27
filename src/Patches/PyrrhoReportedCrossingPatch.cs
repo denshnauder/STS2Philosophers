@@ -1,32 +1,37 @@
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
 
 internal static class PyrrhoReportedCrossingPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    // Resume an allocated record at a real node; never create or reserve another instance.
+    internal static EventModel? TrySelectExistingNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null || !RouteEventMapBoundary.IsSafe(run)) return;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<SocratesQuestionCup>()) is not SocratesQuestionCup { CanOfferNativeQuestion: true } carrier
+            || shared.CurrentDoctrine?.DoctrineId != carrier.Id.Entry) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         SextusOpposedAppearancesState? sextus = shared.SextusOpposedAppearances;
         DescartesMethodicReconstructionState? descartes = shared.DescartesMethodicReconstruction;
         PyrrhoReportedCrossingState? saved = shared.PyrrhoReportedCrossing;
-        // New questions occupy native Unknown event nodes; this path only resumes legacy records.
-        if (saved is null) return;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
         PyrrhoReportedCrossing? canonical = TryGetCanonicalEvent();
-        var player = run.Players.Count == 1 ? run.Players[0] : null;
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         PyrrhoReportedCrossingTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            run.CurrentRoom is CombatRoom { IsPreFinished: true, IsVictoryRoom: false, RoomType: not RoomType.Boss },
+            // The allocated encounter already owns its opportunity. Restoring it
+            // at a physical question node never demands another combat receipt.
+            NativeQuestionNodeEvents.IsEntry(run),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.ResolvedQuestionActs.Contains(1) == true,
@@ -39,15 +44,14 @@ internal static class PyrrhoReportedCrossingPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!PyrrhoReportedCrossingTriggerPolicy.ShouldInsert(context)) return;
+        if (!PyrrhoReportedCrossingTriggerPolicy.ShouldInsert(context)) return null;
         if (journey is null || sextus is null || descartes is null
-            || !sextus.IsUsable() || !descartes.IsUsable()) return;
+            || !sextus.IsUsable() || !descartes.IsUsable()) return null;
 
         if (shared.PyrrhoReportedCrossing is not { } active
             || !PyrrhoReportedCrossingFlow.IsRouteConsistent(active, journey, sextus, descartes))
-            throw new InvalidDataException("The Pyrrho question conflicts with its saved knowledge route.");
-        Log.Info("[STS2Philosophers] Presenting Pyrrho's conflicting testimony after combat.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+            return null;
+        return canonical;
     }
 
     private static PyrrhoReportedCrossing? TryGetCanonicalEvent()

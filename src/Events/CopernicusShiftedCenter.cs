@@ -57,7 +57,8 @@ public sealed class CopernicusShiftedCenter : EventModel
                 Block("CopernicusShiftedCenter saved event state is unavailable.");
                 return;
             }
-            if (!CopernicusNativeTravel.MatchesSource(run, state.Fork))
+            if (!CopernicusNativeTravel.TryBindQuestion(run, state)
+                || !CopernicusNativeTravel.MatchesSource(run, state.Fork))
             {
                 Block("CopernicusShiftedCenter source fork changed before entry recovery.");
                 return;

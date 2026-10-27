@@ -14,6 +14,11 @@ internal static class ZenoRouteMapSafeBoundaryPatch
     private static void Postfix(NMapScreen __instance)
     {
         RunManager runManager = RunManager.Instance;
+        if (DiogenesStaySwitchEntrySession.Get(runManager)?.HasQueuedLegacyExit == true)
+        {
+            __instance.SetTravelEnabled(false);
+            return;
+        }
         if (!ZenoRouteNativeTriggerRegistry.TryGet(runManager, out ZenoRouteNativeTriggerSession? session) ||
             session is null ||
             runManager.DebugOnlyGetState() is not { } runState ||
@@ -31,7 +36,7 @@ internal static class ZenoRouteMapSafeBoundaryPatch
             return;
         }
 
-        if (!session.CanIntercept)
+        if (!session.CanIntercept && !session.HasIntervalRecovery)
         {
             return;
         }
@@ -62,10 +67,40 @@ internal static class ZenoRouteMapSafeBoundaryPatch
             return;
         }
 
+        if (!session.CanResumeLegacyClaim)
+        {
+            // Observe the finished intervening room, but never claim/open an
+            // event while displaying this map. Only a later real ? can do that.
+            if ((session.NeedsIntervalObservation && plan.Context.CompletedRoomReceiptId is not null
+                    || session.HasIntervalRecovery) && __instance.IsTravelEnabled)
+            {
+                __instance.SetTravelEnabled(false);
+                _ = ObserveIntervalAsync(__instance, runState, currentRoom, session, plan.Context.CompletedRoomReceiptId);
+            }
+            return;
+        }
+
         __instance.SetTravelEnabled(false);
         _ = ObserveMapTriggerAsync(
             __instance,
             session.TriggerAsync(plan, baseRoom));
+    }
+
+    private static async Task ObserveIntervalAsync(NMapScreen map, RunState run, AbstractRoom source,
+        ZenoRouteNativeTriggerSession session, string? receipt)
+    {
+        try
+        {
+            if (!await session.ObserveIntervalAsync(receipt))
+            {
+                RouteEventMapBoundary.Freeze(run, "Zeno's actual intervening room has not been durably confirmed.");
+                return;
+            }
+            if (ReferenceEquals(RunManager.Instance.DebugOnlyGetState(), run)
+                && ReferenceEquals(run.CurrentRoom, source) && map.IsOpen && !map.IsTraveling)
+                map.SetTravelEnabled(true);
+        }
+        catch (Exception error) { RouteEventMapBoundary.Freeze(run, $"Zeno interval recovery failed: {error}"); }
     }
 
     private static async Task ObserveCloseRecoveryAsync(Task<bool> recovery)
@@ -126,16 +161,17 @@ internal static class ZenoRouteRestoredEventRoomPatch
         bool isRestoringRoomStackBase,
         ref Task __result)
     {
-        if (BypassDepth.Value > 0 ||
-            __instance.CanonicalEvent is not ZenoAssentBoundary ||
-            runState is not RunState concreteRunState ||
+        if (BypassDepth.Value > 0 || __instance.CanonicalEvent is not ZenoAssentBoundary) return true;
+        if (runState is not RunState concreteRunState ||
             !ReferenceEquals(RunManager.Instance.DebugOnlyGetState(), concreteRunState) ||
             !ZenoRouteNativeTriggerRegistry.TryGet(
                 RunManager.Instance,
                 out ZenoRouteNativeTriggerSession? session) ||
             session is null)
         {
-            return true;
+            Log.Error("[STS2Philosophers] A selected Zeno room has no matching current transaction; entry remains blocked.");
+            __result = Task.CompletedTask;
+            return false;
         }
 
         __result = PrepareAndEnterAsync(
@@ -180,7 +216,7 @@ internal static class ZenoRouteBossGatePatch
         if (BypassDepth.Value > 0 ||
             !ZenoRouteNativeTriggerRegistry.TryGet(__instance, out ZenoRouteNativeTriggerSession? session) ||
             session is null ||
-            !session.CanIntercept ||
+            !session.CanResumeLegacyClaim ||
             __instance.DebugOnlyGetState() is not { } runState ||
             runState.Map is not { } map ||
             runState.BaseRoom is not { } baseRoom ||
@@ -247,7 +283,7 @@ internal static class ZenoRouteActExitGatePatch
         if (BypassDepth.Value > 0 ||
             !ZenoRouteNativeTriggerRegistry.TryGet(__instance, out ZenoRouteNativeTriggerSession? session) ||
             session is null ||
-            !session.CanIntercept ||
+            !session.CanResumeLegacyClaim ||
             __instance.DebugOnlyGetState() is not { } runState ||
             runState.CurrentRoom is not { } currentRoom ||
             runState.BaseRoom is not { } baseRoom ||

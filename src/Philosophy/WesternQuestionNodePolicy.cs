@@ -154,7 +154,7 @@ internal static class WesternQuestionNodePolicy
         && shared.DescartesMethodicReconstruction is { Closed: true, Stage: DescartesReconstructionStage.ResultDeclined } descartes
         && descartes.IsUsable();
 
-    private static bool HasOpenQuestion(PhilosophyRunState shared) =>
+    internal static bool HasOpenQuestion(PhilosophyRunState shared) =>
         shared.ProtagorasSharedDeliberation is { Closed: false } || shared.ParmenidesInquiry is { Closed: false }
         || shared.SextusOpposedAppearances is { Closed: false } || shared.GorgiasSpeechInquiry is { Closed: false }
         || shared.ZenoCivicChallenge is { Closed: false } || shared.AnaximanderOriginInquiry is { Closed: false }

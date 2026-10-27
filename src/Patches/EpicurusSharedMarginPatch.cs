@@ -6,23 +6,24 @@ namespace STS2Philosophers;
 
 internal static class EpicurusSharedMarginPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null) return;
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         EpicurusSharedMargin? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         EpicurusSharedMarginState? saved = philosophy.EpicurusSharedMargin;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         EpicurusSharedMarginTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -36,16 +37,15 @@ internal static class EpicurusSharedMarginPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!EpicurusSharedMarginTriggerPolicy.ShouldInsert(context)) return;
+        if (!EpicurusSharedMarginTriggerPolicy.ShouldInsert(context)) return null;
 
-        if (saved is null)
-        {
-            philosophy.EpicurusSharedMargin = EpicurusSharedMarginState.Create(
-                $"EPICURUS_SHARED_MARGIN:{run.Rng.Seed}:3");
-        }
+        var candidate = saved ?? EpicurusSharedMarginState.Create(
+            $"EPICURUS_SHARED_MARGIN:{run.Rng.Seed}:3");
+        if (!candidate.IsUsable()) return null;
+        philosophy.EpicurusSharedMargin = candidate;
 
         Log.Info("[STS2Philosophers] Presenting Epicurus's act-three shared margin.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static EpicurusSharedMargin? TryGetCanonicalEvent()

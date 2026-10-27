@@ -15,6 +15,9 @@ namespace STS2Philosophers;
 
 public sealed class KongziQingYuPei : RelicModel
 {
+    public override EventModel ModifyNextEvent(EventModel nextEvent) =>
+        NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
+
     private KongziQingYuPeiState _kongziQingYuPei;
     private CardPile? _observedHand;
     private PlayerCombatState? _observedPlayerCombatState;

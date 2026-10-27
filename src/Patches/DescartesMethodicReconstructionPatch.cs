@@ -6,24 +6,25 @@ namespace STS2Philosophers;
 
 internal static class DescartesMethodicReconstructionPatch
 {
-    internal static async Task InsertAtBoundaryAsync()
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
-        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
-        if (run is null) return;
 
-        if (!RouteEventMapBoundary.IsSafe(run)) return;
+        if (!NativeQuestionNodeEvents.IsEntry(run)) return null;
 
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? philosophy) || philosophy is null) return null;
         WesternJourneyState? journey = philosophy.WesternJourney;
         DescartesMethodicReconstruction? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         DescartesMethodicReconstructionState? saved = philosophy.DescartesMethodicReconstruction;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         var currentMapPoint = run.CurrentMapCoord is not null ? run.CurrentMapPoint : null;
         DescartesMethodicReconstructionTriggerContext context = new(
             manager.IsInProgress,
-            RouteEventMapBoundary.IsSafe(run),
+            NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
             behavior?.CompletedCombatCount ?? 0,
@@ -40,17 +41,19 @@ internal static class DescartesMethodicReconstructionPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             canonical is not null);
-        if (!DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(context)) return;
+        if (!DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(context)) return null;
 
+        var candidate = saved ?? DescartesMethodicReconstructionState.Create(
+            $"DESCARTES_METHODIC_RECONSTRUCTION:{run.Rng.Seed}:2");
+        if (!candidate.IsUsable()) return null;
         if (saved is null)
         {
-            if (journey is null || !WesternRouteGraph.LoadEmbedded().TryDecline(journey, "Fixed", 2)) return;
-            philosophy.DescartesMethodicReconstruction = DescartesMethodicReconstructionState.Create(
-                $"DESCARTES_METHODIC_RECONSTRUCTION:{run.Rng.Seed}:2");
+            if (journey is null || !WesternRouteGraph.LoadEmbedded().TryDecline(journey, "Fixed", 2)) return null;
         }
+        philosophy.DescartesMethodicReconstruction = candidate;
 
         Log.Info("[STS2Philosophers] Presenting Descartes's methodic reconstruction at a natural map fork.");
-        await RouteEventMapBoundary.EnterAsync(manager, run, canonical!);
+        return canonical;
     }
 
     private static DescartesMethodicReconstruction? TryGetCanonicalEvent()
