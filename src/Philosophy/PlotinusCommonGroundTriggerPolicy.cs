@@ -21,13 +21,15 @@ internal sealed record PlotinusCommonGroundTriggerContext(
 
 internal static class PlotinusCommonGroundTriggerPolicy
 {
+    private const int MinimumCompletedCombats = 2;
+
     public static bool ShouldInsert(PlotinusCommonGroundTriggerContext context)
     {
         if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
             || context.CurrentActIndex != 2 || !context.ModelAvailable) return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
-        return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 2
+        return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= MinimumCompletedCombats
             && context.EpicurusClosed
             && context.CurrentNodeId == PlotinusCommonGroundState.SourceNodeId
             && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
