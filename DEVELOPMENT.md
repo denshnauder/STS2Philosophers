@@ -1129,3 +1129,38 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 现场原有手动整合0.5.16，ENC127工作区的未提交中文稿1598键与干净集成稿完全一致；该稿、events.before_merge.json及原工作区混合DEVELOPMENT修改均未覆盖。用户退出游戏后两次确认无进程，先备份现装三文件，再在正确MacOS/mods/STS2Philosophers目录暂存、原子替换并逐项验哈希。备份：bin/deploy_backups/batch0516_mac_20261024_121025/，rollback.json为installed_verified，包含原三哈希、新三哈希及源码树。原生游戏0.111.0、实装Ritsu0.6.9/compat0.111.0保持；编译仍锁定0.6.2。
 
 安装DLL SHA256：6d0203f31a80639d73f6e360d727261178667cad13ba474e4bbc89b3e1929bda；PCK：501105e5edc9a6cf278aa8234721600a62fb8dfe02be79237c3d37270b452d31；JSON：2906e6bdb9e78970ae6aed3e7f0fc520c5fee5c2f7737d14b32cef7c567a2fc3。回退先退出游戏，再只恢复备份三文件并核对old_sha256。没有自动启动游戏、没有修改玩家存档、没有操作工坊上传目录或发布。ENC-197返回菜单继续后重复领奖是另行登记的真实反馈，本批没有声称已修复。
+
+## ENC-186 RitsuLib 0.6.2 审计（技术）
+
+| Harmony 类 | 目标 | 保留理由 |
+| --- | --- | --- |
+| DiogenesStaySwitchRestoredRoomPatch | EventRoom.EnterInternal(IRunState,bool) 前缀 | 需 await 会话准备并阻断进入；RoomEnteringEvent 仅通知，无 await/阻断 |
+| DescartesThinkingLensPreviewPatch | NCard.UpdateVisuals 前缀+终结器 | 需在渲染期限定预览目标；无对应事件 |
+| DescartesThinkingLensAffordabilityPatch | CardModel.CanPlayTargeting 前缀+终结器 | 需在入队前限定目标；无对应事件 |
+| PhilosophyRunStateToSavePatch | RunManager.ToSave 前缀+后缀 | 需改写 SerializableRun 标记；RunSavingEvent 不暴露可写快照 |
+| PhilosophyRunStateFromSavePatch | RunState.FromSerializable 前缀+后缀 | 须在反序列化前剥离标记；RunLoadedEvent 过晚 |
+| PhilosophyRunStateSaveReadPatch | ISaveStore.ReadFile(string) 后缀 | 需捕获原始字节与路径；无对应事件 |
+| PhilosophyRunStateNativeRunLoadPatch | RunSaveManager.LoadRunSave 前缀/后缀/终结器 | 需源路径与内容溯源；RunLoadedEvent 缺此输入 |
+| PhilosophyRunStateUnsafeSaveGuardPatch | SaveManager.SaveRun(AbstractRoom,bool) 前缀 | 需在写入前拒绝；RunSavingEvent 不可中止 |
+| ZenoRouteMapSafeBoundaryPatch | NMapScreen.Open 后缀 | 需在地图开启时禁用旅行；MapGeneratedEvent 时机不同 |
+| ZenoRouteRestoredEventRoomPatch | EventRoom.EnterInternal 前缀 | 需 await 准备并阻断；RoomEnteringEvent 无 await |
+| ZenoRouteBossGatePatch | RunManager.EnterMapCoord 前缀 | 需在 Boss 坐标消费前拦截；无对应事件 |
+| ZenoRouteActExitGatePatch | RunManager.EnterNextAct 前缀 | 需 await 触发并可回退原生；ActEnteringEvent 仅通知 |
+| BehaviorObservationCombatStartPatch | Hook.BeforeCombatStart 前缀 | 需 CurrentCombatId；CombatStartingEvent 载荷未证含该 ID |
+| BehaviorObservationCardPlayedPatch | Hook.AfterCardPlayed 前缀 | 需与 Hook 同序及玩家过滤；CardPlayedEvent 顺序未证 |
+| BehaviorObservationCombatEndPatch | Hook.AfterCombatEnd 前缀 | 需与 Hook 同序并取 ActIndex；CombatEndedEvent 顺序未证 |
+| RouteEventMapBoundaryPatch | NMapScreen.Open(bool) 后缀 | 需在地图开启边界处理；无对应事件 |
+| RouteEventMapBoundaryLoadedMapPatch | RunManager.LoadIntoLatestMapCoord 前缀+后缀 | 需包裹 await 恢复；RunLoadedEvent 不可包裹 |
+| RouteEventMapBoundaryRewardsProceedPatch | RunManager.ProceedFromTerminalRewardsScreen 前缀+后缀 | 需包裹 await；RewardsScreenContinuingEvent 不可 await |
+| RouteEventMapBoundarySaveRoomPatch | RunManager.ToSave 前缀 | 需改写 preFinishedRoom 参数；事件不可变更参数 |
+| PhilosophersGazeSaveRecoveryPatch | RunManager.LoadIntoLatestMapCoord 前缀 | 需改写 preFinishedRoom；事件不可变更参数 |
+| NeowProceedPatch | NEventRoom.Proceed 前缀 | 需 async 替换并去重 |
+
+## 持久化与状态
+
+- 复用：主持久化已使用 Ritsu RunSavedData WhenSet。
+- 保留：Zeno 网关私有访问、原始 sidecar 分类、损坏与未来版本保留、原生不安全保存守卫。
+- 延迟：在锁定版本公开 API 证明等价 await/否决/改写、持久回执、原始来源保留与旧迁移语义前，不替换。
+- 旧 EventsSeen 仅作兼容回退，无迁移证据不删除。
+- 状态服务为每局实时绑定与隔离；Ritsu 载荷为序列化/导入包装；主 Codec 校验聚合与跨功能一致性，Zeno Codec 校验版本化路线/事务/摘要，实践 Codec 校验单遗物卡牌/回合回执。
+- 无已证安全的生产替换；本阶段无生产改动、无新测试/构建/部署。既有 enc199 原生与逻辑测试覆盖真实内存保存读回、失败重试及旧/非法用例，未进行实机游戏验证。
