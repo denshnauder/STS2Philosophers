@@ -80,6 +80,7 @@ def main():
             "--input-history-file", os.devnull, "--chat-history-file", os.devnull,
             "--no-auto-lint", "--no-auto-test", "--no-suggest-shell-commands",
             "--no-detect-urls", "--no-analytics", "--no-check-update", "--no-show-release-notes",
+            "--no-show-model-warnings",
             "--no-pretty", "--yes-always", "--timeout", "60", "--message", message, *files,
         ]
         # No wrapper retries. Aider's own bounded reflection/error handling is
