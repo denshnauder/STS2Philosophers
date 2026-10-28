@@ -110,7 +110,16 @@ foreach (string texturePath in texturePaths)
     byte[] ctex;
     if (texturePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
     {
-        ctex = CtexConverter.Convert(File.ReadAllBytes(Full(texturePath)));
+        try
+        {
+            ctex = CtexConverter.Convert(File.ReadAllBytes(Full(texturePath)));
+        }
+        catch (Exception error)
+        {
+            // The Godot importer may still handle an image the fast converter rejects.
+            Console.Error.WriteLine($"PNG conversion failed, falling back to Godot: {texturePath}: {error.Message}");
+            return 3;
+        }
     }
     else
     {
