@@ -171,6 +171,7 @@
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionState.cs" Link="WollstonecraftAdmissionState.cs" />
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
+    <Compile Include="..\..\src\Philosophy\SchopenhauerWillDenialState.cs" Link="SchopenhauerWillDenialState.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectState.cs" Link="HegelSubstanceSubjectState.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectTriggerPolicy.cs" Link="HegelSubstanceSubjectTriggerPolicy.cs" />

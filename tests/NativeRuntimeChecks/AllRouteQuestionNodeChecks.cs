@@ -154,6 +154,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckPlotinusInterval();
             CheckMissingPredecessor();
             CheckWollstonecraftDirect();
+            CheckSchopenhauerDirect();
             Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -448,6 +449,47 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("WollstonecraftAdmissionPatch", "TrySelectExistingNative", run) is null,
             "Wollstonecraft's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckSchopenhauerDirect()
+    {
+        ModelDb.Inject(typeof(SchopenhauerWillDenial));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["DESCARTES__SELF_AND_OTHER__CORE"])!;
+        bool Apply(string edge) => (bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, edge])!;
+        Check(Apply("WESTERN_EDGE_026") && Apply("WESTERN_EDGE_027"),
+            "Schopenhauer fixture reaches Hume before Kant 028.");
+        object kant = Create("KantApperception", "KANT_APPERCEPTION:TEST:3");
+        foreach (string action in new[] { "InspectLedger", "Constitutive", "Leave" })
+            Commit("KantApperception", "KantApperceptionAction", kant, action, journey, graph);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "KantApperception", kant);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        string before = Encode(shared);
+        Check((Task)Call("SchopenhauerWillDenialPatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "Schopenhauer's legacy map callback cannot insert a room or initialize a person.");
+        EventModel? selected = (EventModel?)Call("SchopenhauerWillDenialPatch", "TrySelectNative", run);
+        Check(selected is SchopenhauerWillDenial, "Schopenhauer's native selector opens at Kant's self node.");
+        object state = Get(CurrentShared(run), "SchopenhauerWillDenial");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "Schopenhauer's direct native selection leaves a usable open record.");
+        Check((bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "Schopenhauer's open record participates in the shared question-node guard.");
+        Check(ReferenceEquals(Call("SchopenhauerWillDenialPatch", "TrySelectExistingNative", run), selected),
+            "Schopenhauer restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 2]);
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("SchopenhauerWillDenialPatch", "TrySelectExistingNative", run) is null,
+            "Schopenhauer's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckMarcusInterval()

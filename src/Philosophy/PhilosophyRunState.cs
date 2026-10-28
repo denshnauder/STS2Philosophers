@@ -51,6 +51,7 @@ internal sealed class PhilosophyRunState
     public HumeInductionState? HumeInduction { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public KantApperceptionState? KantApperception { get; set; }
+    public SchopenhauerWillDenialState? SchopenhauerWillDenial { get; set; }
     public RousseauConsentState? RousseauConsent { get; set; }
     public KantUniversalizationState? KantUniversalization { get; set; }
     public MillHarmState? MillHarm { get; set; }
@@ -120,6 +121,7 @@ internal sealed class PhilosophyRunState
         || HumeInduction is not null
         || WollstonecraftAdmission is not null
         || KantApperception is not null
+        || SchopenhauerWillDenial is not null
         || RousseauConsent is not null
         || KantUniversalization is not null
         || MillHarm is not null
@@ -320,6 +322,7 @@ internal sealed class PhilosophyRunState
         HumeInduction?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();
+        SchopenhauerWillDenial?.NormalizeAfterLoad();
         RousseauConsent?.NormalizeAfterLoad();
         KantUniversalization?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();
