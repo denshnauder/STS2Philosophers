@@ -11,6 +11,8 @@ if (args.Contains("--spinoza-only"))
 if (args.Contains("--leibniz-only"))
 {
     LeibnizIndependentClocksChecks.Run();
+LeibnizMonadComparisonChecks.Run();
+HegelSubstanceSubjectChecks.Run();
     return;
 }
 
@@ -41,6 +43,8 @@ GalileoMeasuredPracticeChecks.Run();
 NewtonTwoSitesChecks.Run();
 SpinozaCauseNetworkChecks.Run();
 LeibnizIndependentClocksChecks.Run();
+LeibnizMonadComparisonChecks.Run();
+HegelSubstanceSubjectChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
 WollstonecraftAdmissionChecks.Run();

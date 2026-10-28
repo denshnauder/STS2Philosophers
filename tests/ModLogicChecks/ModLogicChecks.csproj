@@ -172,6 +172,10 @@
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectState.cs" Link="HegelSubstanceSubjectState.cs" />
+    <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectTriggerPolicy.cs" Link="HegelSubstanceSubjectTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizMonadComparisonState.cs" Link="LeibnizMonadComparisonState.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizMonadComparisonTriggerPolicy.cs" Link="LeibnizMonadComparisonTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\RousseauConsentState.cs" Link="RousseauConsentState.cs" />
     <Compile Include="..\..\src\Philosophy\RousseauConsentTriggerPolicy.cs" Link="RousseauConsentTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KantUniversalizationState.cs" Link="KantUniversalizationState.cs" />

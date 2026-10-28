@@ -149,6 +149,8 @@ internal static class NativeQuestionNodeEvents
             ?? GalileoMeasuredPracticePatch.TrySelectNative(run)
             ?? NewtonTwoSitesPatch.TrySelectNative(run)
             ?? SpinozaCauseNetworkPatch.TrySelectNative(run)
+            ?? LeibnizMonadComparisonPatch.TrySelectNative(run)
+            ?? HegelSubstanceSubjectPatch.TrySelectNative(run)
             ?? LeibnizIndependentClocksPatch.TrySelectNative(run)
             ?? HobbesAuthorizedSovereigntyPatch.TrySelectNative(run)
             ?? nextEvent;

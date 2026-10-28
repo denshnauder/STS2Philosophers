@@ -43,6 +43,8 @@ internal sealed class PhilosophyRunState
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
     public NewtonTwoSitesState? NewtonTwoSites { get; set; }
     public SpinozaCauseNetworkState? SpinozaCauseNetwork { get; set; }
+    public LeibnizMonadComparisonState? LeibnizMonadComparison { get; set; }
+    public HegelSubstanceSubjectState? HegelSubstanceSubject { get; set; }
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
     public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
@@ -109,6 +111,8 @@ internal sealed class PhilosophyRunState
         || AnselmUnfinishedProof is not null
         || NewtonTwoSites is not null
         || SpinozaCauseNetwork is not null
+        || LeibnizMonadComparison is not null
+        || HegelSubstanceSubject is not null
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
         || LockeCargoIdentity is not null
@@ -306,6 +310,8 @@ internal sealed class PhilosophyRunState
         AnselmUnfinishedProof?.NormalizeAfterLoad();
         NewtonTwoSites?.NormalizeAfterLoad();
         SpinozaCauseNetwork?.NormalizeAfterLoad();
+        LeibnizMonadComparison?.NormalizeAfterLoad();
+        HegelSubstanceSubject?.NormalizeAfterLoad();
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
         LockeCargoIdentity?.NormalizeAfterLoad();
