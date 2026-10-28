@@ -165,6 +165,11 @@ func _initialize() -> void:
 			continue
 		if not localization_json.data is Dictionary:
 			continue
+		for key in localization_json.data:
+			if not localization_json.data[key] is String:
+				push_error("Localization value must be a string: %s: %s" % [path, key])
+				quit(6)
+				return
 		var keys: Array = localization_json.data.keys()
 		keys.sort()
 		if path.find("/localization/") >= 0:

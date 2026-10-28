@@ -104,4 +104,17 @@ pack "$tmp/missing-key" "$tmp/missing-key.pck"
 expect_verify 6 "$tmp/missing-key" "$tmp/missing-key.pck" "$tmp/missing-key.log" "localization key parity"
 grep -q "Localization key missing in zhs/relics.json" "$tmp/missing-key.log" || fail "verifier did not report the missing localization key"
 
+cp -R "$repo_dir/content/." "$tmp/wrong-value"
+python3 - "$tmp/wrong-value/STS2Philosophers/localization/eng/relics.json" <<'PY'
+import json,sys
+path=sys.argv[1]
+data=json.load(open(path,encoding='utf-8'))
+key=next(iter(data))
+data[key]=[]
+open(path,'w',encoding='utf-8').write(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+PY
+pack "$tmp/wrong-value" "$tmp/wrong-value.pck"
+expect_verify 6 "$tmp/wrong-value" "$tmp/wrong-value.pck" "$tmp/wrong-value.log" "localization value is not a string"
+grep -q "Localization value must be a string" "$tmp/wrong-value.log" || fail "verifier did not report the wrong value type"
+
 echo "PckVerifier checks passed."
