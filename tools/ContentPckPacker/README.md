@@ -33,3 +33,9 @@ Exit codes:
 
 `tools/BuildContentPck.sh` and `tools/BuildContentPck.ps1` call this tool first
 and fall back to the existing Godot import+pack path on exit `3`.
+
+Run the fast/fallback regression checks with:
+
+```bash
+tools/ContentPckPacker/TestContentPckPacker.sh
+```
