@@ -155,6 +155,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckMissingPredecessor();
             CheckWollstonecraftDirect();
             CheckSchopenhauerDirect();
+            CheckJamesDirect();
             Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -490,6 +491,58 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("SchopenhauerWillDenialPatch", "TrySelectExistingNative", run) is null,
             "Schopenhauer's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckJamesDirect()
+    {
+        ModelDb.Inject(typeof(JamesForcedBridge));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, "WESTERN_EDGE_008"])!,
+            "James fixture completes the real Socrates 008.");
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, "WESTERN_EDGE_009"])!,
+            "James fixture adopts the real Plato 009.");
+        Check((bool)graph.GetType().GetMethod("TryReserveQuestion")!.Invoke(graph, [journey, 2])!,
+            "James fixture closes the Diogenes question without switching.");
+        Type routeType = T("ZenoRouteState");
+        object route = Activator.CreateInstance(routeType,
+            [1, Enum.Parse(T("ZenoRouteStage"), "DiogenesClosed"), 0L, 0L,
+                "RUN_JAMES_NATIVE", 2, "WESTERN_EDGE_011",
+                "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+                null, null, null, null, null, null, null, null])!;
+        Type featureType = T("ZenoRouteFeatureState");
+        object feature = Activator.CreateInstance(featureType, [1, route, null])!;
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(shared, "WesternJourney", journey);
+        shared.GetType().GetMethod("SetCurrentZenoRouteState",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.NonPublic, null, [featureType], null)!
+            .Invoke(shared, [feature]);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        string before = Encode(shared);
+        Check((Task)Call("JamesForcedBridgePatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "James's legacy map callback cannot insert a room or initialize a person.");
+        EventModel? selected = (EventModel?)Call("JamesForcedBridgePatch", "TrySelectNative", run);
+        Check(selected is JamesForcedBridge, "James's native selector opens after Diogenes Stay.");
+        object state = Get(CurrentShared(run), "JamesForcedBridge");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "James's direct native selection leaves a usable open record.");
+        Check((bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "James's open record participates in the shared question-node guard.");
+        Check(ReferenceEquals(Call("JamesForcedBridgePatch", "TrySelectExistingNative", run), selected),
+            "James restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 1]);
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("JamesForcedBridgePatch", "TrySelectExistingNative", run) is null,
+            "James's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckMarcusInterval()

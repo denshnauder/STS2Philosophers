@@ -594,7 +594,6 @@
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.LAOZI.description": "[无为与若水] 查看【无为书简】与【水玉】的实践。",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.title": "拒绝邀请",
   "PHILOSOPHERS_GAZE.pages.INITIAL.options.DECLINE.description": "[离开] 先停一步，确认是否不取遗物独自前行。",
-
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.description": "孔子按剑而立，神色温厚端方：\"仁者爱人，故手握兵刃而不忍妄动；礼者立序，故进退之间必有先后。在这座高塔里，你想先以礼立序，还是先以仁克己？\"",
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.MUDUO.title": "循礼：木铎",
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.MUDUO.description": "[获得【木铎】] 每回合先打出技能或能力牌后，技能牌获得临时力量；若先打攻击牌则失去1点力量。",
@@ -602,7 +601,6 @@
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.QING_YU_PEI.description": "[获得【青玉佩】] 敌人无攻击意图时，有可打出的攻击牌却未打出则获得1点“德”并增加罕见/稀有牌奖励。",
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.DECLINE.title": "谢绝孔子的教诲",
   "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.DECLINE.description": "[离开] 不接受遗物，关闭本次事件。",
-
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.description": "墨子摊开墨色竹简与守城图纸，言辞质朴直白：\"空谈无益，万事当看实利。若众人同处一舟，便当共同护持、无相残害；若强敌执刃来犯，便先筑起叫他无功而返的城防。\"",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.MO_SE_ZHU_JIAN.title": "兼爱：墨色竹简",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.MO_SE_ZHU_JIAN.description": "[获得【墨色竹简】] 回合开始所有角色获6格挡；上回合无人失血则累积“相利”（提供能量与抽牌）。",
@@ -610,7 +608,6 @@
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.SHOU_CHENG_TU.description": "[获得【守城图】] 敌方有攻击意图且你未受直接攻击伤害时，下回合开始获得6点格挡。",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.title": "谢绝墨子的教诲",
   "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.description": "[离开] 不接受遗物，关闭本次事件。",
-
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.description": "老子将一卷竹简与一枚水玉置于案上，语调平淡：\"揣而锐之，不可常保。少出妄动之牌，或留一分未尽之气如水顺势——有所不为，方有余地。\"",
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.title": "无为：无为书简",
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.description": "[获得【无为书简】] 回合结束若出牌不超过2张，保留全部手牌，下回合获得2点能量与2点敏捷。",
@@ -618,11 +615,9 @@
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.description": "[获得【水玉】] 回合结束若有未消耗能量，直到下回合开始受到的攻击伤害降低50%。",
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.title": "谢绝老子的教诲",
   "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.description": "[离开] 不接受遗物，关闭本次事件。",
-
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.description": "不借诸子器物，只凭自身牌组登塔，同样是一条道路。你确认就此谢绝全部邀请吗？",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.title": "确认拒绝",
   "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.description": "[确认离开] 不接受任何第一幕路线遗物。",
-
   "PHILOSOPHERS_GAZE.pages.KONGZI_MUDUO.description": "你收下【木铎】。铎声先起，兵刃随后——每回合先以技能或能力立序，再以攻击应事。",
   "PHILOSOPHERS_GAZE.pages.KONGZI_QING_YU_PEI.description": "你收下【青玉佩】。当敌方并无攻势、而你手中握有攻击牌却选择按兵不动时，这份克制将记为一分\"德\"。",
   "PHILOSOPHERS_GAZE.pages.MOZI_MO_SE_ZHU_JIAN.description": "你收下【墨色竹简】。场上众人共得格挡；唯有上一回合无人失血，\"相利\"才会存续。",
@@ -633,7 +628,6 @@
   "PHILOSOPHERS_GAZE.pages.MOZI_DECLINE.description": "你向墨子拱手辞别，未取竹简，亦未取守城图。利害已看清，如何行事仍归你自己。",
   "PHILOSOPHERS_GAZE.pages.LAOZI_DECLINE.description": "你向老子行礼辞别，未取书简，亦未取水玉。去留顺其自然。",
   "PHILOSOPHERS_GAZE.pages.DECLINE.description": "你向三人揖手致意，没有接受任何遗物，转身踏入前路。",
-
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.description": "攀上更高一层阶梯，昔日的选择引来了后继者的叩问。你可以听取他们的推进并替换手中器物，也可以保留旧说与旧遗物。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.MENGZI.title": "聆听孟子",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.MENGZI.description": "[仁之继：取义] 查看【熊掌】如何继承【青玉佩】的“德”。",
@@ -649,47 +643,39 @@
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.YANGZHU.description": "[若水之继：全生] 查看【全生璧】如何替换【水玉】。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE.title": "保留旧说",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION.options.DECLINE.description": "[保留原遗物] 进入确认：不替换现有路线遗物。",
-
   "PHILOSOPHERS_GAZE.pages.MENGZI_VIEWPOINTS.description": "孟子目光炯炯，直言相问：\"积仁于心，若临事不能决断，与袖手何异？【熊掌】会尽数承接【青玉佩】攒下的德，在每场开局化作破阵的气力——你愿由仁入义吗？\"",
   "PHILOSOPHERS_GAZE.pages.MENGZI_VIEWPOINTS.options.XIONG_ZHANG.title": "取义：熊掌",
   "PHILOSOPHERS_GAZE.pages.MENGZI_VIEWPOINTS.options.XIONG_ZHANG.description": "[替换【青玉佩】为【熊掌】] 完整继承已攒下的“德”（N点），每场战斗前N回合获得1能量并多抽2张牌。",
   "PHILOSOPHERS_GAZE.pages.MENGZI_VIEWPOINTS.options.DECLINE.title": "保留青玉佩",
   "PHILOSOPHERS_GAZE.pages.MENGZI_VIEWPOINTS.options.DECLINE.description": "[保留【青玉佩】] 拒绝替换，已积累的“德”保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.description": "荀子拉直墨线，神情严整：\"木受绳则直。礼不止是先后之心，更是日日可验的法度。用【绳墨】替下【木铎】，每回合按‘技能—攻击—技能’的次序落子，你敢接这根尺度吗？\"",
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.SHENG_MO.title": "立规：绳墨",
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.SHENG_MO.description": "[替换【木铎】为【绳墨】] 每回合首次连续打出“技能—攻击—技能”时，获得1点力量和1点敏捷。",
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.DECLINE.title": "保留木铎",
   "PHILOSOPHERS_GAZE.pages.XUNZI_VIEWPOINTS.options.DECLINE.description": "[保留【木铎】] 拒绝替换，木铎保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.description": "禽滑厘拍了拍手边的守城器械：\"纸上的守城图只是方略，落到实地还得靠逐敌布防的器械。来攻之敌越多，守备越厚；只要这一轮没让他们见血，下一轮他们的力气便会衰弱。\"",
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.SHOU_CHENG_XIE.title": "备守：守城械",
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.SHOU_CHENG_XIE.description": "[替换【守城图】为【守城械】] 按攻击意图敌人数获格挡（每敌4点，至多12点）；未受直伤则对全体敌人施加1层虚弱。",
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.DECLINE.title": "保留守城图",
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_VIEWPOINTS.options.DECLINE.description": "[保留【守城图】] 拒绝替换，守城图保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.HUISHI_VIEWPOINTS.description": "惠施拨弄着几枚算筹，语气轻快：\"墨者讲兼爱，先把同等的护持分予众人。可同披一层甲，不等于万物本无分别——谁能从相同的护持里看清界限、亲手击穿它，谁才算摸到了同异的枢机。\"",
   "PHILOSOPHERS_GAZE.pages.HUISHI_VIEWPOINTS.options.LI_WU_CHOU.title": "合同异：历物筹",
   "PHILOSOPHERS_GAZE.pages.HUISHI_VIEWPOINTS.options.LI_WU_CHOU.description": "[替换【墨色竹简】为【历物筹】] 回合开始双方共获8格挡；每回合首次击破敌方格挡时获1能量、抽1牌并对全体敌方造8伤。",
   "PHILOSOPHERS_GAZE.pages.HUISHI_VIEWPOINTS.options.DECLINE.title": "保留墨色竹简",
   "PHILOSOPHERS_GAZE.pages.HUISHI_VIEWPOINTS.options.DECLINE.description": "[保留【墨色竹简】] 拒绝替换，墨色竹简保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.description": "庄子拍着身旁的大葫芦笑道：\"世人嫌大瓠盛水则裂、剖瓢则浅，便骂它无用；可怎么不把它系在腰间浮游江湖呢？少出牌留下的手牌，换个法子用，不正是最轻巧的舟楫？\"",
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DA_HU.title": "乘浮：大瓠",
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DA_HU.description": "[替换【无为书简】为【大瓠】] 回合结束出牌不超过2张则保留手牌；下回合前2张牌减1费并各获4点格挡。",
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DECLINE.title": "保留无为书简",
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_VIEWPOINTS.options.DECLINE.description": "[保留【无为书简】] 拒绝替换，无为书简保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.description": "杨朱托起全生璧，语气淡然：\"以物累形，非善摄生者也。留下未用的能量，既能替你挡去一半锋芒，下回合还能收回手中——护住自身，何必耗尽元气？\"",
   "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.QUAN_SHENG_BI.title": "全生：全生璧",
   "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.QUAN_SHENG_BI.description": "[替换【水玉】为【全生璧】] 回合结束保留至多2点未用能量并在下回合返还；期间受到的攻击伤害降低50%。",
   "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.DECLINE.title": "保留水玉",
   "PHILOSOPHERS_GAZE.pages.YANGZHU_VIEWPOINTS.options.DECLINE.description": "[保留【水玉】] 拒绝替换，水玉保持不变。",
-
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.description": "谢绝后继不会抹去你此前的选择，原有的路线遗物也将原样保留。确认就此作结吗？",
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.options.CONFIRM.title": "确认保留旧说",
   "PHILOSOPHERS_GAZE.pages.ACT_TWO_DECLINE_CONFIRM.options.CONFIRM.description": "[确认保留] 不替换已有路线遗物，结束本局后继邀请。",
-
   "PHILOSOPHERS_GAZE.pages.MENGZI_XIONG_ZHANG.description": "【青玉佩】替换为【熊掌】，此前攒下的\"德\"分毫无损，将在往后的战斗开局化为能量与抽牌。",
   "PHILOSOPHERS_GAZE.pages.XUNZI_SHENG_MO.description": "【木铎】替换为【绳墨】。先后之序化作每回合\"技能—攻击—技能\"的成形法度。",
   "PHILOSOPHERS_GAZE.pages.QIN_GULI_SHOU_CHENG_XIE.description": "【守城图】替换为【守城械】。纸上非攻化为按敌数布防的工事，守住攻势即可令敌方虚弱。",
@@ -703,7 +689,6 @@
   "PHILOSOPHERS_GAZE.pages.ZHUANGZI_DECLINE.description": "你谢绝了【大瓠】。【无为书简】原样保留。",
   "PHILOSOPHERS_GAZE.pages.YANGZHU_DECLINE.description": "你谢绝了【全生璧】。【水玉】原样保留。",
   "PHILOSOPHERS_GAZE.pages.CONTINUATION_DECLINE.description": "你谢绝了后继邀请，保留原有遗物继续前行。",
-
   "DIOGENES_STAY_SWITCH.title": "第欧根尼：去留",
   "DIOGENES_STAY_SWITCH.pages.ROUTE_CHOICE.description.CONTINUED": "第三幕到了。你在能撤的时候硬留下来打完了仗，也没发表过什么公开宣言。第欧根尼哼了一声：“怎么着，停在我这儿，还是去芝诺的廊柱？”",
   "DIOGENES_STAY_SWITCH.pages.ROUTE_CHOICE.description.RETREATED": "第三幕到了。你干脆利落地撤过退，认下了损耗，也没拿胜利奖赏，更没给自己找公开借口。第欧根尼挑了挑眉：“停在我这儿，还是把结尾留给芝诺？”",
@@ -759,7 +744,6 @@
   "DIOGENES_STAY_SWITCH.pages.RESULT_SWITCH.description": "转向已保存。你现有的公开记录将交由下一段训练接手，芝诺会在稍后的节点等你。",
   "DIOGENES_STAY_SWITCH.pages.RESULT_SWITCH.options.LEAVE.title": "继续",
   "DIOGENES_STAY_SWITCH.pages.RESULT_SWITCH.options.LEAVE.description": "[关闭事件] 已预约稍后的芝诺《同意的边界》。",
-
   "ZENO_ASSENT_BOUNDARY.title": "芝诺：同意的边界",
   "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.description": "已经发生：{ACTION_FACT}\n公开历史：{PUBLIC_HISTORY}\n当前说法：{CURRENT_STATEMENT}\n{LATER_OUTCOME}",
   "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.NO_MATERIAL_WITH_STATEMENT.description": "没有留下可核对的行动事实。\n公开历史：{PUBLIC_HISTORY}\n当前说法：{CURRENT_STATEMENT}\n后来的结果不能反过来替当初的说法充当事实。",
@@ -768,11 +752,9 @@
   "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.options.REVIEW_ORIGIN.description": "[查看来源] 回看你从第欧根尼处带入廊柱的材料边界。",
   "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.options.CONTINUE.title": "继续辨明范围",
   "ZENO_ASSENT_BOUNDARY.pages.MATERIAL_REVIEW.options.CONTINUE.description": "[进入同意范围] 前往选择你当前仍愿同意的范围（此时尚未提交）。",
-
   "ZENO_ASSENT_BOUNDARY.pages.ORIGIN_REVIEW.description": "你放过了第欧根尼当场的收束，把后续的终点交给了芝诺。战斗能力未变，而芝诺只按你已公开的材料与你对话。",
   "ZENO_ASSENT_BOUNDARY.pages.ORIGIN_REVIEW.options.BACK_TO_MATERIAL.title": "返回材料",
   "ZENO_ASSENT_BOUNDARY.pages.ORIGIN_REVIEW.options.BACK_TO_MATERIAL.description": "[返回] 重新查看台上的现有记录。",
-
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.description": "可处理的材料都在桌上。芝诺平静地看着你：“外在的遭遇与后来的得失，都不能替你的理智作主。现在只由你决定一件事：你对哪一句判断投下‘同意（Assent）’，或者暂不形成同意？”",
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.options.BACK_TO_MATERIAL.title": "返回材料",
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.options.BACK_TO_MATERIAL.description": "[返回] 重新查看台上的现有记录。",
@@ -786,7 +768,6 @@
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.options.NO_REASSENT.description": "[不追加理由] 保留行动事实本身，不替它补写新的理由。",
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.options.NO_ASSENT.title": "不作同意",
   "ZENO_ASSENT_BOUNDARY.pages.ASSENT_SCOPE.options.NO_ASSENT.description": "[保持留白] 在缺乏材料时不虚构事实或说法，诚实收束。",
-
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_KEEP.description": "既有记录与旧说保持原样，你当前的主张继续有效（后续结果不替它作证）。确认提交后不可改选。",
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_KEEP.options.BACK_TO_SCOPE.title": "返回选择",
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_KEEP.options.BACK_TO_SCOPE.description": "[返回] 回到同意范围选择。",
@@ -812,7 +793,6 @@
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_NO_ASSENT.options.BACK_TO_SCOPE.description": "[返回] 回到同意范围选择。",
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_NO_ASSENT.options.CONFIRM.title": "确认不作同意",
   "ZENO_ASSENT_BOUNDARY.pages.CONFIRM_NO_ASSENT.options.CONFIRM.description": "[确认提交] 保存“不作同意”，解锁后续塞涅卡回看。",
-
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_KEEP.description": "你保留了当前说法，同时让事实与结果各归其位。芝诺没有替这句话判真伪，你的路线定格在自己仍愿承担的边界内。",
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_KEEP.options.LEAVE.title": "结束路线",
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_KEEP.options.LEAVE.description": "[关闭事件] 已保存芝诺抉择，后续可触发塞涅卡《日常回看》。",
@@ -828,7 +808,6 @@
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_NO_ASSENT.description": "在材料空白之处，你没有拿空话冒充判断。路线在“不作同意”处诚实收束。",
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_NO_ASSENT.options.LEAVE.title": "结束路线",
   "ZENO_ASSENT_BOUNDARY.pages.RESULT_NO_ASSENT.options.LEAVE.description": "[关闭事件] 已保存芝诺抉择，后续可触发塞涅卡《日常回看》。",
-
   "EPICURUS_SHARED_MARGIN.title": "共同余地",
   "EPICURUS_SHARED_MARGIN.pages.INVITATION.description": "路边小园里，伊壁鸠鲁倒了两杯清水，温和地对你说：\"赶路的人总有走乏的时候。你和同伴手头各有一回调整行程的余地，只是现在还不知道谁会先用上它。要不要在知道谁先开口之前，先商量好怎么留出这份余地？\"",
   "EPICURUS_SHARED_MARGIN.pages.INVITATION.options.ACCEPT_INVITATION.title": "先约定怎样留下余地",
@@ -870,7 +849,6 @@
   "EPICURUS_SHARED_MARGIN.pages.RESULT_ADJUSTED.options.LEAVE.description": "[返回地图] 关闭事件，保存“无约而自愿同步”记录。",
   "EPICURUS_SHARED_MARGIN.pages.RESULT_SEPARATE.options.LEAVE.title": "离开",
   "EPICURUS_SHARED_MARGIN.pages.RESULT_SEPARATE.options.LEAVE.description": "[返回地图] 关闭事件，保存“各自保留安排”记录。",
-
   "PLATO_WHOLE_ARRANGEMENT.title": "两项职责",
   "PLATO_WHOLE_ARRANGEMENT.pages.INVITATION.description": "柏拉图在案上摆出同一桩公事的两项职责：第一项可以独自做完、留下一份完整的个人成果；第二项则必须等前一人交活之后才能接手。你和同伴得一人分担一项——怎么分？",
   "PLATO_WHOLE_ARRANGEMENT.pages.INVITATION.options.ACCEPT_INVITATION.title": "安排这两项职责",
@@ -912,20 +890,17 @@
   "PLATO_WHOLE_ARRANGEMENT.pages.RESULT_SEPARATED.options.LEAVE.description": "[返回地图] 关闭事件，保存“中途撤回、各自完成”记录。",
   "PLATO_WHOLE_ARRANGEMENT.pages.RESULT_INCOMPLETE.options.LEAVE.title": "离开",
   "PLATO_WHOLE_ARRANGEMENT.pages.RESULT_INCOMPLETE.options.LEAVE.description": "[返回地图] 关闭事件，保留未完成事实。",
-
   "PROTAGORAS_SHARED_DELIBERATION.title": "这次由谁主持",
   "PROTAGORAS_SHARED_DELIBERATION.pages.INVITATION.description": "普罗泰戈拉拦住你与一位同行者：\"都说各人有各人的尺度，可现在你们得一起走过这一程。不妨当面商议一回，看看这桩共同安排究竟由谁来主持？\"",
   "PROTAGORAS_SHARED_DELIBERATION.pages.INVITATION.options.ACCEPT_INVITATION.title": "试一次共同商议",
   "PROTAGORAS_SHARED_DELIBERATION.pages.INVITATION.options.ACCEPT_INVITATION.description": "[占用本幕问号] 开启商议练习，先由你提出实行的办法。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.INVITATION.options.DECLINE_INVITATION.title": "这次不参加",
   "PROTAGORAS_SHARED_DELIBERATION.pages.INVITATION.options.DECLINE_INVITATION.description": "[离开] 不开启练习，也不取得完成记录。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.DEMONSTRATION.description": "同行者看着你：\"我只答应跟你试这一轮，可没保证以后都照你的办。先把你打算怎么做的全盘托出吧。\"",
   "PROTAGORAS_SHARED_DELIBERATION.pages.DEMONSTRATION.options.DEMONSTRATE_ORIGINAL_METHOD.title": "请先听我完整说完，再提修改",
   "PROTAGORAS_SHARED_DELIBERATION.pages.DEMONSTRATION.options.DEMONSTRATE_ORIGINAL_METHOD.description": "[继续] 同行者将复述你的办法，并说明他的授权边界。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.DEMONSTRATION.options.STOP_PRACTICE.title": "停止这次练习",
   "PROTAGORAS_SHARED_DELIBERATION.pages.DEMONSTRATION.options.STOP_PRACTICE.description": "[中断实践] 本幕问号机会已占用，但不形成完成记录。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.description": "同行者准确复述了你的办法。普罗泰戈拉刚要记下\"双方达成共识\"，同行者立刻抬手打断：\"慢着，复述一遍不等于我认下了全部后果。凡是牵涉到要我出力的地方，我得有权当场叫停，说清楚那只是谁的主张。\"",
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.options.CHOOSE_PERSONAL_HOST.title": "保留原法，由我个人主持",
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.options.CHOOSE_PERSONAL_HOST.description": "[个人主持] 不修改原办法，但须听取同行者不愿承担的部分。",
@@ -933,13 +908,11 @@
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.options.CHOOSE_NEGOTIATION.description": "[进入协商] 先回应同行者的限制请求；此时尚未交出主持权。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.options.STOP_PRACTICE.title": "结束共同安排",
   "PROTAGORAS_SHARED_DELIBERATION.pages.BOUNDARY.options.STOP_PRACTICE.description": "[中断实践] 不作后续回应，本次实践记为未完成。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.PERSONAL_RESPONSE.description": "你决定自己掌管主持，只请同行者把异议说完。他照做了，但把话挑得很明：\"我可以配合这一步，但别让我替你代言，也别把我的配合写成共同认可。\"",
   "PROTAGORAS_SHARED_DELIBERATION.pages.PERSONAL_RESPONSE.options.HEAR_FULL_REASON.title": "请完整说出你不愿承担的部分",
   "PROTAGORAS_SHARED_DELIBERATION.pages.PERSONAL_RESPONSE.options.HEAR_FULL_REASON.description": "[完成实践：个人主持] 由你个人主持，同时完整记录对方的保留理由。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.PERSONAL_RESPONSE.options.WITHDRAW_REPRESENTATION_REQUEST.title": "不再请求代办，各自表态",
   "PROTAGORAS_SHARED_DELIBERATION.pages.PERSONAL_RESPONSE.options.WITHDRAW_REPRESENTATION_REQUEST.description": "[完成实践：各自表态] 撤回代办请求，保留双方的复述与拒绝记录。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.description": "同行者盯着你：\"那好，请你先亲口把我的限制复述一遍，再明确告诉我：这一轮你到底授不授权我照这个限制来主持？\"听懂对方的限制，和真正交出主持权，是两码事。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.options.RESTATE_WITHOUT_AUTHORIZATION.title": "只复述，不授权",
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.options.RESTATE_WITHOUT_AUTHORIZATION.description": "[完成实践：不交接主持] 准确复述对方限制，但主持权仍留在你手中。",
@@ -949,7 +922,6 @@
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.options.PROPOSE_SPECIFIC_SENTENCE.description": "[提出限缩修订] 提议暂停时须点明具体句子与归属，等待对方确认。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.options.END_WITHOUT_RESPONSE.title": "结束共同安排",
   "PROTAGORAS_SHARED_DELIBERATION.pages.NEGOTIATION.options.END_WITHOUT_RESPONSE.description": "[中断实践] 不回应当前请求，本次实践记为未完成。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.description": "同行者同意你的补充：叫停时必须点明具体哪句话超了谁的授权；但他拒绝等你整段话讲完才叫停。条件摆在桌上了，交不交接主持权，现在由你拍板。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.options.AUTHORIZE_NARROWED_SCOPE.title": "按这个范围交接",
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.options.AUTHORIZE_NARROWED_SCOPE.description": "[限缩交接] 同行者按收窄后的范围接手主持并立即暂停。",
@@ -957,13 +929,11 @@
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.options.RESTATE_AFTER_REVISION.description": "[完成实践：不交接主持] 确认修订内容，但不交出本次主持权。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.options.STOP_AFTER_PROPOSAL.title": "停止，不回应这次请求",
   "PROTAGORAS_SHARED_DELIBERATION.pages.REVISION_CONFIRMATION.options.STOP_AFTER_PROPOSAL.description": "[中断实践] 让提案停留在提案阶段，本次实践记为未完成。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.ACTIVE_HOSTING.description": "普罗泰戈拉又问了一遍能不能记作\"共同认可\"。刚接手主持的同行者当场叫停：\"能记下来的，只有他这一轮交给我主持的授权范围，不是我永远认可他原来的办法。\"",
   "PROTAGORAS_SHARED_DELIBERATION.pages.ACTIVE_HOSTING.options.CONFIRM_LIMITED_AUTHORIZATION.title": "确认仅本次授权",
   "PROTAGORAS_SHARED_DELIBERATION.pages.ACTIVE_HOSTING.options.CONFIRM_LIMITED_AUTHORIZATION.description": "[完成实践：同伴主持] 在明示范围内继续，由同行者完成本次主持。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.ACTIVE_HOSTING.options.STOP_FUTURE_DELEGATION.title": "不再委托，保留刚才的历史",
   "PROTAGORAS_SHARED_DELIBERATION.pages.ACTIVE_HOSTING.options.STOP_FUTURE_DELEGATION.description": "[完成实践：停止未来代办] 终止往后委托，但保留已发生的授权与暂停记录。",
-
   "PROTAGORAS_SHARED_DELIBERATION.pages.RESULT_DECLINED.description": "你没有参加这次商议，原有的追问方向未作改变。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.RESULT_INCOMPLETE.description": "商议开了一半，你在亮出最终态度前叫了停。这次商议停留在了未完成状态。",
   "PROTAGORAS_SHARED_DELIBERATION.pages.RESULT_PERSONAL_HOST.description": "你保留了个人主持权，也耐着性子听完了同行者不愿承担的部分。他没有替你背书，这次商议至此完成。",
@@ -2044,5 +2014,27 @@
   "SCHOPENHAUER_WILL_DENIAL.pages.RESULT_COMPENSATED.options.LEAVE.description": "关闭记录。",
   "SCHOPENHAUER_WILL_DENIAL.pages.RESULT_SHARED.description": "你维持低收益，并亲自分担一份劳作。你损失 4 金币；记录的是共同劳动，不是英雄式的放弃。",
   "SCHOPENHAUER_WILL_DENIAL.pages.RESULT_SHARED.options.LEAVE.title": "离开。",
-  "SCHOPENHAUER_WILL_DENIAL.pages.RESULT_SHARED.options.LEAVE.description": "关闭记录。"
+  "SCHOPENHAUER_WILL_DENIAL.pages.RESULT_SHARED.options.LEAVE.description": "关闭记录。",
+  "JAMES_FORCED_BRIDGE.title": "必须先走的桥",
+  "JAMES_FORCED_BRIDGE.pages.ASSESSMENT.description": "两道桥横跨峡谷。近桥只在今晚开放；绕行路很长，会损失补给。你没有时间等所有证据。詹姆斯问：这究竟是哪一种选择——它真的无法回避、足够重大，而且两条路对你都可行吗？",
+  "JAMES_FORCED_BRIDGE.pages.ASSESSMENT.options.CHECK_CONDITIONS.title": "检查选择的条件。",
+  "JAMES_FORCED_BRIDGE.pages.ASSESSMENT.options.CHECK_CONDITIONS.description": "判断自己是否真的无法不选、代价是否重大，以及两条路是否都可行。",
+  "JAMES_FORCED_BRIDGE.pages.ASSESSMENT.options.ASK_KEEPER.title": "询问守桥人。",
+  "JAMES_FORCED_BRIDGE.pages.ASSESSMENT.options.ASK_KEEPER.description": "先弄清绕行实际要付出什么，再作决定。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.description": "守桥人确认：近桥午夜关闭，绕行安全但会损失 10 金币补给，两条路在物理上都可行。新的报告说近桥昨天修过，但仍不能排除一块松动的木板。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.CROSS_BRIDGE.title": "走近桥。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.CROSS_BRIDGE.description": "在剩余风险下行动，放弃安全的绕行。结果不能反过来证明当时的选择必然正确。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.TAKE_DETOUR.title": "绕行。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.TAKE_DETOUR.description": "支付 10 金币补给，保住确定的行程。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.REFUSE_CHOICE.title": "拒绝下注。",
+  "JAMES_FORCED_BRIDGE.pages.EVIDENCE.options.REFUSE_CHOICE.description": "两条桥都不选；错过今晚的通行和绕行优惠。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_CROSSED.description": "你在剩余风险下走过近桥，放弃安全绕行。记录保留的是当时可见的证据，而不是用结果倒证你必然正确。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_CROSSED.options.LEAVE.title": "离开。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_CROSSED.options.LEAVE.description": "关闭记录。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_DETOURED.description": "你用 10 金币换补给并绕行。行程确定了，但代价真实存在。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_DETOURED.options.LEAVE.title": "离开。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_DETOURED.options.LEAVE.description": "关闭记录。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_REFUSED.description": "你拒绝下注。错过今晚的通行和绕行优惠；记录不把犹豫写成隐藏的胜利。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_REFUSED.options.LEAVE.title": "离开。",
+  "JAMES_FORCED_BRIDGE.pages.RESULT_REFUSED.options.LEAVE.description": "关闭记录。"
 }

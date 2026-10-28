@@ -86,6 +86,7 @@ internal static class NativeQuestionNodeEvents
             ?? HumeInductionPatch.TrySelectExistingNative(run)
             ?? KantApperceptionPatch.TrySelectExistingNative(run)
             ?? SchopenhauerWillDenialPatch.TrySelectExistingNative(run)
+            ?? JamesForcedBridgePatch.TrySelectExistingNative(run)
             ?? RousseauConsentPatch.TrySelectExistingNative(run)
             ?? KantUniversalizationPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
@@ -97,6 +98,8 @@ internal static class NativeQuestionNodeEvents
             ?? DiogenesStaySwitchEntrySession.TrySelectNative(run)
             ?? ZenoRouteNativeTriggerRegistry.TrySelectNative(run);
         if (special is not null) return special;
+        EventModel? james = JamesForcedBridgePatch.TrySelectNative(run);
+        if (james is not null) return james;
 
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
         WesternQuestionKind kind = carrier is WesternPracticeRelic
