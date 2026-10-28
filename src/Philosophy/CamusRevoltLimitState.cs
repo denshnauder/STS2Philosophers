@@ -83,14 +83,17 @@ internal sealed class CamusRevoltLimitState
             }) return false;
 
         CamusRevoltLimitStage replay = CamusRevoltLimitStage.Situation;
-        bool closed = false;
+        bool replayAcknowledged = false, replayQuestioned = false, closed = false;
         foreach (CamusRevoltLimitAction action in ConfirmedActions)
         {
             if (closed || !CamusRevoltLimitFlow.Options(replay).Contains(action)) return false;
+            replayAcknowledged |= action == CamusRevoltLimitAction.AcknowledgeLevy;
+            replayQuestioned |= action == CamusRevoltLimitAction.QuestionLevy;
             replay = CamusRevoltLimitFlow.Next(replay, action);
             closed = action == CamusRevoltLimitAction.Leave;
         }
         return replay == Stage && closed == Closed
+            && replayAcknowledged == LevyAcknowledged && replayQuestioned == LevyQuestioned
             && (PendingAction == CamusRevoltLimitAction.None
                 || !Closed && CamusRevoltLimitFlow.Options(Stage).Contains(PendingAction));
     }

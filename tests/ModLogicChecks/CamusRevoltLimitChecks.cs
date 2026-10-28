@@ -68,6 +68,14 @@ internal static class CamusRevoltLimitChecks
         Check(!corruptBoth.IsUsable(),
             "Camus rejects both levy responses recorded at once.");
 
+        var corruptMismatch = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        corruptMismatch.Stage = CamusRevoltLimitStage.Proposal;
+        corruptMismatch.QuestionReserved = true;
+        corruptMismatch.LevyQuestioned = true;
+        corruptMismatch.ConfirmedActions.Add(CamusRevoltLimitAction.AcknowledgeLevy);
+        Check(!corruptMismatch.IsUsable(),
+            "Camus rejects a levy response that disagrees with the committed action.");
+
         var corruptReserved = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
         corruptReserved.QuestionReserved = true;
         Check(!corruptReserved.IsUsable(),
