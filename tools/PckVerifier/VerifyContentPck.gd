@@ -170,6 +170,10 @@ func _initialize() -> void:
 			push_error("Packed JSON is invalid: %s: %s" % [path, json.get_error_message()])
 			quit(6)
 			return
+		if not json.data is Dictionary:
+			push_error("Packed JSON root must be an object: %s" % path)
+			quit(6)
+			return
 
 	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		var texture := ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)

@@ -86,4 +86,10 @@ pack "$tmp/missing-texture" "$tmp/missing-texture.pck"
 expect_verify 4 "$tmp/missing-texture" "$tmp/missing-texture.pck" "$tmp/missing-texture.log" "missing required texture file"
 grep -q "Missing packed file" "$tmp/missing-texture.log" || fail "verifier did not report the missing texture"
 
+cp -R "$repo_dir/content/." "$tmp/wrong-root"
+printf '[]' > "$tmp/wrong-root/STS2Philosophers/localization/eng/relics.json"
+pack "$tmp/wrong-root" "$tmp/wrong-root.pck"
+expect_verify 6 "$tmp/wrong-root" "$tmp/wrong-root.pck" "$tmp/wrong-root.log" "localization JSON root is not an object"
+grep -q "Packed JSON root must be an object" "$tmp/wrong-root.log" || fail "verifier did not report the wrong JSON root"
+
 echo "PckVerifier checks passed."
