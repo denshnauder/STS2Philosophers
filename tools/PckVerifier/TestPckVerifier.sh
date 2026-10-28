@@ -58,4 +58,18 @@ pack "$tmp/missing-file" "$tmp/missing-file.pck"
 expect_verify 4 "$tmp/missing-file" "$tmp/missing-file.pck" "$tmp/missing-file.log" "missing required localization file"
 grep -q "Missing packed file" "$tmp/missing-file.log" || fail "verifier did not report the missing file"
 
+cp -R "$repo_dir/content/." "$tmp/atomic-content"
+printf '{not-json' > "$tmp/atomic-content/STS2Philosophers/localization/eng/relics.json"
+printf 'OLD-OUTPUT' > "$tmp/atomic.pck"
+set +e
+CONTENT_DIR="$tmp/atomic-content" "$repo_dir/tools/BuildContentPck.sh" "$tmp/atomic.pck" >"$tmp/atomic.log" 2>&1
+atomic_status=$?
+set -e
+[ "$atomic_status" -eq 6 ] || { cat "$tmp/atomic.log" >&2; fail "atomic build expected 6, got $atomic_status"; }
+[ "$(cat "$tmp/atomic.pck")" = "OLD-OUTPUT" ] || fail "failed atomic build replaced the old PCK"
+if find "$tmp" -maxdepth 1 -name 'atomic.pck.tmp.*' -print -quit | grep -q .; then
+  fail "failed atomic build left a temporary PCK"
+fi
+echo "PASS: failed build keeps old PCK and removes temporary output"
+
 echo "PckVerifier checks passed."
