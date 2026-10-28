@@ -152,6 +152,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckMarcusInterval();
             CheckPlotinusInterval();
             CheckMissingPredecessor();
+            CheckWollstonecraftDirect();
             Console.WriteLine("All route question-node checks passed: all 23 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -398,6 +399,30 @@ internal static class AllRouteQuestionNodeChecks
         string before = Encode(shared);
         Check(Call("AquinasBridgeNoticePatch", "TrySelectNative", run) is null && Encode(shared) == before,
             "A matching relic/graph edge cannot replace the actual closed adopted Aristotle predecessor.");
+    }
+
+    private static void CheckWollstonecraftDirect()
+    {
+        ModelDb.Inject(typeof(WollstonecraftAdmission));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object shared = BuildShared("WollstonecraftAdmission", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            fixture.Relic.Id.Entry, run);
+        Call("PhilosophyRunStateService", "Restore", run, shared); shared = CurrentShared(run);
+        EventModel? selected = (EventModel?)Call("WollstonecraftAdmissionPatch", "TrySelectNative", run);
+        Check(selected is WollstonecraftAdmission, "Wollstonecraft's own native selector can open its real event.");
+        object state = Get(CurrentShared(run), "WollstonecraftAdmission");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "Wollstonecraft's direct native selection leaves a usable open record.");
+        Check((bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "Wollstonecraft's open record participates in the shared question-node guard.");
+        Check(ReferenceEquals(Call("WollstonecraftAdmissionPatch", "TrySelectExistingNative", run), selected),
+            "Wollstonecraft restores its already-open native identity before any competing selector.");
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("WollstonecraftAdmissionPatch", "TrySelectExistingNative", run) is null,
+            "Wollstonecraft's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckMarcusInterval()
