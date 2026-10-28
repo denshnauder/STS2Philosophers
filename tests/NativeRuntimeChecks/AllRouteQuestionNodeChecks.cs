@@ -126,6 +126,11 @@ internal static class AllRouteQuestionNodeChecks
                 typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
                     [run, fixture.Player, chosen, CurrentShared(run), item.Act]);
                 Set(run, "_currentRooms", new List<AbstractRoom>());
+                // 040 and 046 compete for the same Rousseau-history Fixed2.
+                // Make the competitor available here so this guard does not
+                // depend on another native suite running first.
+                if (item.Person == "MachiavelliFloodPreparation")
+                    ModelDb.Inject(typeof(WollstonecraftAdmission));
                 string once = Encode(CurrentShared(run));
                 Call("PhilosophyRunStateService", "Restore", run, Decode(once));
                 Check(ReferenceEquals(carrier.ModifyNextEvent(original), original)
