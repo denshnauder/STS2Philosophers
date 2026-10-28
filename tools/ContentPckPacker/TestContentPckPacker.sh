@@ -49,6 +49,19 @@ cp "$tmp/content/images/events/philosophers_gaze.png" "$tmp/content/images/event
 expect_status 0 "$tmp/content" "$tmp/modified.pck" "$tmp/modified.log" "JSON and PNG changes"
 grep -aq "FAST_PCK_TEST" "$tmp/modified.pck" || fail "JSON key is missing from the fast PCK"
 
+cp -R "$repo_dir/content/." "$tmp/missing-alias-import"
+cp "$tmp/missing-alias-import/images/events/philosophers_gaze.png" "$tmp/missing-alias-import/STS2Philosophers/images/alias_without_import.png"
+python3 - "$tmp/missing-alias-import/BuildContentPck.gd" <<'PY'
+import sys
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+needle = '# These events use'
+assert needle in text
+text = text.replace(needle, '["res://images/events/alias_without_import.png", "res://STS2Philosophers/images/alias_without_import.png"],\n\n' + needle, 1)
+open(path, "w", encoding="utf-8").write(text)
+PY
+expect_status 3 "$tmp/missing-alias-import" "$tmp/missing-alias-import.pck" "$tmp/missing-alias-import.log" "missing alias import asks for Godot fallback"
+
 cp -R "$repo_dir/content/." "$tmp/missing-alias"
 python3 - "$tmp/missing-alias/BuildContentPck.gd" <<'PY'
 import sys

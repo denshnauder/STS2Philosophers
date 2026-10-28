@@ -246,6 +246,11 @@ foreach (var (alias, source) in aliases)
         Console.Error.WriteLine($"missing alias source, falling back to Godot: {sourceFull}");
         return 3;
     }
+    if (!File.Exists(sourceFull + ".import"))
+    {
+        Console.Error.WriteLine($"missing alias import metadata, falling back to Godot: {sourceFull}.import");
+        return 3;
+    }
     AddAlias(alias, source);
 }
 string portraitSourceFull = Full("res://images/events/philosophers_gaze.png");
