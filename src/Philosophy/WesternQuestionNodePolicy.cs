@@ -166,7 +166,8 @@ internal static class WesternQuestionNodePolicy
         || shared.MillHarm is { Closed: false }
         || shared.BeauvoirOther is { Closed: false }
         || shared.FichteSelfPositing is { Closed: false }
-        || shared.LockeCargoIdentity is { Closed: false };
+        || shared.LockeCargoIdentity is { Closed: false }
+        || shared.HumeInduction is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()
     {
