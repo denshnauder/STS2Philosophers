@@ -116,6 +116,8 @@ internal static class NativeQuestionNodeEvents
             ?? PlotinusCommonGroundPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Sextus)
             ?? DescartesMethodicReconstructionPatch.TrySelectNative(run)
+            ?? LockeCargoIdentityPatch.TrySelectNative(run)
+            ?? HumeInductionPatch.TrySelectNative(run)
             ?? HanFeiPublicStandardPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Parmenides)
             ?? Question(WesternQuestionKind.Anaximander)

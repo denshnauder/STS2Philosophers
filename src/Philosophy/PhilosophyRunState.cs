@@ -45,6 +45,8 @@ internal sealed class PhilosophyRunState
     public SpinozaCauseNetworkState? SpinozaCauseNetwork { get; set; }
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
+    public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
+    public HumeInductionState? HumeInduction { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -103,6 +105,8 @@ internal sealed class PhilosophyRunState
         || SpinozaCauseNetwork is not null
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
+        || LockeCargoIdentity is not null
+        || HumeInduction is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -292,6 +296,8 @@ internal sealed class PhilosophyRunState
         SpinozaCauseNetwork?.NormalizeAfterLoad();
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
+        LockeCargoIdentity?.NormalizeAfterLoad();
+        HumeInduction?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

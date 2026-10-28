@@ -164,6 +164,10 @@
     <Compile Include="..\..\src\Philosophy\MachiavelliRealistChallengeTriggerPolicy.cs" Link="MachiavelliRealistChallengeTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyState.cs" Link="HobbesAuthorizedSovereigntyState.cs" />
     <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyTriggerPolicy.cs" Link="HobbesAuthorizedSovereigntyTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\LockeCargoIdentityState.cs" Link="LockeCargoIdentityState.cs" />
+    <Compile Include="..\..\src\Philosophy\LockeCargoIdentityTriggerPolicy.cs" Link="LockeCargoIdentityTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\HumeInductionState.cs" Link="HumeInductionState.cs" />
+    <Compile Include="..\..\src\Philosophy\HumeInductionTriggerPolicy.cs" Link="HumeInductionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>
 </Project>
