@@ -16,6 +16,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/ockham_names_inquiry.png",
 	"res://images/events/plotinus_common_ground.png",
 	"res://images/events/zeno_civic_challenge.png",
+	"res://images/events/leibniz_independent_clocks.png",
 ]
 
 const REQUIRED_FILES := [

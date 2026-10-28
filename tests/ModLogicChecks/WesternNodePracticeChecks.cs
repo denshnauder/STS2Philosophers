@@ -116,7 +116,11 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(newton, Plays("AS", "ab"), previous, 3) == default,
             "Newton calibration pays through the actual cup and must not create a second abstract node reward.");
         covered.Add(newton);
-        Check(covered.Count == 54 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        const string leibnizHarmony = "GOTTFRIED_WILHELM_LEIBNIZ__BEING_AND_CHANGE__HARMONY";
+        Check(WesternNodePracticePolicy.Evaluate(leibnizHarmony, Plays("SASP", "abcd"), previous, 3) == default,
+            "Leibniz's harmony ending must not add a second generic node reward next to the relic practices.");
+        covered.Add(leibnizHarmony);
+        Check(covered.Count == 55 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")

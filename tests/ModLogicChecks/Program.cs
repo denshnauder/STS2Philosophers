@@ -8,6 +8,12 @@ if (args.Contains("--spinoza-only"))
     return;
 }
 
+if (args.Contains("--leibniz-only"))
+{
+    LeibnizIndependentClocksChecks.Run();
+    return;
+}
+
 SocratesKnowledgeRouteChecks.Run();
 SocratesCardProbeChecks.Run();
 
@@ -34,6 +40,7 @@ CopernicusShiftedCenterChecks.Run();
 GalileoMeasuredPracticeChecks.Run();
 NewtonTwoSitesChecks.Run();
 SpinozaCauseNetworkChecks.Run();
+LeibnizIndependentClocksChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

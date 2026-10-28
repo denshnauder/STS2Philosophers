@@ -15,6 +15,10 @@
     <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkFlow.cs" Link="SpinozaCauseNetworkFlow.cs" />
     <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkTriggerPolicy.cs" Link="SpinozaCauseNetworkTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\SpinozaCombatPracticeState.cs" Link="SpinozaCombatPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizHarmonyState.cs" Link="LeibnizHarmonyState.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizHarmonyFlow.cs" Link="LeibnizHarmonyFlow.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizHarmonyTriggerPolicy.cs" Link="LeibnizHarmonyTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\LeibnizCombatPracticeState.cs" Link="LeibnizCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoMeasuredPracticeState.cs" Link="GalileoMeasuredPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoRepeatedPaymentState.cs" Link="GalileoRepeatedPaymentState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementState.cs" Link="DemocritusArrangementState.cs" />

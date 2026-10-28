@@ -127,5 +127,9 @@
   "DESCARTES_THINKING_LENS.spinoza.intervened.title": "介入之镜",
   "DESCARTES_THINKING_LENS.spinoza.intervened.description": "沉思镜原有的效果保留。每场战斗中，第一张手动单体攻击结算后，对同一名仍存活的敌人施加 1 层虚弱；若该目标已死亡，这次机会就此用掉，不换目标，也不延后补发。自动牌不计。",
   "DESCARTES_THINKING_LENS.spinoza.reordered.title": "重排之镜",
-  "DESCARTES_THINKING_LENS.spinoza.reordered.description": "沉思镜原有的效果保留。每场战斗中，第一张手动技能结算后抽 1 张，前提是此前没有手动攻击；若此前已有手动攻击，这次机会就此用掉，不抽牌。自动牌不计。"
+  "DESCARTES_THINKING_LENS.spinoza.reordered.description": "沉思镜原有的效果保留。每场战斗中，第一张手动技能结算后抽 1 张，前提是此前没有手动攻击；若此前已有手动攻击，这次机会就此用掉，不抽牌。自动牌不计。",
+  "DESCARTES_THINKING_LENS.leibniz.independent.title": "沉思镜：独立时钟",
+  "DESCARTES_THINKING_LENS.leibniz.independent.description": "替换斯宾诺莎额外实践且不叠加，保留原有的锁定敌人意图与费用折扣。每场战斗手动攻击与手动技能分别计至 2：第二张手动攻击结算后得 4 点格挡一次，第二张手动技能结算后抽 1 张一次；各自独立、顺序不限、各自仅一次，自动牌不计。无金币或生命成本，无即时补给，无新遗物。",
+  "DESCARTES_THINKING_LENS.leibniz.coordinated.title": "沉思镜：协调时钟",
+  "DESCARTES_THINKING_LENS.leibniz.coordinated.description": "替换斯宾诺莎额外实践且不叠加，保留原有的锁定敌人意图与费用折扣。仅当本场第一回合至少手动打出 1 张攻击且至少 1 张技能，第二回合开始时得 1 点能量一次；首回合未达成则本战不补发，自动牌不计。无金币或生命成本，无即时补给，无新遗物。"
 }

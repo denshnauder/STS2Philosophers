@@ -22,6 +22,7 @@ internal static class LaterActCandidateIds
     public const string Diogenes = "DIOGENES_OF_SINOPE";
     public const string Zeno = "ZENO_OF_CITIUM";
     public const string HanFei = "HAN_FEI";
+    public const string Leibniz = "GOTTFRIED_WILHELM_LEIBNIZ";
 }
 
 internal static class RouteRelicIds
@@ -74,6 +75,7 @@ internal static class LaterActRelicEligibilityCatalog
         Register(LaterActCandidateIds.Diogenes, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.Zeno, ActThreeIndex, RouteRelicIds.SocratesBalanceWeight),
         Register(LaterActCandidateIds.HanFei, ActThreeIndex, RouteRelicIds.XunziShengMo),
+        Register(LaterActCandidateIds.Leibniz, ActThreeIndex, RouteRelicIds.DescartesThinkingLens),
     ];
 
     public static IReadOnlyList<LaterActRelicEligibilityRegistration> Registrations => Entries;

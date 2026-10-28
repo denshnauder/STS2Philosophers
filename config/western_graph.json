@@ -433,6 +433,14 @@
       "stage_id": "CORE",
       "display_name": "牛顿：有条件的两处试验",
       "terminal": true
+    },
+    {
+      "node_id": "GOTTFRIED_WILHELM_LEIBNIZ__BEING_AND_CHANGE__HARMONY",
+      "thinker_id": "GOTTFRIED_WILHELM_LEIBNIZ",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "HARMONY",
+      "display_name": "莱布尼茨",
+      "terminal": true
     }
   ],
   "edges": [
@@ -1950,6 +1958,37 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "docs/design/current/west/32牛顿当前设计.md"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_050",
+      "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GOTTFRIED_WILHELM_LEIBNIZ__BEING_AND_CHANGE__HARMONY",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "后世重释与批判，中；以有限时钟比较检验独立与协调，不证明宇宙前定和谐",
+      "source": "docs/design/current/west/34莱布尼茨当前设计.md",
+      "required_edge_ids": [
+        "WESTERN_EDGE_023"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": [
+          "LaterReinterpretation",
+          "TextualCritique"
+        ],
+        "compressed_mediators": "斯宾诺莎实体与样式的因果网络；莱布尼茨单子与前定和谐的有限比较。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "有限时钟比较不证明宇宙前定和谐，也不给具体失败免费补偿或免罚。",
+        "interpretation_boundary": "单子无窗不等于普通车队不能通信；一次观察不写成形而上学证明。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "docs/design/current/west/34莱布尼茨当前设计.md"
         ]
       }
     }

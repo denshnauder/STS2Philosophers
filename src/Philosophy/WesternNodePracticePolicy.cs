@@ -17,6 +17,9 @@ internal static class WesternNodePracticePolicy
             || plays.Select(play => play.PlayId).Distinct(StringComparer.Ordinal).Count() != plays.Count
             || previousKinds.Any(kind => !Enum.IsDefined(kind))
             || (previousKinds.Count > 0 && previousKinds.Count != previousCards)) return default;
+        // Harmony is the fixed ending reached after the clocks are chosen; the two practices
+        // are paid by the relic, so the ending node itself must not add a generic reward.
+        if (node.StageId == "HARMONY") return default;
         if (WesternRouteCatalog.IsEntryProblem(node.ThinkerId, node.ProblemId))
         {
             return new WesternPracticeState { ProblemId = node.ProblemId, Plays = plays.ToList(), PreviousCards = previousCards }.Evaluate();

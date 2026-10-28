@@ -33,7 +33,7 @@ internal static class RouteEventMapBoundary
         or AquinasBridgeNotice or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger or CopernicusShiftedCenter or GalileoMeasuredPractice
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
         or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing
-        or DiogenesStaySwitch or ZenoAssentBoundary;
+        or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizIndependentClocks;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 

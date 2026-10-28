@@ -140,6 +140,7 @@ internal static class NativeQuestionNodeEvents
             ?? GalileoMeasuredPracticePatch.TrySelectNative(run)
             ?? NewtonTwoSitesPatch.TrySelectNative(run)
             ?? SpinozaCauseNetworkPatch.TrySelectNative(run)
+            ?? LeibnizIndependentClocksPatch.TrySelectNative(run)
             ?? nextEvent;
         // ActModel.PullNextEvent registers the returned model as visited. We do
         // not advance its event queue, append history, or consume another RNG roll.

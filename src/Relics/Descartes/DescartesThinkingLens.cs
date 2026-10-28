@@ -7,9 +7,11 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using MegaCrit.Sts2.Core.ValueProps;
 
 namespace STS2Philosophers;
 
@@ -21,8 +23,31 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
     private SpinozaCombatPracticeState? _spinozaPractice;
     private string? _invalidSpinozaPayload;
     private HashSet<CardPlay>? _spinozaCallbacks;
+    private LeibnizCombatPracticeState? _leibnizPractice;
+    private string? _invalidLeibnizPayload;
+    private HashSet<CardPlay>? _leibnizCallbacks;
 
     private SpinozaCombatPracticeState SpinozaPractice => _spinozaPractice ??= new();
+
+    private LeibnizCombatPracticeState LeibnizPractice =>
+        _leibnizPractice ??= LeibnizCombatPracticeState.CreateDefault();
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public string LeibnizPracticePayload
+    {
+        get => _invalidLeibnizPayload
+            ?? _leibnizPractice?.Encode() ?? LeibnizCombatPracticeState.CreateDefault().Encode();
+        private set
+        {
+            AssertMutable();
+            if (LeibnizCombatPracticeState.TryRestore(value, out LeibnizCombatPracticeState restored))
+            {
+                _leibnizPractice = restored;
+                _invalidLeibnizPayload = null;
+            }
+            else _invalidLeibnizPayload = value;
+        }
+    }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string SpinozaPracticePayload
@@ -55,6 +80,14 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
                     new LocString("relics", $"DESCARTES_THINKING_LENS.spinoza.{branch}.title"),
                     new LocString("relics", $"DESCARTES_THINKING_LENS.spinoza.{branch}.description"))]);
             }
+            if (_invalidLeibnizPayload is null
+                && TryGetLeibnizDisposition(out LeibnizDisposition leibnizDisposition))
+            {
+                string branch = leibnizDisposition.ToString().ToLowerInvariant();
+                tips = tips.Concat([new HoverTip(
+                    new LocString("relics", $"DESCARTES_THINKING_LENS.leibniz.{branch}.title"),
+                    new LocString("relics", $"DESCARTES_THINKING_LENS.leibniz.{branch}.description"))]);
+            }
             return tips;
         }
     }
@@ -62,18 +95,101 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
     public override async Task BeforeCombatStart()
     {
         await base.BeforeCombatStart();
-        if (_invalidSpinozaPayload is not null
-            || !TryGetSpinozaDisposition(out _)
-            || !TrySpinozaCombatKey(out string key)) return;
-        if (SpinozaPractice.BeginCombat(key))
+        if (_invalidSpinozaPayload is null
+            && TryGetSpinozaDisposition(out _)
+            && TrySpinozaCombatKey(out string key)
+            && SpinozaPractice.BeginCombat(key))
             _spinozaCallbacks = null;
+
+        if (_invalidLeibnizPayload is null
+            && TryGetLeibnizDisposition(out _)
+            && TrySpinozaCombatKey(out string leibnizKey)
+            && LeibnizPractice.BeginCombat(leibnizKey))
+            _leibnizCallbacks = null;
+    }
+
+    public override async Task BeforeSideTurnStart(
+        PlayerChoiceContext choiceContext,
+        CombatSide side,
+        IReadOnlyList<Creature> participants,
+        ICombatState combatState)
+    {
+        await base.BeforeSideTurnStart(choiceContext, side, participants, combatState);
+        if (side != CombatSide.Player
+            || Owner is not { } owner
+            || !participants.Contains(owner.Creature)
+            || owner.PlayerCombatState is not { } state
+            || state.TurnNumber <= 0
+            || _invalidLeibnizPayload is not null
+            || !TryGetLeibnizDisposition(out _)
+            || !TrySpinozaCombatKey(out string key)) return;
+        if (LeibnizPractice.BeginCombat(key)) _leibnizCallbacks = null;
+        LeibnizPractice.StartTurn(key, state.TurnNumber);
+    }
+
+    public override async Task AfterPlayerTurnStartLate(PlayerChoiceContext choiceContext, Player player)
+    {
+        await base.AfterPlayerTurnStartLate(choiceContext, player);
+        if (!ReferenceEquals(player, Owner)
+            || Owner?.PlayerCombatState is not { TurnNumber: 2 } state
+            || _invalidLeibnizPayload is not null
+            || !TryGetLeibnizDisposition(out LeibnizDisposition disposition)
+            || !TrySpinozaCombatKey(out string key)) return;
+        if (!LeibnizPractice.TryClaimEnergy(key, state.TurnNumber, disposition)) return;
+        Flash();
+        await PlayerCmd.GainEnergy(1m, Owner);
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        if (!ReferenceEquals(cardPlay.Player, Owner) || cardPlay.IsAutoPlay)
+        if (Owner is null || !ReferenceEquals(cardPlay.Player, Owner) || cardPlay.IsAutoPlay)
         {
             await base.AfterCardPlayed(choiceContext, cardPlay);
+            return;
+        }
+
+        if (_invalidLeibnizPayload is null
+            && TryGetLeibnizDisposition(out LeibnizDisposition leibnizDisposition)
+            && TrySpinozaCombatKey(out string leibnizKey)
+            && Owner?.PlayerCombatState is { TurnNumber: > 0 } leibnizState)
+        {
+            LeibnizCombatPracticeState practice = LeibnizPractice;
+            if (practice.BeginCombat(leibnizKey)) _leibnizCallbacks = null;
+            if (!(_leibnizCallbacks ??= new HashSet<CardPlay>(ReferenceEqualityComparer.Instance))
+                .Add(cardPlay))
+            {
+                await base.AfterCardPlayed(choiceContext, cardPlay);
+                return;
+            }
+            int turn = leibnizState.TurnNumber;
+            await base.AfterCardPlayed(choiceContext, cardPlay);
+            if (_invalidLeibnizPayload is not null || !ReferenceEquals(_leibnizPractice, practice)
+                || !TryGetLeibnizDisposition(out LeibnizDisposition currentLeibniz)
+                || currentLeibniz != leibnizDisposition
+                || !TrySpinozaCombatKey(out string currentLeibnizKey)
+                || currentLeibnizKey != leibnizKey
+                || Owner?.PlayerCombatState?.TurnNumber != turn) return;
+
+            LeibnizPracticeCardKind kind = cardPlay.Card.Type switch
+            {
+                CardType.Attack => LeibnizPracticeCardKind.Attack,
+                CardType.Skill => LeibnizPracticeCardKind.Skill,
+                _ => LeibnizPracticeCardKind.Other,
+            };
+            LeibnizPracticeReward leibnizReward = practice.ObserveManual(
+                leibnizKey, turn, leibnizDisposition, kind);
+            switch (leibnizReward)
+            {
+                case LeibnizPracticeReward.Block4:
+                    Flash();
+                    await CreatureCmd.GainBlock(Owner.Creature, 4, ValueProp.Unpowered,
+                        cardPlay: null, fast: true);
+                    break;
+                case LeibnizPracticeReward.Draw1:
+                    Flash();
+                    await CardPileCmd.Draw(choiceContext, 1m, Owner);
+                    break;
+            }
             return;
         }
 
@@ -96,6 +212,8 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
         await base.AfterCardPlayed(choiceContext, cardPlay);
         if (!TryGetSpinozaDisposition(out SpinozaDisposition current) || current != disposition
             || !TrySpinozaCombatKey(out string currentKey) || currentKey != key) return;
+        Player? owner = Owner;
+        if (owner is null) return;
 
         bool isAttack = cardPlay.Card.Type == CardType.Attack;
         bool isSkill = cardPlay.Card.Type == CardType.Skill;
@@ -110,15 +228,15 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
                 if (cardPlay.Card.TargetType != TargetType.AnyEnemy) break;
                 Creature? target = cardPlay.Target;
                 if (target is null || !target.IsEnemy || !target.IsAlive) break;
-                ICombatState? combatState = Owner.Creature.CombatState;
+                ICombatState? combatState = owner.Creature.CombatState;
                 if (combatState is null || !combatState.Enemies.Contains(target)) break;
                 Flash();
                 await PowerCmd.Apply<WeakPower>(choiceContext, target, 1m,
-                    Owner.Creature, cardPlay.Card);
+                    owner.Creature, cardPlay.Card);
                 break;
             case SpinozaPracticeReward.Draw:
                 Flash();
-                await CardPileCmd.Draw(choiceContext, 1m, Owner);
+                await CardPileCmd.Draw(choiceContext, 1m, owner);
                 break;
         }
     }
@@ -142,6 +260,37 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
             || !state.Closed || !state.EdgeCommitted || !state.IsUsable()
             || state.Disposition is not (SpinozaDisposition.Intervened
                 or SpinozaDisposition.Reordered))
+            return false;
+        disposition = state.Disposition;
+        return true;
+    }
+
+    private bool TryGetLeibnizDisposition(out LeibnizDisposition disposition)
+    {
+        disposition = LeibnizDisposition.None;
+        if (!IsMutable || Owner is null
+            || !Owner.Relics.Any(relic => ReferenceEquals(relic, this))) return false;
+        RunManager manager = RunManager.Instance;
+        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
+        if (run is null || run.CurrentActIndex != 2 || run.Players.Count != 1
+            || manager.NetService?.Type != NetGameType.Singleplayer
+            || !ReferenceEquals(run.Players[0], Owner) || !IsSoleDoctrine
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.CurrentDoctrine is not { ThinkerId: "DESCARTES", DoctrineId: "DESCARTES_THINKING_LENS" }
+            || shared.WesternJourney is not { } journey
+            || journey.CurrentNodeId != LeibnizHarmonyState.AdoptedNodeId
+            || !journey.CompletedEdgeIds.Contains(LeibnizHarmonyState.CompletionEdgeId)
+            || !journey.CompletedEdgeIds.Contains(LeibnizHarmonyState.PredecessorEdgeId)
+            || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_024")
+            || journey.LastFixedAct != 3
+            || journey.RetainedEnding
+            || shared.LeibnizHarmony is not { } state
+            || !state.Closed || !state.EdgeCommitted || !state.IsUsable()
+            || state.InstanceId != LeibnizHarmonyState.BuildInstanceId(run.Rng.Seed)
+            || state.SpinozaInstanceId != $"SPINOZA_CAUSE_NETWORK:{run.Rng.Seed}:2"
+            || state.Disposition is not (LeibnizDisposition.Independent or LeibnizDisposition.Coordinated)
+            || shared.SpinozaCauseNetwork is not { } spinoza
+            || !LeibnizHarmonyFlow.IsRouteConsistent(state, journey, spinoza))
             return false;
         disposition = state.Disposition;
         return true;

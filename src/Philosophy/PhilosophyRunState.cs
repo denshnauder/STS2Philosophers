@@ -43,6 +43,7 @@ internal sealed class PhilosophyRunState
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
     public NewtonTwoSitesState? NewtonTwoSites { get; set; }
     public SpinozaCauseNetworkState? SpinozaCauseNetwork { get; set; }
+    public LeibnizHarmonyState? LeibnizHarmony { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -99,6 +100,7 @@ internal sealed class PhilosophyRunState
         || AnselmUnfinishedProof is not null
         || NewtonTwoSites is not null
         || SpinozaCauseNetwork is not null
+        || LeibnizHarmony is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -286,6 +288,7 @@ internal sealed class PhilosophyRunState
         AnselmUnfinishedProof?.NormalizeAfterLoad();
         NewtonTwoSites?.NormalizeAfterLoad();
         SpinozaCauseNetwork?.NormalizeAfterLoad();
+        LeibnizHarmony?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

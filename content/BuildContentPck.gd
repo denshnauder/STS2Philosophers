@@ -221,7 +221,7 @@ func _initialize() -> void:
 		"augustine_promise", "diogenes_stay_switch", "luther_signed_care",
 		"bacon_sample_ledger", "copernicus_shifted_center", "galileo_measured_practice",
 		"machiavelli_flood_preparation", "newton_two_sites", "spinoza_cause_network", "ockham_names_inquiry",
-		"plotinus_common_ground", "zeno_civic_challenge",
+		"plotinus_common_ground", "zeno_civic_challenge", "leibniz_independent_clocks",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",
 			"res://images/events/philosophers_gaze.png")
