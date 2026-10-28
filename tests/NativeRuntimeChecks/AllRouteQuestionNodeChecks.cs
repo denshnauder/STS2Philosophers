@@ -429,6 +429,10 @@ internal static class AllRouteQuestionNodeChecks
         object shared = BuildShared("WollstonecraftAdmission", "ROUSSEAU__HISTORY_AND_POWER__CORE",
             fixture.Relic.Id.Entry, run);
         Call("PhilosophyRunStateService", "Restore", run, shared); shared = CurrentShared(run);
+        string before = Encode(CurrentShared(run));
+        Check((Task)Call("WollstonecraftAdmissionPatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "Wollstonecraft's legacy map callback cannot insert a room or initialize a person.");
         EventModel? selected = (EventModel?)Call("WollstonecraftAdmissionPatch", "TrySelectNative", run);
         Check(selected is WollstonecraftAdmission, "Wollstonecraft's own native selector can open its real event.");
         object state = Get(CurrentShared(run), "WollstonecraftAdmission");

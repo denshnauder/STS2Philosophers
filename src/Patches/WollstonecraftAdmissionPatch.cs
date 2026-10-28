@@ -6,6 +6,8 @@ namespace STS2Philosophers;
 
 internal static class WollstonecraftAdmissionPatch
 {
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
         if (!NativeQuestionNodeEvents.IsEntry(run)
