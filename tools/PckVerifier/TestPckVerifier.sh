@@ -167,4 +167,19 @@ pack "$tmp/empty-key" "$tmp/empty-key.pck"
 expect_verify 6 "$tmp/empty-key" "$tmp/empty-key.pck" "$tmp/empty-key.log" "empty localization key"
 grep -q "Localization key and value must be non-empty" "$tmp/empty-key.log" || fail "verifier did not report the empty localization key"
 
+cp "$tmp/baseline.pck" "$tmp/corrupt-texture.pck"
+ctex="$(find "$repo_dir/content/.godot/imported" -maxdepth 1 -name 'heraclitus_lyre.svg-*.ctex' -print -quit)"
+[ -n "$ctex" ] || fail "heraclitus lyre import cache is missing"
+python3 - "$tmp/corrupt-texture.pck" "$ctex" <<'PY'
+import sys
+pck = bytearray(open(sys.argv[1], "rb").read())
+ctex = open(sys.argv[2], "rb").read()
+pos = pck.find(ctex)
+assert pos >= 0, "texture bytes are not present in the PCK"
+pck[pos:pos + 8] = b"BROKEN!!"
+open(sys.argv[1], "wb").write(pck)
+PY
+expect_verify 5 "$repo_dir/content" "$tmp/corrupt-texture.pck" "$tmp/corrupt-texture.log" "unloadable packed texture"
+grep -q "Packed texture is not loadable" "$tmp/corrupt-texture.log" || fail "verifier did not report the unloadable texture"
+
 echo "PckVerifier checks passed."
