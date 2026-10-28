@@ -92,14 +92,21 @@ internal sealed class CarnapFrameworkChoiceState
             }) return false;
 
         CarnapFrameworkChoiceStage replay = CarnapFrameworkChoiceStage.Rules;
+        CarnapFramework replayFramework = CarnapFramework.None;
         bool closed = false;
         foreach (CarnapFrameworkChoiceAction action in ConfirmedActions)
         {
             if (closed || !CarnapFrameworkChoiceFlow.Options(replay).Contains(action)) return false;
+            replayFramework = action switch
+            {
+                CarnapFrameworkChoiceAction.ChooseObservation => CarnapFramework.Observation,
+                CarnapFrameworkChoiceAction.ChooseRegion => CarnapFramework.Region,
+                _ => replayFramework,
+            };
             replay = CarnapFrameworkChoiceFlow.Next(replay, action);
             closed = action == CarnapFrameworkChoiceAction.Leave;
         }
-        return replay == Stage && closed == Closed
+        return replay == Stage && closed == Closed && replayFramework == Framework
             && (PendingAction == CarnapFrameworkChoiceAction.None
                 || !Closed && CarnapFrameworkChoiceFlow.Options(Stage).Contains(PendingAction));
     }

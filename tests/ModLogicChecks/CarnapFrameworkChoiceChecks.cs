@@ -66,6 +66,13 @@ internal static class CarnapFrameworkChoiceChecks
         Check(!corruptFramework.IsUsable(),
             "Carnap rejects a framework selected on the untouched rules page.");
 
+        var corruptFrameworkMismatch = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        corruptFrameworkMismatch.Stage = CarnapFrameworkChoiceStage.Evidence;
+        corruptFrameworkMismatch.Framework = CarnapFramework.Region;
+        corruptFrameworkMismatch.ConfirmedActions.Add(CarnapFrameworkChoiceAction.ChooseObservation);
+        Check(!corruptFrameworkMismatch.IsUsable(),
+            "Carnap rejects a framework that disagrees with the committed framework choice.");
+
         var corruptOutcome = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
         corruptOutcome.Outcome = CarnapFrameworkChoiceOutcome.Translated;
         Check(!corruptOutcome.IsUsable(),
