@@ -92,4 +92,16 @@ pack "$tmp/wrong-root" "$tmp/wrong-root.pck"
 expect_verify 6 "$tmp/wrong-root" "$tmp/wrong-root.pck" "$tmp/wrong-root.log" "localization JSON root is not an object"
 grep -q "Packed JSON root must be an object" "$tmp/wrong-root.log" || fail "verifier did not report the wrong JSON root"
 
+cp -R "$repo_dir/content/." "$tmp/missing-key"
+python3 - "$tmp/missing-key/STS2Philosophers/localization/zhs/relics.json" <<'PY'
+import json,sys
+path=sys.argv[1]
+data=json.load(open(path,encoding='utf-8'))
+del data[next(iter(data))]
+open(path,'w',encoding='utf-8').write(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+PY
+pack "$tmp/missing-key" "$tmp/missing-key.pck"
+expect_verify 6 "$tmp/missing-key" "$tmp/missing-key.pck" "$tmp/missing-key.log" "localization key parity"
+grep -q "Localization key missing in zhs/relics.json" "$tmp/missing-key.log" || fail "verifier did not report the missing localization key"
+
 echo "PckVerifier checks passed."

@@ -156,6 +156,40 @@ func _initialize() -> void:
 			quit(4)
 			return
 
+	var localization_keys := {}
+	for path in REQUIRED_FILES:
+		if not path.ends_with(".json"):
+			continue
+		var localization_json := JSON.new()
+		if localization_json.parse(FileAccess.get_file_as_string(path)) != OK:
+			continue
+		if not localization_json.data is Dictionary:
+			continue
+		var keys: Array = localization_json.data.keys()
+		keys.sort()
+		if path.find("/localization/") >= 0:
+			var file_name: String = path.get_file()
+			var language: String = path.get_base_dir().get_file()
+			if not localization_keys.has(file_name):
+				localization_keys[file_name] = {}
+			localization_keys[file_name][language] = keys
+
+	for file_name in localization_keys:
+		if not localization_keys[file_name].has("eng") or not localization_keys[file_name].has("zhs"):
+			continue
+		var eng: Array = localization_keys[file_name]["eng"]
+		var zhs: Array = localization_keys[file_name]["zhs"]
+		for key in eng:
+			if not zhs.has(key):
+				push_error("Localization key missing in zhs/%s: %s" % [file_name, key])
+				quit(6)
+				return
+		for key in zhs:
+			if not eng.has(key):
+				push_error("Localization key missing in eng/%s: %s" % [file_name, key])
+				quit(6)
+				return
+
 	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		if not FileAccess.file_exists(path + ".import"):
 			push_error("Missing packed import metadata: %s.import" % path)
