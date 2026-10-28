@@ -52,6 +52,7 @@ WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
 JamesForcedBridgeChecks.Run();
+CamusRevoltLimitChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();

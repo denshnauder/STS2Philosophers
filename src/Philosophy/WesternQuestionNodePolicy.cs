@@ -171,6 +171,7 @@ internal static class WesternQuestionNodePolicy
         || shared.KantApperception is { Closed: false }
         || shared.SchopenhauerWillDenial is { Closed: false }
         || shared.JamesForcedBridge is { Closed: false }
+        || shared.CamusRevoltLimit is { Closed: false }
         || shared.RousseauConsent is { Closed: false }
         || shared.KantUniversalization is { Closed: false };
 
