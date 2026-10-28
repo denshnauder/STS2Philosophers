@@ -130,4 +130,29 @@ pack "$tmp/empty-value" "$tmp/empty-value.pck"
 expect_verify 6 "$tmp/empty-value" "$tmp/empty-value.pck" "$tmp/empty-value.log" "empty localization value"
 grep -q "Localization key and value must be non-empty" "$tmp/empty-value.log" || fail "verifier did not report the empty localization value"
 
+cp -R "$repo_dir/content/." "$tmp/missing-import"
+rm "$tmp/missing-import/STS2Philosophers/images/heraclitus_lyre.svg.import"
+python3 - "$tmp/missing-import/BuildContentPck.gd" <<'PY'
+import sys
+path=sys.argv[1]
+text=open(path,encoding='utf-8').read()
+needle='''\tfor texture_path in texture_paths:
+\t\tvar import_path: String = texture_path + ".import"
+'''
+replacement='''\tfor texture_path in texture_paths:
+\t\tif texture_path == "res://STS2Philosophers/images/heraclitus_lyre.svg":
+\t\t\tvar raw_error := add_file_or_fail(packer, texture_path, ProjectSettings.globalize_path(texture_path))
+\t\t\tif raw_error != OK:
+\t\t\t\tquit(raw_error)
+\t\t\t\treturn
+\t\t\tcontinue
+\t\tvar import_path: String = texture_path + ".import"
+'''
+assert needle in text
+open(path,'w',encoding='utf-8').write(text.replace(needle,replacement,1))
+PY
+"$godot_bin" --headless --path "$tmp/missing-import" --script "$tmp/missing-import/BuildContentPck.gd" -- "$tmp/missing-import.pck" >"$tmp/missing-import-build.log" 2>&1
+expect_verify 4 "$tmp/missing-import" "$tmp/missing-import.pck" "$tmp/missing-import.log" "missing texture import metadata"
+grep -q "Missing packed import metadata" "$tmp/missing-import.log" || fail "verifier did not report missing import metadata"
+
 echo "PckVerifier checks passed."
