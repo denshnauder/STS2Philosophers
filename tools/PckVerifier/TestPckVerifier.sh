@@ -72,4 +72,18 @@ if find "$tmp" -maxdepth 1 -name 'atomic.pck.tmp.*' -print -quit | grep -q .; th
 fi
 echo "PASS: failed build keeps old PCK and removes temporary output"
 
+cp -R "$repo_dir/content/." "$tmp/missing-texture"
+rm "$tmp/missing-texture/STS2Philosophers/images/heraclitus_lyre.svg"
+python3 - "$tmp/missing-texture/BuildContentPck.gd" <<'PY'
+import sys
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+needle = '\t\t"res://STS2Philosophers/images/heraclitus_lyre.svg",\n'
+assert needle in text
+open(path, "w", encoding="utf-8").write(text.replace(needle, "", 1))
+PY
+pack "$tmp/missing-texture" "$tmp/missing-texture.pck"
+expect_verify 4 "$tmp/missing-texture" "$tmp/missing-texture.pck" "$tmp/missing-texture.log" "missing required texture file"
+grep -q "Missing packed file" "$tmp/missing-texture.log" || fail "verifier did not report the missing texture"
+
 echo "PckVerifier checks passed."

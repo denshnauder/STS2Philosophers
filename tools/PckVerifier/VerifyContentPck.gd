@@ -150,7 +150,7 @@ func _initialize() -> void:
 		quit(3)
 		return
 
-	for path in REQUIRED_FILES + ADDITIONAL_EVENT_TEXTURES:
+	for path in REQUIRED_FILES + REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		if not FileAccess.file_exists(path):
 			push_error("Missing packed file: %s" % path)
 			quit(4)
