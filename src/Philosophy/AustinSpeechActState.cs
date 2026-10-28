@@ -71,8 +71,18 @@ internal sealed class AustinSpeechActState
             || ConfirmedActions.Count > 6 || CheckCount is < 0 or > 2
             || (CostAttempted && Outcome == AustinSpeechActOutcome.None)
             || (CostPaid && !CostAttempted)
-            || (Outcome == AustinSpeechActOutcome.Completed && !PriorityPassSpent)
-            || (Outcome == AustinSpeechActOutcome.Pending && !PendingPromise)) return false;
+            || UnauthorizedSignatureDiscovered != (CheckCount == 2)
+            || PriorityPassSpent != (Outcome == AustinSpeechActOutcome.Completed)
+            || PendingPromise != (Outcome == AustinSpeechActOutcome.Pending)
+            || Outcome switch
+            {
+                AustinSpeechActOutcome.None => Stage is not (AustinSpeechActStage.Station
+                    or AustinSpeechActStage.Evidence),
+                AustinSpeechActOutcome.Completed => Stage != AustinSpeechActStage.ResultCompleted,
+                AustinSpeechActOutcome.Withdrawn => Stage != AustinSpeechActStage.ResultWithdrawn,
+                AustinSpeechActOutcome.Pending => Stage != AustinSpeechActStage.ResultPending,
+                _ => true,
+            }) return false;
 
         AustinSpeechActStage replay = AustinSpeechActStage.Station;
         int checks = 0;

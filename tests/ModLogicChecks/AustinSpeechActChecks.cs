@@ -67,6 +67,26 @@ internal static class AustinSpeechActChecks
             && pending.Cost == 0,
             "Austin records an unfulfilled promise without granting key or passage access.");
 
+        var corruptSignature = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
+        corruptSignature.UnauthorizedSignatureDiscovered = true;
+        Check(!corruptSignature.IsUsable(),
+            "Austin rejects a forged unauthorized-signature flag before two checks.");
+
+        var corruptPassage = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
+        corruptPassage.PriorityPassSpent = true;
+        Check(!corruptPassage.IsUsable(),
+            "Austin rejects a forged spent-passage flag without completion.");
+
+        var corruptPromise = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
+        corruptPromise.PendingPromise = true;
+        Check(!corruptPromise.IsUsable(),
+            "Austin rejects a forged pending-promise flag without the promise action.");
+
+        var corruptOutcome = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
+        corruptOutcome.Outcome = AustinSpeechActOutcome.Completed;
+        Check(!corruptOutcome.IsUsable(),
+            "Austin rejects a completed outcome recorded on the station page.");
+
         var before = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         var early = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
         Check(!AustinSpeechActFlow.IsRouteConsistent(early, before),
