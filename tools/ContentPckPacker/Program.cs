@@ -1,0 +1,181 @@
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using StS2PckPacker;
+
+if (args.Length != 2)
+{
+    Console.Error.WriteLine("usage: ContentPckPacker <contentRoot> <outputPck>");
+    return 2;
+}
+
+string contentRoot = Path.GetFullPath(args[0]);
+string outputPck = Path.GetFullPath(args[1]);
+string scriptPath = Path.Combine(contentRoot, "BuildContentPck.gd");
+string script = File.ReadAllText(scriptPath);
+
+string Section(string start, string end)
+{
+    int a = script.IndexOf(start, StringComparison.Ordinal);
+    if (a < 0) throw new InvalidOperationException($"missing section start: {start}");
+    a += start.Length;
+    int b = script.IndexOf(end, a, StringComparison.Ordinal);
+    if (b < 0) throw new InvalidOperationException($"missing section end: {end}");
+    return script[a..b];
+}
+
+List<string> ResPaths(string text) =>
+    Regex.Matches(text, "\"(res://[^\"]+)\"")
+        .Select(m => m.Groups[1].Value)
+        .Distinct(StringComparer.Ordinal)
+        .ToList();
+
+var resourcePaths = Regex.Matches(
+        Section("var resource_paths: Array[String] = [", "var texture_paths: Array[String] = ["),
+        "\"([^\"]+\\.json)\"")
+    .Select(m => "res://" + m.Groups[1].Value)
+    .Distinct(StringComparer.Ordinal)
+    .ToList();
+var texturePaths = ResPaths(Section("var texture_paths: Array[String] = [", "for texture_path in texture_paths:"));
+var aliasSection = Section("for alias in [", "# These events use");
+var aliases = Regex.Matches(aliasSection, "\\[\\s*\"(res://[^\"]+)\"\\s*,\\s*\"(res://[^\"]+)\"\\s*,?\\s*\\]")
+    .Select(m => (Alias: m.Groups[1].Value, Source: m.Groups[2].Value))
+    .ToList();
+var nameSection = Section("for name in [", "error = packer.flush()");
+var portraitNames = Regex.Matches(nameSection, "\"([a-z0-9_]+)\"")
+    .Select(m => m.Groups[1].Value)
+    .ToList();
+
+var entries = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+var aliasSources = new Dictionary<string, string>(StringComparer.Ordinal);
+foreach (var (alias, source) in aliases)
+    if (!alias.EndsWith(".import", StringComparison.Ordinal))
+        aliasSources[alias] = source;
+
+void Add(string virtualPath, byte[] data)
+{
+    string key = virtualPath.StartsWith("res://", StringComparison.Ordinal) ? virtualPath[6..] : virtualPath;
+    if (entries.TryGetValue(key, out byte[]? existing))
+    {
+        if (!existing.AsSpan().SequenceEqual(data))
+            throw new InvalidOperationException($"conflicting duplicate PCK entry: {key}");
+        return;
+    }
+    entries[key] = data;
+}
+
+string Full(string virtualPath) => Path.Combine(contentRoot, virtualPath[6..]);
+
+string ImportText(string virtualPath)
+{
+    string path = Full(virtualPath) + ".import";
+    if (!File.Exists(path)) throw new FileNotFoundException(path);
+    return File.ReadAllText(path);
+}
+
+string RemapPath(string importText)
+{
+    var m = Regex.Match(importText, "path=\"(res://[^\"]+\\.ctex)\"");
+    if (!m.Success) throw new InvalidOperationException("import has no ctex remap path");
+    return m.Groups[1].Value;
+}
+
+string NewCtexPath(string virtualSource)
+{
+    string name = Path.GetFileName(virtualSource);
+    string hash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(virtualSource))).ToLowerInvariant();
+    return $"res://STS2Philosophers/imported/{name}-{hash}.ctex";
+}
+
+string RewriteImport(string importText, string newCtex, string? sourceFile = null, bool stripUid = false)
+{
+    string text = Regex.Replace(importText, "path=\"res://[^\"]+\\.ctex\"", $"path=\"{newCtex}\"");
+    if (sourceFile is not null)
+        text = Regex.Replace(text, "source_file=\"res://[^\"]+\"", $"source_file=\"{sourceFile}\"");
+    if (stripUid)
+        text = Regex.Replace(text, "(?m)^uid=.*\\n?", "");
+    return text;
+}
+
+foreach (string resourcePath in resourcePaths)
+    Add(resourcePath, File.ReadAllBytes(Full(resourcePath)));
+
+var textureCtex = new Dictionary<string, string>(StringComparer.Ordinal);
+
+foreach (string texturePath in texturePaths)
+{
+    string importText = ImportText(texturePath);
+    string oldCtex = RemapPath(importText);
+    string newCtex = NewCtexPath(texturePath);
+    byte[] ctex;
+    if (texturePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+    {
+        ctex = CtexConverter.Convert(File.ReadAllBytes(Full(texturePath)));
+    }
+    else
+    {
+        string oldCtexFull = Full(oldCtex);
+        if (!File.Exists(oldCtexFull))
+        {
+            Console.Error.WriteLine($"missing imported texture, falling back to Godot: {oldCtexFull}");
+            return 3;
+        }
+        // The fast path may reuse SVG import caches, but never a stale one.
+        // Godot's .md5 sidecar records the source hash that produced the ctex.
+        string md5Path = oldCtexFull[..^".ctex".Length] + ".md5";
+        if (!File.Exists(md5Path))
+        {
+            Console.Error.WriteLine($"missing import hash, falling back to Godot: {md5Path}");
+            return 3;
+        }
+        var md5Match = Regex.Match(File.ReadAllText(md5Path), "source_md5=\"([0-9a-fA-F]+)\"");
+        string actualMd5 = Convert.ToHexString(
+            MD5.HashData(File.ReadAllBytes(Full(texturePath)))).ToLowerInvariant();
+        if (!md5Match.Success
+            || !string.Equals(md5Match.Groups[1].Value, actualMd5, StringComparison.OrdinalIgnoreCase))
+        {
+            Console.Error.WriteLine($"SVG import cache is stale, falling back to Godot: {texturePath}");
+            return 3;
+        }
+        ctex = File.ReadAllBytes(oldCtexFull);
+    }
+    textureCtex[texturePath] = newCtex;
+    Add(texturePath, File.ReadAllBytes(Full(texturePath)));
+    Add(texturePath + ".import", Encoding.UTF8.GetBytes(RewriteImport(importText, newCtex)));
+    Add(newCtex, ctex);
+}
+
+void AddAlias(string aliasPath, string sourcePath)
+{
+    if (aliasPath.EndsWith(".import", StringComparison.Ordinal))
+    {
+        string aliasTexture = aliasPath[..^".import".Length];
+        string sourceTexture = aliasSources.TryGetValue(aliasTexture, out string? mapped)
+            ? mapped : sourcePath[..^".import".Length];
+        if (!textureCtex.TryGetValue(sourceTexture, out string? aliasCtex))
+            throw new InvalidOperationException($"alias import source is not packed: {sourceTexture}");
+        string aliasImport = ImportText(sourceTexture);
+        Add(aliasPath, Encoding.UTF8.GetBytes(
+            RewriteImport(aliasImport, aliasCtex, aliasTexture, stripUid: true)));
+        return;
+    }
+
+    if (!textureCtex.TryGetValue(sourcePath, out string? ctex))
+        throw new InvalidOperationException($"alias source is not packed: {sourcePath}");
+    string sourceImport = ImportText(sourcePath);
+    Add(aliasPath, File.ReadAllBytes(Full(sourcePath)));
+    Add(aliasPath + ".import", Encoding.UTF8.GetBytes(
+        RewriteImport(sourceImport, ctex, aliasPath, stripUid: true)));
+}
+
+foreach (var (alias, source) in aliases)
+    AddAlias(alias, source);
+foreach (string name in portraitNames)
+    AddAlias($"res://images/events/{name}.png", "res://images/events/philosophers_gaze.png");
+
+var pckEntries = entries.Select(kv => new PckFileEntry(kv.Key, kv.Value)).ToArray();
+using var stream = File.Create(outputPck);
+PckWriter.Write(stream, pckEntries);
+Console.WriteLine($"Packed {pckEntries.Length} entries -> {outputPck}");
+Console.WriteLine($"resource={resourcePaths.Count} texture={texturePaths.Count} alias={aliases.Count} portrait={portraitNames.Count}");
+return 0;

@@ -1,0 +1,35 @@
+# ContentPckPacker
+
+Fast content-PCK builder for `STS2Philosophers`.
+
+## Why
+
+The normal path starts Godot headlessly, imports content, and runs
+`content/BuildContentPck.gd`. For JSON/PNG-only changes this is unnecessarily
+slow and requires a working Godot/.NET editor environment.
+
+This tool uses `BSchneppe.StS2.PckPacker` primitives:
+
+- JSON files are packed byte-for-byte.
+- PNG files are converted to Godot `GST2` ctex with `CtexConverter`.
+- Existing SVG import caches are reused only when their source hash matches
+  Godot's `.md5` sidecar.
+- `.import` remaps point at a **non-hidden** `STS2Philosophers/imported/...ctex`
+  path. Godot 4.5.1 hangs when a PCK mounts a `.godot/` entry, so the original
+  `.godot/imported/...` path is not packed directly.
+
+## Usage
+
+```bash
+dotnet run --project tools/ContentPckPacker -c Release -- <contentRoot> <output.pck>
+```
+
+Exit codes:
+
+- `0`: fast PCK written.
+- `3`: needs the Godot fallback (missing/stale SVG import cache, or a PNG
+  conversion that the fast path cannot handle).
+- other: hard failure.
+
+`tools/BuildContentPck.sh` and `tools/BuildContentPck.ps1` call this tool first
+and fall back to the existing Godot import+pack path on exit `3`.
