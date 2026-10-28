@@ -182,4 +182,8 @@ PY
 expect_verify 5 "$repo_dir/content" "$tmp/corrupt-texture.pck" "$tmp/corrupt-texture.log" "unloadable packed texture"
 grep -q "Packed texture is not loadable" "$tmp/corrupt-texture.log" || fail "verifier did not report the unloadable texture"
 
+printf 'not-a-pck' > "$tmp/invalid.pck"
+expect_verify 3 "$repo_dir/content" "$tmp/invalid.pck" "$tmp/invalid.log" "unloadable PCK"
+grep -q "Could not load content PCK" "$tmp/invalid.log" || fail "verifier did not report the unloadable PCK"
+
 echo "PckVerifier checks passed."
