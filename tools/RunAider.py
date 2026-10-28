@@ -34,12 +34,12 @@ def read_key():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--timeout", type=int, default=180, help="Total seconds; default 180")
-    parser.add_argument("--max-tokens", type=int, default=2048, help="Reply token limit; default 2048")
+    parser.add_argument("--max-tokens", type=int, default=8192, help="Reply token limit; default 8192, maximum 32768")
     parser.add_argument("task", help="One concrete edit and its acceptance conditions")
     parser.add_argument("files", nargs="+", help="Only the required repository files")
     args = parser.parse_args()
-    if not args.task.strip() or args.timeout <= 0 or not 1 <= args.max_tokens <= 8192:
-        parser.error("Supply a task, positive timeout, and 1..8192 reply tokens")
+    if not args.task.strip() or args.timeout <= 0 or not 1 <= args.max_tokens <= 32768:
+        parser.error("Supply a task, positive timeout, and 1..32768 reply tokens")
     files = []
     for supplied in args.files:
         path = (REPO / supplied).resolve()
@@ -70,7 +70,10 @@ def main():
         settings = Path(temporary) / "models.json"
         settings.write_text(json.dumps([{
             "name": MODEL, "edit_format": "diff", "weak_model_name": MODEL,
-            "extra_params": {"max_tokens": args.max_tokens, "num_retries": 0},
+            "extra_params": {
+                "max_tokens": args.max_tokens, "num_retries": 0,
+                "extra_body": {"chat_template_kwargs": {"thinking": False}},
+            },
         }]), encoding="utf-8")
         command = [
             executable, "--model", MODEL, "--model-settings-file", str(settings),
@@ -78,10 +81,11 @@ def main():
             "--map-tokens", "0", "--no-stream", "--no-auto-commits", "--no-dirty-commits",
             "--no-gitignore", "--no-add-gitignore-files", "--no-restore-chat-history",
             "--input-history-file", os.devnull, "--chat-history-file", os.devnull,
+            "--max-chat-history-tokens", "32768",
             "--no-auto-lint", "--no-auto-test", "--no-suggest-shell-commands",
             "--no-detect-urls", "--no-analytics", "--no-check-update", "--no-show-release-notes",
             "--no-show-model-warnings",
-            "--no-pretty", "--yes-always", "--timeout", "60", "--message", message, *files,
+            "--no-pretty", "--yes-always", "--timeout", "180", "--message", message, *files,
         ]
         # No wrapper retries. Aider's own bounded reflection/error handling is
         # additionally capped by this deadline; edits made before timeout remain.
