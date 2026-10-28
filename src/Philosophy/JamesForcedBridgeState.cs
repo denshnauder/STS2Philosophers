@@ -88,14 +88,29 @@ internal sealed class JamesForcedBridgeState
             }) return false;
 
         JamesForcedBridgeStage replay = JamesForcedBridgeStage.Assessment;
-        bool closed = false;
+        bool replayForced = false, replayMomentous = false, replayEvidence = false;
+        bool replayFeasible = false, closed = false;
         foreach (JamesForcedBridgeAction action in ConfirmedActions)
         {
             if (closed || !JamesForcedBridgeFlow.Options(replay).Contains(action)) return false;
+            switch (action)
+            {
+                case JamesForcedBridgeAction.CheckConditions:
+                    replayForced = true;
+                    replayMomentous = true;
+                    replayFeasible = true;
+                    break;
+                case JamesForcedBridgeAction.AskKeeper:
+                    replayEvidence = true;
+                    replayFeasible = true;
+                    break;
+            }
             replay = JamesForcedBridgeFlow.Next(replay, action);
             closed = action == JamesForcedBridgeAction.Leave;
         }
         return replay == Stage && closed == Closed
+            && replayForced == ForcedAssessment && replayMomentous == MomentousAssessment
+            && replayEvidence == NewEvidenceSeen && replayFeasible == BothFeasible
             && (PendingAction == JamesForcedBridgeAction.None
                 || !Closed && JamesForcedBridgeFlow.Options(Stage).Contains(PendingAction));
     }

@@ -70,6 +70,14 @@ internal static class JamesForcedBridgeChecks
         Check(!corruptEvidence.IsUsable(),
             "James rejects new evidence recorded before the keeper is asked.");
 
+        var corruptEvidenceMismatch = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
+        corruptEvidenceMismatch.Stage = JamesForcedBridgeStage.Evidence;
+        corruptEvidenceMismatch.BothFeasible = true;
+        corruptEvidenceMismatch.NewEvidenceSeen = true;
+        corruptEvidenceMismatch.ConfirmedActions.Add(JamesForcedBridgeAction.CheckConditions);
+        Check(!corruptEvidenceMismatch.IsUsable(),
+            "James rejects new evidence that disagrees with the committed conditions check.");
+
         var corruptOutcome = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
         corruptOutcome.Outcome = JamesForcedBridgeOutcome.Crossed;
         Check(!corruptOutcome.IsUsable(),
