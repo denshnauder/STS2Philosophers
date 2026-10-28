@@ -159,6 +159,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckCamusDirect();
             CheckCarnapDirect();
             CheckAustinDirect();
+            CheckPopperDirect();
             Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -662,6 +663,45 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("AustinSpeechActPatch", "TrySelectExistingNative", run) is null,
             "Austin's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckPopperDirect()
+    {
+        ModelDb.Inject(typeof(PopperFalsification));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
+        Check((bool)graph.GetType().GetMethod("TryDecline")!.Invoke(graph,
+            [journey, "Fixed", 2])!, "Popper fixture declines the second fixed slot.");
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph,
+            [journey, "WESTERN_EDGE_048"])!, "Popper fixture adopts Bacon 048.");
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        string before = Encode(shared);
+        Check((Task)Call("PopperFalsificationPatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "Popper's legacy map callback cannot insert a room or initialize a person.");
+        EventModel? selected = (EventModel?)Call("PopperFalsificationPatch", "TrySelectNative", run);
+        Check(selected is PopperFalsification,
+            "Popper's native selector opens at Bacon's terminal node after 048.");
+        object state = Get(CurrentShared(run), "PopperFalsification");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "Popper's direct native selection leaves a usable open record.");
+        Check((bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "Popper's open record participates in the shared question-node guard.");
+        Check(ReferenceEquals(Call("PopperFalsificationPatch", "TrySelectExistingNative", run), selected),
+            "Popper restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 2]);
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("PopperFalsificationPatch", "TrySelectExistingNative", run) is null,
+            "Popper's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckMarcusInterval()

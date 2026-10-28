@@ -56,6 +56,7 @@ internal sealed class PhilosophyRunState
     public CamusRevoltLimitState? CamusRevoltLimit { get; set; }
     public CarnapFrameworkChoiceState? CarnapFrameworkChoice { get; set; }
     public AustinSpeechActState? AustinSpeechAct { get; set; }
+    public PopperFalsificationState? PopperFalsification { get; set; }
     public RousseauConsentState? RousseauConsent { get; set; }
     public KantUniversalizationState? KantUniversalization { get; set; }
     public MillHarmState? MillHarm { get; set; }
@@ -130,6 +131,7 @@ internal sealed class PhilosophyRunState
         || CamusRevoltLimit is not null
         || CarnapFrameworkChoice is not null
         || AustinSpeechAct is not null
+        || PopperFalsification is not null
         || RousseauConsent is not null
         || KantUniversalization is not null
         || MillHarm is not null
@@ -335,6 +337,7 @@ internal sealed class PhilosophyRunState
         CamusRevoltLimit?.NormalizeAfterLoad();
         CarnapFrameworkChoice?.NormalizeAfterLoad();
         AustinSpeechAct?.NormalizeAfterLoad();
+        PopperFalsification?.NormalizeAfterLoad();
         RousseauConsent?.NormalizeAfterLoad();
         KantUniversalization?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();

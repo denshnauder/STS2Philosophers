@@ -174,6 +174,7 @@ internal static class WesternQuestionNodePolicy
         || shared.CamusRevoltLimit is { Closed: false }
         || shared.CarnapFrameworkChoice is { Closed: false }
         || shared.AustinSpeechAct is { Closed: false }
+        || shared.PopperFalsification is { Closed: false }
         || shared.RousseauConsent is { Closed: false }
         || shared.KantUniversalization is { Closed: false };
 

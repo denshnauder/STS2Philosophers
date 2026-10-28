@@ -55,6 +55,7 @@ JamesForcedBridgeChecks.Run();
 CamusRevoltLimitChecks.Run();
 CarnapFrameworkChoiceChecks.Run();
 AustinSpeechActChecks.Run();
+PopperFalsificationChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();
