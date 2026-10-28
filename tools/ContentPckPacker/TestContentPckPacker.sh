@@ -56,4 +56,9 @@ cp "$repo_dir/content/images/events/philosophers_gaze.png" "$tmp/content/images/
 printf '\n<!-- test -->\n' >> "$tmp/content/STS2Philosophers/images/heraclitus_lyre.svg"
 expect_status 3 "$tmp/content" "$tmp/stale-svg.pck" "$tmp/stale-svg.log" "changed SVG asks for Godot fallback"
 
+ctex="$(find "$tmp/content/.godot/imported" -name 'heraclitus_lyre.svg-*.ctex' -print -quit)"
+[ -n "$ctex" ] || fail "missing SVG ctex cache in fixture"
+printf 'not a ctex' > "$ctex"
+expect_status 3 "$tmp/content" "$tmp/bad-ctex.pck" "$tmp/bad-ctex.log" "corrupt SVG ctex asks for Godot fallback"
+
 echo "ContentPckPacker checks passed."

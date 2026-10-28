@@ -12,11 +12,13 @@ This tool uses `BSchneppe.StS2.PckPacker` primitives:
 
 - JSON files are packed byte-for-byte.
 - PNG files are converted to Godot `GST2` ctex with `CtexConverter`.
-- Existing SVG import caches are reused only when their source hash matches
-  Godot's `.md5` sidecar.
+- Existing SVG import caches are reused only when both the source hash and the
+  ctex destination hash match Godot's `.md5` sidecar.
 - `.import` remaps point at a **non-hidden** `STS2Philosophers/imported/...ctex`
   path. Godot 4.5.1 hangs when a PCK mounts a `.godot/` entry, so the original
   `.godot/imported/...` path is not packed directly.
+- The PCK is written to a temporary sibling and moved into place only after a
+  complete write, so a failed pack cannot leave a partial output file.
 
 ## Usage
 

@@ -137,16 +137,26 @@ foreach (string texturePath in texturePaths)
             Console.Error.WriteLine($"missing import hash, falling back to Godot: {md5Path}");
             return 3;
         }
-        var md5Match = Regex.Match(File.ReadAllText(md5Path), "source_md5=\"([0-9a-fA-F]+)\"");
-        string actualMd5 = Convert.ToHexString(
+        string md5Text = File.ReadAllText(md5Path);
+        var sourceMatch = Regex.Match(md5Text, "source_md5=\"([0-9a-fA-F]+)\"");
+        var destMatch = Regex.Match(md5Text, "dest_md5=\"([0-9a-fA-F]+)\"");
+        string actualSourceMd5 = Convert.ToHexString(
             MD5.HashData(File.ReadAllBytes(Full(texturePath)))).ToLowerInvariant();
-        if (!md5Match.Success
-            || !string.Equals(md5Match.Groups[1].Value, actualMd5, StringComparison.OrdinalIgnoreCase))
+        byte[] cachedCtex = File.ReadAllBytes(oldCtexFull);
+        string actualDestMd5 = Convert.ToHexString(MD5.HashData(cachedCtex)).ToLowerInvariant();
+        if (!sourceMatch.Success
+            || !string.Equals(sourceMatch.Groups[1].Value, actualSourceMd5, StringComparison.OrdinalIgnoreCase))
         {
             Console.Error.WriteLine($"SVG import cache is stale, falling back to Godot: {texturePath}");
             return 3;
         }
-        ctex = File.ReadAllBytes(oldCtexFull);
+        if (!destMatch.Success
+            || !string.Equals(destMatch.Groups[1].Value, actualDestMd5, StringComparison.OrdinalIgnoreCase))
+        {
+            Console.Error.WriteLine($"SVG import cache is corrupt, falling back to Godot: {texturePath}");
+            return 3;
+        }
+        ctex = cachedCtex;
     }
     textureCtex[texturePath] = newCtex;
     Add(texturePath, File.ReadAllBytes(Full(texturePath)));
@@ -183,8 +193,18 @@ foreach (string name in portraitNames)
     AddAlias($"res://images/events/{name}.png", "res://images/events/philosophers_gaze.png");
 
 var pckEntries = entries.Select(kv => new PckFileEntry(kv.Key, kv.Value)).ToArray();
-using var stream = File.Create(outputPck);
-PckWriter.Write(stream, pckEntries);
+string temporaryOutput = outputPck + ".tmp";
+try
+{
+    using (var stream = File.Create(temporaryOutput))
+        PckWriter.Write(stream, pckEntries);
+    File.Move(temporaryOutput, outputPck, overwrite: true);
+}
+catch
+{
+    if (File.Exists(temporaryOutput)) File.Delete(temporaryOutput);
+    throw;
+}
 Console.WriteLine($"Packed {pckEntries.Length} entries -> {outputPck}");
 Console.WriteLine($"resource={resourcePaths.Count} texture={texturePaths.Count} alias={aliases.Count} portrait={portraitNames.Count}");
 return 0;
