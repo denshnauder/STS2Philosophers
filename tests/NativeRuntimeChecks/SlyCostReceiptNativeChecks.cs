@@ -90,14 +90,14 @@ internal static class SlyCostReceiptNativeChecks
         // play does not become another manually queued PlayCardAction.
     }
 
-    private static async Task NestedReceipt(bool surcharge, bool sly, bool replaySameCard = false)
+    private static async Task NestedReceipt(bool surcharge, bool sly, bool replaySameCard = false, bool autoAttack = true)
     {
         var f = await NewFixture();
         await Complete(f, await Pay(f, Card(f, attack: !surcharge), 2));
         Check(Law(f) == (surcharge ? "Skill" : "Attack"), "The first manual card establishes its actual kind.");
         int price = surcharge ? 3 : 1;
         var parent = await Pay(f, Card(f, attack: true), price);
-        await Automatic(f, sly, replaySameCard ? parent.Card : null);
+        await Automatic(f, sly, replaySameCard ? parent.Card : null, autoAttack);
         await Complete(f, parent);
         Check(Used(f, surcharge),
             $"ENC198 {(surcharge ? "surcharge" : "discount")}: a nested automatic receipt must preserve the paid parent's one-use receipt.");
@@ -203,6 +203,9 @@ internal static class SlyCostReceiptNativeChecks
             foreach (bool surcharge in new[] { false, true })
                 await Scenario($"same-card automatic replay {(surcharge ? "surcharge" : "discount")}",
                     () => NestedReceipt(surcharge, sly: true, replaySameCard: true));
+            foreach (bool surcharge in new[] { false, true })
+                await Scenario($"Sly nested opposite-kind automatic {(surcharge ? "surcharge" : "discount")}",
+                    () => NestedReceipt(surcharge, sly: true, autoAttack: false));
             foreach (bool restorePayload in new[] { true, false })
                 foreach (bool surcharge in new[] { false, true })
                     await Scenario($"{(restorePayload ? "payload restore" : "new turn")} invalidates pending {(surcharge ? "surcharge" : "discount")}",
