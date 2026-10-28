@@ -50,6 +50,7 @@ HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
+KantKnowledgeSynthesisChecks.Run();
 SchopenhauerWillDenialChecks.Run();
 JamesForcedBridgeChecks.Run();
 CamusRevoltLimitChecks.Run();

@@ -157,6 +157,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckSchopenhauerDirect();
             CheckJamesDirect();
             CheckCamusDirect();
+            CheckKantKnowledgeDirect();
             CheckCarnapDirect();
             CheckAustinDirect();
             CheckPopperDirect();
@@ -638,6 +639,44 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("CamusRevoltLimitPatch", "TrySelectExistingNative", run) is null,
             "Camus's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckKantKnowledgeDirect()
+    {
+        ModelDb.Inject(typeof(KantKnowledgeSynthesis));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        foreach (string edge in new[] { "WESTERN_EDGE_012", "WESTERN_EDGE_013", "WESTERN_EDGE_014" })
+            Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, edge])!,
+                $"Kant knowledge fixture applies {edge}.");
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        string before = Encode(shared);
+        Check((Task)Call("KantKnowledgeSynthesisPatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "Kant knowledge's legacy map callback cannot insert a room or initialize a person.");
+        EventModel? selected = (EventModel?)Call("KantKnowledgeSynthesisPatch", "TrySelectNative", run);
+        Check(selected is KantKnowledgeSynthesis,
+            "Kant knowledge's native selector opens at Descartes after Hume's revision question.");
+        object state = Get(CurrentShared(run), "KantKnowledgeSynthesis");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "Kant knowledge's direct native selection leaves a usable open record.");
+        Check(!(bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "Kant knowledge is a fixed event and does not consume the question-node guard.");
+        Check(ReferenceEquals(Call("KantKnowledgeSynthesisPatch", "TrySelectExistingNative", run), selected),
+            "Kant knowledge restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 2]);
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("KantKnowledgeSynthesisPatch", "TrySelectExistingNative", run) is null,
+            "Kant knowledge's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckCarnapDirect()

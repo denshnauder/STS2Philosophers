@@ -171,6 +171,7 @@
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionState.cs" Link="WollstonecraftAdmissionState.cs" />
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
+    <Compile Include="..\..\src\Philosophy\KantKnowledgeSynthesisState.cs" Link="KantKnowledgeSynthesisState.cs" />
     <Compile Include="..\..\src\Philosophy\SchopenhauerWillDenialState.cs" Link="SchopenhauerWillDenialState.cs" />
     <Compile Include="..\..\src\Philosophy\JamesForcedBridgeState.cs" Link="JamesForcedBridgeState.cs" />
     <Compile Include="..\..\src\Philosophy\CamusRevoltLimitState.cs" Link="CamusRevoltLimitState.cs" />
