@@ -43,6 +43,7 @@ SpinozaCauseNetworkChecks.Run();
 LeibnizIndependentClocksChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
+WollstonecraftAdmissionChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

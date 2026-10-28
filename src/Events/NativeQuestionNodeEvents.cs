@@ -137,6 +137,7 @@ internal static class NativeQuestionNodeEvents
             ?? Question(WesternQuestionKind.Anselm)
             ?? Question(WesternQuestionKind.Ockham)
             ?? MachiavelliFloodPreparationPatch.TrySelectNative(run)
+            ?? WollstonecraftAdmissionPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Luther)
             ?? BaconSampleLedgerPatch.TrySelectNative(run)
             ?? CopernicusShiftedCenterPatch.TrySelectNative(run)

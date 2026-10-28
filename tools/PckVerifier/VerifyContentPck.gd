@@ -21,6 +21,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/hobbes_authorized_sovereignty.png",
 	"res://images/events/locke_cargo_identity.png",
 	"res://images/events/hume_induction.png",
+	"res://images/events/wollstonecraft_admission.png",
 ]
 
 const REQUIRED_FILES := [
