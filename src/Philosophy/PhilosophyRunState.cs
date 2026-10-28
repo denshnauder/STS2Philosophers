@@ -54,6 +54,7 @@ internal sealed class PhilosophyRunState
     public SchopenhauerWillDenialState? SchopenhauerWillDenial { get; set; }
     public JamesForcedBridgeState? JamesForcedBridge { get; set; }
     public CamusRevoltLimitState? CamusRevoltLimit { get; set; }
+    public CarnapFrameworkChoiceState? CarnapFrameworkChoice { get; set; }
     public RousseauConsentState? RousseauConsent { get; set; }
     public KantUniversalizationState? KantUniversalization { get; set; }
     public MillHarmState? MillHarm { get; set; }
@@ -126,6 +127,7 @@ internal sealed class PhilosophyRunState
         || SchopenhauerWillDenial is not null
         || JamesForcedBridge is not null
         || CamusRevoltLimit is not null
+        || CarnapFrameworkChoice is not null
         || RousseauConsent is not null
         || KantUniversalization is not null
         || MillHarm is not null
@@ -329,6 +331,7 @@ internal sealed class PhilosophyRunState
         SchopenhauerWillDenial?.NormalizeAfterLoad();
         JamesForcedBridge?.NormalizeAfterLoad();
         CamusRevoltLimit?.NormalizeAfterLoad();
+        CarnapFrameworkChoice?.NormalizeAfterLoad();
         RousseauConsent?.NormalizeAfterLoad();
         KantUniversalization?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();

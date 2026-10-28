@@ -88,6 +88,7 @@ internal static class NativeQuestionNodeEvents
             ?? SchopenhauerWillDenialPatch.TrySelectExistingNative(run)
             ?? JamesForcedBridgePatch.TrySelectExistingNative(run)
             ?? CamusRevoltLimitPatch.TrySelectExistingNative(run)
+            ?? CarnapFrameworkChoicePatch.TrySelectExistingNative(run)
             ?? RousseauConsentPatch.TrySelectExistingNative(run)
             ?? KantUniversalizationPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
@@ -136,6 +137,7 @@ internal static class NativeQuestionNodeEvents
             ?? KantApperceptionPatch.TrySelectNative(run)
             ?? SchopenhauerWillDenialPatch.TrySelectNative(run)
             ?? CamusRevoltLimitPatch.TrySelectNative(run)
+            ?? CarnapFrameworkChoicePatch.TrySelectNative(run)
             ?? KantUniversalizationPatch.TrySelectNative(run)
             ?? MillHarmPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run)
             ?? BeauvoirOtherPatch.TrySelectNative(run)

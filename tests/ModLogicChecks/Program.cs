@@ -53,6 +53,7 @@ KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
 JamesForcedBridgeChecks.Run();
 CamusRevoltLimitChecks.Run();
+CarnapFrameworkChoiceChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();

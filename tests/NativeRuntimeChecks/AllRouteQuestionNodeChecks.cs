@@ -157,6 +157,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckSchopenhauerDirect();
             CheckJamesDirect();
             CheckCamusDirect();
+            CheckCarnapDirect();
             Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -582,6 +583,45 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("CamusRevoltLimitPatch", "TrySelectExistingNative", run) is null,
             "Camus's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckCarnapDirect()
+    {
+        ModelDb.Inject(typeof(CarnapFrameworkChoice));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
+        Check((bool)graph.GetType().GetMethod("TryDecline")!.Invoke(graph,
+            [journey, "Fixed", 2])!, "Carnap fixture declines the second fixed slot.");
+        Check((bool)graph.GetType().GetMethod("TryReserveQuestion")!.Invoke(graph,
+            [journey, 2])!, "Carnap fixture resolves Ockham's second-act question.");
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        string before = Encode(shared);
+        Check((Task)Call("CarnapFrameworkChoicePatch", "InsertAtBoundaryAsync")! is not null
+            && Encode(CurrentShared(run)) == before && run.CurrentRoomCount == 0,
+            "Carnap's legacy map callback cannot insert a room or initialize a person.");
+        EventModel? selected = (EventModel?)Call("CarnapFrameworkChoicePatch", "TrySelectNative", run);
+        Check(selected is CarnapFrameworkChoice,
+            "Carnap's native selector opens at Aristotle's language node after Ockham.");
+        object state = Get(CurrentShared(run), "CarnapFrameworkChoice");
+        Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!
+            && (bool)Get(state, "Closed") == false,
+            "Carnap's direct native selection leaves a usable open record.");
+        Check((bool)Call("WesternQuestionNodePolicy", "HasOpenQuestion", CurrentShared(run))!,
+            "Carnap's open record participates in the shared question-node guard.");
+        Check(ReferenceEquals(Call("CarnapFrameworkChoicePatch", "TrySelectExistingNative", run), selected),
+            "Carnap restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 1]);
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
+        Check(Call("CarnapFrameworkChoicePatch", "TrySelectExistingNative", run) is null,
+            "Carnap's existing-state restore honors the native visited identity.");
     }
 
     private static void CheckMarcusInterval()
