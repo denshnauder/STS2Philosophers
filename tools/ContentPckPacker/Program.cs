@@ -232,7 +232,28 @@ void AddAlias(string aliasPath, string sourcePath)
 }
 
 foreach (var (alias, source) in aliases)
+{
+    string sourceTexture = source;
+    if (source.EndsWith(".import", StringComparison.Ordinal))
+    {
+        string aliasTexture = alias[..^".import".Length];
+        sourceTexture = aliasSources.TryGetValue(aliasTexture, out string? mapped)
+            ? mapped : source[..^".import".Length];
+    }
+    string sourceFull = Full(sourceTexture);
+    if (!File.Exists(sourceFull))
+    {
+        Console.Error.WriteLine($"missing alias source, falling back to Godot: {sourceFull}");
+        return 3;
+    }
     AddAlias(alias, source);
+}
+string portraitSourceFull = Full("res://images/events/philosophers_gaze.png");
+if (!File.Exists(portraitSourceFull))
+{
+    Console.Error.WriteLine($"missing portrait alias source, falling back to Godot: {portraitSourceFull}");
+    return 3;
+}
 foreach (string name in portraitNames)
     AddAlias($"res://images/events/{name}.png", "res://images/events/philosophers_gaze.png");
 
