@@ -194,4 +194,12 @@ set -e
 grep -q "Expected exactly one PCK path" "$tmp/usage.log" || fail "verifier did not report the usage error"
 echo "PASS: missing PCK argument (exit $usage_status)"
 
+set +e
+"$godot_bin" --headless --path "$repo_dir/content" --script "$verifier" -- a b >"$tmp/too-many.log" 2>&1
+too_many_status=$?
+set -e
+[ "$too_many_status" -eq 2 ] || { cat "$tmp/too-many.log" >&2; fail "too many args: expected verifier exit 2, got $too_many_status"; }
+grep -q "Expected exactly one PCK path" "$tmp/too-many.log" || fail "verifier did not report the too-many-args error"
+echo "PASS: too many PCK arguments (exit $too_many_status)"
+
 echo "PckVerifier checks passed."
