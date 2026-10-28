@@ -21,16 +21,15 @@
 3. 直接用 `PckWriter` 写入 `.import` 与 `CtexConverter.Convert` 生成的 ctex，路径可读，但 `ResourceLoader.load(..., "Texture2D")` 同样挂起；把该 ctex 单独放进最小 Godot 工程也挂起。
 4. 生成的 ctex 头部为 `GST2`，但大小与 Godot 自己导入的 ctex 不同（测试图 2904 vs 3794 字节），说明 `CtexConverter` 的输出与当前 Godot 4.5.1 的 ctex 读取路径不兼容。
 
-## 结论
+## 结论与修正
 
-- 不是 staging 路径问题，也不是 PCK 路径表问题；问题集中在 PckPacker 的 PNG→ctex 转换。
-- 直接接入 csproj 会产出“打包成功但纹理加载挂起”的伪成功包，不能作为 ENC-69 交付。
-- 未修改 csproj，未提交 packer 接入代码。
+- 上述“ctex 不兼容”结论不成立：单独把 ctex 放进最小工程可以正常加载，完整 fast PCK 也能通过纹理检查。
+- 真正原因是 **PCK 中包含 `.godot/` 路径条目**。Godot 4.5.1 挂载这种 PCK 后会挂起；把 ctex 改放到非隐藏的 `STS2Philosophers/imported/...`，并在 `.import` remap 中指向该路径，纹理即可正常加载。
+- 另需把 `PckPacker` 的 `sourceDir` 设为资产根，而不是其父目录；否则路径会多一层。
+- 该结论已在 `tools/ContentPckPacker` 落地，并接入 `BuildContentPck.ps1` 的快速路径；SVG 源哈希过期时返回 exit 3，回退原 Godot 导入+打包。
 
-## 可行后续
+## 已落地
 
-1. 保留 Godot 导入缓存：纯 JSON 改动走 PckWriter；PNG 改动仍回退 Godot。只覆盖部分验收，不完整。
-2. 用与 Godot 4.5.1 兼容的 ctex 编码器替换 `CtexConverter`，并做纹理加载回归。
-3. 等待 PckPacker 修复后重新评估。
-
-在 1/2 完成前，ENC-69 保持阻塞。
+- JSON/PNG 改动：`ContentPckPacker` 直接生成 PCK，不启动 Godot。
+- SVG 改动：`ContentPckPacker` 校验 `.md5` sidecar 后复用缓存；缺失或过期则回退 Godot。
+- 验证：完整 fast PCK 216 entries，PckVerifier 通过；修改 JSON+PNG 后仍通过；修改 SVG 后正确回退并通过。
