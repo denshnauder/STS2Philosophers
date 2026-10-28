@@ -124,12 +124,25 @@ string RewriteImport(string importText, string newCtex, string? sourceFile = nul
 }
 
 foreach (string resourcePath in resourcePaths)
-    Add(resourcePath, File.ReadAllBytes(Full(resourcePath)));
+{
+    string resourceFull = Full(resourcePath);
+    if (!File.Exists(resourceFull))
+    {
+        Console.Error.WriteLine($"missing resource, falling back to Godot: {resourceFull}");
+        return 3;
+    }
+    Add(resourcePath, File.ReadAllBytes(resourceFull));
+}
 
 var textureCtex = new Dictionary<string, string>(StringComparer.Ordinal);
 
 foreach (string texturePath in texturePaths)
 {
+    if (!File.Exists(Full(texturePath)))
+    {
+        Console.Error.WriteLine($"missing texture source, falling back to Godot: {Full(texturePath)}");
+        return 3;
+    }
     string importText = ImportText(texturePath);
     string oldCtex = RemapPath(importText);
     string newCtex = NewCtexPath(texturePath);

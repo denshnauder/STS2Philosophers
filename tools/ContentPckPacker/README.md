@@ -33,8 +33,9 @@ dotnet run --project tools/ContentPckPacker -c Release -- <contentRoot> <output.
 Exit codes:
 
 - `0`: fast PCK written.
-- `3`: needs the Godot fallback (missing/stale SVG import cache, a PNG
-  conversion that the fast path cannot handle, or an unsupported resource type).
+- `3`: needs the Godot fallback (missing source/JSON, missing/stale SVG import
+  cache, a PNG conversion that the fast path cannot handle, or an unsupported
+  resource type).
 - other: hard failure.
 
 `tools/BuildContentPck.sh` and `tools/BuildContentPck.ps1` call this tool first
