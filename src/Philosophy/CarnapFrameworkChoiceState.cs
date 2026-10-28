@@ -73,7 +73,23 @@ internal sealed class CarnapFrameworkChoiceState
             || !Enum.IsDefined(Framework) || !Enum.IsDefined(Outcome)
             || ConfirmedActions is null || ConfirmedActions.Count > 3
             || (CostAttempted && Outcome == CarnapFrameworkChoiceOutcome.None)
-            || (CostPaid && !CostAttempted)) return false;
+            || (CostPaid && !CostAttempted)
+            || (Stage == CarnapFrameworkChoiceStage.Rules) != (Framework == CarnapFramework.None)
+            || TranslationBuilt != (Outcome == CarnapFrameworkChoiceOutcome.Translated)
+            || CrossFrameworkLimitShown != (Outcome is CarnapFrameworkChoiceOutcome.Limited
+                or CarnapFrameworkChoiceOutcome.Convenient)
+            || Outcome switch
+            {
+                CarnapFrameworkChoiceOutcome.None => Stage is not (CarnapFrameworkChoiceStage.Rules
+                    or CarnapFrameworkChoiceStage.Evidence),
+                CarnapFrameworkChoiceOutcome.Translated =>
+                    Stage != CarnapFrameworkChoiceStage.ResultTranslated,
+                CarnapFrameworkChoiceOutcome.Limited =>
+                    Stage != CarnapFrameworkChoiceStage.ResultLimited,
+                CarnapFrameworkChoiceOutcome.Convenient =>
+                    Stage != CarnapFrameworkChoiceStage.ResultConvenient,
+                _ => true,
+            }) return false;
 
         CarnapFrameworkChoiceStage replay = CarnapFrameworkChoiceStage.Rules;
         bool closed = false;

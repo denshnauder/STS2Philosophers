@@ -61,6 +61,26 @@ internal static class CarnapFrameworkChoiceChecks
             "Carnap convenient framework records its limit without a universal claim.");
 
         var before = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
+        var corruptFramework = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        corruptFramework.Framework = CarnapFramework.Observation;
+        Check(!corruptFramework.IsUsable(),
+            "Carnap rejects a framework selected on the untouched rules page.");
+
+        var corruptOutcome = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        corruptOutcome.Outcome = CarnapFrameworkChoiceOutcome.Translated;
+        Check(!corruptOutcome.IsUsable(),
+            "Carnap rejects a translated outcome recorded before any action.");
+
+        var corruptTranslation = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        corruptTranslation.TranslationBuilt = true;
+        Check(!corruptTranslation.IsUsable(),
+            "Carnap rejects a forged translation flag without the translated outcome.");
+
+        var corruptLimit = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        corruptLimit.CrossFrameworkLimitShown = true;
+        Check(!corruptLimit.IsUsable(),
+            "Carnap rejects a forged cross-framework-limit flag without a limited outcome.");
+
         var early = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
         Check(!CarnapFrameworkChoiceFlow.IsRouteConsistent(early, before),
             "Carnap cannot open before Ockham's question 2 is resolved.");
