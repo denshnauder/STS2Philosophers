@@ -156,6 +156,15 @@ func _initialize() -> void:
 			quit(4)
 			return
 
+	for path in REQUIRED_FILES:
+		if not path.ends_with(".json"):
+			continue
+		var json := JSON.new()
+		if json.parse(FileAccess.get_file_as_string(path)) != OK:
+			push_error("Packed JSON is invalid: %s: %s" % [path, json.get_error_message()])
+			quit(6)
+			return
+
 	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		var texture := ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
 		if texture == null:
