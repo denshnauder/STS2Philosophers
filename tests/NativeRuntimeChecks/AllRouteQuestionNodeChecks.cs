@@ -500,6 +500,27 @@ internal static class AllRouteQuestionNodeChecks
 
     private static void CheckJamesDirect()
     {
+        ModelDb.Inject(typeof(SchopenhauerWillDenial));
+        var schTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var schFixture = (NativeRuntimeFixture)schTuple[0]!; var schRun = (RunState)schTuple[1]!;
+        object schGraph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object schJourney = schGraph.GetType().GetMethod("Start")!.Invoke(schGraph,
+            ["DESCARTES__SELF_AND_OTHER__CORE"])!;
+        foreach (string edge in new[] { "WESTERN_EDGE_026", "WESTERN_EDGE_027" })
+            Check((bool)schGraph.GetType().GetMethod("TryApply")!.Invoke(schGraph, [schJourney, edge])!,
+                "Schopenhauer chain fixture applies " + edge + ".");
+        object schKant = Create("KantApperception", "KANT_APPERCEPTION:CHAIN:3");
+        foreach (string action in new[] { "InspectLedger", "Constitutive", "Leave" })
+            Commit("KantApperception", "KantApperceptionAction", schKant, action, schJourney, schGraph);
+        object schShared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(schShared, "WesternJourney", schJourney);
+        Put(schShared, "KantApperception", schKant);
+        Call("PhilosophyRunStateService", "Restore", schRun, schShared);
+        EventModel schChosen = schRun.Act.PullNextEvent(schRun);
+        Check(schChosen is SchopenhauerWillDenial,
+            "Real native PullNextEvent selects Schopenhauer at Kant's self node, got " + schChosen.GetType().Name + ".");
+
         ModelDb.Inject(typeof(JamesForcedBridge));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
