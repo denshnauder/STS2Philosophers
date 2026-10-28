@@ -96,6 +96,30 @@ internal static class SchopenhauerWillDenialChecks
             shared.WesternJourney!, shared.KantApperception),
             "Schopenhauer cannot open before Kant 028 is closed.");
 
+        var corruptExtra = SchopenhauerWillDenialState.Create("SCHOPENHAUER_WILL_DENIAL:TEST:3",
+            shared.KantApperception.InstanceId);
+        corruptExtra.ExtraDemandAccepted = true;
+        Check(!corruptExtra.IsUsable(),
+            "Schopenhauer rejects an accepted extra demand before any invitation action.");
+
+        var corruptQuestion = SchopenhauerWillDenialState.Create("SCHOPENHAUER_WILL_DENIAL:TEST:3",
+            shared.KantApperception.InstanceId);
+        corruptQuestion.QuestionReserved = true;
+        Check(!corruptQuestion.IsUsable(),
+            "Schopenhauer rejects a reserved question without a committed action.");
+
+        var corruptOutcome = SchopenhauerWillDenialState.Create("SCHOPENHAUER_WILL_DENIAL:TEST:3",
+            shared.KantApperception.InstanceId);
+        corruptOutcome.Outcome = SchopenhauerWillDenialOutcome.PaidCompensation;
+        Check(!corruptOutcome.IsUsable(),
+            "Schopenhauer rejects a paid-compensation outcome recorded on the invitation page.");
+
+        var corruptClosed = SchopenhauerWillDenialState.Create("SCHOPENHAUER_WILL_DENIAL:TEST:3",
+            shared.KantApperception.InstanceId);
+        corruptClosed.Closed = true;
+        Check(!corruptClosed.IsUsable(),
+            "Schopenhauer rejects a closed invitation with no outcome.");
+
         string[] keys =
         [
             "SCHOPENHAUER_WILL_DENIAL.title",
