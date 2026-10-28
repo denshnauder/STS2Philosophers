@@ -160,6 +160,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckCarnapDirect();
             CheckAustinDirect();
             CheckPopperDirect();
+            CheckNewEventChain();
             Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
@@ -702,6 +703,65 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("PopperFalsificationPatch", "TrySelectExistingNative", run) is null,
             "Popper's existing-state restore honors the native visited identity.");
+    }
+
+    private static void CheckNewEventChain()
+    {
+        ModelDb.Inject(typeof(CarnapFrameworkChoice));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+        object shared = BuildShared("CarnapFrameworkChoice", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            fixture.Relic.Id.Entry, run);
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        shared = CurrentShared(run);
+        object journey = Get(shared, "WesternJourney");
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        Check((bool)graph.GetType().GetMethod("TryDecline")!.Invoke(graph,
+            [journey, "Fixed", 2])!, "Carnap chain fixture declines the second fixed slot.");
+        Check((bool)graph.GetType().GetMethod("TryReserveQuestion")!.Invoke(graph,
+            [journey, 2])!, "Carnap chain fixture resolves Ockham's question.");
+        EventModel chosen = run.Act.PullNextEvent(run);
+        Check(chosen is CarnapFrameworkChoice,
+            "Real native PullNextEvent selects Carnap at Aristotle after Ockham, got " + chosen.GetType().Name + ".");
+
+        ModelDb.Inject(typeof(AustinSpeechAct));
+        var austinTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var austinFixture = (NativeRuntimeFixture)austinTuple[0]!; var austinRun = (RunState)austinTuple[1]!;
+        object austinShared = BuildShared("AustinSpeechAct", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            austinFixture.Relic.Id.Entry, austinRun);
+        Call("PhilosophyRunStateService", "Restore", austinRun, austinShared);
+        austinShared = CurrentShared(austinRun);
+        object austinJourney = Get(austinShared, "WesternJourney");
+        object austinGraph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        Check((bool)austinGraph.GetType().GetMethod("TryDecline")!.Invoke(austinGraph,
+            [austinJourney, "Fixed", 2])!, "Austin chain fixture declines the second fixed slot.");
+        Check((bool)austinGraph.GetType().GetMethod("TryReserveQuestion")!.Invoke(austinGraph,
+            [austinJourney, 2])!, "Austin chain fixture resolves Ockham's question.");
+        object closedCarnap = Create("CarnapFrameworkChoice", "CARNAP_FRAMEWORK_CHOICE:CHAIN:2");
+        Put(closedCarnap, "Closed", true);
+        Put(austinShared, "CarnapFrameworkChoice", closedCarnap);
+        ((HashSet<ModelId>)austinRun.VisitedEventIds).Add(ModelDb.GetId(typeof(CarnapFrameworkChoice)));
+        EventModel austinChosen = austinRun.Act.PullNextEvent(austinRun);
+        Check(austinChosen is AustinSpeechAct,
+            "Real native PullNextEvent selects Austin after Carnap, got " + austinChosen.GetType().Name + ".");
+
+        ModelDb.Inject(typeof(PopperFalsification));
+        var popperTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var popperFixture = (NativeRuntimeFixture)popperTuple[0]!; var popperRun = (RunState)popperTuple[1]!;
+        object popperShared = BuildShared("PopperFalsification", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            popperFixture.Relic.Id.Entry, popperRun);
+        Call("PhilosophyRunStateService", "Restore", popperRun, popperShared);
+        popperShared = CurrentShared(popperRun);
+        object popperJourney = Get(popperShared, "WesternJourney");
+        Put(popperJourney, "LastFixedAct", 3);
+        Put(popperJourney, "CurrentNodeId", "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE");
+        ((HashSet<string>)Get(popperJourney, "CompletedEdgeIds")).Add("WESTERN_EDGE_048");
+        EventModel popperChosen = popperRun.Act.PullNextEvent(popperRun);
+        Check(popperChosen is PopperFalsification,
+            "Real native PullNextEvent selects Popper at Bacon after 048, got " + popperChosen.GetType().Name + ".");
     }
 
     private static void CheckMarcusInterval()
