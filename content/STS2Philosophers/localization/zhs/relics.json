@@ -119,5 +119,9 @@
   "HERACLITUS_LYRE.galileo.unavailable": "复测载荷无法核验，本局不发放复测抽牌；原松弦抽1不恢复。",
   "HERACLITUS_LYRE.galileo.sample.title": "本场复测样本",
   "HERACLITUS_LYRE.galileo.sample.pending": "下方样本牌在第{Turn}回合实际支付{Energy}能量。之后回合用同模型、同实际支付的追踪牌真正松弦消耗，可抽3，本场一次。",
-  "HERACLITUS_LYRE.galileo.sample.claimed": "样本在第{Turn}回合实际支付{Energy}能量；本场复测抽3已领取，不再恢复原松弦抽1。"
+  "HERACLITUS_LYRE.galileo.sample.claimed": "样本在第{Turn}回合实际支付{Energy}能量；本场复测抽3已领取，不再恢复原松弦抽1。",
+  "SOCRATES_QUESTION_CUP.newton.drop.title": "诘问杯·坠落校准",
+  "SOCRATES_QUESTION_CUP.newton.drop.description": "保留诘问杯原有全部效果。校准坠落货物：你的回合结束时，本回合恰好手动打出两张牌且依次为攻击、技能时，获得6点格挡，每回合至多一次；自动打出的牌不计入，第三张手动牌使该效果失效。",
+  "SOCRATES_QUESTION_CUP.newton.tide.title": "诘问杯·潮汐校准",
+  "SOCRATES_QUESTION_CUP.newton.tide.description": "保留诘问杯原有全部效果。校准潮汐运输：你的回合结束时，本回合恰好手动打出两张牌且依次为技能、攻击时，获得6点格挡，每回合至多一次；自动打出的牌不计入，第三张手动牌使该效果失效。"
 }

@@ -112,7 +112,11 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(bacon, Plays("AS", "ab"), previous, 3) == default,
             "Bacon's event-selected comparison pays through the real carrier, without a second generic node reward.");
         covered.Add(bacon);
-        Check(covered.Count == 53 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        const string newton = "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(newton, Plays("AS", "ab"), previous, 3) == default,
+            "Newton calibration pays through the actual cup and must not create a second abstract node reward.");
+        covered.Add(newton);
+        Check(covered.Count == 54 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
@@ -144,6 +148,6 @@ internal static class WesternNodePracticeChecks
             "Same-problem node payloads cannot transfer rewards.");
         foreach (string damaged in new[] { "[]", "{\"NodeId\":null}", "{\"NodeId\":\"UNKNOWN\"}", "broken" })
             Check(WesternPracticeStateCodec.RestoreNode(damaged).NodeId == string.Empty, "Bad self-contained carrier payload is inert.");
-        Console.WriteLine("Western node practice checks passed: all 53 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
+        Console.WriteLine("Western node practice checks passed: all 54 nodes, including explicit no-reward nodes, wrong stages/problems, violations and manual-play boundaries.");
     }
 }

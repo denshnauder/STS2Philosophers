@@ -26,6 +26,8 @@ AnselmUnfinishedProofChecks.Run();
 OckhamNamesInquiryChecks.Run();
 CopernicusShiftedCenterChecks.Run();
 GalileoMeasuredPracticeChecks.Run();
+NewtonTwoSitesChecks.Run();
+NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();
 LutherSignedCareChecks.Run();

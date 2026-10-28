@@ -41,6 +41,7 @@ internal sealed class PhilosophyRunState
     public LutherSignedCareState? LutherSignedCare { get; set; }
     public OckhamNamesInquiryState? OckhamNamesInquiry { get; set; }
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
+    public NewtonTwoSitesState? NewtonTwoSites { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -95,6 +96,7 @@ internal sealed class PhilosophyRunState
         || LutherSignedCare is not null
         || OckhamNamesInquiry is not null
         || AnselmUnfinishedProof is not null
+        || NewtonTwoSites is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -280,6 +282,7 @@ internal sealed class PhilosophyRunState
         LutherSignedCare?.NormalizeAfterLoad();
         OckhamNamesInquiry?.NormalizeAfterLoad();
         AnselmUnfinishedProof?.NormalizeAfterLoad();
+        NewtonTwoSites?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

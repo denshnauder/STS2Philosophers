@@ -119,5 +119,9 @@
   "HERACLITUS_LYRE.galileo.unavailable": "The measurement payload cannot be verified. Repeated-measurement draws are suspended; the original release draw is not restored.",
   "HERACLITUS_LYRE.galileo.sample.title": "This Combat’s Reference Sample",
   "HERACLITUS_LYRE.galileo.sample.pending": "The reference card below actually spent {Energy} Energy on turn {Turn}. On a later turn, release a marked card of that model with the same payment into Exhaust to draw 3, once this combat.",
-  "HERACLITUS_LYRE.galileo.sample.claimed": "The sample spent {Energy} Energy on turn {Turn}. This combat’s draw 3 has been claimed. The original release draw 1 does not return."
+  "HERACLITUS_LYRE.galileo.sample.claimed": "The sample spent {Energy} Energy on turn {Turn}. This combat’s draw 3 has been claimed. The original release draw 1 does not return.",
+  "SOCRATES_QUESTION_CUP.newton.drop.title": "Question Cup: Falling Calibration",
+  "SOCRATES_QUESTION_CUP.newton.drop.description": "Keep all existing Question Cup effects. Calibrated falling cargo: at the end of your turn, if you manually played exactly two cards this turn, Attack then Skill, gain 6 Block, at most once per turn; automatically played cards do not count, and a third manual card invalidates the effect.",
+  "SOCRATES_QUESTION_CUP.newton.tide.title": "Question Cup: Tidal Calibration",
+  "SOCRATES_QUESTION_CUP.newton.tide.description": "Keep all existing Question Cup effects. Calibrated tidal transport: at the end of your turn, if you manually played exactly two cards this turn, Skill then Attack, gain 6 Block, at most once per turn; automatically played cards do not count, and a third manual card invalidates the effect."
 }

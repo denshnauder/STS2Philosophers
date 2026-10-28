@@ -11,6 +11,11 @@ if (args.Contains("--galileo-only"))
     await GalileoMeasuredPracticeNativeChecks.Run();
     return;
 }
+if (args.Contains("--newton-only"))
+{
+    await NewtonTwoSitesNativeChecks.Run();
+    return;
+}
 if (args.Contains("--enc197-only"))
 {
     await PhilosophersGazeSaveRecoveryNativeChecks.Run();
@@ -72,6 +77,7 @@ await LutherSignedCareNativeChecks.Run();
 await BaconSampleLedgerNativeChecks.Run();
 await CopernicusShiftedCenterNativeChecks.Run();
 await GalileoMeasuredPracticeNativeChecks.Run();
+await NewtonTwoSitesNativeChecks.Run();
 await NativeQuestionNodeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();

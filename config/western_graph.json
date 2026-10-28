@@ -425,6 +425,14 @@
       "stage_id": "CORE",
       "display_name": "培根：受限取样与比较",
       "terminal": true
+    },
+    {
+      "node_id": "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "ISAAC_NEWTON",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "牛顿：有条件的两处试验",
+      "terminal": true
     }
   ],
   "edges": [
@@ -1914,6 +1922,34 @@
         "evidence_sources": [
           "docs/design/current/west/29培根当前设计.md",
           "https://history.hanover.edu/texts/bacon/aphor.html"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_049",
+      "from_node_id": "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "Medium",
+      "relation_summary": "经由实际已闭合重建的笛卡尔保存事件，以及有条件的两处地点比较，连接苏格拉底与牛顿；并非苏格拉底直接教导牛顿。",
+      "source": "docs/design/current/west/32牛顿当前设计.md",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "LaterReinterpretation"
+        ],
+        "compressed_mediators": "塞克斯都的悬置，以及实际已保存的笛卡尔有限重建事件；不虚构图节点。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "仅作实际比较，不宣称掌握整全学说。",
+        "interpretation_boundary": "本地校准不能认证远端地点，也不构成历史会面。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "docs/design/current/west/32牛顿当前设计.md"
         ]
       }
     }

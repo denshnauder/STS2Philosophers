@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Philosophy\NewtonTwoSitesTriggerPolicy.cs" Link="NewtonTwoSitesTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
+    <Compile Include="..\..\src\Philosophy\NewtonTwoSitesFlow.cs" Link="NewtonTwoSitesFlow.cs" />
+    <Compile Include="..\..\src\Philosophy\NewtonCalibrationPracticeState.cs" Link="NewtonCalibrationPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoMeasuredPracticeState.cs" Link="GalileoMeasuredPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoRepeatedPaymentState.cs" Link="GalileoRepeatedPaymentState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementState.cs" Link="DemocritusArrangementState.cs" />
