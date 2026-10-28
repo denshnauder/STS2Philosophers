@@ -156,6 +156,12 @@ func _initialize() -> void:
 			quit(4)
 			return
 
+	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
+		if not FileAccess.file_exists(path + ".import"):
+			push_error("Missing packed import metadata: %s.import" % path)
+			quit(4)
+			return
+
 	for path in REQUIRED_FILES:
 		if not path.ends_with(".json"):
 			continue
