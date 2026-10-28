@@ -117,4 +117,17 @@ pack "$tmp/wrong-value" "$tmp/wrong-value.pck"
 expect_verify 6 "$tmp/wrong-value" "$tmp/wrong-value.pck" "$tmp/wrong-value.log" "localization value is not a string"
 grep -q "Localization value must be a string" "$tmp/wrong-value.log" || fail "verifier did not report the wrong value type"
 
+cp -R "$repo_dir/content/." "$tmp/empty-value"
+python3 - "$tmp/empty-value/STS2Philosophers/localization/eng/relics.json" <<'PY'
+import json,sys
+path=sys.argv[1]
+data=json.load(open(path,encoding='utf-8'))
+key=next(iter(data))
+data[key]=''
+open(path,'w',encoding='utf-8').write(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+PY
+pack "$tmp/empty-value" "$tmp/empty-value.pck"
+expect_verify 6 "$tmp/empty-value" "$tmp/empty-value.pck" "$tmp/empty-value.log" "empty localization value"
+grep -q "Localization key and value must be non-empty" "$tmp/empty-value.log" || fail "verifier did not report the empty localization value"
+
 echo "PckVerifier checks passed."

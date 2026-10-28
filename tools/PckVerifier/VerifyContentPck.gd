@@ -170,6 +170,10 @@ func _initialize() -> void:
 				push_error("Localization value must be a string: %s: %s" % [path, key])
 				quit(6)
 				return
+			if key == "" or localization_json.data[key] == "":
+				push_error("Localization key and value must be non-empty: %s" % path)
+				quit(6)
+				return
 		var keys: Array = localization_json.data.keys()
 		keys.sort()
 		if path.find("/localization/") >= 0:
