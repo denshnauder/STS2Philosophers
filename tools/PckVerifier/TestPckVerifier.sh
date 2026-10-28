@@ -155,4 +155,16 @@ PY
 expect_verify 4 "$tmp/missing-import" "$tmp/missing-import.pck" "$tmp/missing-import.log" "missing texture import metadata"
 grep -q "Missing packed import metadata" "$tmp/missing-import.log" || fail "verifier did not report missing import metadata"
 
+cp -R "$repo_dir/content/." "$tmp/empty-key"
+python3 - "$tmp/empty-key/STS2Philosophers/localization/eng/relics.json" "$tmp/empty-key/STS2Philosophers/localization/zhs/relics.json" <<'PY'
+import json,sys
+for path in sys.argv[1:]:
+ data=json.load(open(path,encoding='utf-8'))
+ data['']='empty key'
+ open(path,'w',encoding='utf-8').write(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+PY
+pack "$tmp/empty-key" "$tmp/empty-key.pck"
+expect_verify 6 "$tmp/empty-key" "$tmp/empty-key.pck" "$tmp/empty-key.log" "empty localization key"
+grep -q "Localization key and value must be non-empty" "$tmp/empty-key.log" || fail "verifier did not report the empty localization key"
+
 echo "PckVerifier checks passed."
