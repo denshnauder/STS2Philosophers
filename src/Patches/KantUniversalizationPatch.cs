@@ -26,7 +26,7 @@ internal static class KantUniversalizationPatch
             run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
-                ModelDb.GetId<RousseauConsent>(), "ROUSSEAU"),
+                ModelDb.GetId<RousseauConsent>(), "ROUSSEAU_CONSENT"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,

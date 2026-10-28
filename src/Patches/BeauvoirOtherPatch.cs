@@ -21,7 +21,7 @@ internal static class BeauvoirOtherPatch
         BeauvoirOtherTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
-                ModelDb.GetId<WollstonecraftAdmission>(), "MARY_WOLLSTONECRAFT"),
+                ModelDb.GetId<WollstonecraftAdmission>(), "WOLLSTONECRAFT_ADMISSION"),
             behavior?.CompletedCombatCount ?? 0, journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(BeauvoirOtherState.RequiredEdgeId) == true, edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,

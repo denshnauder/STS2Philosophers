@@ -26,7 +26,7 @@ internal static class RousseauConsentPatch
             run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
-                ModelDb.GetId<AugustinePromise>(), "AUGUSTINE_OF_HIPPO"),
+                ModelDb.GetId<AugustinePromise>(), "AUGUSTINE_PROMISE"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,

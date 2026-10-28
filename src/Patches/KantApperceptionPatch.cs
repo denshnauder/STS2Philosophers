@@ -26,7 +26,7 @@ internal static class KantApperceptionPatch
             run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
-                ModelDb.GetId<HumeInduction>(), "DAVID_HUME"),
+                ModelDb.GetId<HumeInduction>(), "HUME_INDUCTION"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,

@@ -26,7 +26,7 @@ internal static class HumeInductionPatch
             run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
-                ModelDb.GetId<LockeCargoIdentity>(), "JOHN_LOCKE"),
+                ModelDb.GetId<LockeCargoIdentity>(), "LOCKE_CARGO_IDENTITY"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
