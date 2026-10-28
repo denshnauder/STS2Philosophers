@@ -120,7 +120,7 @@ internal static class NativeQuestionNodeEvents
             ?? HumeInductionPatch.TrySelectNative(run)
             ?? KantApperceptionPatch.TrySelectNative(run)
             ?? KantUniversalizationPatch.TrySelectNative(run)
-            ?? MillHarmPatch.TrySelectNative(run)
+            ?? MillHarmPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run)
             ?? BeauvoirOtherPatch.TrySelectNative(run)
             ?? HanFeiPublicStandardPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Parmenides)

@@ -221,7 +221,7 @@ func _initialize() -> void:
 		"augustine_promise", "diogenes_stay_switch", "luther_signed_care",
 		"bacon_sample_ledger", "copernicus_shifted_center", "galileo_measured_practice",
 		"machiavelli_flood_preparation", "newton_two_sites", "spinoza_cause_network", "ockham_names_inquiry",
-		"plotinus_common_ground", "zeno_civic_challenge", "leibniz_monad_comparison", "hegel_substance_subject", "leibniz_independent_clocks",
+		"plotinus_common_ground", "zeno_civic_challenge", "leibniz_monad_comparison", "hegel_substance_subject", "fichte_self_positing", "leibniz_independent_clocks",
 		"machiavelli_realist_challenge", "hobbes_authorized_sovereignty", "locke_cargo_identity", "hume_induction", "wollstonecraft_admission", "kant_apperception", "rousseau_consent", "kant_universalization", "mill_harm", "beauvoir_other",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",

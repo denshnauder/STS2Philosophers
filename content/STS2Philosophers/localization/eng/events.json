@@ -2005,5 +2005,22 @@
   "BEAUVOIR_OTHER.pages.RESULT_AMBIGUITY.options.LEAVE.title": "Leave.",
   "BEAUVOIR_OTHER.pages.RESULT_AMBIGUITY.options.LEAVE.description": "Close the record.",
   "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.title": "Leave.",
-  "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "FICHTE_SELF_POSITING.title": "Fichte: Who Posits the Rule?",
+  "FICHTE_SELF_POSITING.pages.INVITATION.description": "Kant's equal rule is written on the gate ledger, but the clerks who must follow it were never asked to author it. A night shift asks whether the rule is merely handed down or posited by those who act under it. Fichte's objection is not that every impulse should become law: the self posits itself, but it also meets a check from what it is not. You may revise the rule as self-posited, require that revision to pass a public check, or keep Kant's formal rule. This is the act-three question.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REVISE_AS_SELF_POSITED.title": "Revise the rule as self-posited.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REVISE_AS_SELF_POSITED.description": "[Revise] Let the agents re-author the rule they must follow.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REQUIRE_CHECK.title": "Require a public check.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REQUIRE_CHECK.description": "[Check] Bind self-authorship to those who bear its effects.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.KEEP_KANT.title": "Keep Kant's formal rule.",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.KEEP_KANT.description": "[Decline] Keep Kant; spend the act-three question.",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.description": "You revise the rule as self-posited. The Kant freedom node and its practice remain; the record now says the rule must be re-authored by those who act under it, not merely received. No extra node or practice is granted.",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.options.LEAVE.title": "Leave.",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.options.LEAVE.description": "Close the record.",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.description": "You require the self-posited rule to pass a public check. The Kant freedom node and its practice remain; the record binds self-authorship to a check from those who bear its effects.",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.options.LEAVE.title": "Leave.",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.options.LEAVE.description": "Close the record.",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.description": "You keep Kant's formal rule and decline Fichte's revision. The act-three question is spent; the Kant freedom route remains as it was.",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.options.LEAVE.title": "Leave.",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

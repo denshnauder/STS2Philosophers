@@ -54,6 +54,7 @@ internal sealed class PhilosophyRunState
     public RousseauConsentState? RousseauConsent { get; set; }
     public KantUniversalizationState? KantUniversalization { get; set; }
     public MillHarmState? MillHarm { get; set; }
+    public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
     [JsonIgnore]
@@ -122,6 +123,7 @@ internal sealed class PhilosophyRunState
         || RousseauConsent is not null
         || KantUniversalization is not null
         || MillHarm is not null
+        || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
@@ -321,6 +323,7 @@ internal sealed class PhilosophyRunState
         RousseauConsent?.NormalizeAfterLoad();
         KantUniversalization?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();
+        FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {

@@ -45,6 +45,7 @@ SpinozaCauseNetworkChecks.Run();
 LeibnizIndependentClocksChecks.Run();
 LeibnizMonadComparisonChecks.Run();
 HegelSubstanceSubjectChecks.Run();
+FichteSelfPositingChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
 WollstonecraftAdmissionChecks.Run();

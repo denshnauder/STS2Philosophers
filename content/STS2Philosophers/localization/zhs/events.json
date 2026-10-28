@@ -2005,5 +2005,22 @@
   "BEAUVOIR_OTHER.pages.RESULT_AMBIGUITY.options.LEAVE.title": "离开",
   "BEAUVOIR_OTHER.pages.RESULT_AMBIGUITY.options.LEAVE.description": "关闭记录。",
   "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.title": "离开",
-  "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "BEAUVOIR_OTHER.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "FICHTE_SELF_POSITING.title": "费希特：谁设定了这条规则？",
+  "FICHTE_SELF_POSITING.pages.INVITATION.description": "康德的平等规则写在城门账本上，但必须遵守它的办事员从未被请来制定它。夜班提出：这条规则只是被交下来的，还是由行动者自己设定的？费希特的反对并不是说每个冲动都该成为法律：自我设定自身，但也遭遇来自非我的检查。你可以把规则改写为自我设定，要求这次改写通过公开检查，或保留康德的形式规则。这是第三幕问号。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REVISE_AS_SELF_POSITED.title": "把规则改写为自我设定。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REVISE_AS_SELF_POSITED.description": "[改写] 让行动者重新制定他们必须遵守的规则。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REQUIRE_CHECK.title": "要求公开检查。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.REQUIRE_CHECK.description": "[检查] 把自我制定与承受其后果者绑定。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.KEEP_KANT.title": "保留康德的形式规则。",
+  "FICHTE_SELF_POSITING.pages.INVITATION.options.KEEP_KANT.description": "[谢绝] 保留康德；用掉第三幕问号。",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.description": "你把规则改写为自我设定。康德自由节点及其实践保留；记录现在写明，规则必须由行动者重新制定，而不只是被接受。不额外授予节点或实践。",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.options.LEAVE.title": "离开",
+  "FICHTE_SELF_POSITING.pages.RESULT_SELF_POSITED.options.LEAVE.description": "关闭记录。",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.description": "你要求自我设定的规则通过公开检查。康德自由节点及其实践保留；记录把自我制定与承受其后果者的检查绑定在一起。",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.options.LEAVE.title": "离开",
+  "FICHTE_SELF_POSITING.pages.RESULT_CHECK.options.LEAVE.description": "关闭记录。",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.description": "你保留康德的形式规则，谢绝费希特的改写。第三幕问号已用掉；康德自由路线维持原状。",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.options.LEAVE.title": "离开",
+  "FICHTE_SELF_POSITING.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }
