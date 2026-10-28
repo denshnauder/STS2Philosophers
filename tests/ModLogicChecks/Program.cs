@@ -46,6 +46,7 @@ LockeHumeChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 RousseauConsentChecks.Run();
+KantUniversalizationChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

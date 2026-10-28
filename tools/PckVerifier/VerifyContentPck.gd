@@ -24,6 +24,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/wollstonecraft_admission.png",
 	"res://images/events/kant_apperception.png",
 	"res://images/events/rousseau_consent.png",
+	"res://images/events/kant_universalization.png",
 ]
 
 const REQUIRED_FILES := [
