@@ -142,6 +142,21 @@ internal static class SlyCostReceiptNativeChecks
         await Complete(f, await Pay(f, Card(f, attack: true), 2));
     }
 
+    private static async Task ManualDiscardAttack(bool autoAttack)
+    {
+        var f = await NewFixture();
+        var attack = f.AddCard<StrikeSilent>(); attack.EnergyCost.SetThisTurnOrUntilPlayed(2);
+        var parent = await Pay(f, attack, 2);
+        await Automatic(f, sly: true, attack: autoAttack);
+        Check(Law(f) == "Other",
+            $"The nested Sly {(autoAttack ? "attack" : "skill")} does not establish a law while its first manual attack is still resolving.");
+        await Complete(f, parent);
+        Check(Law(f) == "Attack", "A genuinely manual discard attack legally establishes Attack despite its nested automatic child.");
+        await Complete(f, await Pay(f, Card(f, attack: true), 1));
+        await Complete(f, await Pay(f, Card(f, attack: false), 3));
+        await Complete(f, await Pay(f, Card(f, attack: false), 2));
+    }
+
     private static async Task FirstManualAttackWithNestedAuto(bool autoAttack)
     {
         var f = await NewFixture();
@@ -211,6 +226,8 @@ internal static class SlyCostReceiptNativeChecks
             await Scenario("opening Sly skill has no manual law", () => AutomaticBeforeLaw(attack: false));
             await Scenario("manual discard skill with nested Sly attack keeps its legal law", () => ManualDiscardSkill(autoAttack: true));
             await Scenario("manual discard skill with nested Sly skill keeps its legal law", () => ManualDiscardSkill(autoAttack: false));
+            await Scenario("manual discard attack with nested Sly attack keeps its legal law", () => ManualDiscardAttack(autoAttack: true));
+            await Scenario("manual discard attack with nested Sly skill keeps its legal law", () => ManualDiscardAttack(autoAttack: false));
             await Scenario("first manual attack with nested Sly attack", () => FirstManualAttackWithNestedAuto(autoAttack: true));
             await Scenario("first manual attack with nested Sly skill", () => FirstManualAttackWithNestedAuto(autoAttack: false));
             foreach (bool sly in new[] { true, false })
