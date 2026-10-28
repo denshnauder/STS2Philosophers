@@ -552,6 +552,37 @@ internal static class AllRouteQuestionNodeChecks
 
     private static void CheckCamusDirect()
     {
+        ModelDb.Inject(typeof(JamesForcedBridge));
+        var jamesTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var jamesFixture = (NativeRuntimeFixture)jamesTuple[0]!; var jamesRun = (RunState)jamesTuple[1]!;
+        object jamesGraph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object jamesJourney = jamesGraph.GetType().GetMethod("Start")!.Invoke(jamesGraph,
+            ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+        foreach (string edge in new[] { "WESTERN_EDGE_008", "WESTERN_EDGE_009" })
+            Check((bool)jamesGraph.GetType().GetMethod("TryApply")!.Invoke(jamesGraph, [jamesJourney, edge])!,
+                "James chain fixture applies " + edge + ".");
+        Check((bool)jamesGraph.GetType().GetMethod("TryReserveQuestion")!.Invoke(jamesGraph, [jamesJourney, 2])!,
+            "James chain fixture closes the Diogenes question without switching.");
+        Type jamesRouteType = T("ZenoRouteState");
+        object jamesRoute = Activator.CreateInstance(jamesRouteType,
+            [1, Enum.Parse(T("ZenoRouteStage"), "DiogenesClosed"), 0L, 0L,
+                "RUN_JAMES_CHAIN", 2, "WESTERN_EDGE_011",
+                "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE",
+                null, null, null, null, null, null, null, null])!;
+        Type jamesFeatureType = T("ZenoRouteFeatureState");
+        object jamesFeature = Activator.CreateInstance(jamesFeatureType, [1, jamesRoute, null])!;
+        object jamesShared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(jamesShared, "WesternJourney", jamesJourney);
+        jamesShared.GetType().GetMethod("SetCurrentZenoRouteState",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public
+                | System.Reflection.BindingFlags.NonPublic, null, [jamesFeatureType], null)!
+            .Invoke(jamesShared, [jamesFeature]);
+        Call("PhilosophyRunStateService", "Restore", jamesRun, jamesShared);
+        EventModel jamesChosen = jamesRun.Act.PullNextEvent(jamesRun);
+        Check(jamesChosen is JamesForcedBridge,
+            "Real native PullNextEvent selects James after Diogenes Stay, got " + jamesChosen.GetType().Name + ".");
+
         ModelDb.Inject(typeof(CamusRevoltLimit));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
