@@ -121,6 +121,7 @@ internal static class NativeQuestionNodeEvents
             ?? KantApperceptionPatch.TrySelectNative(run)
             ?? RousseauConsentPatch.TrySelectNative(run)
             ?? KantUniversalizationPatch.TrySelectNative(run)
+            ?? MillHarmPatch.TrySelectNative(run)
             ?? HanFeiPublicStandardPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Parmenides)
             ?? Question(WesternQuestionKind.Anaximander)

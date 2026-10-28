@@ -25,6 +25,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/kant_apperception.png",
 	"res://images/events/rousseau_consent.png",
 	"res://images/events/kant_universalization.png",
+	"res://images/events/mill_harm.png",
 ]
 
 const REQUIRED_FILES := [
