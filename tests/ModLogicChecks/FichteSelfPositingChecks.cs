@@ -46,6 +46,12 @@ internal static class FichteSelfPositingChecks
         PhilosophyRunState shared = Fixture();
         Check(FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
             shared.WesternJourney!), "Fichte opens at Kant after 022.");
+        Check(graph.GetEligibleEdges(shared.WesternJourney!, "Question")
+            .Any(edge => edge.EdgeId == FichteSelfPositingState.CompletionEdgeId),
+            "037 is eligible as the act-three question.");
+        Check(!graph.GetEligibleEdges(shared.WesternJourney!, "Fixed")
+            .Any(edge => edge.EdgeId == "WESTERN_EDGE_038"),
+            "038 remains blocked because 022 already spent Fixed3.");
 
         shared = Commit(shared, graph, FichteSelfPositingAction.ReviseAsSelfPosited);
         Check(shared.WesternJourney!.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId)
@@ -55,6 +61,9 @@ internal static class FichteSelfPositingChecks
             && shared.FichteSelfPositing!.SelfPosited
             && shared.FichteSelfPositing.EdgeCommitted,
             "Revising completes 037, keeps Kant, and records self-positing.");
+        Check(!graph.GetEligibleEdges(shared.WesternJourney!, "Fixed")
+            .Any(edge => edge.EdgeId == "WESTERN_EDGE_038"),
+            "Completing 037 still does not release Fixed3 for 038.");
         shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
         Check(shared.FichteSelfPositing!.Closed, "Fichte closes after Leave.");
 
