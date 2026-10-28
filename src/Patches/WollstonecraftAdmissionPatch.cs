@@ -6,6 +6,18 @@ namespace STS2Philosophers;
 
 internal static class WollstonecraftAdmissionPatch
 {
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        WollstonecraftAdmissionState? saved = shared.WollstonecraftAdmission;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (journey is null || !WollstonecraftAdmissionFlow.IsRouteConsistent(saved, journey)) return null;
+        WollstonecraftAdmission? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;

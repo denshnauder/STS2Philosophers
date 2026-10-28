@@ -76,7 +76,9 @@ internal static class NativeQuestionNodeEvents
             ?? PyrrhoReportedCrossingPatch.TrySelectExistingNative(run)
             ?? AnselmUnfinishedProofPatch.TrySelectExistingNative(run)
             ?? OckhamNamesInquiryPatch.TrySelectExistingNative(run)
-            ?? LutherSignedCarePatch.TrySelectExistingNative(run);
+            ?? LutherSignedCarePatch.TrySelectExistingNative(run)
+            ?? MachiavelliFloodPreparationPatch.TrySelectExistingNative(run)
+            ?? WollstonecraftAdmissionPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 
