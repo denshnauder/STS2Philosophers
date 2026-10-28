@@ -30,13 +30,39 @@ List<string> ResPaths(string text) =>
         .Distinct(StringComparer.Ordinal)
         .ToList();
 
-var resourcePaths = Regex.Matches(
-        Section("var resource_paths: Array[String] = [", "var texture_paths: Array[String] = ["),
-        "\"([^\"]+\\.json)\"")
+var resourceEntries = Regex.Matches(
+        Section("var resource_paths: Array[String] = [", "for resource_path in resource_paths:"),
+        "\"([^\"]+)\"")
     .Select(m => "res://" + m.Groups[1].Value)
     .Distinct(StringComparer.Ordinal)
     .ToList();
+var unsupportedResource = resourceEntries.FirstOrDefault(path =>
+    !path.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
+if (unsupportedResource is not null)
+{
+    Console.Error.WriteLine($"unsupported resource in BuildContentPck.gd, falling back to Godot: {unsupportedResource}");
+    return 3;
+}
+var resourcePaths = resourceEntries;
 var texturePaths = ResPaths(Section("var texture_paths: Array[String] = [", "for texture_path in texture_paths:"));
+var unsupportedTexture = texturePaths.FirstOrDefault(path =>
+    !path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+    && !path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase));
+if (unsupportedTexture is not null)
+{
+    Console.Error.WriteLine($"unsupported texture in BuildContentPck.gd, falling back to Godot: {unsupportedTexture}");
+    return 3;
+}
+var unsupportedScriptPath = Regex.Matches(script, "\"(res://[^\"]+)\"")
+    .Select(m => m.Groups[1].Value)
+    .Distinct(StringComparer.Ordinal)
+    .FirstOrDefault(path => Path.GetExtension(path).ToLowerInvariant() is
+        ".tscn" or ".escn" or ".gd" or ".gdshader" or ".tres" or ".res" or ".material" or ".shader");
+if (unsupportedScriptPath is not null)
+{
+    Console.Error.WriteLine($"unsupported packed resource, falling back to Godot: {unsupportedScriptPath}");
+    return 3;
+}
 var aliasSection = Section("for alias in [", "# These events use");
 var aliases = Regex.Matches(aliasSection, "\\[\\s*\"(res://[^\"]+)\"\\s*,\\s*\"(res://[^\"]+)\"\\s*,?\\s*\\]")
     .Select(m => (Alias: m.Groups[1].Value, Source: m.Groups[2].Value))

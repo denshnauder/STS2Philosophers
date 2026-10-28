@@ -19,6 +19,10 @@ This tool uses `BSchneppe.StS2.PckPacker` primitives:
   `.godot/imported/...` path is not packed directly.
 - The PCK is written to a temporary sibling and moved into place only after a
   complete write, so a failed pack cannot leave a partial output file.
+- The fast path refuses to silently omit unsupported resources. A `tscn`,
+  `gdshader`, `gd`, `tres`, `res`, `material`, or `shader` path in
+  `BuildContentPck.gd`, or a non-JSON resource / non-PNG-SVG texture, exits `3`
+  so the caller uses the Godot fallback.
 
 ## Usage
 
@@ -29,8 +33,8 @@ dotnet run --project tools/ContentPckPacker -c Release -- <contentRoot> <output.
 Exit codes:
 
 - `0`: fast PCK written.
-- `3`: needs the Godot fallback (missing/stale SVG import cache, or a PNG
-  conversion that the fast path cannot handle).
+- `3`: needs the Godot fallback (missing/stale SVG import cache, a PNG
+  conversion that the fast path cannot handle, or an unsupported resource type).
 - other: hard failure.
 
 `tools/BuildContentPck.sh` and `tools/BuildContentPck.ps1` call this tool first

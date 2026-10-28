@@ -49,6 +49,30 @@ cp "$tmp/content/images/events/philosophers_gaze.png" "$tmp/content/images/event
 expect_status 0 "$tmp/content" "$tmp/modified.pck" "$tmp/modified.log" "JSON and PNG changes"
 grep -aq "FAST_PCK_TEST" "$tmp/modified.pck" || fail "JSON key is missing from the fast PCK"
 
+cp -R "$repo_dir/content/." "$tmp/unsupported-resource"
+python3 - "$tmp/unsupported-resource/BuildContentPck.gd" <<'PY'
+import sys
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+needle = 'var resource_paths: Array[String] = [\n'
+assert needle in text
+text = text.replace(needle, needle + '\t\t"STS2Philosophers/events/unsupported.tscn",\n', 1)
+open(path, "w", encoding="utf-8").write(text)
+PY
+expect_status 3 "$tmp/unsupported-resource" "$tmp/unsupported-resource.pck" "$tmp/unsupported-resource.log" "unsupported tscn asks for Godot fallback"
+
+cp -R "$repo_dir/content/." "$tmp/unsupported-shader"
+python3 - "$tmp/unsupported-shader/BuildContentPck.gd" <<'PY'
+import sys
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+needle = 'var texture_paths: Array[String] = [\n'
+assert needle in text
+text = text.replace(needle, needle + '\t\t"res://STS2Philosophers/shaders/unsupported.gdshader",\n', 1)
+open(path, "w", encoding="utf-8").write(text)
+PY
+expect_status 3 "$tmp/unsupported-shader" "$tmp/unsupported-shader.pck" "$tmp/unsupported-shader.log" "unsupported gdshader asks for Godot fallback"
+
 printf 'not a png' > "$tmp/content/images/events/philosophers_gaze.png"
 expect_status 3 "$tmp/content" "$tmp/bad-png.pck" "$tmp/bad-png.log" "corrupt PNG asks for Godot fallback"
 cp "$repo_dir/content/images/events/philosophers_gaze.png" "$tmp/content/images/events/philosophers_gaze.png"
