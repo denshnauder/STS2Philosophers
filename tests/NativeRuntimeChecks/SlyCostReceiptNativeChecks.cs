@@ -157,6 +157,22 @@ internal static class SlyCostReceiptNativeChecks
         await Complete(f, await Pay(f, Card(f, attack: false), 2));
     }
 
+    private static async Task ManualDiscardSameCardReplay(bool attack, bool sly)
+    {
+        var f = await NewFixture();
+        CardModel card = Card(f, attack);
+        var parent = await Pay(f, card, 2);
+        await Automatic(f, sly: sly, replay: parent.Card, attack: attack);
+        Check(Law(f) == "Other",
+            $"The same-card {(sly ? "Sly" : "ordinary")} automatic replay does not establish a law while the first manual card resolves.");
+        await Complete(f, parent);
+        Check(Law(f) == (attack ? "Attack" : "Skill"),
+            "The same-card automatic replay preserves the parent's actual manual law.");
+        await Complete(f, await Pay(f, Card(f, attack: true), attack ? 1 : 3));
+        await Complete(f, await Pay(f, Card(f, attack: false), attack ? 3 : 1));
+        await Complete(f, await Pay(f, Card(f, attack: false), 2));
+    }
+
     private static async Task FirstManualAttackWithNestedAuto(bool autoAttack)
     {
         var f = await NewFixture();
@@ -248,6 +264,10 @@ internal static class SlyCostReceiptNativeChecks
                 foreach (bool surcharge in new[] { false, true })
                     await Scenario($"{(restorePayload ? "payload restore" : "new turn")} invalidates pending {(surcharge ? "surcharge" : "discount")}",
                         () => ReceiptInvalidated(surcharge, restorePayload));
+            foreach (bool attack in new[] { true, false })
+                foreach (bool sly in new[] { true, false })
+                    await Scenario($"manual discard {(attack ? "attack" : "skill")} with same-card {(sly ? "Sly" : "ordinary")} replay",
+                        () => ManualDiscardSameCardReplay(attack, sly));
             await Scenario("independent native mutable receipt lifecycles", IndependentMutableCopies);
             if (failures.Count != 0) throw new AggregateException("ENC198 native cost receipt failures", failures);
             Console.WriteLine("ENC198 native checks passed: real native hand cost queries/SpendResources, nested Sly and ordinary automatic receipts, same-card replay, manual lawmaking, once-only discount/surcharge, duplicate callbacks, payload/turn invalidation and independent mutable lifecycles. No full Sly card effects, rendered hand, player saves or game replay.");
