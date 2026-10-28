@@ -123,5 +123,9 @@
   "SOCRATES_QUESTION_CUP.newton.drop.title": "Question Cup: Falling Calibration",
   "SOCRATES_QUESTION_CUP.newton.drop.description": "Keep all existing Question Cup effects. Calibrated falling cargo: at the end of your turn, if you manually played exactly two cards this turn, Attack then Skill, gain 6 Block, at most once per turn; automatically played cards do not count, and a third manual card invalidates the effect.",
   "SOCRATES_QUESTION_CUP.newton.tide.title": "Question Cup: Tidal Calibration",
-  "SOCRATES_QUESTION_CUP.newton.tide.description": "Keep all existing Question Cup effects. Calibrated tidal transport: at the end of your turn, if you manually played exactly two cards this turn, Skill then Attack, gain 6 Block, at most once per turn; automatically played cards do not count, and a third manual card invalidates the effect."
+  "SOCRATES_QUESTION_CUP.newton.tide.description": "Keep all existing Question Cup effects. Calibrated tidal transport: at the end of your turn, if you manually played exactly two cards this turn, Skill then Attack, gain 6 Block, at most once per turn; automatically played cards do not count, and a third manual card invalidates the effect.",
+  "DESCARTES_THINKING_LENS.spinoza.intervened.title": "Lens of Intervention",
+  "DESCARTES_THINKING_LENS.spinoza.intervened.description": "The Meditation Lens keeps its original effects. In each combat, after the first manual single-target Attack resolves, apply 1 Weak to the same still-living enemy; if that target is already dead, the chance is spent, with no retargeting and no later grant. Automatic plays are excluded.",
+  "DESCARTES_THINKING_LENS.spinoza.reordered.title": "Lens of Reordering",
+  "DESCARTES_THINKING_LENS.spinoza.reordered.description": "The Meditation Lens keeps its original effects. In each combat, after the first manual Skill resolves, draw 1, provided there was no manual Attack before it; if there was already a manual Attack, the chance is spent and no card is drawn. Automatic plays are excluded."
 }

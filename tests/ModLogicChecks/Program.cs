@@ -2,6 +2,12 @@ using STS2Philosophers;
 using System.Text;
 using System.Text.Json;
 
+if (args.Contains("--spinoza-only"))
+{
+    SpinozaCauseNetworkChecks.Run();
+    return;
+}
+
 SocratesKnowledgeRouteChecks.Run();
 SocratesCardProbeChecks.Run();
 
@@ -27,6 +33,7 @@ OckhamNamesInquiryChecks.Run();
 CopernicusShiftedCenterChecks.Run();
 GalileoMeasuredPracticeChecks.Run();
 NewtonTwoSitesChecks.Run();
+SpinozaCauseNetworkChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

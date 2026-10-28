@@ -16,6 +16,12 @@ if (args.Contains("--newton-only"))
     await NewtonTwoSitesNativeChecks.Run();
     return;
 }
+if (args.Contains("--spinoza-only"))
+{
+    await DescartesThinkingLensRuntimeChecks.Run();
+    await SpinozaCauseNetworkNativeChecks.Run();
+    return;
+}
 if (args.Contains("--enc197-only"))
 {
     await PhilosophersGazeSaveRecoveryNativeChecks.Run();
@@ -78,6 +84,7 @@ await BaconSampleLedgerNativeChecks.Run();
 await CopernicusShiftedCenterNativeChecks.Run();
 await GalileoMeasuredPracticeNativeChecks.Run();
 await NewtonTwoSitesNativeChecks.Run();
+await SpinozaCauseNetworkNativeChecks.Run();
 await NativeQuestionNodeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();

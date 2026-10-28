@@ -26,7 +26,7 @@ internal static class RouteEventMapBoundary
 
     internal static bool IsRegisteredEvent(EventModel? model) => model is
         PhilosophersGaze or ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
-        or ZenoCivicChallenge or AugustinePromise or AnselmUnfinishedProof or NewtonTwoSites
+        or ZenoCivicChallenge or AugustinePromise or AnselmUnfinishedProof or NewtonTwoSites or SpinozaCauseNetwork
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry

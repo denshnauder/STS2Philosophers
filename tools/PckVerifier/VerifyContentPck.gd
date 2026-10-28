@@ -12,6 +12,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/luther_signed_care.png",
 	"res://images/events/machiavelli_flood_preparation.png",
 	"res://images/events/newton_two_sites.png",
+	"res://images/events/spinoza_cause_network.png",
 	"res://images/events/ockham_names_inquiry.png",
 	"res://images/events/plotinus_common_ground.png",
 	"res://images/events/zeno_civic_challenge.png",

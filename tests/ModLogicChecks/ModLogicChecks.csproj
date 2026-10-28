@@ -11,6 +11,10 @@
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesFlow.cs" Link="NewtonTwoSitesFlow.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonCalibrationPracticeState.cs" Link="NewtonCalibrationPracticeState.cs" />
+    <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkState.cs" Link="SpinozaCauseNetworkState.cs" />
+    <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkFlow.cs" Link="SpinozaCauseNetworkFlow.cs" />
+    <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkTriggerPolicy.cs" Link="SpinozaCauseNetworkTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\SpinozaCombatPracticeState.cs" Link="SpinozaCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoMeasuredPracticeState.cs" Link="GalileoMeasuredPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\GalileoRepeatedPaymentState.cs" Link="GalileoRepeatedPaymentState.cs" />
     <Compile Include="..\..\src\Philosophy\DemocritusArrangementState.cs" Link="DemocritusArrangementState.cs" />

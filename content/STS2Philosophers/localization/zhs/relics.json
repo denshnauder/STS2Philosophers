@@ -123,5 +123,9 @@
   "SOCRATES_QUESTION_CUP.newton.drop.title": "诘问杯·坠落校准",
   "SOCRATES_QUESTION_CUP.newton.drop.description": "保留诘问杯原有全部效果。校准坠落货物：你的回合结束时，本回合恰好手动打出两张牌且依次为攻击、技能时，获得6点格挡，每回合至多一次；自动打出的牌不计入，第三张手动牌使该效果失效。",
   "SOCRATES_QUESTION_CUP.newton.tide.title": "诘问杯·潮汐校准",
-  "SOCRATES_QUESTION_CUP.newton.tide.description": "保留诘问杯原有全部效果。校准潮汐运输：你的回合结束时，本回合恰好手动打出两张牌且依次为技能、攻击时，获得6点格挡，每回合至多一次；自动打出的牌不计入，第三张手动牌使该效果失效。"
+  "SOCRATES_QUESTION_CUP.newton.tide.description": "保留诘问杯原有全部效果。校准潮汐运输：你的回合结束时，本回合恰好手动打出两张牌且依次为技能、攻击时，获得6点格挡，每回合至多一次；自动打出的牌不计入，第三张手动牌使该效果失效。",
+  "DESCARTES_THINKING_LENS.spinoza.intervened.title": "介入之镜",
+  "DESCARTES_THINKING_LENS.spinoza.intervened.description": "沉思镜原有的效果保留。每场战斗中，第一张手动单体攻击结算后，对同一名仍存活的敌人施加 1 层虚弱；若该目标已死亡，这次机会就此用掉，不换目标，也不延后补发。自动牌不计。",
+  "DESCARTES_THINKING_LENS.spinoza.reordered.title": "重排之镜",
+  "DESCARTES_THINKING_LENS.spinoza.reordered.description": "沉思镜原有的效果保留。每场战斗中，第一张手动技能结算后抽 1 张，前提是此前没有手动攻击；若此前已有手动攻击，这次机会就此用掉，不抽牌。自动牌不计。"
 }
