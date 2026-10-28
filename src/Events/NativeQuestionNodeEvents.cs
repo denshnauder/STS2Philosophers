@@ -85,7 +85,8 @@ internal static class NativeQuestionNodeEvents
             ?? LockeCargoIdentityPatch.TrySelectExistingNative(run)
             ?? HumeInductionPatch.TrySelectExistingNative(run)
             ?? KantApperceptionPatch.TrySelectExistingNative(run)
-            ?? RousseauConsentPatch.TrySelectExistingNative(run);
+            ?? RousseauConsentPatch.TrySelectExistingNative(run)
+            ?? KantUniversalizationPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 

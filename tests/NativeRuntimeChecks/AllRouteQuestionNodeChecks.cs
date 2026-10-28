@@ -50,6 +50,7 @@ internal static class AllRouteQuestionNodeChecks
         ("HumeInduction", 1, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("KantApperception", 2, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("RousseauConsent", 1, typeof(RousseauUncarvedStone), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"),
+        ("KantUniversalization", 2, typeof(RousseauUncarvedStone), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"),
     ];
 
     public static async Task Run()
@@ -153,7 +154,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckPlotinusInterval();
             CheckMissingPredecessor();
             CheckWollstonecraftDirect();
-            Console.WriteLine("All route question-node checks passed: all 23 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
+            Console.WriteLine("All route question-node checks passed: all 24 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
         {
@@ -204,6 +205,16 @@ internal static class AllRouteQuestionNodeChecks
             Edge("WESTERN_EDGE_019");
             Edge("WESTERN_EDGE_020");
             ModelDb.Inject(typeof(AugustinePromise));
+        }
+        if (person == "KantUniversalization")
+        {
+            Edge("WESTERN_EDGE_019");
+            Edge("WESTERN_EDGE_020");
+            object rousseau = Create("RousseauConsent", "ROUSSEAU_CONSENT:QUESTION:2");
+            foreach (string action in new[] { "InspectConvention", "UniversalException", "Leave" })
+                Commit("RousseauConsent", "RousseauConsentAction", rousseau, action, journey!, graph);
+            Store("RousseauConsent", rousseau);
+            ModelDb.Inject(typeof(AugustinePromise)); ModelDb.Inject(typeof(RousseauConsent));
         }
         if (person == "HumeInduction")
         {
@@ -311,6 +322,14 @@ internal static class AllRouteQuestionNodeChecks
                 {
                     new() { MapPointType = MapPointType.Unknown,
                         Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<AugustinePromise>() }] },
+                    new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
+                } });
+        if (person == "KantUniversalization")
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(), new(),
+                new()
+                {
+                    new() { MapPointType = MapPointType.Unknown,
+                        Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<RousseauConsent>() }] },
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
                 } });
         if (person == "MillHarm")

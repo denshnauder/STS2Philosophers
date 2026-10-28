@@ -169,7 +169,8 @@ internal static class WesternQuestionNodePolicy
         || shared.LockeCargoIdentity is { Closed: false }
         || shared.HumeInduction is { Closed: false }
         || shared.KantApperception is { Closed: false }
-        || shared.RousseauConsent is { Closed: false };
+        || shared.RousseauConsent is { Closed: false }
+        || shared.KantUniversalization is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()
     {
