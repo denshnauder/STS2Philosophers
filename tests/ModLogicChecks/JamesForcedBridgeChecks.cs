@@ -55,6 +55,26 @@ internal static class JamesForcedBridgeChecks
             && JamesForcedBridgeFlow.TryCommitPending(detour, journey, route) && detour.Closed,
             "James detour result closes.");
 
+        var corruptAssessment = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
+        corruptAssessment.ForcedAssessment = true;
+        Check(!corruptAssessment.IsUsable(),
+            "James rejects a forced assessment without its momentous pair.");
+
+        var corruptFeasible = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
+        corruptFeasible.BothFeasible = true;
+        Check(!corruptFeasible.IsUsable(),
+            "James rejects feasible options recorded before the first inquiry.");
+
+        var corruptEvidence = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
+        corruptEvidence.NewEvidenceSeen = true;
+        Check(!corruptEvidence.IsUsable(),
+            "James rejects new evidence recorded before the keeper is asked.");
+
+        var corruptOutcome = JamesForcedBridgeState.Create("JAMES_FORCED_BRIDGE:TEST:2", route.RunId);
+        corruptOutcome.Outcome = JamesForcedBridgeOutcome.Crossed;
+        Check(!corruptOutcome.IsUsable(),
+            "James rejects a crossed outcome recorded on the assessment page.");
+
         var beforeQuestion = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(beforeQuestion, "WESTERN_EDGE_008"), "James negative fixture completes Socrates 008.");
         Check(graph.TryApply(beforeQuestion, "WESTERN_EDGE_009"), "James negative fixture adopts Plato 009.");

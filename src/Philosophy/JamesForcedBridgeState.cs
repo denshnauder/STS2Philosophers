@@ -71,7 +71,21 @@ internal sealed class JamesForcedBridgeState
             || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Outcome)
             || ConfirmedActions is null || ConfirmedActions.Count > 3
             || (CostAttempted && Outcome == JamesForcedBridgeOutcome.None)
-            || (CostPaid && !CostAttempted)) return false;
+            || (CostPaid && !CostAttempted)
+            || ForcedAssessment != MomentousAssessment
+            || BothFeasible != (Stage != JamesForcedBridgeStage.Assessment)
+            || (ForcedAssessment && NewEvidenceSeen)
+            || (ForcedAssessment && !BothFeasible)
+            || (NewEvidenceSeen && !BothFeasible)
+            || Outcome switch
+            {
+                JamesForcedBridgeOutcome.None => Stage is not (JamesForcedBridgeStage.Assessment
+                    or JamesForcedBridgeStage.Evidence),
+                JamesForcedBridgeOutcome.Crossed => Stage != JamesForcedBridgeStage.ResultCrossed,
+                JamesForcedBridgeOutcome.Detoured => Stage != JamesForcedBridgeStage.ResultDetoured,
+                JamesForcedBridgeOutcome.Refused => Stage != JamesForcedBridgeStage.ResultRefused,
+                _ => true,
+            }) return false;
 
         JamesForcedBridgeStage replay = JamesForcedBridgeStage.Assessment;
         bool closed = false;
