@@ -44,4 +44,18 @@ pack "$tmp/content" "$tmp/bad-json.pck"
 expect_verify 6 "$tmp/content" "$tmp/bad-json.pck" "$tmp/bad-json.log" "invalid localization JSON"
 grep -q "Packed JSON is invalid" "$tmp/bad-json.log" || fail "verifier did not report invalid JSON"
 
+cp -R "$repo_dir/content/." "$tmp/missing-file"
+rm "$tmp/missing-file/STS2Philosophers/localization/eng/relics.json"
+python3 - "$tmp/missing-file/BuildContentPck.gd" <<'PY'
+import sys
+path = sys.argv[1]
+text = open(path, encoding="utf-8").read()
+needle = '\t\t"STS2Philosophers/localization/eng/relics.json",\n'
+assert needle in text
+open(path, "w", encoding="utf-8").write(text.replace(needle, "", 1))
+PY
+pack "$tmp/missing-file" "$tmp/missing-file.pck"
+expect_verify 4 "$tmp/missing-file" "$tmp/missing-file.pck" "$tmp/missing-file.log" "missing required localization file"
+grep -q "Missing packed file" "$tmp/missing-file.log" || fail "verifier did not report the missing file"
+
 echo "PckVerifier checks passed."
