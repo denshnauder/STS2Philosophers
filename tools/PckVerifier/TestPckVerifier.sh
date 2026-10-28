@@ -186,4 +186,12 @@ printf 'not-a-pck' > "$tmp/invalid.pck"
 expect_verify 3 "$repo_dir/content" "$tmp/invalid.pck" "$tmp/invalid.log" "unloadable PCK"
 grep -q "Could not load content PCK" "$tmp/invalid.log" || fail "verifier did not report the unloadable PCK"
 
+set +e
+"$godot_bin" --headless --path "$repo_dir/content" --script "$verifier" >"$tmp/usage.log" 2>&1
+usage_status=$?
+set -e
+[ "$usage_status" -eq 2 ] || { cat "$tmp/usage.log" >&2; fail "usage: expected verifier exit 2, got $usage_status"; }
+grep -q "Expected exactly one PCK path" "$tmp/usage.log" || fail "verifier did not report the usage error"
+echo "PASS: missing PCK argument (exit $usage_status)"
+
 echo "PckVerifier checks passed."

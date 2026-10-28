@@ -36,4 +36,4 @@ Godot --headless --path content \
 GODOT=/path/to/Godot tools/PckVerifier/TestPckVerifier.sh
 ```
 
-覆盖基线、非法 JSON、缺失本地化文件、构建失败保留旧产物、缺失纹理、错误 JSON 根、中英键不一致、非字符串值、空值、缺失 `.import`、空键、不可加载纹理、不可加载 PCK 共 13 条路径。
+覆盖基线、非法 JSON、缺失本地化文件、构建失败保留旧产物、缺失纹理、错误 JSON 根、中英键不一致、非字符串值、空值、缺失 `.import`、空键、不可加载纹理、不可加载 PCK、缺失 PCK 参数共 14 条路径。
