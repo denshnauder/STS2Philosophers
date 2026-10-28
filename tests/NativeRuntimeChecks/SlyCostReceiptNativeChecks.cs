@@ -68,9 +68,9 @@ internal static class SlyCostReceiptNativeChecks
         f.ClearAction();
     }
 
-    private static async Task Automatic(NativeRuntimeFixture f, bool sly, CardModel? replay = null)
+    private static async Task Automatic(NativeRuntimeFixture f, bool sly, CardModel? replay = null, bool attack = true)
     {
-        CardModel child = replay ?? Card(f, attack: true);
+        CardModel child = replay ?? Card(f, attack: attack);
         if (sly) child.GiveSingleTurnSly();
         Check(!sly || child.IsSlyThisTurn, "The discarded child is genuinely marked Sly by the native card API.");
         int before = f.PlayerState.Energy;
@@ -80,7 +80,8 @@ internal static class SlyCostReceiptNativeChecks
         var resources = new ResourceInfo { EnergySpent = 0, EnergyValue = energyValue, StarsSpent = 0, StarValue = 0 };
         var location = f.Relic.ModifyCardPlayResultLocation(child, true, resources,
             new CardLocation(f.Player, PileType.Discard, CardPilePosition.Bottom));
-        var play = new CardPlay { Card = child, Player = f.Player, Target = f.Enemy, IsAutoPlay = true,
+        var play = new CardPlay { Card = child, Player = f.Player,
+            Target = child.Type == CardType.Attack ? f.Enemy : null, IsAutoPlay = true,
             Resources = resources, ResultPile = location.pileType, PlayIndex = 0, PlayCount = 1 };
         await f.Relic.BeforeCardPlayed(play);
         await f.Relic.AfterCardPlayed(new ThrowingPlayerChoiceContext(), play);
@@ -114,12 +115,12 @@ internal static class SlyCostReceiptNativeChecks
         await Complete(f, await Pay(f, Card(f, attack: true), 2));
     }
 
-    private static async Task AutomaticBeforeLaw()
+    private static async Task AutomaticBeforeLaw(bool attack)
     {
         var f = await NewFixture();
-        await Automatic(f, sly: true);
+        await Automatic(f, sly: true, attack: attack);
         Check(Law(f) == "Other" && !Used(f, true) && !Used(f, false),
-            "An opening Sly attack cannot establish the law or consume either manual price opportunity.");
+            $"An opening Sly {(attack ? "attack" : "skill")} cannot establish the law or consume either manual price opportunity.");
         await Complete(f, await Pay(f, Card(f, attack: true), 2));
         Check(Law(f) == "Attack", "The actual first manual attack establishes Attack after opening Sly.");
         await Complete(f, await Pay(f, Card(f, attack: true), 1));
@@ -192,7 +193,8 @@ internal static class SlyCostReceiptNativeChecks
         try
         {
             TestMode.IsOn = true;
-            await Scenario("opening Sly has no manual law", AutomaticBeforeLaw);
+            await Scenario("opening Sly attack has no manual law", () => AutomaticBeforeLaw(attack: true));
+            await Scenario("opening Sly skill has no manual law", () => AutomaticBeforeLaw(attack: false));
             await Scenario("manual discard skill keeps its legal law", ManualDiscardSkill);
             foreach (bool sly in new[] { true, false })
                 foreach (bool surcharge in new[] { false, true })
