@@ -63,6 +63,26 @@ internal static class CamusRevoltLimitChecks
             && escalated.ThirdPartyHarmed && escalated.Cost == 0,
             "Camus escalation records third-party harm without a combat reward.");
 
+        var corruptBoth = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        corruptBoth.LevyAcknowledged = true; corruptBoth.LevyQuestioned = true;
+        Check(!corruptBoth.IsUsable(),
+            "Camus rejects both levy responses recorded at once.");
+
+        var corruptReserved = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        corruptReserved.QuestionReserved = true;
+        Check(!corruptReserved.IsUsable(),
+            "Camus rejects a reserved question without any committed action.");
+
+        var corruptHarm = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        corruptHarm.ThirdPartyHarmed = true;
+        Check(!corruptHarm.IsUsable(),
+            "Camus rejects third-party harm recorded outside escalation.");
+
+        var corruptOutcome = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        corruptOutcome.Outcome = CamusRevoltLimitOutcome.Restrained;
+        Check(!corruptOutcome.IsUsable(),
+            "Camus rejects a restrained outcome recorded on the situation page.");
+
         var before = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(before, "WESTERN_EDGE_008") && graph.TryApply(before, "WESTERN_EDGE_009")
             && graph.TryApply(before, "WESTERN_EDGE_010"),

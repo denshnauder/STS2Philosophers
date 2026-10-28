@@ -67,7 +67,20 @@ internal sealed class CamusRevoltLimitState
             || !Enum.IsDefined(Outcome) || ConfirmedActions is null
             || ConfirmedActions.Count > 3
             || (CostAttempted && Outcome == CamusRevoltLimitOutcome.None)
-            || (CostPaid && !CostAttempted)) return false;
+            || (CostPaid && !CostAttempted)
+            || (LevyAcknowledged && LevyQuestioned)
+            || (LevyAcknowledged || LevyQuestioned) != (Stage != CamusRevoltLimitStage.Situation)
+            || QuestionReserved != (Stage != CamusRevoltLimitStage.Situation)
+            || ThirdPartyHarmed != (Outcome == CamusRevoltLimitOutcome.Escalated)
+            || Outcome switch
+            {
+                CamusRevoltLimitOutcome.None => Stage is not (CamusRevoltLimitStage.Situation
+                    or CamusRevoltLimitStage.Proposal),
+                CamusRevoltLimitOutcome.Restrained => Stage != CamusRevoltLimitStage.ResultRestrained,
+                CamusRevoltLimitOutcome.Withdrawn => Stage != CamusRevoltLimitStage.ResultWithdrawn,
+                CamusRevoltLimitOutcome.Escalated => Stage != CamusRevoltLimitStage.ResultEscalated,
+                _ => true,
+            }) return false;
 
         CamusRevoltLimitStage replay = CamusRevoltLimitStage.Situation;
         bool closed = false;
