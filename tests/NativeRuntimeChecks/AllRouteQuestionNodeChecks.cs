@@ -49,6 +49,7 @@ internal static class AllRouteQuestionNodeChecks
         ("LockeCargoIdentity", 0, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("HumeInduction", 1, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("KantApperception", 2, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
+        ("RousseauConsent", 1, typeof(RousseauUncarvedStone), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"),
     ];
 
     public static async Task Run()
@@ -151,7 +152,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckMarcusInterval();
             CheckPlotinusInterval();
             CheckMissingPredecessor();
-            Console.WriteLine("All route question-node checks passed: all 22 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
+            Console.WriteLine("All route question-node checks passed: all 23 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
         {
@@ -197,6 +198,12 @@ internal static class AllRouteQuestionNodeChecks
             Store("SextusOpposedAppearances", sextus);
         }
         if (person == "AugustinePromise") Edge("WESTERN_EDGE_019");
+        if (person == "RousseauConsent")
+        {
+            Edge("WESTERN_EDGE_019");
+            Edge("WESTERN_EDGE_020");
+            ModelDb.Inject(typeof(AugustinePromise));
+        }
         if (person == "HumeInduction")
         {
             object locke = Create("LockeCargoIdentity", "LOCKE_CARGO_IDENTITY:QUESTION:1");
@@ -295,6 +302,14 @@ internal static class AllRouteQuestionNodeChecks
                 {
                     new() { MapPointType = MapPointType.Unknown,
                         Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<HumeInduction>() }] },
+                    new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
+                } });
+        if (person == "RousseauConsent")
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(),
+                new()
+                {
+                    new() { MapPointType = MapPointType.Unknown,
+                        Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<AugustinePromise>() }] },
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
                 } });
         if (person == "MillHarm")

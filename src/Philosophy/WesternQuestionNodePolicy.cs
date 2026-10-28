@@ -168,7 +168,8 @@ internal static class WesternQuestionNodePolicy
         || shared.FichteSelfPositing is { Closed: false }
         || shared.LockeCargoIdentity is { Closed: false }
         || shared.HumeInduction is { Closed: false }
-        || shared.KantApperception is { Closed: false };
+        || shared.KantApperception is { Closed: false }
+        || shared.RousseauConsent is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()
     {
