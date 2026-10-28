@@ -23,6 +23,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/hume_induction.png",
 	"res://images/events/wollstonecraft_admission.png",
 	"res://images/events/kant_apperception.png",
+	"res://images/events/rousseau_consent.png",
 ]
 
 const REQUIRED_FILES := [

@@ -49,6 +49,7 @@ internal sealed class PhilosophyRunState
     public HumeInductionState? HumeInduction { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public KantApperceptionState? KantApperception { get; set; }
+    public RousseauConsentState? RousseauConsent { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -111,6 +112,7 @@ internal sealed class PhilosophyRunState
         || HumeInduction is not null
         || WollstonecraftAdmission is not null
         || KantApperception is not null
+        || RousseauConsent is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -304,6 +306,7 @@ internal sealed class PhilosophyRunState
         HumeInduction?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();
+        RousseauConsent?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

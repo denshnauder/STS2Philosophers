@@ -172,6 +172,8 @@
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\RousseauConsentState.cs" Link="RousseauConsentState.cs" />
+    <Compile Include="..\..\src\Philosophy\RousseauConsentTriggerPolicy.cs" Link="RousseauConsentTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>
 </Project>
