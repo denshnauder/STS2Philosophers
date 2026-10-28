@@ -668,6 +668,22 @@ internal static class AllRouteQuestionNodeChecks
 
     private static void CheckPopperDirect()
     {
+        ModelDb.Inject(typeof(CamusRevoltLimit));
+        var camusTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var camusFixture = (NativeRuntimeFixture)camusTuple[0]!; var camusRun = (RunState)camusTuple[1]!;
+        object camusShared = BuildShared("CamusRevoltLimit", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            camusFixture.Relic.Id.Entry, camusRun);
+        Call("PhilosophyRunStateService", "Restore", camusRun, camusShared);
+        camusShared = CurrentShared(camusRun);
+        object camusJourney = Get(camusShared, "WesternJourney");
+        Put(camusJourney, "LastFixedAct", 3);
+        Put(camusJourney, "CurrentNodeId", "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE");
+        ((HashSet<string>)Get(camusJourney, "CompletedEdgeIds")).Add("WESTERN_EDGE_011");
+        EventModel camusChosen = camusRun.Act.PullNextEvent(camusRun);
+        Check(camusChosen is CamusRevoltLimit,
+            "Real native PullNextEvent selects Camus at Zeno after 011, got " + camusChosen.GetType().Name + ".");
+
         ModelDb.Inject(typeof(PopperFalsification));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
