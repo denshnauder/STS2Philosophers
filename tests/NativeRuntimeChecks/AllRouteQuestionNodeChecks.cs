@@ -46,6 +46,7 @@ internal static class AllRouteQuestionNodeChecks
         ("MillHarm", 1, typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
         ("BeauvoirOther", 2, typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
         ("FichteSelfPositing", 2, typeof(SocratesQuestionCup), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
+        ("LockeCargoIdentity", 0, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
     ];
 
     public static async Task Run()
@@ -148,7 +149,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckMarcusInterval();
             CheckPlotinusInterval();
             CheckMissingPredecessor();
-            Console.WriteLine("All route question-node checks passed: all 19 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
+            Console.WriteLine("All route question-node checks passed: all 20 former Fixed/Practice events initialize through real native PullNextEvent/public relic hooks, original priority, visited/RNG/queue invariants, native room checkpoints, no-op map callbacks, and no side effects on illegal nodes/rooms/visited events; ordinary-combat history and actual predecessor guards. No rendered UI, complete run replay or player-save access.");
         }
         finally
         {

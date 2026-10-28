@@ -6,6 +6,20 @@ namespace STS2Philosophers;
 
 internal static class LockeCargoIdentityPatch
 {
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        LockeCargoIdentityState? saved = shared.LockeCargoIdentity;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (journey is null || !LockeCargoIdentityFlow.IsRouteConsistent(saved, journey)) return null;
+        LockeCargoIdentity? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
