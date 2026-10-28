@@ -65,6 +65,36 @@ internal static class PopperFalsificationChecks
             && notConclusive.TheoryNotKilled && notConclusive.Cost == 0,
             "Popper refuses to treat one test as the theory's end.");
 
+        var corruptBoundary = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptBoundary.FalsifiableTest = true;
+        Check(!corruptBoundary.IsUsable(),
+            "Popper rejects a falsifiable test selected on the reports page.");
+
+        var corruptInstrument = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptInstrument.InstrumentRiskKnown = true;
+        Check(!corruptInstrument.IsUsable(),
+            "Popper rejects instrument risk recorded without calibration.");
+
+        var corruptCalibration = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptCalibration.CalibrationPaid = true;
+        Check(!corruptCalibration.IsUsable(),
+            "Popper rejects calibration payment recorded without the calibrated outcome.");
+
+        var corruptCounterexample = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptCounterexample.AuxiliaryUnknown = true;
+        Check(!corruptCounterexample.IsUsable(),
+            "Popper rejects auxiliary uncertainty recorded without a counterexample.");
+
+        var corruptVerdict = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptVerdict.TheoryNotKilled = true;
+        Check(!corruptVerdict.IsUsable(),
+            "Popper rejects a withheld verdict recorded without the not-conclusive outcome.");
+
+        var corruptOutcome = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
+        corruptOutcome.Outcome = PopperFalsificationOutcome.Calibrated;
+        Check(!corruptOutcome.IsUsable(),
+            "Popper rejects a calibrated outcome recorded on the reports page.");
+
         var before = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         var early = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
         Check(!PopperFalsificationFlow.IsRouteConsistent(early, before),

@@ -71,7 +71,28 @@ internal sealed class PopperFalsificationState
             || ConfirmedActions.Count > 3
             || (CostAttempted && Outcome == PopperFalsificationOutcome.None)
             || (CostPaid && !CostAttempted)
-            || (Outcome == PopperFalsificationOutcome.Calibrated && !CalibrationPaid)) return false;
+            || FalsifiableTest != (Stage is PopperFalsificationStage.Evidence
+                or PopperFalsificationStage.ResultCalibrated
+                or PopperFalsificationStage.ResultCounterexample
+                or PopperFalsificationStage.ResultNotConclusive)
+            || InstrumentRiskKnown != (Outcome == PopperFalsificationOutcome.Calibrated)
+            || CalibrationPaid != (Outcome == PopperFalsificationOutcome.Calibrated)
+            || AuxiliaryUnknown != (Outcome == PopperFalsificationOutcome.Counterexample)
+            || TheoryNotKilled != (Outcome == PopperFalsificationOutcome.NotConclusive)
+            || Outcome switch
+            {
+                PopperFalsificationOutcome.None => Stage is not (PopperFalsificationStage.Reports
+                    or PopperFalsificationStage.Evidence),
+                PopperFalsificationOutcome.Unfalsifiable =>
+                    Stage != PopperFalsificationStage.ResultUnfalsifiable,
+                PopperFalsificationOutcome.Calibrated =>
+                    Stage != PopperFalsificationStage.ResultCalibrated,
+                PopperFalsificationOutcome.Counterexample =>
+                    Stage != PopperFalsificationStage.ResultCounterexample,
+                PopperFalsificationOutcome.NotConclusive =>
+                    Stage != PopperFalsificationStage.ResultNotConclusive,
+                _ => true,
+            }) return false;
 
         PopperFalsificationStage replay = PopperFalsificationStage.Reports;
         bool closed = false;
