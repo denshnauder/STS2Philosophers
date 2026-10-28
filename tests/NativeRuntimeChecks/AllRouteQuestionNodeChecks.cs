@@ -439,6 +439,8 @@ internal static class AllRouteQuestionNodeChecks
             "Wollstonecraft's open record participates in the shared question-node guard.");
         Check(ReferenceEquals(Call("WollstonecraftAdmissionPatch", "TrySelectExistingNative", run), selected),
             "Wollstonecraft restores its already-open native identity before any competing selector.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(run), 1]);
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("WollstonecraftAdmissionPatch", "TrySelectExistingNative", run) is null,
             "Wollstonecraft's existing-state restore honors the native visited identity.");
