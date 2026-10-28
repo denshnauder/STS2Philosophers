@@ -44,6 +44,7 @@ LeibnizIndependentClocksChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
 WollstonecraftAdmissionChecks.Run();
+KantApperceptionChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

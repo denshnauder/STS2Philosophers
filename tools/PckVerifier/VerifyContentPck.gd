@@ -22,6 +22,7 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/locke_cargo_identity.png",
 	"res://images/events/hume_induction.png",
 	"res://images/events/wollstonecraft_admission.png",
+	"res://images/events/kant_apperception.png",
 ]
 
 const REQUIRED_FILES := [

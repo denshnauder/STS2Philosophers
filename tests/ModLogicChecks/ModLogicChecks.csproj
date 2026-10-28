@@ -170,6 +170,8 @@
     <Compile Include="..\..\src\Philosophy\HumeInductionTriggerPolicy.cs" Link="HumeInductionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionState.cs" Link="WollstonecraftAdmissionState.cs" />
     <Compile Include="..\..\src\Philosophy\WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
+    <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>
 </Project>
