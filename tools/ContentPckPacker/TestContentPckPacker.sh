@@ -49,6 +49,10 @@ cp "$tmp/content/images/events/philosophers_gaze.png" "$tmp/content/images/event
 expect_status 0 "$tmp/content" "$tmp/modified.pck" "$tmp/modified.log" "JSON and PNG changes"
 grep -aq "FAST_PCK_TEST" "$tmp/modified.pck" || fail "JSON key is missing from the fast PCK"
 
+cp -R "$repo_dir/content/." "$tmp/missing-import"
+rm "$tmp/missing-import/STS2Philosophers/images/heraclitus_lyre.svg.import"
+expect_status 3 "$tmp/missing-import" "$tmp/missing-import.pck" "$tmp/missing-import.log" "missing texture import asks for Godot fallback"
+
 cp -R "$repo_dir/content/." "$tmp/missing-resource"
 rm "$tmp/missing-resource/STS2Philosophers/localization/eng/relics.json"
 expect_status 3 "$tmp/missing-resource" "$tmp/missing-resource.pck" "$tmp/missing-resource.log" "missing JSON asks for Godot fallback"

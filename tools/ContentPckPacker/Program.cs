@@ -143,6 +143,11 @@ foreach (string texturePath in texturePaths)
         Console.Error.WriteLine($"missing texture source, falling back to Godot: {Full(texturePath)}");
         return 3;
     }
+    if (!File.Exists(Full(texturePath) + ".import"))
+    {
+        Console.Error.WriteLine($"missing texture import metadata, falling back to Godot: {Full(texturePath)}.import");
+        return 3;
+    }
     string importText = ImportText(texturePath);
     string oldCtex = RemapPath(importText);
     string newCtex = NewCtexPath(texturePath);
