@@ -251,6 +251,11 @@ foreach (var (alias, source) in aliases)
         Console.Error.WriteLine($"missing alias import metadata, falling back to Godot: {sourceFull}.import");
         return 3;
     }
+    if (!textureCtex.ContainsKey(sourceTexture))
+    {
+        Console.Error.WriteLine($"alias source is not in the packed texture list, falling back to Godot: {sourceTexture}");
+        return 3;
+    }
     AddAlias(alias, source);
 }
 string portraitSourceFull = Full("res://images/events/philosophers_gaze.png");
