@@ -51,6 +51,18 @@ internal static class WollstonecraftAdmissionChecks
         Check(shared.WollstonecraftAdmission!.Closed, "Wollstonecraft closes after Leave.");
 
         shared = Fixture(graph);
+        shared = Commit(shared, graph, WollstonecraftAdmissionAction.CompareRecords);
+        shared = Commit(shared, graph, WollstonecraftAdmissionAction.KeepPractice);
+        Check(shared.WollstonecraftAdmission!.FixedDeclined
+            && !shared.WollstonecraftAdmission.EdgeCommitted
+            && !shared.WesternJourney!.CompletedEdgeIds.Contains(WollstonecraftAdmissionState.CompletionEdgeId)
+            && shared.WesternJourney.CurrentNodeId == WollstonecraftAdmissionState.SourceNodeId
+            && shared.WesternJourney.LastFixedAct == 2
+            && shared.WesternJourney.DeclinedFixedActs.Contains(2),
+            "Keeping the unequal practice declines 040 instead of entering Wollstonecraft.");
+        shared = Commit(shared, graph, WollstonecraftAdmissionAction.Leave);
+
+        shared = Fixture(graph);
         shared = Commit(shared, graph, WollstonecraftAdmissionAction.KeepRousseau);
         Check(shared.WesternJourney!.DeclinedFixedActs.Contains(2)
             && !shared.WesternJourney.CompletedEdgeIds.Contains(WollstonecraftAdmissionState.CompletionEdgeId)

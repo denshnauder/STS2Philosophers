@@ -101,7 +101,7 @@ internal static class WollstonecraftAdmissionFlow
                 break;
             case WollstonecraftAdmissionAction.KeepPractice:
                 state.Loss = WollstonecraftLoss.None;
-                state.EdgeCommitted = true;
+                state.FixedDeclined = true;
                 state.Stage = WollstonecraftAdmissionStage.ResultExclusion;
                 break;
             case WollstonecraftAdmissionAction.KeepRousseau:
@@ -121,8 +121,9 @@ internal static class WollstonecraftAdmissionFlow
         if (!IsRouteConsistent(state, journey) || state.PendingAction == WollstonecraftAdmissionAction.None) return false;
         WollstonecraftAdmissionAction action = state.PendingAction;
         bool adopts = action is WollstonecraftAdmissionAction.UnifyRules
-            or WollstonecraftAdmissionAction.FundBoth or WollstonecraftAdmissionAction.KeepPractice;
-        bool declines = action == WollstonecraftAdmissionAction.KeepRousseau;
+            or WollstonecraftAdmissionAction.FundBoth;
+        bool declines = action is WollstonecraftAdmissionAction.KeepRousseau
+            or WollstonecraftAdmissionAction.KeepPractice;
         if (adopts && !journey.CompletedEdgeIds.Contains(WollstonecraftAdmissionState.CompletionEdgeId)
             && !graph.TryApply(journey, WollstonecraftAdmissionState.CompletionEdgeId)) return false;
         if (declines && !journey.DeclinedFixedActs.Contains(2)
