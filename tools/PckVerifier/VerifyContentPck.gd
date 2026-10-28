@@ -156,25 +156,35 @@ func _initialize() -> void:
 			quit(4)
 			return
 
+	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
+		if not FileAccess.file_exists(path + ".import"):
+			push_error("Missing packed import metadata: %s.import" % path)
+			quit(4)
+			return
+
 	var localization_keys := {}
 	for path in REQUIRED_FILES:
 		if not path.ends_with(".json"):
 			continue
-		var localization_json := JSON.new()
-		if localization_json.parse(FileAccess.get_file_as_string(path)) != OK:
-			continue
-		if not localization_json.data is Dictionary:
-			continue
-		for key in localization_json.data:
-			if not localization_json.data[key] is String:
+		var json := JSON.new()
+		if json.parse(FileAccess.get_file_as_string(path)) != OK:
+			push_error("Packed JSON is invalid: %s: %s" % [path, json.get_error_message()])
+			quit(6)
+			return
+		if not json.data is Dictionary:
+			push_error("Packed JSON root must be an object: %s" % path)
+			quit(6)
+			return
+		for key in json.data:
+			if not json.data[key] is String:
 				push_error("Localization value must be a string: %s: %s" % [path, key])
 				quit(6)
 				return
-			if key == "" or localization_json.data[key] == "":
+			if key == "" or json.data[key] == "":
 				push_error("Localization key and value must be non-empty: %s" % path)
 				quit(6)
 				return
-		var keys: Array = localization_json.data.keys()
+		var keys: Array = json.data.keys()
 		keys.sort()
 		if path.find("/localization/") >= 0:
 			var file_name: String = path.get_file()
@@ -198,25 +208,6 @@ func _initialize() -> void:
 				push_error("Localization key missing in eng/%s: %s" % [file_name, key])
 				quit(6)
 				return
-
-	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
-		if not FileAccess.file_exists(path + ".import"):
-			push_error("Missing packed import metadata: %s.import" % path)
-			quit(4)
-			return
-
-	for path in REQUIRED_FILES:
-		if not path.ends_with(".json"):
-			continue
-		var json := JSON.new()
-		if json.parse(FileAccess.get_file_as_string(path)) != OK:
-			push_error("Packed JSON is invalid: %s: %s" % [path, json.get_error_message()])
-			quit(6)
-			return
-		if not json.data is Dictionary:
-			push_error("Packed JSON root must be an object: %s" % path)
-			quit(6)
-			return
 
 	for path in REQUIRED_TEXTURES + ADDITIONAL_EVENT_TEXTURES:
 		var texture := ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_IGNORE)
