@@ -122,6 +122,7 @@ internal static class NativeQuestionNodeEvents
             ?? AnaximenesBreathInvitationPatch.TrySelectNative(run)
             ?? AugustinePromisePatch.TrySelectNative(run)
             ?? AristotleCivicInquiryPatch.TrySelectNative(run)
+            ?? MachiavelliRealistChallengePatch.TrySelectNative(run)
             ?? AquinasBridgeNoticePatch.TrySelectNative(run)
             ?? DemocritusArrangementPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Empedocles)
@@ -141,6 +142,7 @@ internal static class NativeQuestionNodeEvents
             ?? NewtonTwoSitesPatch.TrySelectNative(run)
             ?? SpinozaCauseNetworkPatch.TrySelectNative(run)
             ?? LeibnizIndependentClocksPatch.TrySelectNative(run)
+            ?? HobbesAuthorizedSovereigntyPatch.TrySelectNative(run)
             ?? nextEvent;
         // ActModel.PullNextEvent registers the returned model as visited. We do
         // not advance its event queue, append history, or consume another RNG roll.

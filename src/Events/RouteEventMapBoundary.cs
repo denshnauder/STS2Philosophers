@@ -30,10 +30,10 @@ internal static class RouteEventMapBoundary
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation
         or AristotleCivicInquiry or DemocritusArrangement or EmpedoclesRootsInquiry
-        or AquinasBridgeNotice or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger or CopernicusShiftedCenter or GalileoMeasuredPractice
+        or AquinasBridgeNotice or MachiavelliRealistChallenge or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger or CopernicusShiftedCenter or GalileoMeasuredPractice
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
         or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing
-        or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizIndependentClocks;
+        or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizIndependentClocks or HobbesAuthorizedSovereignty;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 

@@ -161,6 +161,9 @@
     <Compile Include="..\..\src\Philosophy\ZenoAssentBoundaryRoomEntry.cs" Link="ZenoAssentBoundaryRoomEntry.cs" />
     <Compile Include="..\..\src\Philosophy\BehaviorObservationRecorder.cs" Link="BehaviorObservationRecorder.cs" />
     <Compile Include="..\..\src\Philosophy\PhilosophersGazeActOneCandidatePolicy.cs" Link="PhilosophersGazeActOneCandidatePolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\MachiavelliRealistChallengeTriggerPolicy.cs" Link="MachiavelliRealistChallengeTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyState.cs" Link="HobbesAuthorizedSovereigntyState.cs" />
+    <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyTriggerPolicy.cs" Link="HobbesAuthorizedSovereigntyTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>
 </Project>

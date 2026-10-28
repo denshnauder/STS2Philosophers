@@ -6,6 +6,11 @@ if (portraitsMode >= 0)
     EventPortraitNativeChecks.Run(args[1]);
     return;
 }
+if (args.Contains("--hobbes-only"))
+{
+    await RouteEventMapBoundaryNativeChecks.Run();
+    return;
+}
 if (args.Contains("--galileo-only"))
 {
     await GalileoMeasuredPracticeNativeChecks.Run();

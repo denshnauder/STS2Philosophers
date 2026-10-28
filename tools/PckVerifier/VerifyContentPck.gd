@@ -17,6 +17,8 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/plotinus_common_ground.png",
 	"res://images/events/zeno_civic_challenge.png",
 	"res://images/events/leibniz_independent_clocks.png",
+	"res://images/events/machiavelli_realist_challenge.png",
+	"res://images/events/hobbes_authorized_sovereignty.png",
 ]
 
 const REQUIRED_FILES := [
