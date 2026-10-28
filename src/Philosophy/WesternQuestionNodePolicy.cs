@@ -164,7 +164,8 @@ internal static class WesternQuestionNodePolicy
         || shared.MachiavelliFloodPreparation is { Closed: false }
         || shared.WollstonecraftAdmission is { Closed: false }
         || shared.MillHarm is { Closed: false }
-        || shared.BeauvoirOther is { Closed: false };
+        || shared.BeauvoirOther is { Closed: false }
+        || shared.FichteSelfPositing is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()
     {

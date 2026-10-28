@@ -80,7 +80,8 @@ internal static class NativeQuestionNodeEvents
             ?? MachiavelliFloodPreparationPatch.TrySelectExistingNative(run)
             ?? WollstonecraftAdmissionPatch.TrySelectExistingNative(run)
             ?? MillHarmPatch.TrySelectExistingNative(run)
-            ?? BeauvoirOtherPatch.TrySelectExistingNative(run);
+            ?? BeauvoirOtherPatch.TrySelectExistingNative(run)
+            ?? FichteSelfPositingPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 
