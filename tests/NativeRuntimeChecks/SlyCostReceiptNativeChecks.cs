@@ -128,28 +128,28 @@ internal static class SlyCostReceiptNativeChecks
         await Complete(f, await Pay(f, Card(f, attack: false), 2));
     }
 
-    private static async Task ManualDiscardSkill(bool autoAttack)
+    private static async Task ManualDiscardSkill(bool autoAttack, bool sly)
     {
         var f = await NewFixture();
         var skill = f.AddCard<Prepared>(); skill.EnergyCost.SetThisTurnOrUntilPlayed(2);
         var parent = await Pay(f, skill, 2);
-        await Automatic(f, sly: true, attack: autoAttack);
+        await Automatic(f, sly: sly, attack: autoAttack);
         Check(Law(f) == "Other",
-            $"The nested Sly {(autoAttack ? "attack" : "skill")} does not establish a law while its first manual skill is still resolving.");
+            $"The nested {(sly ? "Sly" : "ordinary")} {(autoAttack ? "attack" : "skill")} does not establish a law while its first manual skill is still resolving.");
         await Complete(f, parent);
         Check(Law(f) == "Skill", "A genuinely manual discard skill legally establishes Skill despite its nested automatic attack.");
         await Complete(f, await Pay(f, Card(f, attack: true), 3));
         await Complete(f, await Pay(f, Card(f, attack: true), 2));
     }
 
-    private static async Task ManualDiscardAttack(bool autoAttack)
+    private static async Task ManualDiscardAttack(bool autoAttack, bool sly)
     {
         var f = await NewFixture();
         var attack = f.AddCard<StrikeSilent>(); attack.EnergyCost.SetThisTurnOrUntilPlayed(2);
         var parent = await Pay(f, attack, 2);
-        await Automatic(f, sly: true, attack: autoAttack);
+        await Automatic(f, sly: sly, attack: autoAttack);
         Check(Law(f) == "Other",
-            $"The nested Sly {(autoAttack ? "attack" : "skill")} does not establish a law while its first manual attack is still resolving.");
+            $"The nested {(sly ? "Sly" : "ordinary")} {(autoAttack ? "attack" : "skill")} does not establish a law while its first manual attack is still resolving.");
         await Complete(f, parent);
         Check(Law(f) == "Attack", "A genuinely manual discard attack legally establishes Attack despite its nested automatic child.");
         await Complete(f, await Pay(f, Card(f, attack: true), 1));
@@ -224,10 +224,14 @@ internal static class SlyCostReceiptNativeChecks
             TestMode.IsOn = true;
             await Scenario("opening Sly attack has no manual law", () => AutomaticBeforeLaw(attack: true));
             await Scenario("opening Sly skill has no manual law", () => AutomaticBeforeLaw(attack: false));
-            await Scenario("manual discard skill with nested Sly attack keeps its legal law", () => ManualDiscardSkill(autoAttack: true));
-            await Scenario("manual discard skill with nested Sly skill keeps its legal law", () => ManualDiscardSkill(autoAttack: false));
-            await Scenario("manual discard attack with nested Sly attack keeps its legal law", () => ManualDiscardAttack(autoAttack: true));
-            await Scenario("manual discard attack with nested Sly skill keeps its legal law", () => ManualDiscardAttack(autoAttack: false));
+            foreach (bool sly in new[] { true, false })
+                foreach (bool autoAttack in new[] { true, false })
+                    await Scenario($"manual discard skill with nested {(sly ? "Sly" : "ordinary")} {(autoAttack ? "attack" : "skill")} keeps its legal law",
+                        () => ManualDiscardSkill(autoAttack, sly));
+            foreach (bool sly in new[] { true, false })
+                foreach (bool autoAttack in new[] { true, false })
+                    await Scenario($"manual discard attack with nested {(sly ? "Sly" : "ordinary")} {(autoAttack ? "attack" : "skill")} keeps its legal law",
+                        () => ManualDiscardAttack(autoAttack, sly));
             await Scenario("first manual attack with nested Sly attack", () => FirstManualAttackWithNestedAuto(autoAttack: true));
             await Scenario("first manual attack with nested Sly skill", () => FirstManualAttackWithNestedAuto(autoAttack: false));
             foreach (bool sly in new[] { true, false })
