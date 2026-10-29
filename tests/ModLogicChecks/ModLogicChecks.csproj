@@ -181,6 +181,7 @@
     <Compile Include="..\..\src\Philosophy\CrossActCombatHistory.cs" Link="CrossActCombatHistory.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectState.cs" Link="HegelSubstanceSubjectState.cs" />
+    <Compile Include="..\..\src\Philosophy\HegelCombatPracticeState.cs" Link="HegelCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectTriggerPolicy.cs" Link="HegelSubstanceSubjectTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\FichteSelfPositingState.cs" Link="FichteSelfPositingState.cs" />
     <Compile Include="..\..\src\Philosophy\FichteSelfPositingTriggerPolicy.cs" Link="FichteSelfPositingTriggerPolicy.cs" />

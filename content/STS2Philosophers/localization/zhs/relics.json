@@ -131,5 +131,7 @@
   "DESCARTES_THINKING_LENS.leibniz.independent.title": "沉思镜：独立时钟",
   "DESCARTES_THINKING_LENS.leibniz.independent.description": "替换斯宾诺莎额外实践且不叠加，保留原有的锁定敌人意图与费用折扣。每场战斗手动攻击与手动技能分别计至 2：第二张手动攻击结算后得 4 点格挡一次，第二张手动技能结算后抽 1 张一次；各自独立、顺序不限、各自仅一次，自动牌不计。无金币或生命成本，无即时补给，无新遗物。",
   "DESCARTES_THINKING_LENS.leibniz.coordinated.title": "沉思镜：协调时钟",
-  "DESCARTES_THINKING_LENS.leibniz.coordinated.description": "替换斯宾诺莎额外实践且不叠加，保留原有的锁定敌人意图与费用折扣。仅当本场第一回合至少手动打出 1 张攻击且至少 1 张技能，第二回合开始时得 1 点能量一次；首回合未达成则本战不补发，自动牌不计。无金币或生命成本，无即时补给，无新遗物。"
+  "DESCARTES_THINKING_LENS.leibniz.coordinated.description": "替换斯宾诺莎额外实践且不叠加，保留原有的锁定敌人意图与费用折扣。仅当本场第一回合至少手动打出 1 张攻击且至少 1 张技能，第二回合开始时得 1 点能量一次；首回合未达成则本战不补发，自动牌不计。无金币或生命成本，无即时补给，无新遗物。",
+  "DESCARTES_THINKING_LENS.hegel.title": "沉思镜：实体即主体",
+  "DESCARTES_THINKING_LENS.hegel.description": "斯宾诺莎的额外实践不再叠加，保留沉思镜原有的锁定敌人意图与费用折扣。每场战斗中，连续四张手动牌依次为攻击、技能、攻击、技能时，抽 1 张并获得 4 点格挡，每场仅一次；序列中断则重新计数，自动牌不计。无金币或生命成本，无即时补给，无新遗物。"
 }

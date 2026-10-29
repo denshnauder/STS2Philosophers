@@ -26,11 +26,17 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
     private LeibnizCombatPracticeState? _leibnizPractice;
     private string? _invalidLeibnizPayload;
     private HashSet<CardPlay>? _leibnizCallbacks;
+    private HegelCombatPracticeState? _hegelPractice;
+    private string? _invalidHegelPayload;
+    private HashSet<CardPlay>? _hegelCallbacks;
 
     private SpinozaCombatPracticeState SpinozaPractice => _spinozaPractice ??= new();
 
     private LeibnizCombatPracticeState LeibnizPractice =>
         _leibnizPractice ??= LeibnizCombatPracticeState.CreateDefault();
+
+    private HegelCombatPracticeState HegelPractice =>
+        _hegelPractice ??= HegelCombatPracticeState.CreateDefault();
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string LeibnizPracticePayload
@@ -46,6 +52,24 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
                 _invalidLeibnizPayload = null;
             }
             else _invalidLeibnizPayload = value;
+        }
+    }
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public string HegelPracticePayload
+    {
+        get => _invalidHegelPayload
+            ?? _hegelPractice?.Encode() ?? HegelCombatPracticeState.CreateDefault().Encode();
+        private set
+        {
+            AssertMutable();
+            if (HegelCombatPracticeState.TryRestore(value, out HegelCombatPracticeState restored))
+            {
+                _hegelPractice = restored;
+                _invalidHegelPayload = null;
+                _hegelCallbacks = null;
+            }
+            else _invalidHegelPayload = value;
         }
     }
 
@@ -88,6 +112,12 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
                     new LocString("relics", $"DESCARTES_THINKING_LENS.leibniz.{branch}.title"),
                     new LocString("relics", $"DESCARTES_THINKING_LENS.leibniz.{branch}.description"))]);
             }
+            if (_invalidHegelPayload is null && TryGetHegelDisposition())
+            {
+                tips = tips.Concat([new HoverTip(
+                    new LocString("relics", "DESCARTES_THINKING_LENS.hegel.title"),
+                    new LocString("relics", "DESCARTES_THINKING_LENS.hegel.description"))]);
+            }
             return tips;
         }
     }
@@ -106,6 +136,12 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
             && TrySpinozaCombatKey(out string leibnizKey)
             && LeibnizPractice.BeginCombat(leibnizKey))
             _leibnizCallbacks = null;
+
+        if (_invalidHegelPayload is null
+            && TryGetHegelDisposition()
+            && TrySpinozaCombatKey(out string hegelKey)
+            && HegelPractice.BeginCombat(hegelKey))
+            _hegelCallbacks = null;
     }
 
     public override async Task BeforeSideTurnStart(
@@ -190,6 +226,38 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
                     await CardPileCmd.Draw(choiceContext, 1m, Owner);
                     break;
             }
+            return;
+        }
+
+        if (_invalidHegelPayload is null
+            && TryGetHegelDisposition()
+            && TrySpinozaCombatKey(out string hegelKey))
+        {
+            HegelCombatPracticeState practice = HegelPractice;
+            if (practice.BeginCombat(hegelKey)) _hegelCallbacks = null;
+            if (!(_hegelCallbacks ??= new HashSet<CardPlay>(ReferenceEqualityComparer.Instance))
+                .Add(cardPlay))
+            {
+                await base.AfterCardPlayed(choiceContext, cardPlay);
+                return;
+            }
+            await base.AfterCardPlayed(choiceContext, cardPlay);
+            if (_invalidHegelPayload is not null || !ReferenceEquals(_hegelPractice, practice)
+                || !TryGetHegelDisposition()
+                || !TrySpinozaCombatKey(out string currentHegelKey) || currentHegelKey != hegelKey)
+                return;
+
+            HegelPracticeCardKind kind = cardPlay.Card.Type switch
+            {
+                CardType.Attack => HegelPracticeCardKind.Attack,
+                CardType.Skill => HegelPracticeCardKind.Skill,
+                _ => HegelPracticeCardKind.Other,
+            };
+            if (practice.ObserveManual(hegelKey, kind) != HegelPracticeReward.DrawAndBlock) return;
+            Flash();
+            await CardPileCmd.Draw(choiceContext, 1m, Owner!);
+            await CreatureCmd.GainBlock(Owner!.Creature, 4, ValueProp.Unpowered,
+                cardPlay: null, fast: true);
             return;
         }
 
@@ -293,6 +361,29 @@ public sealed class DescartesThinkingLens : WesternPracticeRelic
             || !LeibnizHarmonyFlow.IsRouteConsistent(state, journey, spinoza))
             return false;
         disposition = state.Disposition;
+        return true;
+    }
+
+    private bool TryGetHegelDisposition()
+    {
+        if (!IsMutable || Owner is null
+            || !Owner.Relics.Any(relic => ReferenceEquals(relic, this))) return false;
+        RunManager manager = RunManager.Instance;
+        RunState? run = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
+        if (run is null || run.CurrentActIndex != 2 || run.Players.Count != 1
+            || manager.NetService?.Type != NetGameType.Singleplayer
+            || !ReferenceEquals(run.Players[0], Owner) || !IsSoleDoctrine
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared.WesternJourney is not { } journey
+            || journey.CurrentNodeId != HegelSubstanceSubjectState.AdoptedNodeId
+            || !journey.CompletedEdgeIds.Contains(HegelSubstanceSubjectState.RequiredEdgeId)
+            || !journey.CompletedEdgeIds.Contains(HegelSubstanceSubjectState.CompletionEdgeId)
+            || journey.LastFixedAct != 3
+            || journey.RetainedEnding
+            || shared.HegelSubstanceSubject is not { } state
+            || !state.Closed || !state.EdgeCommitted || !state.IsUsable()
+            || state.InstanceId != $"HEGEL_SUBSTANCE_SUBJECT:{run.Rng.Seed}:3"
+            || !HegelSubstanceSubjectFlow.IsRouteConsistent(state, journey)) return false;
         return true;
     }
 

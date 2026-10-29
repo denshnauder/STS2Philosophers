@@ -112,6 +112,7 @@ PhilosophyRunStateMarkerCarrierChecks.Run();
 PhilosophyRunStateRitsuChecks.Run();
 WesternEntryChecks.Run();
 WesternBeingChecks.Run();
+HegelPracticeChecks.Run();
 WesternKnowledgeChecks.Run();
 WesternNodePracticeChecks.Run();
 
