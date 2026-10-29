@@ -20,17 +20,19 @@ packer_status=$?
 set -e
 
 if [ "$packer_status" -eq 0 ]; then
-  echo "Content PCK built by fast packer, verifying: $temporary"
+  # The fast path validates JSON, source presence and texture imports itself;
+  # ENC-69 keeps Godot out of JSON/PNG-only builds. Full PCK verification runs
+  # in tools/VerifyMod.ps1 and tools/PckVerifier/TestPckVerifier.sh.
+  echo "Content PCK built by fast packer: $temporary"
 elif [ "$packer_status" -eq 3 ]; then
   echo "Fast packer requested Godot fallback."
   "$godot_bin" --headless --editor --path "$content_dir" --import --quit
   "$godot_bin" --headless --path "$content_dir" --script "$content_dir/BuildContentPck.gd" -- "$temporary"
+  "$godot_bin" --headless --path "$repo_dir/tools/PckVerifier" --script "$repo_dir/tools/PckVerifier/VerifyContentPck.gd" -- "$temporary"
 else
   echo "ContentPckPacker failed with exit code $packer_status." >&2
   exit "$packer_status"
 fi
-
-"$godot_bin" --headless --path "$content_dir" --script "$repo_dir/tools/PckVerifier/VerifyContentPck.gd" -- "$temporary"
 mv -f "$temporary" "$output"
 trap - EXIT
 echo "Content PCK installed at: $output"

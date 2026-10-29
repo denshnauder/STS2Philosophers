@@ -54,23 +54,24 @@ try
         {
             throw "Godot content pack export failed with exit code $LASTEXITCODE."
         }
+
+        & $GodotExecutable `
+            --headless `
+            --path (Join-Path $PSScriptRoot 'PckVerifier') `
+            --script (Join-Path $PSScriptRoot 'PckVerifier/VerifyContentPck.gd') `
+            -- `
+            $temporary
+
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "PCK verification failed with exit code $LASTEXITCODE."
+        }
     }
     else
     {
         throw "ContentPckPacker failed with exit code $packerExit."
     }
 
-    & $GodotExecutable `
-        --headless `
-        --path (Join-Path $PSScriptRoot 'PckVerifier') `
-        --script (Join-Path $PSScriptRoot 'PckVerifier/VerifyContentPck.gd') `
-        -- `
-        $temporary
-
-    if ($LASTEXITCODE -ne 0)
-    {
-        throw "PCK verification failed with exit code $LASTEXITCODE."
-    }
 
     Move-Item -LiteralPath $temporary -Destination $OutputPath -Force
     Write-Host "Content PCK installed at: $OutputPath"

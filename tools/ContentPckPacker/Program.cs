@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using StS2PckPacker;
 
@@ -131,7 +132,21 @@ foreach (string resourcePath in resourcePaths)
         Console.Error.WriteLine($"missing resource, falling back to Godot: {resourceFull}");
         return 3;
     }
-    Add(resourcePath, File.ReadAllBytes(resourceFull));
+    byte[] resourceBytes = File.ReadAllBytes(resourceFull);
+    if (resourcePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+        && Environment.GetEnvironmentVariable("CONTENT_PCK_ALLOW_INVALID_JSON") != "1")
+    {
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(resourceBytes);
+        }
+        catch (JsonException exception)
+        {
+            Console.Error.WriteLine($"invalid JSON in {resourcePath}: {exception.Message}");
+            return 6;
+        }
+    }
+    Add(resourcePath, resourceBytes);
 }
 
 var textureCtex = new Dictionary<string, string>(StringComparer.Ordinal);

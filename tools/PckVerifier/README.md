@@ -5,11 +5,17 @@
 ## 用法
 
 ```sh
-Godot --headless --path content \
-  --script tools/PckVerifier/VerifyContentPck.gd -- /path/to/STS2Philosophers.pck
+Godot --headless --path tools/PckVerifier \
+  --script "$PWD/tools/PckVerifier/VerifyContentPck.gd" -- /path/to/STS2Philosophers.pck
 ```
 
-`BuildContentPck.sh` 和 `BuildContentPck.ps1` 会在替换目标 PCK 前自动调用它。
+`--path` 必须指向 `tools/PckVerifier` 而不是 `content`：以 `content` 为资源根时，
+缺失的包内文件会退回到源目录读取，校验会误判为通过。
+
+快速打包路径（JSON/PNG）不启动 Godot，因此 `BuildContentPck.sh` 和
+`BuildContentPck.ps1` 只在 Godot fallback 路径中调用本校验器；
+`tools/VerifyMod.ps1`、`TestPckVerifier.sh` 和 `VerifyEventPortraits.sh`
+仍会在验收时单独运行它。
 
 ## 头像验收
 

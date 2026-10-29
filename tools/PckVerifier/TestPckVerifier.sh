@@ -15,12 +15,17 @@ trap 'rm -rf "$tmp"' EXIT
 
 fail() { echo "FAIL: $*" >&2; exit 1; }
 pack() {
-  "$dotnet_bin" run --project "$packer_project" -c Release -- "$1" "$2" >"$tmp/pack.log" 2>&1 \
+  # The verifier must be able to inspect a broken pack, so these fixtures opt
+  # out of the packer's own JSON validation.
+  CONTENT_PCK_ALLOW_INVALID_JSON=1 \
+    "$dotnet_bin" run --project "$packer_project" -c Release -- "$1" "$2" >"$tmp/pack.log" 2>&1 \
     || { cat "$tmp/pack.log" >&2; fail "packer failed for $1"; }
 }
 verify() {
-  local content="$1" pck="$2" log="$3"
-  "$godot_bin" --headless --path "$content" --script "$verifier" -- "$pck" >"$log" 2>&1
+  local pck="$2" log="$3"
+  # An isolated project root keeps missing pack entries from falling back to
+  # the source content directory.
+  "$godot_bin" --headless --path "$repo_dir/tools/PckVerifier" --script "$verifier" -- "$pck" >"$log" 2>&1
 }
 expect_verify() {
   local expected="$1" content="$2" pck="$3" log="$4" label="$5"
