@@ -48,6 +48,7 @@ HegelSubstanceSubjectChecks.Run();
 FichteSelfPositingChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
+BerkeleyPerceivedMarkChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
