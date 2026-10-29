@@ -32,8 +32,11 @@ dotnet run --project tools/ContentPckPacker -c Release -- <contentRoot> <output.
 
 Exit codes:
 
-- `0`: fast PCK written. JSON is parsed before packing, so an invalid
-  localization file fails here instead of producing a broken PCK.
+- `0`: fast PCK written. Before writing, every JSON file is parsed and the
+  structural checks the Godot verifier applies are repeated here: the root
+  must be an object, every value must be a non-empty string, every key must be
+  non-empty, and `eng`/`zhs` localization files of the same name must carry
+  the same keys. A violation fails the build instead of producing a broken PCK.
 - `3`: needs the Godot fallback (missing source/JSON, missing/stale SVG import
   cache, a PNG conversion that the fast path cannot handle, or an unsupported
   resource type).

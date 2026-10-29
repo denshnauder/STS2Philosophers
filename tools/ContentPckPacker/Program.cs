@@ -124,6 +124,55 @@ string RewriteImport(string importText, string newCtex, string? sourceFile = nul
     return text;
 }
 
+// The same structural checks the Godot verifier applies, run here so the fast
+// path can fail before writing a PCK without starting an editor.
+var localizationKeys = new Dictionary<string, Dictionary<string, List<string>>>(StringComparer.Ordinal);
+bool validateJson = Environment.GetEnvironmentVariable("CONTENT_PCK_ALLOW_INVALID_JSON") != "1";
+int RejectJson(string message)
+{
+    Console.Error.WriteLine(message);
+    return 6;
+}
+int ValidateJson(string resourcePath, byte[] resourceBytes)
+{
+    JsonDocument document;
+    try
+    {
+        document = JsonDocument.Parse(resourceBytes);
+    }
+    catch (JsonException exception)
+    {
+        return RejectJson($"Packed JSON is invalid: {resourcePath}: {exception.Message}");
+    }
+    using (document)
+    {
+        if (document.RootElement.ValueKind != JsonValueKind.Object)
+            return RejectJson($"Packed JSON root must be an object: {resourcePath}");
+        var keys = new List<string>();
+        foreach (JsonProperty property in document.RootElement.EnumerateObject())
+        {
+            if (property.Value.ValueKind != JsonValueKind.String)
+                return RejectJson($"Localization value must be a string: {resourcePath}: {property.Name}");
+            if (property.Name.Length == 0 || property.Value.GetString()!.Length == 0)
+                return RejectJson($"Localization key and value must be non-empty: {resourcePath}");
+            keys.Add(property.Name);
+        }
+        keys.Sort(StringComparer.Ordinal);
+        if (resourcePath.Contains("/localization/", StringComparison.Ordinal))
+        {
+            string[] parts = resourcePath.Split('/');
+            if (parts.Length >= 2)
+            {
+                string fileName = parts[^1], language = parts[^2];
+                if (!localizationKeys.TryGetValue(fileName, out var languages))
+                    localizationKeys[fileName] = languages = new(StringComparer.Ordinal);
+                languages[language] = keys;
+            }
+        }
+    }
+    return 0;
+}
+
 foreach (string resourcePath in resourcePaths)
 {
     string resourceFull = Full(resourcePath);
@@ -133,20 +182,23 @@ foreach (string resourcePath in resourcePaths)
         return 3;
     }
     byte[] resourceBytes = File.ReadAllBytes(resourceFull);
-    if (resourcePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-        && Environment.GetEnvironmentVariable("CONTENT_PCK_ALLOW_INVALID_JSON") != "1")
+    if (validateJson && resourcePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
     {
-        try
-        {
-            using JsonDocument document = JsonDocument.Parse(resourceBytes);
-        }
-        catch (JsonException exception)
-        {
-            Console.Error.WriteLine($"invalid JSON in {resourcePath}: {exception.Message}");
-            return 6;
-        }
+        int status = ValidateJson(resourcePath, resourceBytes);
+        if (status != 0) return status;
     }
     Add(resourcePath, resourceBytes);
+}
+
+foreach ((string fileName, var languages) in localizationKeys)
+{
+    if (!languages.TryGetValue("eng", out var eng) || !languages.TryGetValue("zhs", out var zhs)) continue;
+    foreach (string key in eng)
+        if (!zhs.Contains(key, StringComparer.Ordinal))
+            return RejectJson($"Localization key missing in zhs/{fileName}: {key}");
+    foreach (string key in zhs)
+        if (!eng.Contains(key, StringComparer.Ordinal))
+            return RejectJson($"Localization key missing in eng/{fileName}: {key}");
 }
 
 var textureCtex = new Dictionary<string, string>(StringComparer.Ordinal);

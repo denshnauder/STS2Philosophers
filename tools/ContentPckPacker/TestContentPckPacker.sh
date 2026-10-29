@@ -37,13 +37,61 @@ expect_status 0 "$repo_dir/content" "$tmp/baseline.pck" "$tmp/baseline.log" "bas
 magic="$(od -An -tx1 -N4 "$tmp/baseline.pck" | tr -d ' \n')"
 [ "$magic" = "47445043" ] || fail "baseline PCK magic is $magic, expected GDPC"
 
-cp -R "$repo_dir/content/." "$tmp/content"
-python3 - "$tmp/content/STS2Philosophers/localization/eng/events.json" <<'PY'
+# The fast path must reproduce the verifier's structural localization checks
+# without Godot, and a rejected build must never replace the previous output.
+printf 'OLD-OUTPUT' > "$tmp/guarded.pck"
+cp -R "$repo_dir/content/." "$tmp/root-array"
+printf '[]' > "$tmp/root-array/STS2Philosophers/localization/eng/relics.json"
+expect_status 6 "$tmp/root-array" "$tmp/guarded.pck" "$tmp/root-array.log" "JSON root must be an object"
+grep -q "Packed JSON root must be an object" "$tmp/root-array.log" || fail "root-array build did not name the root check"
+[ "$(cat "$tmp/guarded.pck")" = "OLD-OUTPUT" ] || fail "a rejected root-array build replaced the old PCK"
+if find "$tmp" -maxdepth 1 -name 'guarded.pck.tmp*' -print -quit | grep -q .; then
+  fail "a rejected root-array build left a temporary PCK"
+fi
+
+cp -R "$repo_dir/content/." "$tmp/non-string"
+python3 - "$tmp/non-string/STS2Philosophers/localization/eng/relics.json" <<'PY'
 import json, sys
 path = sys.argv[1]
 data = json.load(open(path, encoding="utf-8"))
-data["FAST_PCK_TEST"] = "fast path without Godot"
+data["FAST_PCK_NON_STRING"] = 3
 json.dump(data, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PY
+expect_status 6 "$tmp/non-string" "$tmp/non-string.pck" "$tmp/non-string.log" "localization value must be a string"
+grep -q "Localization value must be a string" "$tmp/non-string.log" || fail "non-string build did not name the value check"
+
+cp -R "$repo_dir/content/." "$tmp/empty-value"
+python3 - "$tmp/empty-value/STS2Philosophers/localization/eng/relics.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+data = json.load(open(path, encoding="utf-8"))
+data["FAST_PCK_EMPTY"] = ""
+json.dump(data, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PY
+expect_status 6 "$tmp/empty-value" "$tmp/empty-value.pck" "$tmp/empty-value.log" "localization value must be non-empty"
+grep -q "Localization key and value must be non-empty" "$tmp/empty-value.log" || fail "empty-value build did not name the non-empty check"
+
+cp -R "$repo_dir/content/." "$tmp/key-parity"
+python3 - "$tmp/key-parity/STS2Philosophers/localization/eng/relics.json" "$tmp/key-parity/STS2Philosophers/localization/zhs/relics.json" <<'PY'
+import json, sys
+eng_path, zhs_path = sys.argv[1], sys.argv[2]
+eng = json.load(open(eng_path, encoding="utf-8"))
+zhs = json.load(open(zhs_path, encoding="utf-8"))
+key = sorted(set(eng) - set(zhs))[0] if set(eng) - set(zhs) else sorted(eng)[0]
+zhs.pop(key, None)
+json.dump(zhs, open(zhs_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PY
+expect_status 6 "$tmp/key-parity" "$tmp/key-parity.pck" "$tmp/key-parity.log" "eng and zhs keys must match"
+grep -q "Localization key missing in zhs/relics.json" "$tmp/key-parity.log" || fail "key-parity build did not name the missing key"
+
+cp -R "$repo_dir/content/." "$tmp/content"
+python3 - "$tmp/content/STS2Philosophers/localization/eng/events.json" \
+  "$tmp/content/STS2Philosophers/localization/zhs/events.json" <<'PY'
+import json, sys
+for path in sys.argv[1:]:
+    data = json.load(open(path, encoding="utf-8"))
+    data["FAST_PCK_TEST"] = "fast path without Godot"
+    json.dump(data, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 PY
 cp "$tmp/content/images/events/philosophers_gaze.png" "$tmp/content/images/events/zeno_assent_boundary.png"
 expect_status 0 "$tmp/content" "$tmp/modified.pck" "$tmp/modified.log" "JSON and PNG changes"
