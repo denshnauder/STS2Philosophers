@@ -60,6 +60,7 @@ if (args.Contains("--enc199-only"))
     await EasternQuestionEntryNativeChecks.Run();
     await StoicQuestionEntryNativeChecks.Run();
     await LegacyStoicQuestionExitNativeChecks.Run();
+    await EventGoldCostRecoveryNativeChecks.Run();
     return;
 }
 if (args.Contains("--copernicus-only"))
@@ -106,3 +107,4 @@ await EasternQuestionEntryNativeChecks.Run();
 
 await StoicQuestionEntryNativeChecks.Run();
 await LegacyStoicQuestionExitNativeChecks.Run();
+await EventGoldCostRecoveryNativeChecks.Run();

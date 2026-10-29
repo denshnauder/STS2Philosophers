@@ -142,14 +142,33 @@ internal static class RouteEventMapBoundary
         EventRoom? room = expectedRoom ?? run.CurrentRoom as EventRoom;
         if (room is null || !IsRegisteredEvent(room.CanonicalEvent)) return false;
         string expected = PhilosophyRunStateCodec.Encode(shared);
-        await SaveManager.Instance.SaveRun(room);
+        try
+        {
+            await SaveManager.Instance.SaveRun(room);
+        }
+        catch (Exception exception)
+        {
+            // A failed save must report "unknown" to the caller so it can Block
+            // instead of unwinding through the event's async chain.
+            Log.Error($"[STS2Philosophers] Route event save failed: {exception}");
+            return false;
+        }
         if (!IsCurrentRun(manager, run)
             || PhilosophyRunStateCodec.Encode(shared) != expected) return false;
 
         SaveManager saveManager = SaveManager.Instance;
         RunSaveManager runSaveManager = NativeAccess.GetRunSaveManager(saveManager);
-        string? json = NativeAccess.GetSaveStore(saveManager).ReadFile(
-            NativeAccess.GetCurrentRunSavePath(runSaveManager));
+        string? json;
+        try
+        {
+            json = NativeAccess.GetSaveStore(saveManager).ReadFile(
+                NativeAccess.GetCurrentRunSavePath(runSaveManager));
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] Route event save readback failed: {exception}");
+            return false;
+        }
         if (json is null) return false;
         PhilosophyRunStateRitsuSaveReadResult read = PhilosophyRunStateRitsuSaveReader.Read(json);
         if (read.Classification != PhilosophyRunStateRitsuSaveClassification.Current

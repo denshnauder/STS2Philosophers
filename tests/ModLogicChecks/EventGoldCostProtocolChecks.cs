@@ -47,7 +47,7 @@ internal static class EventGoldCostProtocolChecks
         AlreadyChargedRestoreDoesNotChargeAgain();
         ClampedChargeRestoreDoesNotChargeAgain();
         UnchargedRestoreChargesOnce();
-        LegacyAttemptWithoutSnapshotChargesOnce();
+        LegacyAttemptWithoutSnapshotSettlesWithoutCharging();
         AttemptPersistFailureDoesNotCharge();
         PaidPersistFailureReportsUnknownAfterOneCharge();
         MissingOwnerDoesNotPersist();
@@ -120,15 +120,16 @@ internal static class EventGoldCostProtocolChecks
         Check(harness.Gold == 4m, "The retried charge is applied exactly once.");
     }
 
-    private static void LegacyAttemptWithoutSnapshotChargesOnce()
+    private static void LegacyAttemptWithoutSnapshotSettlesWithoutCharging()
     {
         var state = new FakeState { Cost = 6m, CostAttempted = true };
         var harness = new Harness();
         Check(harness.Apply(state) == EventGoldCostOutcome.Settled,
-            "A legacy attempt without a snapshot recovers instead of freezing.");
-        Check(harness.Charges == 1 && harness.Persists == 2,
-            "Legacy recovery writes a fresh snapshot, charges once, then persists.");
-        Check(state.CostGoldBefore == 10m && state.CostPaid, "Legacy recovery ends paid.");
+            "A legacy attempt without a snapshot settles instead of freezing.");
+        Check(harness.Charges == 0 && harness.Persists == 1,
+            "An ambiguous legacy record never charges a second time.");
+        Check(harness.Gold == 10m && state.CostPaid && state.CostGoldAfter == 10m,
+            "Legacy recovery leaves gold untouched and records the settled state.");
     }
 
     private static void AttemptPersistFailureDoesNotCharge()
