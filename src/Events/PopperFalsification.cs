@@ -134,34 +134,23 @@ public sealed class PopperFalsification : EventModel
     private async Task<bool> ApplyCostAsync(RunState run, PhilosophyRunState shared,
         PopperFalsificationState state)
     {
-        if (state.Outcome == PopperFalsificationOutcome.None || state.CostPaid) return true;
-        if (state.CostAttempted)
+        if (state.Outcome == PopperFalsificationOutcome.None) return true;
+        EventGoldCostOutcome outcome = await EventGoldCostProtocol.ApplyAsync(
+            state,
+            () => Owner is null ? null : (decimal?)Owner.Gold,
+            async () => await PlayerCmd.LoseGold(state.Cost, Owner!, GoldLossType.Spent),
+            () => RouteEventMapBoundary.PersistEventAsync(run, shared));
+        switch (outcome)
         {
-            Block("PopperFalsification cost was attempted but its outcome is unknown.");
-            return false;
-        }
-        state.CostAttempted = true;
-        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
-        {
-            Block("PopperFalsification cost attempt persistence is unknown.");
-            return false;
-        }
-        if (state.Cost > 0)
-        {
-            if (Owner is null)
-            {
+            case EventGoldCostOutcome.OwnerUnavailable:
                 Block("PopperFalsification has no owner to charge.");
                 return false;
-            }
-            await PlayerCmd.LoseGold(state.Cost, Owner, GoldLossType.Spent);
+            case EventGoldCostOutcome.PersistenceUnknown:
+                Block("PopperFalsification cost persistence is unknown.");
+                return false;
+            default:
+                return true;
         }
-        state.CostPaid = true;
-        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
-        {
-            Block("PopperFalsification paid cost persistence is unknown.");
-            return false;
-        }
-        return true;
     }
 
     private static bool CommitPending(PhilosophyRunState shared, PopperFalsificationState state) =>

@@ -17,7 +17,7 @@ internal enum SchopenhauerWillDenialOutcome
     None, RefusedProfit, PaidCompensation, SharedLabor,
 }
 
-internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized
+internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized, IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const int QuestionAct = 3;
@@ -35,6 +35,8 @@ internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized
     public bool QuestionReserved { get; set; }
     public bool CostAttempted { get; set; }
     public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
     public static SchopenhauerWillDenialState Create(string instanceId, string kantInstanceId) => new()

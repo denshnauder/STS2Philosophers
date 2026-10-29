@@ -56,6 +56,7 @@ CamusRevoltLimitChecks.Run();
 CarnapFrameworkChoiceChecks.Run();
 AustinSpeechActChecks.Run();
 PopperFalsificationChecks.Run();
+EventGoldCostProtocolChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();

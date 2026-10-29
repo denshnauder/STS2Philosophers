@@ -134,31 +134,23 @@ public sealed class SchopenhauerWillDenial : EventModel
     private async Task<bool> ApplyCostAsync(RunState run, PhilosophyRunState shared,
         SchopenhauerWillDenialState state)
     {
-        if (state.Outcome == SchopenhauerWillDenialOutcome.None || state.CostPaid) return true;
-        if (state.CostAttempted)
+        if (state.Outcome == SchopenhauerWillDenialOutcome.None) return true;
+        EventGoldCostOutcome outcome = await EventGoldCostProtocol.ApplyAsync(
+            state,
+            () => Owner is null ? null : (decimal?)Owner.Gold,
+            async () => await PlayerCmd.LoseGold(state.Cost, Owner!, GoldLossType.Spent),
+            () => RouteEventMapBoundary.PersistEventAsync(run, shared));
+        switch (outcome)
         {
-            Block("SchopenhauerWillDenial cost was attempted but its outcome is unknown.");
-            return false;
+            case EventGoldCostOutcome.OwnerUnavailable:
+                Block("SchopenhauerWillDenial has no owner to charge.");
+                return false;
+            case EventGoldCostOutcome.PersistenceUnknown:
+                Block("SchopenhauerWillDenial cost persistence is unknown.");
+                return false;
+            default:
+                return true;
         }
-        state.CostAttempted = true;
-        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
-        {
-            Block("SchopenhauerWillDenial cost attempt persistence is unknown.");
-            return false;
-        }
-        if (Owner is null)
-        {
-            Block("SchopenhauerWillDenial has no owner to charge.");
-            return false;
-        }
-        await PlayerCmd.LoseGold(state.Cost, Owner, GoldLossType.Spent);
-        state.CostPaid = true;
-        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
-        {
-            Block("SchopenhauerWillDenial paid cost persistence is unknown.");
-            return false;
-        }
-        return true;
     }
 
     private static bool CommitPending(PhilosophyRunState shared, SchopenhauerWillDenialState state) =>

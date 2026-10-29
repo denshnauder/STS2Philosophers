@@ -177,6 +177,7 @@
     <Compile Include="..\..\src\Philosophy\CarnapFrameworkChoiceState.cs" Link="CarnapFrameworkChoiceState.cs" />
     <Compile Include="..\..\src\Philosophy\AustinSpeechActState.cs" Link="AustinSpeechActState.cs" />
     <Compile Include="..\..\src\Philosophy\PopperFalsificationState.cs" Link="PopperFalsificationState.cs" />
+    <Compile Include="..\..\src\Philosophy\EventGoldCostProtocol.cs" Link="EventGoldCostProtocol.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectState.cs" Link="HegelSubstanceSubjectState.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectTriggerPolicy.cs" Link="HegelSubstanceSubjectTriggerPolicy.cs" />

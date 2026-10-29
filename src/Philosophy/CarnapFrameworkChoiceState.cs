@@ -35,7 +35,7 @@ internal enum CarnapFrameworkChoiceOutcome
     Convenient,
 }
 
-internal sealed class CarnapFrameworkChoiceState
+internal sealed class CarnapFrameworkChoiceState : IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE";
@@ -52,6 +52,8 @@ internal sealed class CarnapFrameworkChoiceState
     public CarnapFrameworkChoiceOutcome Outcome { get; set; }
     public bool CostAttempted { get; set; }
     public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
     public static CarnapFrameworkChoiceState Create(string instanceId) => new()

@@ -28,7 +28,7 @@ internal enum CamusRevoltLimitOutcome
     Escalated,
 }
 
-internal sealed class CamusRevoltLimitState
+internal sealed class CamusRevoltLimitState : IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE";
@@ -46,6 +46,8 @@ internal sealed class CamusRevoltLimitState
     public bool QuestionReserved { get; set; }
     public bool CostAttempted { get; set; }
     public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
     public static CamusRevoltLimitState Create(string instanceId) => new()

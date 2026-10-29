@@ -28,7 +28,7 @@ internal enum JamesForcedBridgeOutcome
     Refused,
 }
 
-internal sealed class JamesForcedBridgeState
+internal sealed class JamesForcedBridgeState : IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "PLATO__VIRTUE_AND_HAPPINESS__CORE";
@@ -48,6 +48,8 @@ internal sealed class JamesForcedBridgeState
     public JamesForcedBridgeOutcome Outcome { get; set; }
     public bool CostAttempted { get; set; }
     public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
     public static JamesForcedBridgeState Create(string instanceId, string runId) => new()
