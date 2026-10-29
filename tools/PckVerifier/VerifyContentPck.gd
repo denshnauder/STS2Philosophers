@@ -30,6 +30,12 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/kant_universalization.png",
 	"res://images/events/mill_harm.png",
 	"res://images/events/beauvoir_other.png",
+	"res://images/events/schopenhauer_will_denial.png",
+	"res://images/events/james_forced_bridge.png",
+	"res://images/events/camus_revolt_limit.png",
+	"res://images/events/carnap_framework_choice.png",
+	"res://images/events/austin_speech_act.png",
+	"res://images/events/popper_falsification.png",
 ]
 
 const REQUIRED_FILES := [

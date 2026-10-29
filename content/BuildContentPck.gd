@@ -223,6 +223,7 @@ func _initialize() -> void:
 		"machiavelli_flood_preparation", "newton_two_sites", "spinoza_cause_network", "ockham_names_inquiry",
 		"plotinus_common_ground", "zeno_civic_challenge", "leibniz_monad_comparison", "hegel_substance_subject", "fichte_self_positing", "leibniz_independent_clocks",
 		"machiavelli_realist_challenge", "hobbes_authorized_sovereignty", "locke_cargo_identity", "hume_induction", "wollstonecraft_admission", "kant_apperception", "rousseau_consent", "kant_universalization", "mill_harm", "beauvoir_other",
+		"schopenhauer_will_denial", "james_forced_bridge", "camus_revolt_limit", "carnap_framework_choice", "austin_speech_act", "popper_falsification",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",
 			"res://images/events/philosophers_gaze.png")

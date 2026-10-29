@@ -11,6 +11,17 @@ Godot --headless --path content \
 
 `BuildContentPck.sh` 和 `BuildContentPck.ps1` 会在替换目标 PCK 前自动调用它。
 
+## 头像验收
+
+普通校验通过不等于事件房间能打开：每个 `EventModel` 的原生默认头像路径也必须在包里。构建后运行：
+
+```sh
+GODOT=/path/to/Godot tools/PckVerifier/VerifyEventPortraits.sh /path/to/STS2Philosophers.pck
+```
+
+脚本枚举 mod 程序集中全部具体 `EventModel`，解析真实 `InitialPortraitPath`，加载包内纹理并调用游戏自身的 `CreateInitialPortrait`；新增事件忘记加头像别名时会在此失败。当前基线为 54/54。
+
+
 ## 退出码
 
 | 码 | 含义 |
