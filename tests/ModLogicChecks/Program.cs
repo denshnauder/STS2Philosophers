@@ -57,6 +57,7 @@ CarnapFrameworkChoiceChecks.Run();
 AustinSpeechActChecks.Run();
 PopperFalsificationChecks.Run();
 EventGoldCostProtocolChecks.Run();
+CrossActCombatHistoryChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();

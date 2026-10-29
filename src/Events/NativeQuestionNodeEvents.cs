@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Runs.History;
 
 namespace STS2Philosophers;
 
@@ -35,18 +36,50 @@ internal static class NativeQuestionNodeEvents
     {
         if (!HasCompletedCombat(run, normalOnly)) return false;
         var history = run.MapPointHistory[run.CurrentActIndex];
-        int last = -1;
-        for (int i = 0; i < history.Count; i++)
-            if (history[i].Rooms.Any(room => Equals(room.ModelId, predecessor))
-                || history[i].PlayerStats.Any(stats => stats.EventChoices.Any(choice =>
-                    choice.Title.LocTable == "events" && choice.Title.LocEntryKey.StartsWith(
-                        localizationRoot + ".pages.", StringComparison.Ordinal)))) last = i;
+        int last = LastPredecessorIndex(history, predecessor, localizationRoot);
         // Legacy inserted events may have only native choice history, rather
         // than their own room record. Missing history cannot prove a later fight.
-        return last >= 0 && history.Skip(last + 1).Any(point => point.Rooms.Any(room =>
-            room.RoomType == MegaCrit.Sts2.Core.Rooms.RoomType.Monster
-            || !normalOnly && room.RoomType == MegaCrit.Sts2.Core.Rooms.RoomType.Elite));
+        return last >= 0 && history.Skip(last + 1).Any(point => IsCombatPoint(point, normalOnly));
     }
+
+    // Third-act questions may depend on a second-act event (Hegel 025 needs
+    // Leibniz 024). The current-act scan cannot see that history, so the
+    // predecessor is looked up in earlier acts and any fight after it counts.
+    internal static bool HasCompletedCombatAfterAcrossActs(RunState run, ModelId predecessor,
+        string localizationRoot, bool normalOnly = false)
+    {
+        if (!HasCompletedCombat(run, normalOnly)) return false;
+        var acts = new List<IReadOnlyList<CombatHistoryPoint>>();
+        for (int act = 0; act <= run.CurrentActIndex && act < run.MapPointHistory.Count; act++)
+        {
+            acts.Add(run.MapPointHistory[act]
+                .Select(point => new CombatHistoryPoint(
+                    MatchesPredecessor(point, predecessor, localizationRoot),
+                    IsCombatPoint(point, normalOnly)))
+                .ToList());
+        }
+        return CrossActCombatHistory.HasCombatAfterPredecessor(acts, run.CurrentActIndex);
+    }
+
+    private static int LastPredecessorIndex(IReadOnlyList<MapPointHistoryEntry> history, ModelId predecessor,
+        string localizationRoot)
+    {
+        int last = -1;
+        for (int i = 0; i < history.Count; i++)
+            if (MatchesPredecessor(history[i], predecessor, localizationRoot)) last = i;
+        return last;
+    }
+
+    private static bool MatchesPredecessor(MapPointHistoryEntry point, ModelId predecessor,
+        string localizationRoot) =>
+        point.Rooms.Any(room => Equals(room.ModelId, predecessor))
+        || point.PlayerStats.Any(stats => stats.EventChoices.Any(choice =>
+            choice.Title.LocTable == "events" && choice.Title.LocEntryKey.StartsWith(
+                localizationRoot + ".pages.", StringComparison.Ordinal)));
+
+    private static bool IsCombatPoint(MapPointHistoryEntry point, bool normalOnly) =>
+        point.Rooms.Any(room => room.RoomType == MegaCrit.Sts2.Core.Rooms.RoomType.Monster
+            || !normalOnly && room.RoomType == MegaCrit.Sts2.Core.Rooms.RoomType.Elite);
 
     private static bool IsDoctrineCarrier(RelicModel carrier) => carrier is WesternPracticeRelic
         or KongziMuduo or KongziQingYuPei or MengziXiongZhang or XunziShengMo

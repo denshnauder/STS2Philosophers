@@ -25,7 +25,7 @@ internal static class HegelSubstanceSubjectPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
+            NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<LeibnizMonadComparison>(), "LEIBNIZ_MONAD_COMPARISON"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
