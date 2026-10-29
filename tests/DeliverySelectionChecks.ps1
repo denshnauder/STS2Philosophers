@@ -2,6 +2,8 @@
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $selector = Join-Path $PSScriptRoot '../tools/SelectDeliveryIssue.ps1'
+$repositoryRoot = Split-Path -Parent $PSScriptRoot
+$headSha = (& git -C $repositoryRoot rev-parse HEAD).Trim()
 $people = @((Get-Content -LiteralPath (Join-Path $PSScriptRoot '../config/western_research.json') -Raw | ConvertFrom-Json).people)
 $temporaryDirectory = Join-Path ([IO.Path]::GetTempPath()) ('STS2DeliverySelection_' + [Guid]::NewGuid().ToString('N'))
 [void](New-Item -ItemType Directory -Path $temporaryDirectory)
@@ -118,12 +120,37 @@ try {
     $snapshot.issues[89].status = 'Done'
     $output = RunCase $snapshot
     AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'A completed dependency did not release the earliest authorized person.'
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'Todo'
+    $snapshot.issues += @{ id = 'DEP'; title = '前置实现'; description = "已交接。`n待部署提交：$headSha"; status = 'In Progress'; priority = 1; createdAt = '2026-10-01T00:00:00Z'; relations = @{ blockedBy = @() } }
+    $snapshot.issues[1].relations.blockedBy = @('DEP')
+    $output = RunCase $snapshot @('-BaselineCommit', $headSha)
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'An integrated prerequisite blocked development.'
 
-    $snapshot.issues[89].status = 'Canceled'
     $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'blocked') 'An unverified handoff was treated as integrated without a baseline check.'
+
+    $snapshot.issues[89].description = '前置实现尚未完成。'
+    $output = RunCase $snapshot @('-BaselineCommit', $headSha)
+    AssertCase ($output.status -eq 'blocked') 'An unimplemented prerequisite released development.'
+
+    $snapshot.issues[89].status = 'In Review'
+    $snapshot.issues[89].description = '前置实现已交接，等待验收。'
+    $output = RunCase $snapshot @('-BaselineCommit', $headSha)
+    AssertCase ($output.status -eq 'blocked') 'An In Review prerequisite without integrated evidence released development.'
+
+    $snapshot.issues[89].status = 'Done'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'A completed dependency did not release the earliest authorized person.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'Todo'
+    $snapshot.issues += @{ id = 'DEP'; title = '前置实现'; description = '未完成'; status = 'Canceled'; priority = 1; createdAt = '2026-10-01T00:00:00Z'; relations = @{ blockedBy = @() } }
+    $snapshot.issues[1].relations.blockedBy = @('DEP')
+    $output = RunCase $snapshot @('-BaselineCommit', $headSha)
     AssertCase ($output.status -eq 'blocked') 'Canceled prerequisite was treated as delivered.'
 
-    $snapshot.issues = @($snapshot.issues | Where-Object { $_.id -ne 'ENGINEERING' })
+    $snapshot.issues = @($snapshot.issues | Where-Object { $_.id -ne 'DEP' })
     $output = RunCase $snapshot
     AssertCase ($output.status -eq 'invalidSnapshot' -and $null -eq $output.selectedIssue) 'A dependency absent from the complete snapshot was silently ignored.'
 
@@ -204,39 +231,81 @@ try {
     $snapshot = NewSnapshot
     $output = RunCase $snapshot
     AssertCase ($output.status -eq 'complete' -and $null -eq $output.selectedIssue) 'A complete terminal queue was not reported without fabricating work.'
+    $sha = '0123456789abcdef0123456789abcdef01234567'
     $snapshot = NewSnapshot
     $snapshot.issues[1].status = 'In Progress'
     $snapshot.issues[1].description += "`n待部署提交：abcdef1234567"
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'awaitingReview' -and $output.pendingDeployment.Count -eq 0) 'Legacy pending marker bypassed Sol.'
+    $snapshot.issues[2].status = 'Todo'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON3') 'Legacy implemented work stalled independent development.'
+    $snapshot.issues[2].status = 'Done'
+    $snapshot.issues[1].description = '人物：阿那克西曼德'
+    $snapshot.issues[1].status = 'In Review'
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'awaitingReview') 'Review-only queue incorrectly reported complete.'
+    $snapshot.issues[2].status = 'Todo'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON3' -and $output.pendingDeployment.Count -eq 0) 'Waiting for Sol stalled next implementation.'
+    $snapshot.issues[2].status = 'Done'
+    $snapshot.issues[1].description += "`n待部署提交：$sha`n验收通过提交：0000000000000000000000000000000000000000"
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'awaitingReview' -and $output.pendingDeployment.Count -eq 0) 'Mismatched review SHA accepted.'
+    $approved = "人物：阿那克西曼德`n待部署提交：$sha`n验收通过提交：$sha"
+    foreach ($extra in @("`n待部署提交：$sha", "`n验收通过提交：$sha", "`n待部署提交：bad", "`n验收通过提交：bad")) {
+        $snapshot.issues[1].description = $approved + $extra
+        $output = RunCase $snapshot
+        AssertCase ($output.status -eq 'awaitingReview' -and $output.pendingDeployment.Count -eq 0) 'Duplicate or malformed marker accepted.'
+    }
+    $snapshot.issues[1].description = $approved
+    $snapshot.issues[1].status = 'In Progress'
+    $output = RunCase $snapshot
+    AssertCase ($output.status -eq 'awaitingReview' -and $output.pendingDeployment.Count -eq 0) 'Revoked acceptance still deployed.'
+    $snapshot.issues[1].description = '人物：阿那克西曼德'
+    $output = RunCase $snapshot
+    AssertCase ($output.selectedIssue.id -eq 'PERSON2') 'Cleared rejected issue did not resume implementation.'
+
+    $snapshot = NewSnapshot
+    $snapshot.issues[1].status = 'In Review'
+    $snapshot.issues[1].description += "`n待部署提交：$sha`n验收通过提交：$sha"
     $snapshot.issues[2].status = 'In Progress'
     $output = RunCase $snapshot
     AssertCase ($output.selectedIssue.id -eq 'PERSON3' -and $output.pendingDeployment.Count -eq 1) 'Verified pending deployment prevented continuation.'
     $snapshot.issues[2].relations.blockedBy = @('PERSON2')
-    $output = RunCase $snapshot
+    $output = RunCase $snapshot @('-AllowDeployment')
     AssertCase ($output.status -eq 'deployBatch' -and $null -eq $output.selectedIssue) 'Pending deployment incorrectly satisfied a real dependency.'
     $snapshot.issues[2].relations.blockedBy = @()
-    $snapshot.issues[2].description += "`n待部署提交：0123456789abcdef"
-    $snapshot.issues[3].status = 'In Progress'
-    $snapshot.issues[3].description += "`n待部署提交：0123456789abcdef"
+    $snapshot.issues[2].status = 'In Review'
+    $snapshot.issues[2].description += "`n待部署提交：$sha`n验收通过提交：$sha"
+    $snapshot.issues[3].status = 'In Review'
+    $snapshot.issues[3].description += "`n待部署提交：$sha`n验收通过提交：$sha"
     $snapshot.issues[4].status = 'Todo'
-    $output = RunCase $snapshot @('-BatchSize', '3')
+    $output = RunCase $snapshot @('-BatchSize', '3', '-AllowDeployment')
     AssertCase ($output.status -eq 'deployBatch' -and $output.pendingDeployment.Count -eq 3) 'Three-person batch did not trigger deployment.'
     $output = RunCase $snapshot
     AssertCase ($output.selectedIssue.id -eq 'PERSON5') 'Default four-person batch triggered too early.'
-    $snapshot.issues[4].status = 'In Progress'
-    $snapshot.issues[4].description += "`n待部署提交：0123456789abcdef"
-    $output = RunCase $snapshot
+    $snapshot.issues[4].status = 'In Review'
+    $snapshot.issues[4].description += "`n待部署提交：$sha`n验收通过提交：$sha"
+    $output = RunCase $snapshot @('-AllowDeployment')
     AssertCase ($output.status -eq 'deployBatch' -and $output.pendingDeployment.Count -eq 4) 'Four-person batch did not trigger deployment.'
 
     $snapshot = NewSnapshot
-    $snapshot.issues[1].status = 'In Progress'
-    $snapshot.issues[1].description += "`n待部署提交：abcdef1234567"
-    $output = RunCase $snapshot
+    $snapshot.issues[1].status = 'In Review'
+    $snapshot.issues[1].description += "`n待部署提交：$sha`n验收通过提交：$sha"
+    $output = RunCase $snapshot @('-AllowDeployment')
     AssertCase ($output.status -eq 'deployBatch') 'End-of-queue pending batch was reported complete.'
+    $snapshot.issues[1].relations.blockedBy = @('PERSON3')
+    $snapshot.issues[2].status = 'In Progress'
+    $output = RunCase $snapshot @('-AllowDeployment')
+    AssertCase ($output.status -eq 'blocked' -and ($output.reasons -join '') -match 'blockedBy') 'Accepted batch ignored actual release prerequisite.'
+    $snapshot.issues[1].relations.blockedBy = @()
+    $snapshot.issues[2].status = 'Done'
     $snapshot.issues[1].description = '人物：阿那克西曼德' + "`n待部署提交：not_a_commit"
     $output = RunCase $snapshot
-    AssertCase ($output.selectedIssue.id -eq 'PERSON2' -and $output.pendingDeployment.Count -eq 0) 'Malformed marker skipped unfinished work.'
+    AssertCase ($output.status -eq 'awaitingReview' -and $output.pendingDeployment.Count -eq 0) 'Malformed marker skipped unfinished work.'
     $snapshot.issues[0].status = 'In Progress'
-    $snapshot.issues[0].description += "`n待部署提交：abcdef1234567"
+    $snapshot.issues[0].description += "`n待部署提交：$sha`n验收通过提交：$sha"
     $output = RunCase $snapshot
     AssertCase ($output.selectedIssue.id -eq 'PERSON1' -and $output.pendingDeployment.Count -eq 0) 'Research was treated as a gameplay deployment.'
 

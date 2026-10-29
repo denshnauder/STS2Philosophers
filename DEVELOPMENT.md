@@ -24,7 +24,7 @@ pwsh -NoProfile -File ./tools/SelectDeliveryIssue.ps1
 
 API 认证与分页遵循 [Linear 官方文档](https://linear.app/developers/graphql) 和 [分页说明](https://linear.app/developers/pagination)。脚本自动遍历项目全部分页（含归档），只给候选补取全部入向 blocks 关系；项目外依赖只参与依赖核对，不加入人物队列。检查 HTTP／GraphQL 部分错误、分页游标及重复 ID。API 不提供事务快照；领取或关闭前仍应针对选中任务确认状态和依赖没有改变。
 
-已连接 Linear 工具但本机没有 API key 时，无需再建凭据：在工具编排代码内分页调用 `list_issues`（项目 UUID `b0a5ebc4-5f7b-4ac0-a5ef-a09c01f053f4`，`includeArchived=true`，保留 id/title/description/status/priority/createdAt），检查 hasNextPage 与 cursor；将原始返回留在程序变量中，不用 text/日志打印。对候选调用 `get_issue(includeRelations=true)` 补齐 `relations.blockedBy`，写入系统临时目录，再运行以下命令。若首次守卫提示候选依赖未知，只补该候选后重跑；不得手写空依赖。外部依赖须附其真实状态，无法核验则阻塞。完整读取后才声明 `complete=true`，并写 `totalIssueCount`。快照仅为本次临时输入，不是新的状态源，用毕删除，不使用旧快照领取。
+已连接 Linear 工具但本机没有 API key 时，无需再建凭据：在工具编排代码内分页调用 `list_issues`（项目 UUID `b0a5ebc4-5f7b-4ac0-a5ef-a09c01f053f4`，`includeArchived=true`，保留 id/title/description/status/priority/createdAt），检查 hasNextPage 与 cursor；将原始返回留在程序变量中，不用 text/日志打印。注意 `list_issues` 返回的 description 可能仅有前500字，不能据此判断没有验收或待部署标记。快照生成器须对所有非终态任务用 `get_issue` 补齐完整 description；对候选用 `get_issue(includeRelations=true)` 补齐 `relations.blockedBy`，写入系统临时目录，再运行以下命令。若首次守卫提示候选依赖未知，只补该候选后重跑；不得手写空依赖。外部依赖须附其真实状态，无法核验则阻塞。完整读取后才声明 `complete=true`，并写 `totalIssueCount`。快照仅为本次临时输入，不是新的状态源，用毕删除，不使用旧快照领取。
 
 ```powershell
 pwsh -NoProfile -File ./tools/SelectDeliveryIssue.ps1 -IssueSnapshotPath <临时快照路径>
@@ -33,13 +33,23 @@ pwsh -NoProfile -File ./tools/SelectDeliveryIssue.ps1 -IssueSnapshotPath <临时
 
 快照兼容原格式：`{ complete: true, totalIssueCount: N, issues: [...] }`；每张票保留上述六字段，候选必须有真实 `relations: { blockedBy: [任务ID或带id对象] }`。退出码保持 0（选择／待部署批次／完成）、2（无效输入或读取失败）、3（阻塞）。摘要不代替读取选中 Issue 的具体要求，完整诊断也不代替交付证据。明确获授权的公共工程例外仍使用 `-AuthorizedEngineeringIssueId` 与 `-EngineeringAuthorizationScope`，不能据此扩大人物玩法范围。
 
-玩法人物完成合法实现、受影响增量测试及提交推送后，在原 Linear Issue 描述加入独占一行 `待部署提交：<7～40位十六进制提交号>`，保留 In Progress。该行只表示可进入交付批次；只能在证据真实时填写，不等于 Done。研究人物不使用该标记。选择器跳过这些已实现人物以继续下一位，但其依赖仍未 Done，不能放行依赖它的任务。正常只返回待部署人数；达 `-BatchSize`（默认4，可设3）、下一人物无法执行或队列结束时返回 deployBatch 和批内任务 ID，先部署已有批次，部署后重新查询。需要运行验证时可主动提前交付。
+玩法人物完成合法实现、受影响增量测试及提交推送后转 In Review，在原 Issue 评论交接基准完整 SHA、交付完整 SHA、实现偏差、验证结果及未验证项。Sol 在独立会话审查真实差异、相关调用链和原定验收要求；通过后由验收者在描述中各保留唯一一行 `待部署提交：<40位SHA>` 与 `验收通过提交：<同一40位SHA>`，状态仍为 In Review。这些行只是验收证据的索引，不是评审人身份认证或代码正确性证明；实施者不能自行签署。历史短 SHA、多条待部署行、缺验收或不一致记录均须核实和补审，不能自动迁移为通过。
 
-单人物：必要材料 → 设计 → 实现 → 增量测试 → 提交推送；批次：综合验证 → 构建 → 安全部署与回退 → 清除待部署行并关闭对应任务 → 继续。只主动实现一人，允许多张已实现人物票等待同批部署，不另设标签、状态或批次文件。部署失败或游戏运行只报告受影响阻塞，不能关闭任务。当前需求范围内不创建调度或新增管理票。
+Sol 的阻断问题写回原 Issue：审查基准与提交、文件位置、触发条件、实际影响、最小修复方向和复验要求；明确区分已证实缺陷、待验证风险和非阻断建议。阻断缺陷将原 Issue 转 In Progress，并清除全部待部署和验收通过行；DS 每轮及提交前重读当前票描述与最新评论，优先修复当前合法任务的未解决阻断项，回复修复提交及证据后再次转 In Review。由 Sol 复验关闭问题，DS 不自行宣称独立验收通过。设计争议由 Astra 在原票收敛；普通审查与修复不另拆票。已 Done 却缺少原定交付条件的，回原票更正；新增体验改进另按授权处理。
+
+选择器把玩法 In Review 视为已交接的异步审查队列；旧 In Progress 中有有效待部署提交的也视为已实现积压，不冒充验收通过。DS 不等待 Sol 回复，按原序继续下一合法实现。Sol 发现已证实缺陷时退回原票 In Progress 并清除标记，DS 在正常任务边界处理修复；无回复、建议或单纯状态不同不是缺陷。真实依赖仍检查，不随意删除关系；如依赖实际只是已集成代码而非部署条件，核实代码及原票后澄清，不把所有未 Done 一概解释成必须等审查。
+
+选择器默认只选开发工作，不因待发布批次达到人数而停止实现；开发依赖只要求前置实现已集成到当前基线（交接提交为 -BaselineCommit 祖先，或用 -IntegratedDependency 经核实实现已存在并注明），不要求先验收、部署或 Done；未实现、未集成或明确须先发布的前置仍阻断。只有实际允许发布时才显式传 -AllowDeployment，发布候选还须通过独立验收并核实全部真实前置。没有开发项时返回 awaitingReview，仅表示当前实现队列已交接，不表示项目已交付，也不要求 DS 持续轮询 Sol。不要每十几秒重复读全部任务、打印相同结论；有后续合法工作就继续做。
+
+单人物：必要设计 → 实现 → 增量测试 → 提交推送及交接 → 立即继续下一合法实现；Sol 同时异步验收，批次：复核原票最新评论、验收对应代码及主仓集成状态 → 跨人物相称验证 → 构建 → 安全部署与回退 → 清除两种标记并关闭对应任务。验收后影响该范围的修改须重审新增差异；不得用已审提交给无关或未经审查的混合产物背书。部署失败、游戏运行或另有用户冻结／禁止部署指令时保留待发布，不关闭任务。只主动实现一人，不另建批次文件、调度或管理票。没有用户试玩或流程审阅回复不算批准，但与独立代码验收是两件事。
 
 记录职责固定：设计写现有人物入口，状态及待部署提交写 Linear，玩家可见变化才写 README，必要验证及部署证据写 DEVELOPMENT；不为步骤齐全而重复修改所有文件。
 
+本机发布约定：已确认 Git HTTPS 推送缺少凭据时，认证未改变就不重复尝试，改用已连接的 GitHub 工具。待上传文件通过工具编排或可用代码环境留在程序变量中直接转交；模型只接收路径、字节数、对象 SHA 与结果，不逐文件打印或手工复述 blob 全文，不为发布重读全部代码、本地化及开发日志。已上传对象按 SHA 复用。远端完整文件树与本地交付树、父提交核对一致后再安全同步本地引用，保留工作区和 reflog，不因提交元数据差异另建内容相同的 local 副本分支。这是一条发布规则，不新增观察者、报告或调度。
+
 本次验证（2026年10月19日）：领取检查41项通过，覆盖原顺序与依赖、短输出、待部署批次、项目与依赖分页、外部依赖、重复游标／ID及GraphQL部分失败。通过已连接工具在程序内读取189张实时项目任务，仅补候选关系后，摘要选择ENC-108（第7位，In Progress），无阻塞；未写入Linear。直接API路径使用模拟响应验证，当前环境未配置LINEAR_API_KEY，未声称直连实测。未改游戏内容，不构建或部署游戏。
+
+2026年10月29日早先串行版本验证（已被用户纠正为异步验收）：领取检查50项通过，新增覆盖旧待部署记录、等待独立验收、SHA不一致、重复／畸形标记、撤销验收和修复后恢复；原有顺序、依赖、批次及API分页检查保留。DeepSeek Harness 的 Auto Continue v0.17.0 已通过设置界面保存新版自主循环提示并读回持久化配置；保留会话 Off、既有版本冻结及禁止安装／部署／改存档限制，未启动循环、未代签任何人物验收。Aider 所用同济凭据本次返回额度耗尽且未改文件，不代表 Harness 备用模型额度状态。本次仅调整工作流，不构建或部署游戏。
 
 ## 按需技术与安全细则
 
@@ -81,6 +91,26 @@ pwsh -NoProfile -File ./tools/SelectDeliveryIssue.ps1 -IssueSnapshotPath <临时
 设计优先于代码。自动检查只证明实现符合已写规则，不能证明思想转译、可玩性、路线差异或正式呈现成立。先完成具体选择、代价、表达机会、反例与制作成本，再实施相称的最小内容；试玩反馈另开 Issue，不作为已验证并部署交付的闸门。
 
 新增通用基础设施前先检查当前锁定版本的 RitsuLib、游戏原生公开 API 和仓库现有适配器。只有缺少能力、语义或兼容性不符，或关键原子性／恢复要求无法满足时才自建，并在对应 Issue 记录理由。业务状态机允许自研；保持 RitsuLib 为唯一主框架，不叠加 BaseLib，不以减少代码量换取存档、SL、幂等或兼容风险。
+
+## ENC-122／123／124 奥卡姆、马基雅维利与路德（2026年10月23日，0.5.14）
+
+三人已实现并推送至版本提交a41082e2010c30393d3ebfe17b4bdc4309d83e9b：语言独立内批与泥板命名规则、历史固定046与延迟准备、019→020后的047主体转线。全部纯逻辑、26事件原生房间／陈旧输入、实际卡牌付款及格挡／能量分支通过；锁定RitsuLib0.6.2与本机0.6.9兼容0.111.0均通过，Release零警告，原生测试保留既有CS8613警告，PCK校验通过；没有渲染UI或整局实机回放。
+
+00:34:46游戏已退出；目标仅三普通文件且父路径无符号链接，旧0.5.13哈希与前次安装记录一致。备份验真至bin/deploy_backups/enc122_enc123_enc124_mac_20261023_003446/，rollback.json记录回退方法。0.5.14安装与构建SHA256一致：DLL 619c9bc57a54e93a721dc2bf7d38a412a957f709d4058f987b902612e7141837；PCK 5ac8ed55c62ea72718f67bc7961e160781802fe36a8a5f1cef686dc15553ec12；清单349246cb41bf00333a60aa6f953b7884e133beadd8eb10298f4eecb855087f2a。未改玩家存档，回退须退出游戏后还原备份顶层三文件。交付证据同时写入原Linear票；整份含本机历史的日志不上传。
+
+## ENC-121 阿奎那（2026年10月22日，0.5.13）
+
+第三幕制度016→045原生《两份渡桥告示》及城邦印章首张手动牌实践已实现；语言029/030保持独立。七条完整保存重放路径、23事件原生房间／陈旧输入、实际付款与格挡／能量、先打不符牌失去机会、自动牌排除、坏载荷及独立实例回执通过。锁定RitsuLib 0.6.2及本机创意工坊0.6.9／游戏兼容0.111.0均通过；Release零警告零错误、PCK校验通过，原生测试项目保留既有CS8613警告。没有渲染UI或整局试玩。代码提交 `f9da28380962468b0a2b6c628a653e80010ba315`，版本说明提交 `bfa9841703abb74d96cdfe1f2a604e1465f06f28`；远端树逐项一致。
+
+选择器确认下一位ENC-122真实依赖本票，故按规则提前部署。游戏未运行、目标只有三普通文件且无符号链接，旧0.5.12哈希与上次记录相同；备份并验真至 `bin/deploy_backups/enc121_mac_20261022_154834/`。0.5.13三文件安装哈希与构建相同：DLL `f13335b568d44b6e94634b9b8bfb7b07a4f28bcca1e273737bde0d2679daedc5`；PCK `17a7d6a2c645fe9a089cb0707bcb9175db8b90a2448fdc77137bdcefdc6f6071`；清单 `1b7a1ad53a43eb9022ed8e415b7216b2da47d69b4a1cac6880a29fdaff36a8a3`。`rollback.json`记录新旧哈希，回退须先退出游戏，再还原备份顶层三文件；未改玩家存档。本段在本机保留，交付证据同时登记Linear，不上传包含本机历史信息的整份开发日志。
+
+## ENC-118／119／120 普罗提诺、奥古斯丁与安瑟尔谟合批（2026年10月21日，0.5.12）
+
+普罗提诺在柏拉图德性支路完成伊壁鸠鲁、再过一场普通战斗后进入第三幕 Fixed；采纳共同草图或保留版本后，审思砝码在严格手动「技能—攻击—另一种技能」牌序下回合末给 5 格挡。奥古斯丁沿柏拉图制度支路先完成 019 公共约定，再进入 020 承诺与劳作；公开担保在后续战斗首回合给 6 格挡，承担劳作给 1 能量，且与亚里士多德制度事件互斥。安瑟尔谟在塞克斯都关闭、第二幕谢绝笛卡尔且皮浪结束后的苏格拉底知识支路，占用第三幕问号；公布、修订、撤回分别在首回合给 1 能量、首回合给 6 格挡、第二回合给 8 格挡。三人均使用原生事件与现有遗物，不新增第四幕或框架；具体来源、代价、反例与恢复边界见各自当前设计页。
+
+完整纯逻辑检查、Godot 4.5.1 原生房间／战斗回调与 RitsuLib 0.6.2 存档检查通过，包含既有 ENC-194 战斗奖励保护边界；Release 零警告零错误，PCK 内容校验通过。原生检查分别实际观察普罗提诺格挡、奥古斯丁格挡／能量、安瑟尔谟首二回合收益及重复回调门控。未做渲染界面或整局玩家试玩，ENC-194 的实际战斗奖励复验仍按独立反馈异步跟进。GitHub 合批版本提交为 `d4da4279fcc2eca15efcae49eb6146bb63b150e9`，父链包含三位实现及 ENC-194 修复代码。
+
+部署前确认游戏未运行、目标只有三件普通文件，旧 0.5.11 三哈希与上次安装记录相符。备份并逐项验真至 `bin/deploy_backups/enc118_enc119_enc120_mac_20261021_132140/`，该目录的 `rollback.json` 记录新旧哈希及回退方式。0.5.12 安装与构建输入 SHA256 一致：DLL `499617732dfb46afba048db3f8b1d66903d3d1dac13528e3a3e7d9dfc3231a97`，PCK `94407229c142df15102b48116e2a6b0ea58f84a98b76f7c1e552373cc4ce5743`，清单 `44e243279104c2e1dc3593bcb985df5963197038a646358840b7e12d48f1afd4`。回退时先退出游戏，再还原备份目录顶层三文件；未改玩家存档。
 
 ## ENC-116／117 马可·奥勒留与皮浪合批（2026年10月20日，0.5.10）
 
@@ -279,7 +309,7 @@ C3模型检查：`node tools/design/SocratesC3PaperChecks.cjs`，15项覆盖持�
 该入口已合入`main`并与后续人物路线共存；正式芝诺静态图也已替换开发占位图。`tools/VerifyMod.ps1`已完成全量逻辑、Release、PCK纹理校验和安全部署。第二幕披露、第三幕说法修订与苏格拉底主动撤离玩法仍不在当前交付内；没有合法事实时正常进入NoMaterial，不从当前资源反推历史。后续游戏体验问题按独立反馈处理，不作为本次部署完成的闸门。
 
 - `src/Patches/NeowProceedPatch.cs` 与 `src/Patches/ActTwoPhilosophersGazePatch.cs` 分别负责第一层和第二层事件插入。
-- 第一层插入会拦截已经结束的涅奥事件；必须先对底层涅奥 `EventRoom` 调用 `MarkPreFinished` 并保存，再用嵌套房间进入“诸子观照”。否则退出读档会恢复一个仍可结算的涅奥房间，造成奖励重复领取。
+- 第一层插入会拦截已经结束的涅奥事件；先标记底层涅奥 `EventRoom.MarkPreFinished`，生成原候选，再把即将进入的观照 `EventRoom` 作为明确参数保存并读回确认，之后才嵌套进入。原生 `SaveRun(null)` 会清掉 `PreFinishedRoom`，不能用它代表保存底层房间。观照的 `EventModel.IsFinished` 不会自动更新普通事件房间的完成标记，结束时须另行 `MarkPreFinished` 并确认保存；恢复时由观照自己的初始状态方法处理已结束房间。
 - `src/Events/PhilosophersGaze.cs` 负责事件页面、遗物授予与替换、拒绝处理和保存。
 - `src/Events/PhilosophersGazeFlowPolicy.cs` 定义页面、选项和结果转换。
 - `src/Philosophy/LaterActRelicEligibilityCatalog.cs` 是第二、三幕后继的统一资格表。每个人物声明幕索引与接受的前置遗物；运行时每次从 `Player.Relics` 的当前 `ModelId.Entry` 重新计算，不保存派生候选，因此读档、返回地图和遗物替换后不会沿用已经失去的旧资格。
@@ -1109,6 +1139,8 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 
 2026年10月15日全量逻辑、Release零警告零错误、PCK内容与笛卡尔图片别名加载、游戏未运行时的部署三文件SHA256均通过。部署即本次开发交付；后续试玩中的信息密度、分叉节奏或方法取舍问题按独立反馈处理。
 
+
+
 ### ENC-127 伽利略实践源码（2026年10月23日）
 
 独立分支enc127_galileo_practice从02eb64集成基线接续，不混入文案PR #5。采用PR #4第32节的校准和有限结论，聚焦斜坡先后测量、静置起点核验及校准后再次测量；去掉未验证10金币及重复导航。第三幕普通Monster战的奖励完成后沿既有返图屏障进入，实际唯一竖琴、真实德谟克利特和已接受恩培多克勒闭合才有资格；不新增图边、Fixed/Question，不依赖哥白尼选择。
@@ -1129,6 +1161,66 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 现场原有手动整合0.5.16，ENC127工作区的未提交中文稿1598键与干净集成稿完全一致；该稿、events.before_merge.json及原工作区混合DEVELOPMENT修改均未覆盖。用户退出游戏后两次确认无进程，先备份现装三文件，再在正确MacOS/mods/STS2Philosophers目录暂存、原子替换并逐项验哈希。备份：bin/deploy_backups/batch0516_mac_20261024_121025/，rollback.json为installed_verified，包含原三哈希、新三哈希及源码树。原生游戏0.111.0、实装Ritsu0.6.9/compat0.111.0保持；编译仍锁定0.6.2。
 
 安装DLL SHA256：6d0203f31a80639d73f6e360d727261178667cad13ba474e4bbc89b3e1929bda；PCK：501105e5edc9a6cf278aa8234721600a62fb8dfe02be79237c3d37270b452d31；JSON：2906e6bdb9e78970ae6aed3e7f0fc520c5fee5c2f7737d14b32cef7c567a2fc3。回退先退出游戏，再只恢复备份三文件并核对old_sha256。没有自动启动游戏、没有修改玩家存档、没有操作工坊上传目录或发布。ENC-197返回菜单继续后重复领奖是另行登记的真实反馈，本批没有声称已修复。
+
+
+### ENC-197 主仓收尾与0.5.17部署（2026年10月26日）
+
+现有修复先保全为abe7653，再安全整合回正式主仓。原有AGENTS及本机DEVELOPMENT以.tools/recovery_backups/consolidation_20261026_123429/与stash da9c8030b3225472c945811ad7db67d1319c681d保全，双方历史均保留。内部DEVELOPMENT整份上传被自动审批拒绝，留在本机；公开修复39887be75019540f4062c575271f3ca482053224仅包含代码/资源/玩家说明/测试，规则经用户明确授权发布为d7a0c787dafedff88320068464d9d9b408e8aae3。主仓与GitHub开发分支已核对相同；无PR。
+
+原生SaveRun(null)会清空PreFinishedRoom，普通EventModel完成不等于EventRoom完成。观照入场明确保存目标房间，结束标记房间后读回Ritsu与原生存档确认；未知写入时Proceed仅重试保存。旧初始节点只凭合法候选证明涅奥已结束，已有遗物/学说闭合；混合异步领奖和拒绝且缺乏授予事实时锁定保全。真实原生ToSave、SaveManager、RunSaveManager及Ritsu0.6.2钩子内存写读回，失败重试/成功放行/非持久游戏、历史先于异步提交、单人/节点/坏数据拒绝均通过。
+
+构建源：/Users/ency/Documents/Codex/Projects/STS2Philosophers，分支enc196_question_nodes，Commit d7a0c787dafedff88320068464d9d9b408e8aae3，树d2ce7f28ad634bef56a52a77215040b950e6cd48。包含的未提交修改仅本文件，为本机历史与证据，不参与编译或PCK；部署时差异摘要SHA记录于rollback.json。编译输出bin/Release/net9.0，安装目录为Steam游戏.app/Contents/MacOS/mods/STS2Philosophers。主仓Release零警告零错误、完整逻辑/原生回归通过；原生工程保留既有CS8613。PCK校验通过，实际包内四JSON逐字节等于源文件，中英events各1600键，已有1598键及占位符完整保留。日志保存在.tools/enc197_main_*.log。
+
+游戏未运行时先备份0.5.16，再替换并验真三文件，回退点bin/deploy_backups/enc197_main_20261026_172412/，rollback.json=installed_verified。安装DLL c76657832074b0bbcc0ce020a119bb479082385a9bc8e6683777ef26b8a1003e；PCK 3bc4ab03b3e6a11f609d48641991519424d74598759fe2200c60641968b8127e；清单56a7b8b4b4cd7d3c9d2fdd1ef8f2ea7c2ee3d85fe832bbeb4847d96ccf56f8f6。只改Mod三文件，未启动游戏、未改玩家存档、未发布工坊。ENC-197已Done；未宣称本轮渲染UI或整局实机验收。
+
+
+### 用户要求暂停的恢复断点（2026年10月26日）
+
+用户明确指令：“记录断点，在这里暂停”。已终止 ENC-198 队列准备中的执行；没有活动协作执行，不继续实施、迁移或部署。必须等用户明确要求恢复；恢复时先读本段，再核对当前 Git、GitHub 与完整实时 Linear，不把本段快照当作未来实时状态。
+
+正式源目录：/Users/ency/Documents/Codex/Projects/STS2Philosophers。分支 enc196_question_nodes，HEAD d7a0c787dafedff88320068464d9d9b408e8aae3，树 d2ce7f28ad634bef56a52a77215040b950e6cd48，与 origin/enc196_question_nodes 一致。唯一未提交文件为本机 DEVELOPMENT.md（既有历史、整合与本断点）；保留，不整份暂存或上传。长期 AGENTS 已单独提交，且经用户明确授权同步 GitHub。未创建 PR；旧工作树均保留。今后使用主仓分支开发，只从主仓核验集成版本构建。
+
+已完成 ENC-197：Linear 为 Done。公开修复提交 39887be75019540f4062c575271f3ca482053224，规则集成提交 d7a0c787dafedff88320068464d9d9b408e8aae3；0.5.17 已从主仓构建、发布并安全安装。Release 零警告零错误、完整纯逻辑/原生回归、真实 Ritsu 保存成功读回与失败重试、PCK 及实际四 JSON 一致通过；日志保存在 .tools/enc197_main_*.log。没有本轮渲染 UI 或整局实机验收，不依赖可能清空的 /private/tmp。
+
+安装 DLL SHA256 c76657832074b0bbcc0ce020a119bb479082385a9bc8e6683777ef26b8a1003e；PCK 3bc4ab03b3e6a11f609d48641991519424d74598759fe2200c60641968b8127e；清单 56a7b8b4b4cd7d3c9d2fdd1ef8f2ea7c2ee3d85fe832bbeb4847d96ccf56f8f6。回退点 bin/deploy_backups/enc197_main_20261026_172412/，rollback.json=installed_verified；暂停前只读重验安装哈希一致。只改 Steam 游戏 .app/Contents/MacOS/mods/STS2Philosophers 三个文件，未改玩家存档、未自动启动游戏、未发布工坊。
+
+下一步 ENC-198 尚未开工：用户当前授权“把没做完的做完，然后开始改bug和做迁移”，该票已由 Backlog 转 Todo；暂停前实时 get_issue 确认仍 Todo、blockedBy 为空。未设为 In Progress、未创建 enc198 分支、未改相关生产/测试代码。选择器准备被取消，.tools/enc198_current_queue.json 不存在。恢复时重新程序分页读取完整项目并补真实依赖，再用 SelectDeliveryIssue.ps1 的明确工程范围校验和领取；不要复用旧快照，也不要领取牛顿或后序人物。
+
+ENC-198 已有只读证据：WesternPracticeRelic.AfterCardPlayed 自动分支的 _costQuotes.Clear() 会清掉仍执行中的父手动牌已付款回执。原生时序为父牌付款→BeforeCardPlayed→父牌 OnPlay→弃牌触发奇巧自动牌 AfterCardPlayed→父牌 AfterCardPlayed；父回执丢失可能让首张加/减费机会未消费，下一手动牌再次修费。现有 IsAutoPlay 排除和原生 AutoPlay 标志正确，尚未证明截图中 Attack/Skill 争议的全部根因。先补真实付款后嵌套自动回调的失败重现，再修费用回执归属；覆盖无手动立规自动攻击、手动弃牌技能合法立规、首张加减费一次、显示费用/实际 EnergySpent、跨回合及芝诺改良。不取消异类加费，不把 EnergyValue 当实际付款，不把立规贸然提前到 BeforeCardPlayed；未实机重现前不宣称反馈全部验收。
+
+随后入口迁移尚未修改代码，也未新建迁移票。用户已授权所有非开局事件迁入对应幕实际问号：无合法问号就不触发，不造节点、不挪幕、不做 Boss/离幕兜底。先核对现有任务范围，避免重复建票。复用原生 ModifyNextEvent，保留问号战斗/商店概率与最终 visited；迁移 17 个 Fixed/Practice、第二幕 Gaze、第欧根尼、斯多亚 Zeno，保留各自原机会语义（占问号不等于再次扣 Question 预算）。需要给中方六根遗物及荀子绳墨接统一钩子；Gaze 同 ModelId 跨幕不能被开局 visited 一刀排除。
+
+特殊迁移边界：哥白尼需原生问号选择/房间建立两阶段绑定真实双出口；第欧根尼需把双层 MapRoom 关闭逻辑适配为单层问号；Zeno 需停掉新事件地图/Boss/ActExit 强插，保留间隔事实和旧已 claim 事务目的地。12 个现有 Question 的新进入与真正旧房间恢复也要分流。已保存/准备/部分提交的旧事务保留原实例、载荷和奖励事实，不静默换绑、不重领；仅未进入未 claim 的待办等下一合法问号。不能只关派发而不接新生产入口，不能删除保存读回保护。按 AGENTS 在聊天完整展开本轮新增/修改页面、选项、结局；不制作 Canvas/Mermaid/流程图文件。
+
+主仓原规则与本机日志已保全于 .tools/recovery_backups/consolidation_20261026_123429/，另保留 stash da9c8030b3225472c945811ad7db67d1319c681d。ENC197 工作树保全提交 abe7653 含仅本机技术日志修订，公开 39887be 有意不含整份内部日志；不要仅凭 SHA 不同判断代码丢失或清目录。整份 DEVELOPMENT 上传已被自动审批拒绝（本机路径/内部记录），本机保留；用户只明确追加授权 AGENTS 同步。GitHub/Linear 连接已恢复，Git 只读 fetch 可用；HTTPS push 未配凭据时不盲试，发布只传必要文件并核对树和父链。不创建调度，不在暂停期间自动恢复。
+
+
+## ENC198 费用回执修复验证（2026年10月26日）
+
+在唯一主仓 enc198_sly_cost_receipts（d7a0c78 基线）验证原生费用查询与 SpendResources 付款、BeforeCardPlayed、嵌套自动回调、父 AfterCardPlayed 的真实次序。旧生产在奇巧／普通自动牌的同类减费、异类加费及同一 CardModel 自动重放共六项丢失已付款回执；旧码证据 /private/tmp/enc198_native_before.log。开局自动牌不立规、手动弃牌技能合法立规原本正确，不将截图表述直接等同已查明根因。
+
+现按 CardPlay 引用冻结父手动牌付款回执，在 After 消费其确切记录；自动子牌可清预览缓存但不能清父回执。冻结容器在实际 mutable 实例惰性初始化，新回合、载荷恢复及战斗重置清理，不提前立规、不变芝诺改良触发时点，不新增保存字段或改变规则数值。一次独立公共生命周期审查无未解决 P1/P2。
+
+.tools/enc198_native_targeted.log 的13场景通过；.tools/enc198_native.log 完整原生回归 exit0，包括笛卡尔、卢梭、赫拉克利特、芝诺与ENC197。新增载荷恢复／真实新回合废弃未完成父回执、双mutable隔离检查。原生测试编译仅既有CS8613；.tools/enc198_release.log Release零警告零错误；.tools/enc198_logic.log完整纯逻辑通过。本票未改资源，沿用已验证0.5.17 PCK；部署前核对源内容无变更和PCK哈希。版本0.5.18。没有执行完整奇巧效果动画、渲染手牌或玩家存档读写；未取得整局实机复现，不把ENC198完整反馈标为已验收。
+
+ENC198部署完成：主仓 enc196_question_nodes@aba1d3ce01a47f5c2532b3699b9389b4b268313d，tree a25bc7e94e582bdc7380e79e3d788e42feacd270；整合后再次Release零警告零错误（.tools/enc198_integrated_release.log）。包含的未提交修改仅DEVELOPMENT.md本地日志，哈希与明细已存回退记录，不参与编译/PCK。三文件安装核对通过：DLL a3c46206cdeaeef416ba98a60e5cab2f897c3b74ff8cca66af55b4a0b70027f0；PCK 3bc4ab03b3e6a11f609d48641991519424d74598759fe2200c60641968b8127e；清单 b6f69c00b4abd7beba61116e28b233705e6a78c11c22e6d7e04ba37ea71423a4。源目录本主仓，输出bin/Release/net9.0，安装目录与0.5.17相同。回退记录 bin/deploy_backups/enc198_main_20261026_233321/rollback.json，status installed_verified，未改存档/未发布工坊。ENC198保留In Progress等待完整实机反馈；用户无需等待试玩再推进ENC199。
+
+
+## ENC199 原生问号入口迁移验证（2026年10月27日）
+
+唯一主仓 enc199_native_route_events，基线 aba1d3ce。17个Fixed/Practice、第二幕观照、第欧根尼和斯多葛芝诺迁入真实Unknown抽为Event；保留原生房型概率、visited、随机/队列、人物前置及业务预算。原地图/战后新事件派发停用；旧已分配Question与旧房间/已认领旅行事务保留确切身份。哥白尼仅使用当前真实问号的两个合法出口，先冻结再绑定实际房间历史；普罗提诺和马可分别要求实际前驱事件后的非Boss战斗。
+
+独立审查修复原12Question未建房间记录恢复、芝诺在任何持久化Retry前核对确切旧目的地、同步Task清理导致返回null、重复关闭已finished事件。未解决P1/P2为零。完整纯逻辑enc199_logic.log与完整原生enc199_native_full.log通过；真实Ritsu/native内存写入读回及失败重试、全部普通/东方/特殊入口通过；旧Diogenes v1 Stay/Switch两层关闭实际Godot deferred等待native自身选项任务后才退出确切base一次，保存读回再Proceed一次。仅私有UI返回边界替代，不宣称旧芝诺Boss/离幕或完整地图渲染实测。原生编译仅既有CS8613，生产编译无警告。
+
+enc199_stoic_before.log保留Retry前错误目的地否决的旧码失败证据，前缀抛出保证不接触存储。新PCK与四份JSON逐字一致；全部键集合/非空/占位符保持，仅四条中文Epictetus关闭说明修正实际问号入口，英文不变。完整Epictetus八页流程已在聊天交付，谢绝亦可满足Marcus关闭前置的现行事实单独说明，用户未审阅不算批准。未制作Canvas/流程图文件。
+
+待主分支整合发布并按集成Commit构建安全部署。未启动游戏、未改玩家存档、未发布工坊、未建PR，自动检查不等于实机验收。之后优先ENC186。
+
+
+ENC199集成与部署：主仓主开发分支 enc196_question_nodes@ed6da6d2fa0d8b50b57d24a291209e003225ea99，树070cce56ce825ac7f80ea8716032f1c1bf3e0207；独立Aider配置公开提交2f03e7d0edce26169d495216de19bdcd326be4f0，迁移提交ed6da6d2。原本地a81a3d6/84e960b保留在Issue分支，逐提交树与API发布链一致。主仓只余DEVELOPMENT未提交，本机技术记录不参与编译/PCK，其差异哈希在回退记录。Release零警告零错误，集成PCK与四源JSON一致。游戏未运行，备份0.5.18后安装0.5.19并验真：DLL ab978dcaea25a3a6ad865c3244ccc391336ab78f579d3401c663ba59a96b101e；PCK c7a0aaa0d3656f8fd8e29701736cad20af15b25345b2d40858779181d85b36a1；清单d4b5c1910ac413acad3ada4a64be26d1f5c3a8ecebb19feeddf195393c4387ff。输出bin/Release/net9.0，安装Steam游戏.app/Contents/MacOS/mods/STS2Philosophers，回退bin/deploy_backups/enc199_main_20261027_221946/rollback.json状态installed_verified。未启动游戏、未改玩家存档、未发工坊、未建PR。实机验收未进行。
+
+Aider工作流已实测：tools/RunAider.py仅从~/.codex/.env读取指定密钥到子进程，双NO_PROXY仅追加同济域名；map0/no-stream/message/禁提交及有限时间/输出。微小C#常量提取由DS实际编辑，单次2.5k输入534输出，Release及完整纯逻辑通过。包装环境/密钥脱敏/一次调用/不改父环境检查通过。首次空配置失败已改为临时空YAML映射；Aider启动自动追加gitignore已禁用并还原确切新增行，无其他已有文件被改。用户最新要求能交DS的都交DS，无不得不的review不review，不新增配置Issue目录。
+
 
 ## ENC-186 RitsuLib 0.6.2 审计（技术）
 
@@ -1164,3 +1256,19 @@ D150离开手牌操作，只比较“延后但绝不免除的一次外部结果�
 - 旧 EventsSeen 仅作兼容回退，无迁移证据不删除。
 - 状态服务为每局实时绑定与隔离；Ritsu 载荷为序列化/导入包装；主 Codec 校验聚合与跨功能一致性，Zeno Codec 校验版本化路线/事务/摘要，实践 Codec 校验单遗物卡牌/回合回执。
 - 无已证安全的生产替换；本阶段无生产改动、无新测试/构建/部署。既有 enc199 原生与逻辑测试覆盖真实内存保存读回、失败重试及旧/非法用例，未进行实机游戏验证。
+
+
+## ENC129 斯宾诺莎实现与定向验证（2026年10月28日）
+
+唯一源仓 `/Users/ency/Documents/Codex/Projects/STS2Philosophers`，已整合主开发分支 `enc196_question_nodes`，Commit `a6bfd3940078a4d39a21c43ed30ea4985be1af9c`，源码版本0.5.21。此次交付26文件，未夹带原有DEVELOPMENT、RunAider和Newton片段。新事件采用原生实际问号抽取和023边，两战斗实践保持镜原效果，坏状态冻结及保存收据拒绝重复领取。
+
+仅运行spinoza-only：`.tools/enc129_logic_build.log`、`enc129_logic_only.log`、`enc129_native_build.log`、`enc129_native_only.log`；七路径、真实PullNextEvent/原生队列、EventRoom保存恢复、陈旧与重复按钮、同目标Weak1/死亡不转移、Draw1/先Attack失效/自动不计、SavedProperty与mutable实例隔离均通过。纯构建零警告零错误，native构建零错误仅测试既有CS8613；headless exit0；旧ENC191镜子检查一次通过。首次失败为测试夹具第二敌人创建时run不完整，夹具修复后通过，生产未因此修改。没有全量回归、PCK、安装、游戏启动或实机试玩。待与牛顿后续批次构建部署，未记录安装哈希、不作已部署声明。
+
+
+## ENC130 莱布尼茨实现与 0.5.22 批次部署（2026年10月28日）
+
+唯一源仓 `/Users/ency/Documents/Codex/Projects/STS2Philosophers`，分支 `enc130_leibniz`，构建提交 `edbb7fb319f1775fb139f77909e4502063894902`，树 `7492543284822d30164968163cca84b2aa2d99fb`；父链 `9581972` 莱布尼茨实现、`932dc1b` Aider 预算、`a6bfd39` 斯宾诺莎。DEVELOPMENT 仍为本机记录，未提交；`tools/NewtonChineseText.json`、`tools/NewtonEnglishText.json` 与 `tools/__pycache__` 未纳入。
+
+补上保存回执校验：`TurnNumber=0` 必须全空；首回合标记与手动计数／独立回执互斥；`EnergyClaimed` 需双首回合标记且 `TurnNumber>=2`。新增 5 组非法载荷；节点实践覆盖 54→55，HARMONY 终点明确无通用奖励；后继遗物资格断言 19→21；沉思镜回调消除 2 个可空警告；原生检查补 `Multiplayer` 命名空间后编译通过。
+
+验证：全量 ModLogicChecks 99 组 exit0；Release 0 警告 0 错误；莱布尼茨原生定向与全量原生 exit0（仅测试项目既有 CS8613）；PCK 导出与内容校验通过；35 个事件立绘（含莱布尼茨）从 PCK 加载通过。游戏未运行；0.5.19 三文件哈希与上次记录一致，备份至 `bin/deploy_backups/enc130_batch_20261028_225658/` 并验真。安装 0.5.22：DLL `0d96249a267203f3c87d858d230158735e1f1d174db70dd68d689e5735cf71a9`，PCK `c33b8fd76be434e27f326b3e97ed056702a5c308d381163262c2e4a897318095`，清单 `55be879453f0ae71963b393defa4ba8dfb4c41173678ffc9630ebfc1909c1f97`；安装哈希与构建一致。未启动游戏、未改玩家存档、未发工坊、未建 PR；实机验收未进行。

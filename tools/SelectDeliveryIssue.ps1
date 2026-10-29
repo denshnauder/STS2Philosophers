@@ -11,8 +11,11 @@ param(
     [Parameter(ParameterSetName = 'Live')][string]$ProjectId = 'b0a5ebc4-5f7b-4ac0-a5ef-a09c01f053f4',
     [ValidateSet('Summary', 'Json', 'Diagnostic')][string]$OutputFormat = 'Summary',
     [ValidateRange(3, 4)][int]$BatchSize = 4,
+    [switch]$AllowDeployment,
     [string[]]$AuthorizedEngineeringIssueId = @(),
-    [string]$EngineeringAuthorizationScope
+    [string]$EngineeringAuthorizationScope,
+    [string]$BaselineCommit = '',
+    [string[]]$IntegratedDependency = @()
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +32,43 @@ $result = [ordered]@{
 function IssueSummary($issue) {
     [ordered]@{ id = $issue.id; title = $issue.title; status = $issue.status }
 }
+
+# These lines index acceptance evidence in Linear; they do not authenticate a
+# reviewer or certify code. Release must re-read comments and verify integrated scope.
+function HasReviewMarker($issue) {
+    return [regex]::IsMatch([string]$issue.description, '(?m)^[ \t]*(?:待部署提交|验收通过提交)[：:]')
+}
+function HasMatchingAcceptance($issue) {
+    if ($issue.status -ne 'In Review') { return $false }
+    $text = [string]$issue.description
+    foreach ($label in @('待部署提交', '验收通过提交')) {
+        if ([regex]::Matches($text, "(?m)^[ \t]*${label}[：:]").Count -ne 1) { return $false }
+    }
+    $pendingMatch = [regex]::Match($text, '(?m)^[ \t]*待部署提交[：:][ \t]*([0-9a-fA-F]{40})[ \t]*\r?$')
+    $reviewMatch = [regex]::Match($text, '(?m)^[ \t]*验收通过提交[：:][ \t]*([0-9a-fA-F]{40})[ \t]*\r?$')
+    return $pendingMatch.Success -and $reviewMatch.Success -and
+        $pendingMatch.Groups[1].Value -eq $reviewMatch.Groups[1].Value
+}
+
+function Get-HandoffShas($issue) {
+    $found = [regex]::Matches([string]$issue.description, '(?m)^[ \t]*(?:待部署提交|验收通过提交|交付提交|实现提交)[：:][ \t]*([0-9a-fA-F]{40})[ \t]*\r?$')
+    return @($found | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+}
+
+# Development needs the prerequisite implementation in this baseline, not its
+# release verdict. Acceptance, deployment and Done remain release prerequisites.
+function Test-DevelopmentReady($issue) {
+    if ($issue.status -eq 'Done') { return $true }
+    if ($IntegratedDependency -contains $issue.id) { return $true }
+    if ([string]::IsNullOrWhiteSpace($BaselineCommit)) { return $false }
+    foreach ($sha in (Get-HandoffShas $issue)) {
+        & git -C $repositoryRoot merge-base --is-ancestor $sha $BaselineCommit 2>$null
+        if ($LASTEXITCODE -eq 0) { return $true }
+    }
+    return $false
+}
+
+$repositoryRoot = Split-Path -Parent $PSScriptRoot
 
 # The key stays in the process environment; neither responses nor credentials are logged.
 $live = $PSCmdlet.ParameterSetName -eq 'Live'
@@ -195,20 +235,26 @@ try {
     $result.unmappedIssues = @($unmapped)
     if ($validationProblems.Count -gt 0) { throw ($validationProblems -join '; ') }
 
-    # A single line in the existing Linear description records a verified implementation
-    # commit. It is not Done, and does not satisfy another issue's deployment dependency.
+    # Only independently accepted gameplay is eligible for a release batch.
     $pending = @($issues | Where-Object {
-        $_.status -eq 'In Progress' -and $null -ne $_.personName -and
+        $null -ne $_.personName -and
         $people[$byName[$_.personName]].primary_use -ne '研究' -and
-        [regex]::IsMatch([string]$_.description, '(?m)^待部署提交[：:]\s*[0-9a-fA-F]{7,40}\s*$')
+        (HasMatchingAcceptance $_)
     })
+    # Implementation continues while Sol reviews. In Review means implementation
+    # handed off under this protocol, not an instruction to block the work queue.
+    $implementedIds = @($issues | Where-Object {
+        $null -ne $_.personName -and $people[$byName[$_.personName]].primary_use -ne '研究' -and
+        ($_.status -eq 'In Review' -or ($_.status -eq 'In Progress' -and
+        [regex]::IsMatch([string]$_.description, '(?m)^[ \t]*待部署提交[：:][ \t]*[0-9a-fA-F]{7,40}(?=[ \t\r\n、,，]|$)')))
+    } | ForEach-Object { $_.id })
     $pendingIds = @($pending | ForEach-Object { $_.id })
     $result.pendingDeployment = @($pending | ForEach-Object { IssueSummary $_ })
     $earliestIssues = @()
     for ($index = 0; $index -lt $people.Count; $index++) {
         $person = $people[$index]
         $active = @($mapped[$person.display_name] | Where-Object { $_.status -notin @('Canceled', 'Cancelled', 'Duplicate') })
-        $unfinished = @($active | Where-Object { $_.status -ne 'Done' -and $_.id -notin $pendingIds })
+        $unfinished = @($active | Where-Object { $_.status -ne 'Done' -and $_.id -notin $implementedIds })
         # Linear records completion under the baseline primary use. Research
         # delivery is authorized project-wide; titles do not require gameplay.
         if ($unfinished.Count -gt 0 -or $active.Count -eq 0) {
@@ -226,7 +272,7 @@ try {
         }
     }
     $result.lateInProgress = @($issues | Where-Object {
-        $_.status -eq 'In Progress' -and $_.id -notin $pendingIds -and $null -ne $_.personName -and $null -ne $result.earliestUnfinished -and
+        $_.status -eq 'In Progress' -and $_.id -notin $implementedIds -and $null -ne $_.personName -and $null -ne $result.earliestUnfinished -and
         ($byName[$_.personName] + 1) -gt $result.earliestUnfinished.order
     } | ForEach-Object { IssueSummary $_ })
 
@@ -250,7 +296,7 @@ try {
         Sort-Object @{Expression = { if ($_.status -eq 'In Progress') { 0 } else { 1 } }},
             @{Expression = { if ($_.priority -eq 0) { 5 } else { $_.priority } }}, createdAt, id)
     $eligible = @()
-    $batchReady = $AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -ge $BatchSize
+    $batchReady = $AllowDeployment -and $AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -ge $BatchSize
     foreach ($candidate in $(if ($batchReady) { @() } else { $orderedCandidates })) {
         HydrateDependencies $candidate
         if (-not $candidate.dependenciesKnown) {
@@ -261,14 +307,27 @@ try {
                 throw "Dependency missing from complete snapshot: $($candidate.id) blocked by $blockerId"
             }
         }
-        if (@($candidate.blockerIds | Where-Object { $byId[$_].status -ne 'Done' }).Count -eq 0) {
+        if (@($candidate.blockerIds | Where-Object { -not (Test-DevelopmentReady $byId[$_]) }).Count -eq 0) {
             $eligible = @($candidate)
             break
         }
     }
-    if ($AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -gt 0 -and
-        ($pending.Count -ge $BatchSize -or $eligible.Count -eq 0)) {
-        $result.status = 'deployBatch'
+    $releaseProblems = @()
+    if ($AllowDeployment -and $AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -gt 0) {
+        # Acceptance does not waive real prerequisites of release candidates.
+        foreach ($releaseIssue in $pending) {
+            HydrateDependencies $releaseIssue
+            if (-not $releaseIssue.dependenciesKnown) { throw "Hydrate relations.blockedBy for release candidate $($releaseIssue.id)." }
+            foreach ($blockerId in $releaseIssue.blockerIds) {
+                if (-not $byId.ContainsKey($blockerId)) { throw "Missing release dependency: $blockerId" }
+                if ($byId[$blockerId].status -ne 'Done') { $releaseProblems += "$($releaseIssue.id) blockedBy $blockerId ($($byId[$blockerId].status)); cannot release." }
+            }
+        }
+    }
+    if ($AllowDeployment -and $AuthorizedEngineeringIssueId.Count -eq 0 -and $pending.Count -gt 0 -and
+        ($releaseProblems.Count -gt 0 -or $pending.Count -ge $BatchSize -or $eligible.Count -eq 0)) {
+        if ($releaseProblems.Count -gt 0) { $result.status = 'blocked'; $result.reasons += $releaseProblems }
+        else { $result.status = 'deployBatch' }
     } elseif ($eligible.Count -gt 0) {
         $selected = $eligible[0]
         $result.status = 'selected'
@@ -277,6 +336,9 @@ try {
             personName = $selected.personName
             authorizedScope = $(if ($selectionKind -eq 'AuthorizedEngineeringException') { $EngineeringAuthorizationScope } else { $null })
         }
+    } elseif ($null -eq $result.earliestUnfinished -and $implementedIds.Count -gt 0 -and $AuthorizedEngineeringIssueId.Count -eq 0) {
+        $result.status = 'awaitingReview'
+        $result.reasons += '现有实现已交接，审查与发布异步；无新增实现项，不持续轮询或重复汇报。'
     } elseif ($null -eq $result.earliestUnfinished -and $AuthorizedEngineeringIssueId.Count -eq 0) {
         $result.status = 'complete'
         $result.reasons += '快照中已映射人物任务均为Done；本检查器不代替原票按主要用途验收的研究成果或玩法接入、验证与部署证据。'
@@ -285,7 +347,7 @@ try {
         foreach ($issue in $candidates) {
             if ($issue.status -notin @('Todo', 'In Progress')) { $result.reasons += "$($issue.id) status=$($issue.status); 未获可执行授权或等待验收。" }
             foreach ($blockerId in $issue.blockerIds) {
-                if ($byId[$blockerId].status -ne 'Done') { $result.reasons += "$($issue.id) blockedBy $blockerId ($($byId[$blockerId].status))." }
+                if (-not (Test-DevelopmentReady $byId[$blockerId])) { $result.reasons += "$($issue.id) blockedBy $blockerId ($($byId[$blockerId].status); 实现未集成或缺失)." }
             }
         }
         if ($result.lateInProgress.Count -gt 0) { $result.reasons += '存在后序人物In Progress；只能按明确授权的必要范围安全收尾，不能自动继续其人物玩法。' }
@@ -298,7 +360,8 @@ try {
 $pendingCount = if ($result.Contains('pendingDeployment')) { @($result.pendingDeployment).Count } else { 0 }
 $nextAction = switch ($result.status) {
     'selected' { if ($result.selectedIssue.status -eq 'In Progress') { '继续当前任务实现' } else { '领取当前任务并执行' } }
-    'deployBatch' { '综合验证、构建并安全部署本批；通过后关闭对应任务' }
+    'deployBatch' { '复核Sol验收评论及集成提交，综合验证后按当前部署授权交付本批；通过后关闭对应任务' }
+    'awaitingReview' { '实现队列已交接；验收异步，无新任务时结束本轮，不空转轮询' }
     'complete' { '当前人物队列已完成' }
     default { '处理上述阻塞；不领取后序人物' }
 }
