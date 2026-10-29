@@ -68,5 +68,24 @@ internal static class BerkeleyPerceivedMarkChecks
         var pending = Observe(BerkeleyMarkAction.CheckTouch);
         pending.PendingAction = BerkeleyMarkAction.Leave;
         Check(!pending.IsUsable(), "A pending action outside the stage must be rejected.");
+
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        var journey = new WesternJourneyState
+        {
+            CurrentNodeId = BerkeleyPerceivedMarkState.SourceNodeId,
+            LastFixedAct = BerkeleyPerceivedMarkState.DeclineAct,
+        };
+        var committed = Observe(BerkeleyMarkAction.CheckTouch);
+        Check(BerkeleyPerceivedMarkFlow.IsRouteConsistent(committed, journey),
+            "The observation scene must sit on the knowledge-line question opportunity.");
+        Check(BerkeleyPerceivedMarkFlow.TryPrepare(committed, BerkeleyMarkAction.RejectMaterialSubstance),
+            "The narrow conclusion must be selectable on the route.");
+        Check(BerkeleyPerceivedMarkFlow.TryCommitPending(committed, journey, graph),
+            "A narrow conclusion must decline the knowledge question instead of switching to Hume.");
+        Check(journey.ResolvedQuestionActs.Contains(BerkeleyPerceivedMarkState.DeclineAct)
+            && journey.CurrentNodeId == BerkeleyPerceivedMarkState.SourceNodeId,
+            "Declining must keep the player on Descartes's knowledge node.");
+        Check(committed.QuestionDeclined && committed.IsUsable(),
+            "The declined route must remain replayable.");
     }
 }
