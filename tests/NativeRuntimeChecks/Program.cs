@@ -61,6 +61,13 @@ if (args.Contains("--enc199-only"))
     await StoicQuestionEntryNativeChecks.Run();
     await LegacyStoicQuestionExitNativeChecks.Run();
     await EventGoldCostRecoveryNativeChecks.Run();
+await HegelCrossActNativeChecks.Run();
+    await HegelCrossActNativeChecks.Run();
+    return;
+}
+if (args.Contains("--hegel-only"))
+{
+    await HegelCrossActNativeChecks.Run();
     return;
 }
 if (args.Contains("--copernicus-only"))
