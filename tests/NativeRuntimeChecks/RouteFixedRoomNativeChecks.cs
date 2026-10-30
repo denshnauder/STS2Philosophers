@@ -15,6 +15,29 @@ using static NativeRuntimeFixture;
 // such room by name instead of failing on the first one.
 internal static class RouteFixedRoomNativeChecks
 {
+    // Lines that are not implementation gaps: each one waits on a design
+    // decision or on content that does not exist yet. Anything outside these
+    // lists fails the check, so a room that stops opening can no longer slip
+    // through as a printed number.
+    private static readonly string[] ExpectedActTwo =
+    [
+        "NATURE_AND_BECOMING",         // Spinoza waits on a design decision (lens and doctrine)
+        "WILL_AND_VALUE",              // Schopenhauer has no room
+        "UNCONSCIOUS_AND_NORM",        // no fixed edge carries act two to Freud
+        "CONSEQUENCE_AND_FREEDOM",     // Bentham has no incoming edge
+        "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
+        "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
+    ];
+    private static readonly string[] ExpectedActThree =
+    [
+        "AUTONOMY_AND_HISTORY",        // closing-figure placement, waiting on the design call
+        "EDUCATION_AND_SITUATION",     // closing-figure placement
+        "CHECKS_AND_JUSTICE",          // closing-figure placement
+        "SCIENTIFIC_MODEL",            // closing-figure placement
+        "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
+        "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room
+    ];
+
     private const BindingFlags Methods = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
     private static readonly Assembly Mod = typeof(SpinozaCauseNetwork).Assembly;
     private static Type T(string name) => Mod.GetType("STS2Philosophers." + name)!;
@@ -135,7 +158,19 @@ internal static class RouteFixedRoomNativeChecks
         if (thirdFailures.Count > 0)
             Console.WriteLine("Route act-three gaps (" + thirdFailures.Count + "): "
                 + string.Join(" | ", thirdFailures));
+        AssertOnly(ExpectedActTwo, failures, "act two");
+        AssertOnly(ExpectedActThree, thirdFailures, "act three");
         return Task.CompletedTask;
+    }
+
+    private static void AssertOnly(string[] expected, List<string> failures, string act)
+    {
+        foreach (string failure in failures)
+        {
+            string routeId = failure[..failure.IndexOf(':')];
+            Check(expected.Contains(routeId),
+                $"{act}: {routeId} stopped opening its fixed room and is not on the known-gap list: {failure}");
+        }
     }
 
     private static string? FindEdge(object graph, object journey, int act, string thinker, out string? target)
