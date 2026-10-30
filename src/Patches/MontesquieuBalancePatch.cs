@@ -36,7 +36,9 @@ internal static class MontesquieuBalancePatch
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             behavior?.CompletedCombatCount ?? 0, journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
-            edgeEligible,
+            edgeEligible && journey is not null
+                && WesternFirstActBranch.IsChosen(run, journey, WesternRouteGraph.LoadEmbedded(),
+                    MontesquieuBalanceState.CompletionEdgeId),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && MontesquieuBalanceFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
