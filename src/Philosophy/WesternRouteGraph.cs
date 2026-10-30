@@ -25,7 +25,8 @@ internal sealed record WesternGraphEdge(
     [property: JsonPropertyName("required_edge_ids")] string[] RequiredEdgeIds,
     [property: JsonPropertyName("enabled")] bool Enabled,
     [property: JsonPropertyName("context")] WesternEdgeContext Context,
-    [property: JsonPropertyName("retirement_reason")] string? RetirementReason = null);
+    [property: JsonPropertyName("retirement_reason")] string? RetirementReason = null,
+    [property: JsonPropertyName("route_ids")] string[]? RouteIds = null);
 
 internal sealed record WesternEdgeContext(
     [property: JsonPropertyName("from_problem_id")] string FromProblemId,
@@ -57,6 +58,12 @@ internal sealed class WesternJourneyState
     public HashSet<int> DeclinedFixedActs { get; set; } = [];
     public bool RetainedEnding { get; set; }
 
+    /// <summary>
+    /// The default mainline this run follows. Empty for saves written before the
+    /// route table existed, which keeps every edge open exactly as before.
+    /// </summary>
+    public string RouteId { get; set; } = string.Empty;
+
     internal void NormalizeAfterLoad()
     {
         CurrentNodeId ??= string.Empty;
@@ -65,6 +72,7 @@ internal sealed class WesternJourneyState
         ResolvedQuestionActs ??= [];
         CandidateWindows ??= new(StringComparer.Ordinal);
         DeclinedFixedActs ??= [];
+        RouteId ??= string.Empty;
     }
 }
 
@@ -294,6 +302,8 @@ internal sealed class WesternRouteGraph
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
         && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
+        && (string.IsNullOrEmpty(state.RouteId) || edge.RouteIds is null or { Length: 0 }
+            || edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal))
         && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
         && (slot != "Fixed" || edge.Confidence != "Low");
 

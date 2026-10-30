@@ -1363,7 +1363,10 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "route_ids": [
+        "NATURE_AND_BECOMING"
+      ]
     },
     {
       "edge_id": "WESTERN_EDGE_024",

@@ -39,5 +39,17 @@ internal static class WesternRouteTableChecks
                 if (!nodes.Any(node => node.StartsWith(figure + "__", StringComparison.Ordinal))) missing.Add(figure);
         Check(missing.SetEquals(MissingFigures),
             "The gap list is exactly the set of named figures that have no node.");
+
+        // Route scoping: an edge that names routes is closed to a run following a
+        // different one, and stays open to saves that predate route identity.
+        WesternJourneyState journey = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        Check(graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
+            "A legacy run with no route identity keeps every edge open.");
+        journey.RouteId = "NATURE_AND_BECOMING";
+        Check(graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
+            "The route that owns the edge keeps it open.");
+        journey.RouteId = "EXPERIENCE_AND_SELF";
+        Check(!graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
+            "A run following another route does not see the edge.");
     }
 }
