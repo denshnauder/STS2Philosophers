@@ -134,7 +134,11 @@ public sealed class PeirceInquiry : EventModel
         string instanceId = state.InstanceId;
         PeirceInquiryStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
+        bool jamesAlreadyMet = Owner?.RunState is RunState ownerRun
+            && PhilosophyRunStateService.TryGet(ownerRun, out PhilosophyRunState? ownerShared)
+            && ownerShared?.JamesForcedBridge is not null;
         return PeirceInquiryFlow.Options(stage)
+            .Where(action => !(action == PeirceInquiryAction.AskJames && jamesAlreadyMet))
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{PeirceInquiryFlow.StageKey(stage)}.options.{PeirceInquiryFlow.ActionKey(action)}",
