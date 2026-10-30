@@ -2533,5 +2533,22 @@
   "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.title": "Leave the lecture",
   "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.description": "Close the record.",
   "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.title": "Leave the lecture",
-  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "LEVI_STRAUSS_MYTH.title": "Levi-Strauss: The Structure of Myth",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.description": "Two versions of the same story differ in every detail, yet repeat the same opposition. Levi-Strauss asks what the record should keep.",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.STRUCTURAL_READING.title": "Read the myth structurally",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.STRUCTURAL_READING.description": "Record the recurring oppositions and how the versions transform them.",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.HISTORICAL_READING.title": "Keep a historical reading",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.HISTORICAL_READING.description": "Record the versions as events in a sequence with causes.",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.KEEP_SAUSSURE.title": "Keep Saussure",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.KEEP_SAUSSURE.description": "Refuse the question and stay with language and speech.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.description": "You read the myth structurally. The versions are transformations of one set of oppositions, and the differences are kept as variations rather than noise.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.description": "You keep a historical reading. The versions are dated and causally ordered, and the recurring opposition is noted but not made the object.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.description": "You keep Saussure. The question goes unanswered, and no fixed link is taken this act.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.options.LEAVE.title": "Leave the seminar",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.options.LEAVE.description": "Close the record.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.title": "Leave the seminar",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.description": "Close the record.",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

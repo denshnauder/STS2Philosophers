@@ -8,8 +8,8 @@ internal enum SaussureSignStandard { None, Langue, Sign, Aristotelian }
 
 /// <summary>
 /// Saussure's first-act resolution on the language line. Aristotle's language
-/// entry is the source; the act's single fixed link (switch to
-/// structural linguistics) or keeping Aristotle.
+/// entry is the source; the act's single resolution is a question edge
+/// (switch to structural linguistics) or keeping Aristotle.
 /// </summary>
 internal sealed class SaussureSignState : IJsonOnDeserialized
 {
@@ -26,7 +26,7 @@ internal sealed class SaussureSignState : IJsonOnDeserialized
     public List<SaussureSignAction> ConfirmedActions { get; set; } = [];
     public SaussureSignStandard Standard { get; set; }
     public bool EdgeCommitted { get; set; }
-    public bool FixedDeclined { get; set; }
+    public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
     public static SaussureSignState Create(string instanceId) => new() { InstanceId = instanceId };
@@ -55,7 +55,7 @@ internal sealed class SaussureSignState : IJsonOnDeserialized
             SaussureSignFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && FixedDeclined == replay.FixedDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
     }
 }
 
@@ -95,7 +95,7 @@ internal static class SaussureSignFlow
                 break;
             case SaussureSignAction.KeepAristotle:
                 state.Standard = SaussureSignStandard.Aristotelian;
-                state.FixedDeclined = true;
+                state.QuestionDeclined = true;
                 state.Stage = SaussureSignStage.ResultKept;
                 break;
             case SaussureSignAction.Leave:
@@ -127,11 +127,11 @@ internal static class SaussureSignFlow
             || SaussureSignState.RequiredEdgeId.Length > 0
                 && !journey.CompletedEdgeIds.Contains(SaussureSignState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(SaussureSignState.CompletionEdgeId);
-        if (!state.EdgeCommitted && !state.FixedDeclined)
+        if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == 1 && !adopted && !journey.DeclinedFixedActs.Contains(2)
                 && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 2
                 && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 2
             && journey.DeclinedFixedActs.Contains(2)

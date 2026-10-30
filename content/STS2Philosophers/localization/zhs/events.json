@@ -2533,5 +2533,22 @@
   "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.title": "离开讲堂",
   "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.description": "关闭记录。",
   "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.title": "离开讲堂",
-  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "LEVI_STRAUSS_MYTH.title": "列维-斯特劳斯：神话的结构",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.description": "同一个故事的两个版本处处不同，却重复着同一组对立。列维-斯特劳斯问：记录应当保留什么？",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.STRUCTURAL_READING.title": "结构地阅读神话",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.STRUCTURAL_READING.description": "记录反复出现的对立，以及各版本如何转换它们。",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.HISTORICAL_READING.title": "保留历史阅读",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.HISTORICAL_READING.description": "把各版本记为有原因、有先后的事件。",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.KEEP_SAUSSURE.title": "保留索绪尔",
+  "LEVI_STRAUSS_MYTH.pages.INVITATION.options.KEEP_SAUSSURE.description": "拒绝这个问题，停留在语言与言语。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.description": "你结构地阅读神话。各版本是同一组对立的转换，差异作为变体保留，而不是噪音。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.description": "你保留历史阅读。各版本被定年并排出因果顺序，反复出现的对立只被记下，未成为对象。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.description": "你保留索绪尔。问题没有得到回答，本幕不再取得固定承接。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.options.LEAVE.title": "离开研讨班",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_STRUCTURE.options.LEAVE.description": "关闭记录。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.title": "离开研讨班",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.description": "关闭记录。",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

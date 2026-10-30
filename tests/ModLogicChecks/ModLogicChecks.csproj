@@ -183,6 +183,7 @@
     <Compile Include="..\..\src\Philosophy\RussellAnalysisState.cs" Link="RussellAnalysisState.cs" />
     <Compile Include="..\..\src\Philosophy\WittgensteinGameState.cs" Link="WittgensteinGameState.cs" />
     <Compile Include="..\..\src\Philosophy\SaussureSignState.cs" Link="SaussureSignState.cs" />
+    <Compile Include="..\..\src\Philosophy\LeviStraussMythState.cs" Link="LeviStraussMythState.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />

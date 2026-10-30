@@ -78,6 +78,7 @@ internal sealed class PhilosophyRunState
     public RussellAnalysisState? RussellAnalysis { get; set; }
     public WittgensteinGameState? WittgensteinGame { get; set; }
     public SaussureSignState? SaussureSign { get; set; }
+    public LeviStraussMythState? LeviStraussMyth { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -171,6 +172,7 @@ internal sealed class PhilosophyRunState
         || RussellAnalysis is not null
         || WittgensteinGame is not null
         || SaussureSign is not null
+        || LeviStraussMyth is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -395,6 +397,7 @@ internal sealed class PhilosophyRunState
         RussellAnalysis?.NormalizeAfterLoad();
         WittgensteinGame?.NormalizeAfterLoad();
         SaussureSign?.NormalizeAfterLoad();
+        LeviStraussMyth?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

@@ -2980,6 +2980,36 @@
           "00西哲当前路线.md:26"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_081",
+      "from_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从符号系统转入神话的结构分析",
+      "source": "00西哲当前路线.md:26",
+      "required_edge_ids": [
+        "WESTERN_EDGE_080"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "结构分析须保留具体神话的差异，不能把诸文化写成同一组二元对立。",
+        "interpretation_boundary": "问题展开，不宣称直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:26"
+        ]
+      }
     }
   ],
   "samples": [
