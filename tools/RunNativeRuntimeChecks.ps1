@@ -11,6 +11,7 @@ $repository = Split-Path -Parent $PSScriptRoot
 $dotNetRoot = [string]$settings.Project.PropertyGroup.DotNetRoot
 $godot = [string]$settings.Project.PropertyGroup.GodotExecutable
 $dotnet = Join-Path $dotNetRoot 'dotnet.exe'
+if (-not (Test-Path -LiteralPath $dotnet -PathType Leaf)) { $dotnet = Join-Path $dotNetRoot 'dotnet' }
 foreach ($required in @($dotnet, $godot)) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) { throw "Missing configured file: $required" }
 }

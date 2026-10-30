@@ -69,23 +69,22 @@ internal static class BerkeleyPerceivedMarkChecks
         pending.PendingAction = BerkeleyMarkAction.Leave;
         Check(!pending.IsUsable(), "A pending action outside the stage must be rejected.");
 
-        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        var journey = new WesternJourneyState
-        {
-            CurrentNodeId = BerkeleyPerceivedMarkState.SourceNodeId,
-            LastFixedAct = BerkeleyPerceivedMarkState.DeclineAct,
-        };
-        var committed = Observe(BerkeleyMarkAction.CheckTouch);
-        Check(BerkeleyPerceivedMarkFlow.IsRouteConsistent(committed, journey),
-            "The observation scene must sit on the knowledge-line question opportunity.");
-        Check(BerkeleyPerceivedMarkFlow.TryPrepare(committed, BerkeleyMarkAction.RejectMaterialSubstance),
-            "The narrow conclusion must be selectable on the route.");
-        Check(BerkeleyPerceivedMarkFlow.TryCommitPending(committed, journey, graph),
-            "A narrow conclusion must decline the knowledge question instead of switching to Hume.");
-        Check(journey.ResolvedQuestionActs.Contains(BerkeleyPerceivedMarkState.DeclineAct)
-            && journey.CurrentNodeId == BerkeleyPerceivedMarkState.SourceNodeId,
-            "Declining must keep the player on Descartes's knowledge node.");
-        Check(committed.QuestionDeclined && committed.IsUsable(),
-            "The declined route must remain replayable.");
+        var locke = LockeCargoIdentityState.Create("LOCKE_CARGO_IDENTITY:TEST:1");
+        Check(locke.Berkeley is { Closed: false }, "A new Locke record must carry the Berkeley segment.");
+        Check(LockeCargoIdentityFlow.Options(LockeCargoStage.ResultMemory).Contains(LockeCargoAction.InspectScreen),
+            "The result page must offer the in-batch segment.");
+        Check(!LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.CheckTouch),
+            "The segment must not open before the player inspects the screen.");
+        locke.Inspecting = true;
+        Check(LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.CheckTouch),
+            "The inspection must accept one observation channel.");
+        Check(LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.RejectMaterialSubstance),
+            "The inspection must accept a narrow conclusion.");
+        Check(LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.Leave) && !locke.Inspecting,
+            "Leaving the segment must return to the Locke record.");
+        Check(locke.Berkeley is { Closed: true } && locke.IsUsable(),
+            "The finished in-batch segment must stay replayable.");
+        Check(!LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.CheckTouch),
+            "A closed segment must not accept a second observation.");
     }
 }

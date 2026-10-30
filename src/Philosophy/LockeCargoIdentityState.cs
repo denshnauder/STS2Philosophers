@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace STS2Philosophers;
 
 internal enum LockeCargoStage { Invitation, Evidence, ResultMemory, ResultSealed, ResultDuty, ResultKept }
-internal enum LockeCargoAction { None, CheckMemory, CheckSignature, CheckMark, ReturnByMemory, SealAndWitness, ConfirmDutyOnly, KeepDescartes, Leave }
+internal enum LockeCargoAction { None, CheckMemory, CheckSignature, CheckMark, ReturnByMemory, SealAndWitness, ConfirmDutyOnly, KeepDescartes, InspectScreen, Leave }
 internal enum LockeEvidence { None, Memory, Signature, Mark }
 internal enum LockeJudgment { None, Identity, Custody }
 
@@ -23,14 +23,21 @@ internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
     public LockeJudgment Judgment { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool QuestionDeclined { get; set; }
+    public bool Inspecting { get; set; }
+    public BerkeleyPerceivedMarkState? Berkeley { get; set; }
     public bool Closed { get; set; }
 
-    public static LockeCargoIdentityState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static LockeCargoIdentityState Create(string instanceId) => new()
+    {
+        InstanceId = instanceId,
+        Berkeley = BerkeleyPerceivedMarkState.Create($"{instanceId}:BERKELEY"),
+    };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
+        Berkeley?.NormalizeAfterLoad();
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -42,6 +49,8 @@ internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
             || !Enum.IsDefined(Evidence) || !Enum.IsDefined(Judgment)
             || ConfirmedActions is null || ConfirmedActions.Count > 5
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
+            || Inspecting && (Berkeley is null || Berkeley.Closed)
+            || Berkeley is not null && !Berkeley.IsUsable()
             || Closed && PendingAction != LockeCargoAction.None
             || PendingAction != LockeCargoAction.None
                 && !LockeCargoIdentityFlow.Options(Stage).Contains(PendingAction)) return false;
@@ -68,7 +77,7 @@ internal static class LockeCargoIdentityFlow
         LockeCargoStage.Evidence =>
             [LockeCargoAction.ReturnByMemory, LockeCargoAction.SealAndWitness, LockeCargoAction.ConfirmDutyOnly],
         LockeCargoStage.ResultMemory or LockeCargoStage.ResultSealed or LockeCargoStage.ResultDuty or LockeCargoStage.ResultKept =>
-            [LockeCargoAction.Leave],
+            [LockeCargoAction.InspectScreen, LockeCargoAction.Leave],
         _ => [],
     };
 
@@ -96,11 +105,22 @@ internal static class LockeCargoIdentityFlow
                 state.Judgment = LockeJudgment.Custody; state.Stage = LockeCargoStage.ResultDuty; state.EdgeCommitted = true; break;
             case LockeCargoAction.KeepDescartes:
                 state.QuestionDeclined = true; state.Stage = LockeCargoStage.ResultKept; break;
+            case LockeCargoAction.InspectScreen:
+                state.Inspecting = true; break;
             case LockeCargoAction.Leave:
                 state.Closed = true; break;
         }
         state.ConfirmedActions.Add(action);
         state.PendingAction = LockeCargoAction.None;
+    }
+
+    public static bool TryApplyBerkeley(LockeCargoIdentityState state, BerkeleyMarkAction action)
+    {
+        if (!state.IsUsable() || !state.Inspecting || state.Berkeley is not { } berkeley
+            || berkeley.Closed || !BerkeleyPerceivedMarkFlow.TryPrepare(berkeley, action)) return false;
+        BerkeleyPerceivedMarkFlow.Apply(berkeley, action);
+        if (berkeley.Closed) state.Inspecting = false;
+        return state.IsUsable();
     }
 
     public static bool TryCommitPending(LockeCargoIdentityState state, WesternJourneyState journey, WesternRouteGraph graph)

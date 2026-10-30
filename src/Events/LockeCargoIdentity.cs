@@ -146,16 +146,67 @@ public sealed class LockeCargoIdentity : EventModel
 
     private IReadOnlyList<EventOption> GenerateOptions(LockeCargoIdentityState state)
     {
+        if (state.Inspecting && state.Berkeley is { } berkeley)
+        {
+            string berkeleyId = berkeley.InstanceId;
+            BerkeleyMarkStage berkeleyStage = berkeley.Stage;
+            int berkeleyCount = berkeley.ConfirmedActions.Count;
+            return BerkeleyPerceivedMarkFlow.Options(berkeleyStage)
+                .Select(action => new EventOption(this,
+                    () => ChooseBerkeley(state, berkeleyId, berkeleyStage, berkeleyCount, action),
+                    $"BERKELEY_PERCEIVED_MARK.pages.{BerkeleyPerceivedMarkFlow.DescriptionKey(berkeley)}.options.{BerkeleyActionKey(action)}",
+                    Array.Empty<IHoverTip>()))
+                .ToArray();
+        }
         string instanceId = state.InstanceId;
         LockeCargoStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
         return LockeCargoIdentityFlow.Options(stage)
+            .Where(action => action != LockeCargoAction.InspectScreen || state.Berkeley is { Closed: false })
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{LockeCargoIdentityFlow.StageKey(stage)}.options.{LockeCargoIdentityFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
+
+    private async Task ChooseBerkeley(LockeCargoIdentityState expectedState, string expectedBerkeleyId,
+        BerkeleyMarkStage expectedStage, int expectedActionCount, BerkeleyMarkAction action)
+    {
+        if (!_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
+        {
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+            if (shared.LockeCargoIdentity is not { } state || !ReferenceEquals(state, expectedState)
+                || state.Berkeley is not { } berkeley || berkeley.InstanceId != expectedBerkeleyId
+                || berkeley.Stage != expectedStage || berkeley.ConfirmedActions.Count != expectedActionCount
+                || !state.Inspecting) return;
+            _ready = false;
+            if (!LockeCargoIdentityFlow.TryApplyBerkeley(state, action))
+            {
+                Block($"The Berkeley segment could not apply: {action}.");
+                return;
+            }
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"The Berkeley segment persistence is unknown: {action}.");
+                return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
+        }
+        catch (Exception exception)
+        {
+            Block($"The Berkeley segment failed: {exception}");
+        }
+        finally
+        {
+            Volatile.Write(ref _resolving, 0);
+        }
+    }
+
+    private static string BerkeleyActionKey(BerkeleyMarkAction action) => string.Concat(
+        action.ToString().SelectMany((c, i) => i > 0 && char.IsUpper(c) ? new[] { '_', c } : new[] { char.ToUpperInvariant(c) }));
 
     private LockeCargoIdentityState? TryRestoreState()
     {
@@ -181,5 +232,7 @@ public sealed class LockeCargoIdentity : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(LockeCargoIdentityState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{LockeCargoIdentityFlow.DescriptionKey(state)}.description");
+        state.Inspecting && state.Berkeley is { } berkeley
+            ? L10NLookup($"BERKELEY_PERCEIVED_MARK.pages.{BerkeleyPerceivedMarkFlow.DescriptionKey(berkeley)}.description")
+            : L10NLookup($"{LocalizationRoot}.pages.{LockeCargoIdentityFlow.DescriptionKey(state)}.description");
 }

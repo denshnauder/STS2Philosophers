@@ -17,9 +17,6 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized
 {
     public const int CurrentVersion = 1;
     public const string HiddenObjectId = "SEALED_SECOND_CRATE";
-    public const string SourceNodeId = "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE";
-    public const string EdgeId = "WESTERN_EDGE_014";
-    public const int DeclineAct = 2;
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -29,7 +26,6 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized
     public BerkeleyChannel Channel { get; set; }
     public string? HiddenObject { get; set; }
     public BerkeleyConclusion Conclusion { get; set; }
-    public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
     public static BerkeleyPerceivedMarkState Create(string instanceId) => new() { InstanceId = instanceId };
@@ -62,8 +58,7 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized
             BerkeleyPerceivedMarkFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Channel == replay.Channel && HiddenObject == replay.HiddenObject
-            && Conclusion == replay.Conclusion && QuestionDeclined == replay.QuestionDeclined
-            && Closed == replay.Closed;
+            && Conclusion == replay.Conclusion && Closed == replay.Closed;
     }
 }
 
@@ -111,17 +106,14 @@ internal static class BerkeleyPerceivedMarkFlow
             case BerkeleyMarkAction.RejectMaterialSubstance:
                 state.Conclusion = BerkeleyConclusion.RejectMaterialSubstance;
                 state.Stage = BerkeleyMarkStage.ResultReject;
-                state.QuestionDeclined = true;
                 break;
             case BerkeleyMarkAction.RequestSecondObserver:
                 state.Conclusion = BerkeleyConclusion.SecondObserver;
                 state.Stage = BerkeleyMarkStage.ResultWitness;
-                state.QuestionDeclined = true;
                 break;
             case BerkeleyMarkAction.KeepPerceptionScope:
                 state.Conclusion = BerkeleyConclusion.PerceptionScope;
                 state.Stage = BerkeleyMarkStage.ResultScope;
-                state.QuestionDeclined = true;
                 break;
             case BerkeleyMarkAction.Leave:
                 state.Closed = true;
@@ -129,27 +121,6 @@ internal static class BerkeleyPerceivedMarkFlow
         }
         state.ConfirmedActions.Add(action);
         state.PendingAction = BerkeleyMarkAction.None;
-    }
-
-    public static bool TryCommitPending(BerkeleyPerceivedMarkState state, WesternJourneyState journey,
-        WesternRouteGraph graph)
-    {
-        if (!IsRouteConsistent(state, journey) || state.PendingAction == BerkeleyMarkAction.None) return false;
-        BerkeleyMarkAction action = state.PendingAction;
-        bool concludes = action is BerkeleyMarkAction.RejectMaterialSubstance
-            or BerkeleyMarkAction.RequestSecondObserver or BerkeleyMarkAction.KeepPerceptionScope;
-        if (concludes && !journey.ResolvedQuestionActs.Contains(BerkeleyPerceivedMarkState.DeclineAct)
-            && !graph.TryDecline(journey, "Question", BerkeleyPerceivedMarkState.DeclineAct)) return false;
-        Apply(state, action);
-        return IsRouteConsistent(state, journey);
-    }
-
-    public static bool IsRouteConsistent(BerkeleyPerceivedMarkState state, WesternJourneyState journey)
-    {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || journey.CurrentNodeId != BerkeleyPerceivedMarkState.SourceNodeId) return false;
-        bool declined = journey.ResolvedQuestionActs.Contains(BerkeleyPerceivedMarkState.DeclineAct);
-        return state.QuestionDeclined == declined;
     }
 
     public static string DescriptionKey(BerkeleyPerceivedMarkState state) => state.Stage switch
