@@ -2601,5 +2601,22 @@
   "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.title": "离开研讨班",
   "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.description": "关闭记录。",
   "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "GADAMER_FUSION.title": "伽达默尔：视域融合",
+  "GADAMER_FUSION.pages.INVITATION.description": "文本是为另一个时代写的，而你从自己的时代读它。伽达默尔问：记录应当如何对待这段距离？",
+  "GADAMER_FUSION.pages.INVITATION.options.HORIZON_FUSION.title": "融合视域",
+  "GADAMER_FUSION.pages.INVITATION.options.HORIZON_FUSION.description": "把你的问题与文本的回答记为同一场对话。",
+  "GADAMER_FUSION.pages.INVITATION.options.EFFECTIVE_HISTORY.title": "标记效果历史",
+  "GADAMER_FUSION.pages.INVITATION.options.EFFECTIVE_HISTORY.description": "记录传统如何已经塑造了你能从文本中听到的东西。",
+  "GADAMER_FUSION.pages.INVITATION.options.KEEP_HEIDEGGER.title": "保留海德格尔",
+  "GADAMER_FUSION.pages.INVITATION.options.KEEP_HEIDEGGER.description": "拒绝这个问题，停留在在世存在。",
+  "GADAMER_FUSION.pages.RESULT_FUSION.description": "你融合视域。你的问题与文本的回答被记为同一场对话，距离作为使对话可能之物被保留。",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.description": "你标记效果历史。记录显示传统在你开始之前已塑造了你的阅读，并注明融合本身未被进入。",
+  "GADAMER_FUSION.pages.RESULT_KEPT.description": "你保留海德格尔。问题没有得到回答，本幕不再取得问号承接。",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.LEAVE.title": "离开研讨班",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.LEAVE.description": "关闭记录。",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.title": "离开研讨班",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.description": "关闭记录。",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

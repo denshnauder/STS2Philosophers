@@ -72,6 +72,7 @@ LeviStraussMythChecks.Run();
 FoucaultPowerChecks.Run();
 DerridaDeconstructionChecks.Run();
 DeleuzeDifferenceChecks.Run();
+GadamerFusionChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

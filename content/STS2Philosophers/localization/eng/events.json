@@ -2601,5 +2601,22 @@
   "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.title": "Leave the seminar",
   "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.description": "Close the record.",
   "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "GADAMER_FUSION.title": "Gadamer: Fusion of Horizons",
+  "GADAMER_FUSION.pages.INVITATION.description": "The text was written for another age, and you read it from yours. Gadamer asks what the record should make of that distance.",
+  "GADAMER_FUSION.pages.INVITATION.options.HORIZON_FUSION.title": "Fuse the horizons",
+  "GADAMER_FUSION.pages.INVITATION.options.HORIZON_FUSION.description": "Record your question and the text's answer as one conversation.",
+  "GADAMER_FUSION.pages.INVITATION.options.EFFECTIVE_HISTORY.title": "Mark effective history",
+  "GADAMER_FUSION.pages.INVITATION.options.EFFECTIVE_HISTORY.description": "Record how the tradition has already shaped what you can hear in the text.",
+  "GADAMER_FUSION.pages.INVITATION.options.KEEP_HEIDEGGER.title": "Keep Heidegger",
+  "GADAMER_FUSION.pages.INVITATION.options.KEEP_HEIDEGGER.description": "Refuse the question and stay with being-in-the-world.",
+  "GADAMER_FUSION.pages.RESULT_FUSION.description": "You fuse the horizons. Your question and the text's answer are recorded as one conversation, and the distance is kept as what makes it possible.",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.description": "You mark effective history. The record shows how the tradition shaped your reading before you began, and notes that the fusion itself was not entered.",
+  "GADAMER_FUSION.pages.RESULT_KEPT.description": "You keep Heidegger. The question goes unanswered, and no question link is taken this act.",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.LEAVE.title": "Leave the seminar",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.LEAVE.description": "Close the record.",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.title": "Leave the seminar",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.description": "Close the record.",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
