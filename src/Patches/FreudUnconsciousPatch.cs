@@ -46,7 +46,7 @@ internal static class FreudUnconsciousPatch
         var candidate = saved ?? FreudUnconsciousState.Create($"FREUD_UNCONSCIOUS:{run.Rng.Seed}:1");
         if (journey is null || !FreudUnconsciousFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.FreudUnconscious = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Freud's unconscious question.");
         return canonical;
     }
 

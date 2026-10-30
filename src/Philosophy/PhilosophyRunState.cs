@@ -87,6 +87,7 @@ internal sealed class PhilosophyRunState
     public AdornoNegativeState? AdornoNegative { get; set; }
     public HabermasCommunicationState? HabermasCommunication { get; set; }
     public FreudUnconsciousState? FreudUnconscious { get; set; }
+    public LacanSignifierState? LacanSignifier { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -189,6 +190,7 @@ internal sealed class PhilosophyRunState
         || AdornoNegative is not null
         || HabermasCommunication is not null
         || FreudUnconscious is not null
+        || LacanSignifier is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -422,6 +424,7 @@ internal sealed class PhilosophyRunState
         AdornoNegative?.NormalizeAfterLoad();
         HabermasCommunication?.NormalizeAfterLoad();
         FreudUnconscious?.NormalizeAfterLoad();
+        LacanSignifier?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

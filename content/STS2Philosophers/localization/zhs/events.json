@@ -2704,5 +2704,19 @@
   "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.title": "结束会谈",
   "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.description": "离开诊室。",
   "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.title": "结束会谈",
-  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "离开诊室。"
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "离开诊室。",
+  "LACAN_SIGNIFIER.pages.REQUEST.description": "旅站有人请你取回「属于你的」标记。三名说话者都声称知道它在哪里：看守说它被存进了柜子，信使说它被寄往下一站，记录员说它登记在别人的名下。你先把「你的」这个词连到其中一人和他当时的使用场景。",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_KEEPER": "把「你的」连到看守：他当时在柜台后清点寄存物。",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_COURIER": "把「你的」连到信使：他当时正要把它交给下一站。",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_ARCHIVIST": "把「你的」连到记录员：他当时把它写进别人的登记行。",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.description": "新的发言打断了原来的意义链：另一位说话者当众改口，把「你的」指向另一个承诺。你要么追踪这次变化并澄清自己的请求，要么保留既有解释立即领取，要么拒绝把一个无法确证的缺失物说成具体对象。",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.CLARIFY": "追踪这次改口，公开澄清自己真正要的是什么。",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.CLAIM_NOW": "保留既有解释，立即领取现在能拿到的东西。",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.REFUSE_OBJECT": "拒绝把无法确证的缺失物说成具体对象，保留未解之处。",
+  "LACAN_SIGNIFIER.pages.RESULT_CLARIFIED.description": "你追踪了改口，公开说明自己的请求；代价是失去一次领取物品的优先权。能指的使用者、公开要求与真正拿到的东西都记了下来。",
+  "LACAN_SIGNIFIER.pages.RESULT_CLARIFIED.options.LEAVE": "离开旅站。",
+  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.description": "你保留既有解释并立即领取，但记录显示有一位请求者始终没有得到回应。",
+  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE": "离开旅站。",
+  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.description": "你拒绝把无法确证的缺失物说成具体对象，事件在这里结束，未解之处被如实保留。",
+  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE": "离开旅站。"
 }

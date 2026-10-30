@@ -2704,5 +2704,19 @@
   "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.title": "Close the session",
   "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.description": "Leave the consulting room.",
   "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.title": "Close the session",
-  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "Leave the consulting room."
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "Leave the consulting room.",
+  "LACAN_SIGNIFIER.pages.REQUEST.description": "At the waystation someone asks you to reclaim the token that is \"yours\". Three speakers all claim to know where it is: the keeper says it was stored in a cabinet, the courier says it was sent on to the next stop, the archivist says it was recorded under someone else's name. You first bind the word \"yours\" to one speaker and to the scene in which he used it.",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_KEEPER": "Bind \"yours\" to the keeper: he was counting stored goods behind the counter.",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_COURIER": "Bind \"yours\" to the courier: he was about to hand it on to the next stop.",
+  "LACAN_SIGNIFIER.pages.REQUEST.options.BIND_ARCHIVIST": "Bind \"yours\" to the archivist: he was writing it into someone else's register line.",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.description": "A new utterance breaks the chain of meaning: another speaker publicly changes his wording and points \"yours\" at a different promise. You can track the shift and clarify your request, keep the existing reading and claim at once, or refuse to name an unverifiable missing object as a concrete thing.",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.CLARIFY": "Track the change and publicly clarify what you actually asked for.",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.CLAIM_NOW": "Keep the existing reading and claim what can be had right now.",
+  "LACAN_SIGNIFIER.pages.INTERRUPTED.options.REFUSE_OBJECT": "Refuse to name the unverifiable missing object and keep the gap open.",
+  "LACAN_SIGNIFIER.pages.RESULT_CLARIFIED.description": "You tracked the change and stated your request publicly; the cost is losing the priority to claim the item. The signifier's user, the public demand and what you actually received are recorded.",
+  "LACAN_SIGNIFIER.pages.RESULT_CLARIFIED.options.LEAVE": "Leave the waystation.",
+  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.description": "You kept the existing reading and claimed at once, but the record shows that one requester never received an answer.",
+  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE": "Leave the waystation.",
+  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.description": "You refused to name the unverifiable missing object; the event ends here and the unresolved gap is left as it is.",
+  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE": "Leave the waystation."
 }

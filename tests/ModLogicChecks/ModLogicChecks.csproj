@@ -192,6 +192,8 @@
     <Compile Include="..\..\src\Philosophy\AdornoNegativeState.cs" Link="AdornoNegativeState.cs" />
     <Compile Include="..\..\src\Philosophy\HabermasCommunicationState.cs" Link="HabermasCommunicationState.cs" />
     <Compile Include="..\..\src\Philosophy\FreudUnconsciousState.cs" Link="FreudUnconsciousState.cs" />
+    <Compile Include="..\..\src\Philosophy\LacanSignifierState.cs" Link="LacanSignifierState.cs" />
+    <Compile Include="..\..\src\Philosophy\LacanSignifierTriggerPolicy.cs" Link="LacanSignifierTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />

@@ -625,6 +625,14 @@
       "stage_id": "CORE",
       "display_name": "弗洛伊德",
       "terminal": false
+    },
+    {
+      "node_id": "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+      "thinker_id": "JACQUES_LACAN",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "拉康",
+      "terminal": false
     }
   ],
   "edges": [
@@ -3209,6 +3217,37 @@
         "compressed_mediators": "",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "无意识须保留主体的不透明性，不能把分析写成对他人内心的全知。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:29"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_088",
+      "from_node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+      "to_node_id": "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从无意识结构转入能指链与他者",
+      "source": "00西哲当前路线.md:29",
+      "required_edge_ids": [
+        "WESTERN_EDGE_087"
+      ],
+      "enabled": true,
+      "retirement_reason": null,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "能指与欲望须保留请求被关系重新定位的过程，不能写成读心或成功治疗分数。",
         "interpretation_boundary": "问题展开，不伪造直接师承。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [

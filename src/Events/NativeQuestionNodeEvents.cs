@@ -155,7 +155,21 @@ internal static class NativeQuestionNodeEvents
             ?? AustinSpeechActPatch.TrySelectExistingNative(run)
             ?? PopperFalsificationPatch.TrySelectExistingNative(run)
             ?? RousseauConsentPatch.TrySelectExistingNative(run)
-            ?? KantUniversalizationPatch.TrySelectExistingNative(run);
+            ?? KantUniversalizationPatch.TrySelectExistingNative(run)
+            ?? FoucaultPowerPatch.TrySelectExistingNative(run)
+            ?? DeleuzeDifferencePatch.TrySelectExistingNative(run)
+            ?? GadamerFusionPatch.TrySelectExistingNative(run)
+            ?? RussellAnalysisPatch.TrySelectExistingNative(run)
+            ?? WittgensteinGamePatch.TrySelectExistingNative(run)
+            ?? SaussureSignPatch.TrySelectExistingNative(run)
+            ?? LeviStraussMythPatch.TrySelectExistingNative(run)
+            ?? DerridaDeconstructionPatch.TrySelectExistingNative(run)
+            ?? HorkheimerReasonPatch.TrySelectExistingNative(run)
+            ?? AdornoNegativePatch.TrySelectExistingNative(run)
+            ?? HabermasCommunicationPatch.TrySelectExistingNative(run)
+            ?? FreudUnconsciousPatch.TrySelectExistingNative(run)
+            ?? LacanSignifierPatch.TrySelectExistingNative(run)
+            ?? FregeSensePatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 
@@ -238,6 +252,20 @@ internal static class NativeQuestionNodeEvents
             ?? HegelSubstanceSubjectPatch.TrySelectNative(run)
             ?? LeibnizIndependentClocksPatch.TrySelectNative(run)
             ?? HobbesAuthorizedSovereigntyPatch.TrySelectNative(run)
+            ?? FoucaultPowerPatch.TrySelectNative(run)
+            ?? DeleuzeDifferencePatch.TrySelectNative(run)
+            ?? GadamerFusionPatch.TrySelectNative(run)
+            ?? RussellAnalysisPatch.TrySelectNative(run)
+            ?? WittgensteinGamePatch.TrySelectNative(run)
+            ?? SaussureSignPatch.TrySelectNative(run)
+            ?? LeviStraussMythPatch.TrySelectNative(run)
+            ?? DerridaDeconstructionPatch.TrySelectNative(run)
+            ?? HorkheimerReasonPatch.TrySelectNative(run)
+            ?? AdornoNegativePatch.TrySelectNative(run)
+            ?? HabermasCommunicationPatch.TrySelectNative(run)
+            ?? FreudUnconsciousPatch.TrySelectNative(run)
+            ?? LacanSignifierPatch.TrySelectNative(run)
+            ?? FregeSensePatch.TrySelectNative(run)
             ?? nextEvent;
         // ActModel.PullNextEvent registers the returned model as visited. We do
         // not advance its event queue, append history, or consume another RNG roll.
