@@ -20,6 +20,10 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>The act this instance occupies: 1 for the question, 2 or 3 on a route.</summary>
+    public int ActIndex { get; set; } = 1;
+    /// <summary>The fixed edge this instance commits, chosen by the act it serves.</summary>
+    public string EdgeId { get; set; } = CompletionEdgeId;
     public MontesquieuBalanceStage Stage { get; set; }
     public MontesquieuBalanceAction PendingAction { get; set; }
     public List<MontesquieuBalanceAction> ConfirmedActions { get; set; } = [];
@@ -30,15 +34,21 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static MontesquieuBalanceState Create(string instanceId) => new()
+    public static MontesquieuBalanceState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+
+    public static MontesquieuBalanceState CreateAt(string instanceId, int actIndex, string edgeId) => new()
     {
         InstanceId = instanceId,
+        ActIndex = actIndex,
+        EdgeId = edgeId,
         Voltaire = VoltaireToleranceState.Create($"{instanceId}:VOLTAIRE"),
     };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
         Voltaire?.NormalizeAfterLoad();
     }
@@ -49,6 +59,7 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Standard)
+            || string.IsNullOrWhiteSpace(EdgeId)
             || Inspecting && (Voltaire is null || Voltaire.Closed)
             || Voltaire is not null && !Voltaire.IsUsable()
             || ConfirmedActions is null || ConfirmedActions.Count > 4
@@ -121,10 +132,10 @@ internal static class MontesquieuBalanceFlow
         MontesquieuBalanceAction action = state.PendingAction;
         bool adopts = action is MontesquieuBalanceAction.SeparatePowers or MontesquieuBalanceAction.BalanceFactions;
         bool declines = action == MontesquieuBalanceAction.PreservePrivilege;
-        if (adopts && !journey.CompletedEdgeIds.Contains(MontesquieuBalanceState.CompletionEdgeId)
-            && !graph.TryApply(journey, MontesquieuBalanceState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(2)
-            && !graph.TryDecline(journey, "Fixed", 2)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex + 1)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex + 1)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -132,14 +143,15 @@ internal static class MontesquieuBalanceFlow
     public static bool IsRouteConsistent(MontesquieuBalanceState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(MontesquieuBalanceState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declined = state.ActIndex + 1;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 1 && !adopted && !journey.DeclinedFixedActs.Contains(2)
+            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == MontesquieuBalanceState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex + 1
                 && journey.CurrentNodeId == MontesquieuBalanceState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2 && journey.DeclinedFixedActs.Contains(2)
+        return !adopted && journey.LastFixedAct == state.ActIndex + 1 && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == MontesquieuBalanceState.SourceNodeId;
     }
 

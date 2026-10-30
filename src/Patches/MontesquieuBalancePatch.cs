@@ -29,24 +29,40 @@ internal static class MontesquieuBalancePatch
         MontesquieuBalance? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == MontesquieuBalanceState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        // A route that names Montesquieu in a later act brings its own fixed edge
+        // and its own position; otherwise this stays the first act's question.
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "MONTESQUIEU" ? 2
+                : route.ActThreeFigure == "MONTESQUIEU" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct
+                    && edge.ToNodeId == MontesquieuBalanceState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? MontesquieuBalanceState.CompletionEdgeId
+            : MontesquieuBalanceState.CompletionEdgeId;
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         MontesquieuBalanceTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
-                && WesternFirstActBranch.IsChosen(run, journey, WesternRouteGraph.LoadEmbedded(),
-                    MontesquieuBalanceState.CompletionEdgeId),
+                && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && MontesquieuBalanceFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            routeAct);
         if (!MontesquieuBalanceTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? MontesquieuBalanceState.Create($"MONTESQUIEU_BALANCE:{run.Rng.Seed}:1");
+        var candidate = saved ?? (routeAct >= 2
+            ? MontesquieuBalanceState.CreateAt($"MONTESQUIEU_BALANCE:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : MontesquieuBalanceState.Create($"MONTESQUIEU_BALANCE:{run.Rng.Seed}:1"));
         if (journey is null || !MontesquieuBalanceFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.MontesquieuBalance = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Montesquieu's balance question.");
         return canonical;
     }
 
