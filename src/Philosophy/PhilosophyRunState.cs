@@ -61,6 +61,7 @@ internal sealed class PhilosophyRunState
     public KantUniversalizationState? KantUniversalization { get; set; }
     public MillHarmState? MillHarm { get; set; }
     public MontesquieuBalanceState? MontesquieuBalance { get; set; }
+    public SmithSympathyState? SmithSympathy { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -137,6 +138,7 @@ internal sealed class PhilosophyRunState
         || KantUniversalization is not null
         || MillHarm is not null
         || MontesquieuBalance is not null
+        || SmithSympathy is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -344,6 +346,7 @@ internal sealed class PhilosophyRunState
         KantUniversalization?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();
         MontesquieuBalance?.NormalizeAfterLoad();
+        SmithSympathy?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

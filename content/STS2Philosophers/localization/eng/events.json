@@ -2227,5 +2227,22 @@
   "DIDEROT_PRACTICE.pages.RESULT_SAMPLE.options.LEAVE.title": "Leave the entry",
   "DIDEROT_PRACTICE.pages.RESULT_SAMPLE.options.LEAVE.description": "Close the record.",
   "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.title": "Leave the entry",
-  "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.description": "Close the record."
+  "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.description": "Close the record.",
+  "SMITH_SYMPATHY.title": "Adam Smith: Sympathy and Public Action",
+  "SMITH_SYMPATHY.pages.INVITATION.description": "A stranger goes bankrupt in the market square. Some onlookers feel for him; others only recalculate the price. Smith asks what order should rest on.",
+  "SMITH_SYMPATHY.pages.INVITATION.options.SYMPATHY_ORDER.title": "Ground order in sympathy",
+  "SMITH_SYMPATHY.pages.INVITATION.options.SYMPATHY_ORDER.description": "Let fellow-feeling set the standard, even where it favors those near us.",
+  "SMITH_SYMPATHY.pages.INVITATION.options.EXCHANGE_ORDER.title": "Rely on exchange and self-interest",
+  "SMITH_SYMPATHY.pages.INVITATION.options.EXCHANGE_ORDER.description": "Let prices coordinate strangers and leave sympathy to private life.",
+  "SMITH_SYMPATHY.pages.INVITATION.options.PRESERVE_ARRANGEMENT.title": "Keep Plato's arrangement",
+  "SMITH_SYMPATHY.pages.INVITATION.options.PRESERVE_ARRANGEMENT.description": "Refuse the market question and give up this act's fixed link.",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.description": "You ground order in sympathy. Strangers can count on being seen, but fellow-feeling still bends toward those closest to us.",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.description": "You rely on exchange and self-interest. Prices coordinate strangers efficiently, and the bankrupt man becomes a line in the ledger.",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.description": "You keep Plato's arrangement. The market question goes unanswered and no fixed link is taken this act.",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.options.LEAVE.title": "Leave the square",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.options.LEAVE.description": "Close the record.",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.title": "Leave the square",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.description": "Close the record.",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.title": "Leave the square",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "Close the record."
 }

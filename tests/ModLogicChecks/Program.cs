@@ -51,6 +51,7 @@ LockeHumeChecks.Run();
 BerkeleyPerceivedMarkChecks.Run();
 MontesquieuBalanceChecks.Run();
 DiderotPracticeChecks.Run();
+SmithSympathyChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

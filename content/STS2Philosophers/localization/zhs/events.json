@@ -2227,5 +2227,22 @@
   "DIDEROT_PRACTICE.pages.RESULT_SAMPLE.options.LEAVE.title": "离开条目",
   "DIDEROT_PRACTICE.pages.RESULT_SAMPLE.options.LEAVE.description": "关闭记录。",
   "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.title": "离开条目",
-  "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.description": "关闭记录。"
+  "DIDEROT_PRACTICE.pages.RESULT_REFUSE.options.LEAVE.description": "关闭记录。",
+  "SMITH_SYMPATHY.title": "亚当·斯密：同感与公共行动",
+  "SMITH_SYMPATHY.pages.INVITATION.description": "集市上，一个陌生人破产了。围观者有的替他难过，有的只重新算价。斯密问你：秩序应当建立在什么之上？",
+  "SMITH_SYMPATHY.pages.INVITATION.options.SYMPATHY_ORDER.title": "以同感为秩序基础",
+  "SMITH_SYMPATHY.pages.INVITATION.options.SYMPATHY_ORDER.description": "让同胞感成为标准，即使它偏袒离我们近的人。",
+  "SMITH_SYMPATHY.pages.INVITATION.options.EXCHANGE_ORDER.title": "只按交换与自利",
+  "SMITH_SYMPATHY.pages.INVITATION.options.EXCHANGE_ORDER.description": "让价格协调陌生人，把同感留给私人生活。",
+  "SMITH_SYMPATHY.pages.INVITATION.options.PRESERVE_ARRANGEMENT.title": "保留柏拉图式安排",
+  "SMITH_SYMPATHY.pages.INVITATION.options.PRESERVE_ARRANGEMENT.description": "拒绝回答市场问题，放弃本幕固定承接。",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.description": "你让同感成为秩序的基础。陌生人可以指望被看见，但同胞感仍会偏向离我们最近的人。",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.description": "你只按交换与自利安排。价格高效地协调陌生人，破产者则变成账本上的一行。",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.description": "你保留柏拉图式安排。市场问题没有得到回答，本幕不再取得固定承接。",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.options.LEAVE.title": "离开集市",
+  "SMITH_SYMPATHY.pages.RESULT_SYMPATHY.options.LEAVE.description": "关闭记录。",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.title": "离开集市",
+  "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.description": "关闭记录。",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.title": "离开集市",
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "关闭记录。"
 }
