@@ -139,14 +139,7 @@ internal static class GadamerFusionFlow
             && journey.CurrentNodeId == GadamerFusionState.SourceNodeId;
     }
 
-    public static string DescriptionKey(GadamerFusionState state) => state.Stage switch
-    {
-        GadamerFusionStage.Invitation => "INVITATION",
-        GadamerFusionStage.ResultFusion => "RESULT_ALIENATION",
-        GadamerFusionStage.ResultHistory => "RESULT_PROGRESS",
-        GadamerFusionStage.ResultKept => "RESULT_KEPT",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(GadamerFusionState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(GadamerFusionStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(GadamerFusionAction action) => UpperSnake(action.ToString());

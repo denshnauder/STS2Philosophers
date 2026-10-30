@@ -135,14 +135,7 @@ internal static class HeideggerDaseinFlow
             && journey.CurrentNodeId == HeideggerDaseinState.SourceNodeId;
     }
 
-    public static string DescriptionKey(HeideggerDaseinState state) => state.Stage switch
-    {
-        HeideggerDaseinStage.Invitation => "INVITATION",
-        HeideggerDaseinStage.ResultSituation => "RESULT_SEPARATION",
-        HeideggerDaseinStage.ResultDasein => "RESULT_BALANCE",
-        HeideggerDaseinStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(HeideggerDaseinState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(HeideggerDaseinStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(HeideggerDaseinAction action) => UpperSnake(action.ToString());

@@ -138,14 +138,7 @@ internal static class WittgensteinGameFlow
             && journey.CurrentNodeId == WittgensteinGameState.SourceNodeId;
     }
 
-    public static string DescriptionKey(WittgensteinGameState state) => state.Stage switch
-    {
-        WittgensteinGameStage.Invitation => "INVITATION",
-        WittgensteinGameStage.ResultGame => "RESULT_ALIENATION",
-        WittgensteinGameStage.ResultPicture => "RESULT_PROGRESS",
-        WittgensteinGameStage.ResultKept => "RESULT_KEPT",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(WittgensteinGameState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(WittgensteinGameStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(WittgensteinGameAction action) => UpperSnake(action.ToString());

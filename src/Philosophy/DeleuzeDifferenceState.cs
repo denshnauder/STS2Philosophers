@@ -139,14 +139,7 @@ internal static class DeleuzeDifferenceFlow
             && journey.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId;
     }
 
-    public static string DescriptionKey(DeleuzeDifferenceState state) => state.Stage switch
-    {
-        DeleuzeDifferenceStage.Invitation => "INVITATION",
-        DeleuzeDifferenceStage.ResultDifference => "RESULT_ALIENATION",
-        DeleuzeDifferenceStage.ResultRhizome => "RESULT_PROGRESS",
-        DeleuzeDifferenceStage.ResultKept => "RESULT_KEPT",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(DeleuzeDifferenceState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(DeleuzeDifferenceStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(DeleuzeDifferenceAction action) => UpperSnake(action.ToString());

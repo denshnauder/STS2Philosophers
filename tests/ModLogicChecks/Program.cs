@@ -73,6 +73,7 @@ FoucaultPowerChecks.Run();
 DerridaDeconstructionChecks.Run();
 DeleuzeDifferenceChecks.Run();
 GadamerFusionChecks.Run();
+EventPageLocalizationChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

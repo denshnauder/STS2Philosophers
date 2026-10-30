@@ -134,14 +134,7 @@ internal static class HusserlEpocheFlow
             && journey.CurrentNodeId == HusserlEpocheState.SourceNodeId;
     }
 
-    public static string DescriptionKey(HusserlEpocheState state) => state.Stage switch
-    {
-        HusserlEpocheStage.Invitation => "INVITATION",
-        HusserlEpocheStage.ResultAppearance => "RESULT_SEPARATION",
-        HusserlEpocheStage.ResultSuspension => "RESULT_BALANCE",
-        HusserlEpocheStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(HusserlEpocheState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(HusserlEpocheStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(HusserlEpocheAction action) => UpperSnake(action.ToString());

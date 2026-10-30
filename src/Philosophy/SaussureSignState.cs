@@ -138,14 +138,7 @@ internal static class SaussureSignFlow
             && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
     }
 
-    public static string DescriptionKey(SaussureSignState state) => state.Stage switch
-    {
-        SaussureSignStage.Invitation => "INVITATION",
-        SaussureSignStage.ResultLangue => "RESULT_ALIENATION",
-        SaussureSignStage.ResultSign => "RESULT_PROGRESS",
-        SaussureSignStage.ResultKept => "RESULT_KEPT",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(SaussureSignState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(SaussureSignStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(SaussureSignAction action) => UpperSnake(action.ToString());

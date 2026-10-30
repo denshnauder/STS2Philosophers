@@ -135,14 +135,7 @@ internal static class LeviStraussMythFlow
             && journey.CurrentNodeId == LeviStraussMythState.SourceNodeId;
     }
 
-    public static string DescriptionKey(LeviStraussMythState state) => state.Stage switch
-    {
-        LeviStraussMythStage.Invitation => "INVITATION",
-        LeviStraussMythStage.ResultStructure => "RESULT_SEPARATION",
-        LeviStraussMythStage.ResultHistory => "RESULT_BALANCE",
-        LeviStraussMythStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(LeviStraussMythState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(LeviStraussMythStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(LeviStraussMythAction action) => UpperSnake(action.ToString());

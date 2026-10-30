@@ -135,14 +135,7 @@ internal static class FoucaultPowerFlow
             && journey.CurrentNodeId == FoucaultPowerState.SourceNodeId;
     }
 
-    public static string DescriptionKey(FoucaultPowerState state) => state.Stage switch
-    {
-        FoucaultPowerStage.Invitation => "INVITATION",
-        FoucaultPowerStage.ResultPower => "RESULT_SEPARATION",
-        FoucaultPowerStage.ResultDiscipline => "RESULT_BALANCE",
-        FoucaultPowerStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(FoucaultPowerState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(FoucaultPowerStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(FoucaultPowerAction action) => UpperSnake(action.ToString());

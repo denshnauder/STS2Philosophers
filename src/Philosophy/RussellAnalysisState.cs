@@ -135,14 +135,7 @@ internal static class RussellAnalysisFlow
             && journey.CurrentNodeId == RussellAnalysisState.SourceNodeId;
     }
 
-    public static string DescriptionKey(RussellAnalysisState state) => state.Stage switch
-    {
-        RussellAnalysisStage.Invitation => "INVITATION",
-        RussellAnalysisStage.ResultDescription => "RESULT_SEPARATION",
-        RussellAnalysisStage.ResultAtomism => "RESULT_BALANCE",
-        RussellAnalysisStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(RussellAnalysisState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(RussellAnalysisStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(RussellAnalysisAction action) => UpperSnake(action.ToString());

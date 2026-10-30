@@ -138,14 +138,7 @@ internal static class DerridaDeconstructionFlow
             && journey.CurrentNodeId == DerridaDeconstructionState.SourceNodeId;
     }
 
-    public static string DescriptionKey(DerridaDeconstructionState state) => state.Stage switch
-    {
-        DerridaDeconstructionStage.Invitation => "INVITATION",
-        DerridaDeconstructionStage.ResultBinary => "RESULT_ALIENATION",
-        DerridaDeconstructionStage.ResultDifferance => "RESULT_PROGRESS",
-        DerridaDeconstructionStage.ResultKept => "RESULT_KEPT",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(DerridaDeconstructionState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(DerridaDeconstructionStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(DerridaDeconstructionAction action) => UpperSnake(action.ToString());

@@ -134,14 +134,7 @@ internal static class SartreExistenceFlow
             && journey.CurrentNodeId == SartreExistenceState.SourceNodeId;
     }
 
-    public static string DescriptionKey(SartreExistenceState state) => state.Stage switch
-    {
-        SartreExistenceStage.Invitation => "INVITATION",
-        SartreExistenceStage.ResultExistence => "RESULT_SEPARATION",
-        SartreExistenceStage.ResultFreedom => "RESULT_BALANCE",
-        SartreExistenceStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(SartreExistenceState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(SartreExistenceStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(SartreExistenceAction action) => UpperSnake(action.ToString());

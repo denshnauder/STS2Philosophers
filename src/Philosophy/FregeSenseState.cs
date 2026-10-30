@@ -134,14 +134,7 @@ internal static class FregeSenseFlow
             && journey.CurrentNodeId == FregeSenseState.SourceNodeId;
     }
 
-    public static string DescriptionKey(FregeSenseState state) => state.Stage switch
-    {
-        FregeSenseStage.Invitation => "INVITATION",
-        FregeSenseStage.ResultSense => "RESULT_SEPARATION",
-        FregeSenseStage.ResultScript => "RESULT_BALANCE",
-        FregeSenseStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(FregeSenseState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(FregeSenseStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(FregeSenseAction action) => UpperSnake(action.ToString());

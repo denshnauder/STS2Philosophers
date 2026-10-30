@@ -135,14 +135,7 @@ internal static class MerleauPontyBodyFlow
             && journey.CurrentNodeId == MerleauPontyBodyState.SourceNodeId;
     }
 
-    public static string DescriptionKey(MerleauPontyBodyState state) => state.Stage switch
-    {
-        MerleauPontyBodyStage.Invitation => "INVITATION",
-        MerleauPontyBodyStage.ResultBody => "RESULT_SEPARATION",
-        MerleauPontyBodyStage.ResultObjective => "RESULT_BALANCE",
-        MerleauPontyBodyStage.ResultKept => "RESULT_PRIVILEGE",
-        _ => "INVITATION",
-    };
+    public static string DescriptionKey(MerleauPontyBodyState state) => UpperSnake(state.Stage.ToString());
 
     public static string StageKey(MerleauPontyBodyStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(MerleauPontyBodyAction action) => UpperSnake(action.ToString());
