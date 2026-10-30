@@ -27,6 +27,7 @@
     <EmbeddedResource Include="config\thinker_proposals.json" />
     <EmbeddedResource Include="config\western_routes.json" />
     <EmbeddedResource Include="config\western_graph.json" />
+    <EmbeddedResource Include="config\western_mainlines.json" LogicalName="STS2Philosophers.config.western_mainlines.json" />
 
     <Reference Include="sts2">
       <HintPath>$(GameManagedDirectory)\sts2.dll</HintPath>
