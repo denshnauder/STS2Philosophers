@@ -2687,5 +2687,22 @@
   "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.title": "Leave the seminar",
   "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.description": "Close the record.",
   "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "FREUD_UNCONSCIOUS.title": "Freud: The Unconscious",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.description": "The cogito is certain of itself, and something in it is not available to it. Freud asks what the record should name that remainder.",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.UNCONSCIOUS.title": "Record the unconscious",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.UNCONSCIOUS.description": "Record a region of the mind that is not given to consciousness and still directs it.",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.DREAM_WORK.title": "Record dream-work",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.DREAM_WORK.description": "Record how dreams disguise a wish and how the disguise can be read.",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.KEEP_DESCARTES.title": "Keep Descartes",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.KEEP_DESCARTES.description": "Refuse the question and stay with the clear and distinct I.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.description": "You record the unconscious. A region of the mind is recorded as not given to consciousness and still directing it, and the record notes that the self is not transparent to itself.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.description": "You record dream-work. Dreams are recorded as disguising a wish, and the disguise is recorded as readable, without naming a separate unconscious agency.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.description": "You keep Descartes. The question goes unanswered, and no fixed link is taken this act.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.options.LEAVE.title": "Close the session",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.options.LEAVE.description": "Leave the consulting room.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.title": "Close the session",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.description": "Leave the consulting room.",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.title": "Close the session",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "Leave the consulting room."
 }

@@ -617,6 +617,14 @@
       "stage_id": "CORE",
       "display_name": "哈贝马斯",
       "terminal": true
+    },
+    {
+      "node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+      "thinker_id": "SIGMUND_FREUD",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "弗洛伊德",
+      "terminal": false
     }
   ],
   "edges": [
@@ -3177,6 +3185,34 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_087",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从清楚分明的我思转入无意识",
+      "source": "00西哲当前路线.md:29",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "无意识须保留主体的不透明性，不能把分析写成对他人内心的全知。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:29"
         ]
       }
     }

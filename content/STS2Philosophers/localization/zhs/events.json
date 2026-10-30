@@ -2687,5 +2687,22 @@
   "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.title": "离开研讨班",
   "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.description": "关闭记录。",
   "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "FREUD_UNCONSCIOUS.title": "弗洛伊德：无意识",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.description": "我思对自身确定，而它之中有某物并不向它敞开。弗洛伊德问：记录应当如何命名这份剩余？",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.UNCONSCIOUS.title": "记录无意识",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.UNCONSCIOUS.description": "把心灵中不向意识呈现却仍在支配它的区域记录下来。",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.DREAM_WORK.title": "记录梦的工作",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.DREAM_WORK.description": "记录梦如何伪装一个愿望，以及这层伪装如何被读出。",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.KEEP_DESCARTES.title": "保留笛卡尔",
+  "FREUD_UNCONSCIOUS.pages.INVITATION.options.KEEP_DESCARTES.description": "拒绝这个问题，停留在清楚分明的我。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.description": "你记录无意识。心灵中有一区域被记为不向意识呈现却仍在支配它，记录注明自我对自身并不透明。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.description": "你记录梦的工作。梦被记为对愿望的伪装，这层伪装被记为可读，而未单独命名一个无意识机构。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.description": "你保留笛卡尔。问题没有得到回答，本幕不再取得固定承接。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.options.LEAVE.title": "结束会谈",
+  "FREUD_UNCONSCIOUS.pages.RESULT_UNCONSCIOUS.options.LEAVE.description": "离开诊室。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.title": "结束会谈",
+  "FREUD_UNCONSCIOUS.pages.RESULT_DREAM.options.LEAVE.description": "离开诊室。",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.title": "结束会谈",
+  "FREUD_UNCONSCIOUS.pages.RESULT_KEPT.options.LEAVE.description": "离开诊室。"
 }
