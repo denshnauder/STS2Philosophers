@@ -60,6 +60,8 @@ internal static class RouteFixedRoomNativeChecks
         List<string> failures = [];
         List<string> thirdFailures = [];
         List<string> unnamedFailures = [];
+        List<string> unnamedThirdFailures = [];
+        List<List<MapPointHistoryEntry>> thirdHistory = [];
         foreach (object route in routes.Cast<object>())
         {
             string routeId = (string)Get(route, "RouteId");
@@ -117,7 +119,7 @@ internal static class RouteFixedRoomNativeChecks
                         && method.GetParameters().Length == 0)
                     .MakeGenericMethod(secondRoomType).Invoke(null, null)!
                 : null;
-            Set(thirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            thirdHistory = new List<List<MapPointHistoryEntry>>
             {
                 new(),
                 secondRoomId is null
@@ -129,7 +131,8 @@ internal static class RouteFixedRoomNativeChecks
                         new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
                     },
                 new() { new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] } },
-            });
+            };
+            Set(thirdRun, "_mapPointHistory", thirdHistory);
             object thirdJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
             Put(thirdJourney, "RouteId", routeId);
             // The act-one handover into the figure that opens act two is part of
@@ -158,6 +161,21 @@ internal static class RouteFixedRoomNativeChecks
                 continue;
             }
             CheckRoom(routeId, "act three", thirdNode!, rooms, thirdRun, thirdJourney, thirdFailures, relic);
+            // The same act three boundary, with the route still unnamed: a run
+            // that never took the first act's question has to reach it too.
+            var unnamedThirdTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                .Invoke(null, [relic, 2])!;
+            var unnamedThirdRun = (RunState)unnamedThirdTuple[1]!;
+            Set(unnamedThirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>(thirdHistory));
+            object unnamedThird = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+            foreach (string done in thirdCompleted) ((HashSet<string>)Get(unnamedThird, "CompletedEdgeIds")).Add(done);
+            foreach (string seen in (HashSet<string>)Get(thirdJourney, "SeenThinkerIds"))
+                ((HashSet<string>)Get(unnamedThird, "SeenThinkerIds")).Add(seen);
+            ((HashSet<int>)Get(unnamedThird, "ResolvedQuestionActs")).Add(2);
+            Put(unnamedThird, "CurrentNodeId", secondNode);
+            Put(unnamedThird, "LastFixedAct", 2);
+            CheckRoom(routeId, "act three (unnamed)", thirdNode!, rooms, unnamedThirdRun, unnamedThird,
+                unnamedThirdFailures, relic);
         }
         // Reported, not enforced yet. Two things can make a line appear here: the
         // room is still gated to the act it was written for, or the fixture has no
@@ -181,6 +199,15 @@ internal static class RouteFixedRoomNativeChecks
             $"A run that does not take the first act's question reaches act two with {unnamedFailures.Count} "
             + "routes broken, not the known seventeen.");
         AssertOnly(ExpectedActTwo, failures, "act two");
+        if (unnamedThirdFailures.Count > 0)
+            Console.WriteLine("Route unnamed-act-three gaps (" + unnamedThirdFailures.Count + "): "
+                + string.Join(" | ", unnamedThirdFailures));
+        // Eighteen of twenty routes open no third act at all without a route name:
+        // the third act's rooms are all route-scoped, so an unnamed run sees none
+        // of them. Asserted so the day act one names the route it has to fall.
+        Check(unnamedThirdFailures.Count == 18,
+            $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
+            + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
         CheckFirstActBranch(graph);
         return Task.CompletedTask;
