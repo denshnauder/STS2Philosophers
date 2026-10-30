@@ -20,7 +20,12 @@ internal static class ActFixedEntryHost
         // The position is open when the previous act's fixed event was taken
         // (act index + 1) or when it was not (act index). Both are real runs.
         int act = run.CurrentActIndex;
-        if (journey.LastFixedAct is var position && (position < act || position > act + 1)) return false;
+        if (journey.LastFixedAct > act + 1) return false;
+        // A run that declined the previous act's fixed event arrives with that
+        // slot still open. One that declined twice arrives behind it, and the
+        // skipped slots are exactly what declining means; the boundary fills this
+        // act's slot anyway instead of leaving the act without its fixed event.
+        if (journey.LastFixedAct < act) journey.LastFixedAct = act;
         // The boundary fills this act's slot: the rooms and their own consistency
         // rules read the slot being filled, not the last one filled.
         int arrived = journey.LastFixedAct;
