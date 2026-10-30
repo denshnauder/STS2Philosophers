@@ -2584,5 +2584,22 @@
   "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.title": "Leave the seminar",
   "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.description": "Close the record.",
   "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "DELEUZE_DIFFERENCE.title": "Deleuze: Difference and Repetition",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.description": "The same event returns, and each return differs. Deleuze asks what the record should count as real.",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.DIFFERENCE_REPETITION.title": "Record difference before identity",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.DIFFERENCE_REPETITION.description": "Record the divergence as primary and identity as a result.",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.RHIZOME.title": "Record a rhizome",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.RHIZOME.description": "Record the connections as a network with no centre or hierarchy.",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.KEEP_SCHELLING.title": "Keep Schelling",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.KEEP_SCHELLING.description": "Refuse the question and stay with nature as visible spirit.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.description": "You record difference before identity. The divergence is primary, and identity is noted as what the repetition produces.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.description": "You record a rhizome. The connections are recorded without centre, and the record notes that identity was not derived.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.description": "You keep Schelling. The question goes unanswered, and no question link is taken this act.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.options.LEAVE.title": "Leave the seminar",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.options.LEAVE.description": "Close the record.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.title": "Leave the seminar",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.description": "Close the record.",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

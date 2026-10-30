@@ -186,6 +186,7 @@
     <Compile Include="..\..\src\Philosophy\LeviStraussMythState.cs" Link="LeviStraussMythState.cs" />
     <Compile Include="..\..\src\Philosophy\FoucaultPowerState.cs" Link="FoucaultPowerState.cs" />
     <Compile Include="..\..\src\Philosophy\DerridaDeconstructionState.cs" Link="DerridaDeconstructionState.cs" />
+    <Compile Include="..\..\src\Philosophy\DeleuzeDifferenceState.cs" Link="DeleuzeDifferenceState.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />

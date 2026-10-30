@@ -2584,5 +2584,22 @@
   "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.title": "离开研讨班",
   "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.description": "关闭记录。",
   "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "DELEUZE_DIFFERENCE.title": "德勒兹：差异与重复",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.description": "同一事件再次发生，而每一次返回都有差异。德勒兹问：记录应当把什么算作真实？",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.DIFFERENCE_REPETITION.title": "先记录差异，再记录同一",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.DIFFERENCE_REPETITION.description": "把分歧记为首要的，同一记为结果。",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.RHIZOME.title": "记录根茎",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.RHIZOME.description": "把连接记为没有中心、没有层级的网络。",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.KEEP_SCHELLING.title": "保留谢林",
+  "DELEUZE_DIFFERENCE.pages.INVITATION.options.KEEP_SCHELLING.description": "拒绝这个问题，停留在自然作为可见精神。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.description": "你先记录差异。分歧是首要的，同一被记为重复所产生的结果。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.description": "你记录根茎。连接被记为无中心，记录注明同一未被推导出来。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.description": "你保留谢林。问题没有得到回答，本幕不再取得问号承接。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.options.LEAVE.title": "离开研讨班",
+  "DELEUZE_DIFFERENCE.pages.RESULT_DIFFERENCE.options.LEAVE.description": "关闭记录。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.title": "离开研讨班",
+  "DELEUZE_DIFFERENCE.pages.RESULT_RHIZOME.options.LEAVE.description": "关闭记录。",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "DELEUZE_DIFFERENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

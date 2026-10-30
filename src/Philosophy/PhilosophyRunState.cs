@@ -81,6 +81,7 @@ internal sealed class PhilosophyRunState
     public LeviStraussMythState? LeviStraussMyth { get; set; }
     public FoucaultPowerState? FoucaultPower { get; set; }
     public DerridaDeconstructionState? DerridaDeconstruction { get; set; }
+    public DeleuzeDifferenceState? DeleuzeDifference { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -177,6 +178,7 @@ internal sealed class PhilosophyRunState
         || LeviStraussMyth is not null
         || FoucaultPower is not null
         || DerridaDeconstruction is not null
+        || DeleuzeDifference is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -404,6 +406,7 @@ internal sealed class PhilosophyRunState
         LeviStraussMyth?.NormalizeAfterLoad();
         FoucaultPower?.NormalizeAfterLoad();
         DerridaDeconstruction?.NormalizeAfterLoad();
+        DeleuzeDifference?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
