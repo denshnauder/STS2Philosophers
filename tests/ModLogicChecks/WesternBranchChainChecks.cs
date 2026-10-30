@@ -86,6 +86,18 @@ internal static class WesternBranchChainChecks
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
             "The knowledge entry must offer the scientific line.");
 
+        // A run that turns at the first act's question stands on the figure it
+        // turned to, and that figure counts as met — otherwise the second act's
+        // room would meet it a second time.
+        WesternJourneyState turned = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        Check(graph.TryApply(turned, "WESTERN_EDGE_153"), "The turn to autonomy must apply.");
+        Check(turned.CurrentNodeId == "IMMANUEL_KANT__SELF_AND_OTHER__CORE", "The turn must land on the figure it names.");
+        Check(turned.SeenThinkerIds.Contains("IMMANUEL_KANT"), "A figure a turn reaches counts as met.");
+        Check(turned.LastFixedAct == 1, "A question does not take the act's fixed slot.");
+        turned.LastFixedAct = 2;
+        Check(graph.GetEligibleEdges(turned, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_154"),
+            "A turned line must still have its second act's fixed step.");
+
         // The first act's question offers what the run could turn onto, plus the
         // direction the shared Husserl figure asks about, plus staying.
         Check(RouteTurnQuestionOptions.For(offer, graph).Select(choice => choice.Key)
