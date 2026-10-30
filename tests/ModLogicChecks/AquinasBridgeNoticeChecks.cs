@@ -89,7 +89,7 @@ internal static class AquinasBridgeNoticeChecks
             eligible with { RequiredEdgeCompleted = false }, eligible with { RivalEdgeCompleted = true },
             eligible with { CompletionEdgeEligible = false }, eligible with { HasRequiredRelic = false },
             eligible with { AristotleAdoptedAndClosed = false }, eligible with { CurrentActIndex = 1 },
-            eligible with { LastFixedAct = 3 }, eligible with { HasSavedInstance = true, SavedInstanceClosed = true } })
+            eligible with { LastFixedAct = 1 }, eligible with { HasSavedInstance = true, SavedInstanceClosed = true } })
             Check(!AquinasBridgeNoticeTriggerPolicy.ShouldInsert(blocked), "Unsafe or conflicting invitations stay absent.");
         Check(AquinasBridgeNoticeTriggerPolicy.ShouldInsert(eligible with { HasSavedInstance = true,
             SavedInstanceUsable = true, SavedRouteConsistent = true, SourceIsCompletedNonBossCombat = false,

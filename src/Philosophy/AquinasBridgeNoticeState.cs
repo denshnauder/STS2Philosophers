@@ -120,7 +120,7 @@ internal static class AquinasBridgeNoticeFlow
         if (!state.IsUsable() || !journey.CompletedEdgeIds.Contains(AquinasBridgeNoticeState.RequiredEdgeId)
             || journey.RetainedEnding || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_017")) return false;
         if (!state.FixedSlotResolved)
-            return journey.LastFixedAct == 2 && journey.CurrentNodeId == AquinasBridgeNoticeState.SourceNodeId
+            return journey.LastFixedAct >= 2 && journey.CurrentNodeId == AquinasBridgeNoticeState.SourceNodeId
                 && !journey.DeclinedFixedActs.Contains(3)
                 && !journey.CompletedEdgeIds.Contains(AquinasBridgeNoticeState.CompletionEdgeId);
         return journey.LastFixedAct == 3 && (state.EdgeCommitted

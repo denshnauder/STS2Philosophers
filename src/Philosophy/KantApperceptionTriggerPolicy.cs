@@ -27,7 +27,7 @@ internal static class KantApperceptionTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == KantApperceptionState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible;
     }
 }

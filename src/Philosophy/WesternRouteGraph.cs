@@ -134,7 +134,7 @@ internal sealed class WesternRouteGraph
         state.CompletedEdgeIds.Add(edgeId);
         state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
         if (edge.Slot == "Question") state.ResolvedQuestionActs.Add(state.LastFixedAct);
-        else state.LastFixedAct++;
+        else state.LastFixedAct = Math.Min(3, state.LastFixedAct + 1);
         if (edge.Outcome is "Adopt" or "Switch") state.CurrentNodeId = edge.ToNodeId;
         return true;
     }
@@ -182,22 +182,25 @@ internal sealed class WesternRouteGraph
         return true;
     }
 
-    public bool IsComplete(WesternJourneyState state) => state.LastFixedAct == 3
+    public bool IsComplete(WesternJourneyState state) => state.LastFixedAct >= 3
         && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node) && (node.Terminal || state.RetainedEnding);
 
     public bool TryDecline(WesternJourneyState state, string slot, int expectedAct)
     {
         if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3 || state.RetainedEnding) return false;
         if (slot == "Question") return expectedAct == state.LastFixedAct && state.ResolvedQuestionActs.Add(state.LastFixedAct);
-        if (slot != "Fixed" || state.LastFixedAct >= 3 || expectedAct != state.LastFixedAct + 1) return false;
-        state.LastFixedAct++;
-        state.DeclinedFixedActs.Add(state.LastFixedAct);
+        if (slot != "Fixed" || state.LastFixedAct > 3
+            || expectedAct is < 1 or > 3
+            || state.DeclinedFixedActs.Contains(expectedAct)
+            || expectedAct != state.LastFixedAct && expectedAct != state.LastFixedAct + 1) return false;
+        state.LastFixedAct = expectedAct;
+        state.DeclinedFixedActs.Add(expectedAct);
         return true;
     }
 
     public bool TryRetainEnding(WesternJourneyState state)
     {
-        if (state.LastFixedAct != 3 || !_nodes.ContainsKey(state.CurrentNodeId) || IsComplete(state)) return false;
+        if (state.LastFixedAct < 3 || !_nodes.ContainsKey(state.CurrentNodeId) || IsComplete(state)) return false;
         state.RetainedEnding = true;
         return true;
     }
@@ -278,7 +281,7 @@ internal sealed class WesternRouteGraph
     private bool IsEligible(WesternJourneyState state, WesternGraphEdge edge, string slot) => edge.Enabled && !state.RetainedEnding
         && edge.Slot == slot && edge.FromNodeId == state.CurrentNodeId
         && state.LastFixedAct is >= 1 and <= 3
-        && (slot != "Fixed" || state.LastFixedAct < 3)
+        && (slot != "Fixed" || state.LastFixedAct <= 3 && !IsComplete(state))
         && edge.Act <= (slot == "Fixed" ? state.LastFixedAct + 1 : state.LastFixedAct)
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)

@@ -113,7 +113,7 @@ internal static class PlotinusCommonGroundFlow
     {
         if (!state.IsUsable() || !journey.CompletedEdgeIds.Contains(PlotinusCommonGroundState.RequiredEdgeId)) return false;
         if (!state.FixedSlotResolved)
-            return journey.LastFixedAct == 2 && journey.CurrentNodeId == PlotinusCommonGroundState.SourceNodeId
+            return journey.LastFixedAct >= 2 && journey.CurrentNodeId == PlotinusCommonGroundState.SourceNodeId
                 && !journey.RetainedEnding && !journey.DeclinedFixedActs.Contains(3)
                 && !journey.CompletedEdgeIds.Contains(PlotinusCommonGroundState.CompletionEdgeId);
         return journey.LastFixedAct == 3 && (state.EdgeCommitted

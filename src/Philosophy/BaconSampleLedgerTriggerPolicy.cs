@@ -13,7 +13,7 @@ internal static class BaconSampleLedgerTriggerPolicy
         if (!c.RunInProgress || !c.AtSafeMapBoundary || !c.IsSingleplayer || c.CurrentActIndex != 2
             || !c.ModelAvailable || !c.HasRequiredRelic) return false;
         if (c.HasSavedInstance) return c.SavedInstanceUsable && !c.SavedInstanceClosed && c.SavedRouteConsistent;
-        return c.SourceIsCompletedNonBossCombat && c.CompletedCombatCount >= 1 && c.LastFixedAct == 2
+        return c.SourceIsCompletedNonBossCombat && c.CompletedCombatCount >= 1 && c.LastFixedAct >= 2
             && c.CurrentNodeId == BaconSampleLedgerState.SourceNodeId && c.CompletionEdgeEligible && c.PredecessorReady;
     }
 }

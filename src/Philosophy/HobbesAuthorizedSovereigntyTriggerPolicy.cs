@@ -30,7 +30,7 @@ internal static class HobbesAuthorizedSovereigntyTriggerPolicy
         }
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == HobbesAuthorizedSovereigntyState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible && context.AristotleClosed;
     }
 }

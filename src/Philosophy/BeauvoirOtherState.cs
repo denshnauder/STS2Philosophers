@@ -107,7 +107,7 @@ internal static class BeauvoirOtherFlow
             || !journey.CompletedEdgeIds.Contains(BeauvoirOtherState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(BeauvoirOtherState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct >= 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && journey.CurrentNodeId == BeauvoirOtherState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3

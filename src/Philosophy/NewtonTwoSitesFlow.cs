@@ -216,7 +216,7 @@ internal static class NewtonTwoSitesFlow
         bool edge = journey.CompletedEdgeIds.Contains(NewtonTwoSitesState.CompletionEdgeId);
         bool seen = journey.SeenThinkerIds.Contains("ISAAC_NEWTON");
         if (!state.FixedSlotResolved)
-            return journey.CurrentNodeId == NewtonTwoSitesState.SourceNodeId && journey.LastFixedAct == 2
+            return journey.CurrentNodeId == NewtonTwoSitesState.SourceNodeId && journey.LastFixedAct >= 2
                 && !journey.DeclinedFixedActs.Contains(3) && !journey.RetainedEnding && !edge && !seen;
         if (journey.LastFixedAct != 3) return false;
         return state.EdgeCommitted

@@ -124,7 +124,7 @@ internal static class BaconSampleLedgerFlow
         bool edge = journey.CompletedEdgeIds.Contains(BaconSampleLedgerState.CompletionEdgeId);
         bool seen = journey.SeenThinkerIds.Contains("FRANCIS_BACON");
         if (!state.FixedSlotResolved)
-            return !edge && !seen && !journey.RetainedEnding && journey.LastFixedAct == 2
+            return !edge && !seen && !journey.RetainedEnding && journey.LastFixedAct >= 2
                 && journey.CurrentNodeId == BaconSampleLedgerState.SourceNodeId && !journey.DeclinedFixedActs.Contains(3);
         return journey.LastFixedAct == 3 && (state.EdgeCommitted
             ? edge && seen && !journey.RetainedEnding && !journey.DeclinedFixedActs.Contains(3)

@@ -271,7 +271,7 @@ internal static class DemocritusArrangementChecks
             {
                 saved with { HasPrerequisite = false }, saved with { RetainedEnding = true },
                 saved with { IsSafeRoomStack = false }, saved with { SavedInstanceUsable = false },
-                saved with { SavedInstanceClosed = true }, saved with { LastFixedAct = 3 },
+                saved with { SavedInstanceClosed = true }, saved with { LastFixedAct = 0 },
                 saved with { CurrentNodeId = "OTHER" }, saved with { CurrentActIndex = 2 },
             }) Check(!DemocritusArrangementTriggerPolicy.ShouldInsert(denied), "Saved state does not waive route, act, safety or closure checks.");
         }

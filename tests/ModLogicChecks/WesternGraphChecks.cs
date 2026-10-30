@@ -30,6 +30,20 @@ internal static class WesternGraphChecks
             }
             Check(graph.IsComplete(state), "Each sequence must reach a legitimate third-act conclusion after save/restore at every step.");
             Check(graph.GetEligibleEdges(state, "Fixed").Count == 0, "Fourth-act echoes must remain unavailable.");
+        // Each act owns one fixed position. A run whose relics and route allow it
+        // must be able to take all three, not two with the third replacing the second.
+        var chain = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
+        Check(graph.TryApply(chain, "WESTERN_EDGE_065") && chain.LastFixedAct == 2,
+            "The first act's fixed event opens the second act's position.");
+        Check(graph.TryApply(chain, "WESTERN_EDGE_066") && chain.LastFixedAct == 3,
+            "The second act's fixed event opens the third act's position.");
+        Check(graph.TryApply(chain, "WESTERN_EDGE_056") && chain.LastFixedAct == 3,
+            "The third act's fixed event must still be adoptable after the second was taken.");
+        Check(chain.CompletedEdgeIds.Contains("WESTERN_EDGE_056")
+            && chain.CurrentNodeId == "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
+            "The third fixed adoption must enter its own node.");
+        Check(graph.GetEligibleEdges(chain, "Fixed").Count == 0,
+            "A completed three-slot line leaves no fixed position behind.");
         }
         WesternJourneyState plato = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(plato, "WESTERN_EDGE_008") && graph.TryApply(plato, "WESTERN_EDGE_009"),

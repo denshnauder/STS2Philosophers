@@ -19,7 +19,7 @@ internal static class AquinasBridgeNoticeTriggerPolicy
                 && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == AquinasBridgeNoticeState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && !context.RivalEdgeCompleted && context.CompletionEdgeEligible
             && context.HasRequiredRelic && context.AristotleAdoptedAndClosed;
     }

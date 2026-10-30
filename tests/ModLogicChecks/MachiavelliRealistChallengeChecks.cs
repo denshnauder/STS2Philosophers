@@ -32,7 +32,7 @@ internal static class MachiavelliRealistChallengeChecks
             eligible with { CompletedCombatCount = 0 },
             eligible with { CurrentNodeId = "ARISTOTLE__BEING_AND_CHANGE__CORE" },
             eligible with { LastFixedAct = 1 },
-            eligible with { LastFixedAct = 3 },
+            eligible with { LastFixedAct = 1 },
             eligible with { RequiredEdgeCompleted = false },
             eligible with { QuestionResolved = true },
             eligible with { EdgeEligible = false },

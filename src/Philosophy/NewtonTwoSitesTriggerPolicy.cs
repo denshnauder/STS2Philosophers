@@ -27,7 +27,7 @@ internal static class NewtonTwoSitesTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed
                 && context.SavedInstanceConsistent;
 
-        return context.CurrentNodeId == SourceNodeId && context.LastFixedAct == 2
+        return context.CurrentNodeId == SourceNodeId && context.LastFixedAct >= 2
             && !context.FixedActThreeResolved && !context.RetainedEnding
             && context.HasEligibleFixedEdge && context.HasCompletedCombatAfterDescartes;
     }

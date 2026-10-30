@@ -17,7 +17,7 @@ internal static class KantUniversalizationTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == KantUniversalizationState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible;
     }
 }

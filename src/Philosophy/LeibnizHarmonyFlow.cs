@@ -90,7 +90,7 @@ internal static class LeibnizHarmonyFlow
         if (!state.FixedSlotResolved)
         {
             return journey.CurrentNodeId == LeibnizHarmonyState.SourceNodeId
-                && journey.LastFixedAct == 2
+                && journey.LastFixedAct >= 2
                 && !journey.DeclinedFixedActs.Contains(3)
                 && !journey.RetainedEnding
                 && !journey.CompletedEdgeIds.Contains(LeibnizHarmonyState.CompletionEdgeId)

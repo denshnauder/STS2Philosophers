@@ -172,7 +172,7 @@ internal static class AnselmUnfinishedProofFlow
             ? journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
                 && journey.ResolvedQuestionActs.Contains(3)
                 && journey.RetainedEnding == (state.Disposition != AnselmProofDisposition.None)
-            : journey.LastFixedAct == 2 && !journey.DeclinedFixedActs.Contains(3)
+            : journey.LastFixedAct >= 2 && !journey.DeclinedFixedActs.Contains(3)
                 && !journey.ResolvedQuestionActs.Contains(3) && !journey.RetainedEnding);
 
     public static bool TryPrepare(AnselmUnfinishedProofState state, AnselmProofAction action)

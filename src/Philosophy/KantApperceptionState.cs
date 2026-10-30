@@ -126,7 +126,7 @@ internal static class KantApperceptionFlow
             || !journey.CompletedEdgeIds.Contains(KantApperceptionState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(KantApperceptionState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted
+            return journey.LastFixedAct >= 2 && !adopted
                 && !journey.DeclinedFixedActs.Contains(3)
                 && journey.CurrentNodeId == KantApperceptionState.SourceNodeId;
         if (state.EdgeCommitted)

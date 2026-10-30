@@ -27,7 +27,7 @@ internal static class NewtonTwoSitesChecks
             fresh with { HasAnselmInstance = true },
             fresh with { HasOpenRouteQuestion = true },
             fresh with { CurrentNodeId = "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE" },
-            fresh with { LastFixedAct = 3 },
+            fresh with { LastFixedAct = 1 },
             fresh with { FixedActThreeResolved = true },
             fresh with { RetainedEnding = true },
             fresh with { HasEligibleFixedEdge = false },

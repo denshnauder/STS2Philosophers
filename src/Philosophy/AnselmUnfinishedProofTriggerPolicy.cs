@@ -21,7 +21,7 @@ internal static class AnselmUnfinishedProofTriggerPolicy
                 && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == AnselmUnfinishedProofState.RequiredNodeId
-            && context.LastFixedAct == 2 && context.FirstQuestionResolved
+            && context.LastFixedAct >= 2 && context.FirstQuestionResolved
             && context.SecondFixedDeclined && context.SecondQuestionResolved
             && !context.ThirdFixedResolved && !context.ThirdQuestionResolved
             && context.HasRequiredRelic && context.PyrrhoClosed && context.PyrrhoRouteConsistent;

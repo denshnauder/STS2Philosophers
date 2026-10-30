@@ -178,7 +178,7 @@ internal static class HobbesAuthorizedSovereigntyFlow
         bool adopted = journey.CompletedEdgeIds.Contains(HobbesAuthorizedSovereigntyState.CompletionEdgeId);
         if (!state.FixedSlotResolved)
         {
-            return journey.LastFixedAct == 2
+            return journey.LastFixedAct >= 2
                 && journey.CurrentNodeId == HobbesAuthorizedSovereigntyState.SourceNodeId
                 && !adopted && !journey.DeclinedFixedActs.Contains(3);
         }

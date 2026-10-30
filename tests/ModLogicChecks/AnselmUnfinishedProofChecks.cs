@@ -135,7 +135,7 @@ internal static class AnselmUnfinishedProofChecks
         {
             eligible with { CurrentActIndex = 1 },
             eligible with { SourceIsCompletedNonBossCombat = false },
-            eligible with { LastFixedAct = 3 },
+            eligible with { LastFixedAct = 1 },
             eligible with { FirstQuestionResolved = false },
             eligible with { SecondFixedDeclined = false },
             eligible with { SecondQuestionResolved = false },

@@ -32,7 +32,7 @@ internal static class PlotinusCommonGroundTriggerPolicy
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= MinimumCompletedCombats
             && context.EpicurusClosed
             && context.CurrentNodeId == PlotinusCommonGroundState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible && context.HasRequiredRelic;
     }
 }

@@ -127,7 +127,7 @@ internal static class HegelSubstanceSubjectFlow
         if (state.FixedDeclined)
             return !adopted && declined && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == HegelSubstanceSubjectState.SourceNodeId;
-        return journey.LastFixedAct == 2 && !adopted && !declined
+        return journey.LastFixedAct >= 2 && !adopted && !declined
             && journey.CurrentNodeId == HegelSubstanceSubjectState.SourceNodeId;
     }
 
