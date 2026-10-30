@@ -103,6 +103,16 @@ internal static class RouteTurnQuestionNativeChecks
                 $"{item.Node}: an unreadable record must not spend the fork.");
             Put(record, "Version", 1);
 
+            // The act's fixed event takes the slot; once it is taken the question
+            // is no longer this act's question.
+            Put(record, "Closed", true);
+            ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+            Put(journey, "LastFixedAct", 2);
+            Check(Call("RouteTurnQuestionPatch", "TrySelectNative", run) is null,
+                $"{item.Node}: a taken fixed slot must close the act's question.");
+            Put(journey, "LastFixedAct", 1);
+            Put(record, "Closed", false);
+
             // The fork is asked once per run: an answered record means the run
             // already chose, so the next question node must not ask it again.
             Put(record, "Closed", true);
