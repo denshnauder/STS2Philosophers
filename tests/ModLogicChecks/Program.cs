@@ -63,6 +63,7 @@ DeweyPublicExperimentChecks.Run();
 HusserlEpocheChecks.Run();
 HeideggerDaseinChecks.Run();
 SartreExistenceChecks.Run();
+MerleauPontyBodyChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

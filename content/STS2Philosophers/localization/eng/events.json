@@ -2448,5 +2448,22 @@
   "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.title": "Leave the cafe",
   "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.description": "Close the record.",
   "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the cafe",
-  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "MERLEAU_PONTY_BODY.title": "Merleau-Ponty: The Body as Subject",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.description": "The room has measured the hand that reaches for the cup, and the numbers describe a mechanism. Merleau-Ponty asks what the record leaves out.",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.BODY_AS_SUBJECT.title": "The body as subject of perception",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.BODY_AS_SUBJECT.description": "Record the hand as the one that perceives, not only as the object measured.",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.OBJECTIVE_BODY.title": "Keep the objective body",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.OBJECTIVE_BODY.description": "Keep the measurement and treat the reaching as a mechanism it explains.",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.KEEP_HUSSERL.title": "Keep Husserl",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.KEEP_HUSSERL.description": "Refuse the question and stay with the epochē.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.description": "You record the body as subject. The hand is the one that reaches and perceives, and the measurement is one of its situations rather than its whole truth.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.description": "You keep the objective body. The reaching stays a mechanism, and the record notes that the perceiving hand was not entered.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.description": "You keep Husserl. The question remains suspended, and no fixed link is taken this act.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.options.LEAVE.title": "Leave the laboratory",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.options.LEAVE.description": "Close the record.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.title": "Leave the laboratory",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.description": "Close the record.",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the laboratory",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

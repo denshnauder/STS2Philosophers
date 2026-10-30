@@ -2448,5 +2448,22 @@
   "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.title": "离开咖啡馆",
   "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.description": "关闭记录。",
   "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.title": "离开咖啡馆",
-  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "MERLEAU_PONTY_BODY.title": "梅洛庞蒂：身体主体",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.description": "房间测量了伸向杯子的那只手，数字描述出一套机制。梅洛庞蒂问：记录漏掉了什么？",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.BODY_AS_SUBJECT.title": "身体作为知觉主体",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.BODY_AS_SUBJECT.description": "把那只手记为知觉者，而不只是被测量的对象。",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.OBJECTIVE_BODY.title": "保留客观身体",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.OBJECTIVE_BODY.description": "保留测量，把伸手当作它所能解释的机制。",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.KEEP_HUSSERL.title": "保留胡塞尔",
+  "MERLEAU_PONTY_BODY.pages.INVITATION.options.KEEP_HUSSERL.description": "拒绝这个问题，停留在悬置。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.description": "你记录身体主体。手是伸手并知觉的那只手，测量只是它的处境之一，而不是全部真相。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.description": "你保留客观身体。伸手仍是机制，记录注明知觉的手没有被写入。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.description": "你保留胡塞尔。问题仍被悬置，本幕不再取得固定承接。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.options.LEAVE.title": "离开实验室",
+  "MERLEAU_PONTY_BODY.pages.RESULT_BODY.options.LEAVE.description": "关闭记录。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.title": "离开实验室",
+  "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.description": "关闭记录。",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.title": "离开实验室",
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

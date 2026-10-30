@@ -2852,6 +2852,34 @@
           "00西哲当前路线.md:24"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_076",
+      "from_node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从身体知觉转入性别化的处境与他者",
+      "source": "00西哲当前路线.md:25",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "身体处境须保留性别化的不对称，不能写成中立主体的自由选择。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:25"
+        ]
+      }
     }
   ],
   "samples": [
