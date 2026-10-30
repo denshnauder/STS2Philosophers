@@ -148,17 +148,21 @@ internal static class LockeCargoIdentityFlow
 
     public static bool IsRouteConsistent(LockeCargoIdentityState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != 1) return false;
+        int act = state.ActIndex;
+        if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != act) return false;
+        // Act one's question names the route; a room the route places later has no
+        // question of its own to resolve.
+        bool asked = act == 1 && journey.ResolvedQuestionActs.Contains(1);
+        // Act one's question names the route, so the room may only open after it
+        // is answered; a room the route places later is opened by the boundary.
+        bool named = act != 1 || asked;
         bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return !adopted && !journey.ResolvedQuestionActs.Contains(1)
-                && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
+            return !adopted && !asked && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted
-                && journey.ResolvedQuestionActs.Contains(1)
+            return !state.QuestionDeclined && adopted && named
                 && journey.CurrentNodeId == LockeCargoIdentityState.AdoptedNodeId;
-        return !adopted && journey.ResolvedQuestionActs.Contains(1)
-            && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
+        return !adopted && named && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
     }
 
     public static string DescriptionKey(LockeCargoIdentityState state) => state.Stage switch

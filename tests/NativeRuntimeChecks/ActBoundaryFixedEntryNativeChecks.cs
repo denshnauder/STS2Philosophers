@@ -44,6 +44,9 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(FregeSense));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             [typeof(FregeSense)], doctrine: false, position: 2, route: "FORMAL_LANGUAGE");
+        ModelDb.Inject(typeof(LockeCargoIdentity));
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
+            [typeof(LockeCargoIdentity)], doctrine: true, position: 2, route: "EXPERIENCE_AND_SELF");
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;

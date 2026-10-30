@@ -101,6 +101,23 @@ internal static class RouteFixedRoomNativeChecks
             failures.Add($"{routeId}: {act} has no room for {node}.");
             return;
         }
+        // A room the route places in act two sits where act one's fixed event
+        // leaves the run, so play that handover before asking the boundary.
+        if (act == "act two")
+        {
+            string source = (string)T(room.Name + "State").GetField("SourceNodeId", Methods)!
+                .GetRawConstantValue()!;
+            object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+            foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+                .Invoke(graph, [journey, "Fixed"])!).Cast<object>())
+            {
+                if ((int)Get(edge, "Act") != 1 || (string)Get(edge, "ToNodeId") != source) continue;
+                graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, (string)Get(edge, "EdgeId")]);
+                break;
+            }
+            ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Add(1);
+            Put(journey, "LastFixedAct", 2);
+        }
         ModelDb.Inject(room);
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(shared, "CurrentDoctrine", Doctrine(relic));
