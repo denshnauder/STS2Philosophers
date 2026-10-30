@@ -2516,5 +2516,22 @@
   "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.title": "Leave the room",
   "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.description": "Close the record.",
   "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.title": "Leave the room",
-  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "SAUSSURE_SIGN.title": "Saussure: Language and Speech",
+  "SAUSSURE_SIGN.pages.INVITATION.description": "The room has a written rule and a living speaker who breaks it. Saussure asks what the record should separate.",
+  "SAUSSURE_SIGN.pages.INVITATION.options.LANGUAGE_PAROLE.title": "Separate language from speech",
+  "SAUSSURE_SIGN.pages.INVITATION.options.LANGUAGE_PAROLE.description": "Record the shared system apart from this speaker's use of it.",
+  "SAUSSURE_SIGN.pages.INVITATION.options.SIGN_ARBITRARY.title": "Mark the sign as arbitrary",
+  "SAUSSURE_SIGN.pages.INVITATION.options.SIGN_ARBITRARY.description": "Record that the link between sound and meaning is conventional.",
+  "SAUSSURE_SIGN.pages.INVITATION.options.KEEP_ARISTOTLE.title": "Keep Aristotle",
+  "SAUSSURE_SIGN.pages.INVITATION.options.KEEP_ARISTOTLE.description": "Refuse the question and stay with the categories of speech.",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.description": "You separate language from speech. The shared system is recorded apart from the speaker's use, and the breaking becomes a fact about speech.",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.description": "You mark the sign as arbitrary. The link between sound and meaning is recorded as convention, and the rule can change without the world changing.",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.description": "You keep Aristotle. The question goes unanswered, and no question link is taken this act.",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.options.LEAVE.title": "Leave the lecture",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.options.LEAVE.description": "Close the record.",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.title": "Leave the lecture",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.description": "Close the record.",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.title": "Leave the lecture",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

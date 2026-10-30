@@ -2952,6 +2952,34 @@
           "00西哲当前路线.md:26"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_080",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从语词范畴转入语言系统与符号",
+      "source": "00西哲当前路线.md:26",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "系统与言语的区分须保留说话者的位置，不能把语言写成脱离使用的规则表。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:26"
+        ]
+      }
     }
   ],
   "samples": [

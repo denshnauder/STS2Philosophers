@@ -2516,5 +2516,22 @@
   "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.title": "离开房间",
   "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.description": "关闭记录。",
   "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.title": "离开房间",
-  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "SAUSSURE_SIGN.title": "索绪尔：语言与言语",
+  "SAUSSURE_SIGN.pages.INVITATION.description": "房间有一条写下的规则，和一个打破它的说话者。索绪尔问：记录应当分开什么？",
+  "SAUSSURE_SIGN.pages.INVITATION.options.LANGUAGE_PAROLE.title": "区分语言与言语",
+  "SAUSSURE_SIGN.pages.INVITATION.options.LANGUAGE_PAROLE.description": "把共有的系统与这个说话者的使用分开记录。",
+  "SAUSSURE_SIGN.pages.INVITATION.options.SIGN_ARBITRARY.title": "标记符号的任意性",
+  "SAUSSURE_SIGN.pages.INVITATION.options.SIGN_ARBITRARY.description": "记录声音与意义之间的联系是约定的。",
+  "SAUSSURE_SIGN.pages.INVITATION.options.KEEP_ARISTOTLE.title": "保留亚里士多德",
+  "SAUSSURE_SIGN.pages.INVITATION.options.KEEP_ARISTOTLE.description": "拒绝这个问题，停留在语词的范畴。",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.description": "你区分语言与言语。共有系统与说话者的使用分开记录，打破规则成为言语的事实。",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.description": "你标记符号的任意性。声音与意义的联系被记为约定，规则可以改变而世界不必改变。",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.description": "你保留亚里士多德。问题没有得到回答，本幕不再取得问号承接。",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.options.LEAVE.title": "离开讲堂",
+  "SAUSSURE_SIGN.pages.RESULT_LANGUE.options.LEAVE.description": "关闭记录。",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.title": "离开讲堂",
+  "SAUSSURE_SIGN.pages.RESULT_SIGN.options.LEAVE.description": "关闭记录。",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.title": "离开讲堂",
+  "SAUSSURE_SIGN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }
