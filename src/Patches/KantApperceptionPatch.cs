@@ -50,8 +50,10 @@ internal static class KantApperceptionPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
-                ModelDb.GetId<HumeInduction>(), "HUME_INDUCTION"),
+            routeAct >= 2
+                ? NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true)
+                : NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
+                    ModelDb.GetId<HumeInduction>(), "HUME_INDUCTION"),
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
@@ -68,6 +70,9 @@ internal static class KantApperceptionPatch
         var candidate = saved ?? (routeAct >= 2
             ? KantApperceptionState.CreateAt($"KANT_APPERCEPTION:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
             : KantApperceptionState.Create($"KANT_APPERCEPTION:{run.Rng.Seed}:3"));
+        if (routeAct >= 2 && candidate.RouteSourceNodeId.Length == 0)
+            candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId).FirstOrDefault() ?? string.Empty;
         if (journey is null || !KantApperceptionFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.KantApperception = candidate;
 

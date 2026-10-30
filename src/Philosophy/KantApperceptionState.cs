@@ -26,6 +26,9 @@ internal sealed class KantApperceptionState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+
+    /// <summary>The node a route arrives from when it places this room outside its own act.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
     public KantApperceptionStage Stage { get; set; }
     public KantApperceptionAction PendingAction { get; set; }
     public List<KantApperceptionAction> ConfirmedActions { get; set; } = [];
@@ -150,7 +153,8 @@ internal static class KantApperceptionFlow
         // Act three opens once act two's fixed event has been taken (position two)
         // and stays open through its own act; act two opens in place.
         int opens = act == 3 ? 2 : act;
-        bool atSource = journey.CurrentNodeId == KantApperceptionState.SourceNodeId || routeArrival;
+        bool atSource = journey.CurrentNodeId == KantApperceptionState.SourceNodeId || routeArrival
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct >= opens && !adopted
                 && !journey.DeclinedFixedActs.Contains(declined) && atSource;
