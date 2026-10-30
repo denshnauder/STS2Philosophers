@@ -513,6 +513,14 @@
       "stage_id": "CORE",
       "display_name": "福柯",
       "terminal": false
+    },
+    {
+      "node_id": "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "JEREMY_BENTHAM",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "边沁",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2478,6 +2486,90 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:35"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_065",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从德性追问转入后果计算",
+      "source": "00西哲当前路线.md:32",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "后果计算须保留个体不可被总额吞没的边界，不能把最大幸福写成对少数的自然牺牲。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:32"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_066",
+      "from_node_id": "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从总收益转入个体保护",
+      "source": "00西哲当前路线.md:32",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "后果计算须保留个体不可被总额吞没的边界，不能把最大幸福写成对少数的自然牺牲。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:32"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_067",
+      "from_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从个体保护转入制度分配检验",
+      "source": "00西哲当前路线.md:32",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "后果计算须保留个体不可被总额吞没的边界，不能把最大幸福写成对少数的自然牺牲。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:32"
         ]
       }
     }

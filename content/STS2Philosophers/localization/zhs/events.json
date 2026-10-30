@@ -2312,5 +2312,22 @@
   "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.title": "离开档案室",
   "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.description": "关闭记录。",
   "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.title": "离开档案室",
-  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "BENTHAM_UTILITY.title": "边沁：计算",
+  "BENTHAM_UTILITY.pages.INVITATION.description": "一位治安官带来苦乐账本：一次重伤可以被许多小便利抵消。边沁问：这个房间应当怎么算？",
+  "BENTHAM_UTILITY.pages.INVITATION.options.AGGREGATE_UTILITY.title": "把总额加起来",
+  "BENTHAM_UTILITY.pages.INVITATION.options.AGGREGATE_UTILITY.description": "把账本相加，让最大总额来决定。",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_INDIVIDUAL_BOUNDARY.title": "保留个体边界",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_INDIVIDUAL_BOUNDARY.description": "拒绝让一个人的伤害被总额抵消。",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_SOCRATES.title": "留在苏格拉底",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_SOCRATES.description": "拒绝计算，保留苏格拉底式的追问。",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.description": "你按总额计算。账本平衡了，受伤的人变成一行可以被总额压过的数字。",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.description": "你保留边界。总额不再能抵消那一次伤害，计算必须在这里停下。",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.description": "你留在苏格拉底。问题仍然敞开，本幕不再取得固定承接。",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.options.LEAVE.title": "离开办公室",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.options.LEAVE.description": "关闭记录。",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.title": "离开办公室",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.description": "关闭记录。",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.title": "离开办公室",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

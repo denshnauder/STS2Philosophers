@@ -2312,5 +2312,22 @@
   "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.title": "Leave the archive",
   "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.description": "Close the record.",
   "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the archive",
-  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "BENTHAM_UTILITY.title": "Bentham: The Calculus",
+  "BENTHAM_UTILITY.pages.INVITATION.description": "A magistrate brings a ledger of pains and pleasures: one severe injury can be offset by many small conveniences. Bentham asks how the room should count it.",
+  "BENTHAM_UTILITY.pages.INVITATION.options.AGGREGATE_UTILITY.title": "Aggregate the sum",
+  "BENTHAM_UTILITY.pages.INVITATION.options.AGGREGATE_UTILITY.description": "Add the ledger up and let the greatest total decide.",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_INDIVIDUAL_BOUNDARY.title": "Keep an individual boundary",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_INDIVIDUAL_BOUNDARY.description": "Refuse to let one person's injury be cancelled by the total.",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_SOCRATES.title": "Stay with Socrates",
+  "BENTHAM_UTILITY.pages.INVITATION.options.KEEP_SOCRATES.description": "Refuse the calculus and keep the Socratic examination.",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.description": "You aggregate. The ledger balances, and the injured party becomes a line that the total can outweigh.",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.description": "You keep a boundary. The sum can no longer cancel the one injury, and the calculus must stop at it.",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.description": "You stay with Socrates. The question remains open, and no fixed link is taken this act.",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.options.LEAVE.title": "Leave the office",
+  "BENTHAM_UTILITY.pages.RESULT_UTILITY.options.LEAVE.description": "Close the record.",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.title": "Leave the office",
+  "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.description": "Close the record.",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the office",
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
