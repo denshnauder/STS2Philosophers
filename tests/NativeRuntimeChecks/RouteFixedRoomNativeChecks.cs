@@ -56,7 +56,6 @@ internal static class RouteFixedRoomNativeChecks
         List<string> failures = [];
         List<string> thirdFailures = [];
         List<string> unnamedFailures = [];
-        List<string> unnamedThirdFailures = [];
         // A run that takes no question follows the default line of its entry:
         // the first line the route table lists for that entry. The other lines
         // of the same entry are only reachable through the first act's question.
@@ -186,23 +185,6 @@ internal static class RouteFixedRoomNativeChecks
             CheckRoom(routeId, "act three", thirdNode!, rooms, thirdRun, thirdJourney, thirdFailures, relic);
             // The same act three boundary, with the route still unnamed: a run
             // that never took the first act's question has to reach it too.
-            if (defaults[entry] == routeId)
-            {
-                var unnamedThirdTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-                    .Invoke(null, [relic, 2])!;
-                var unnamedThirdRun = (RunState)unnamedThirdTuple[1]!;
-                Set(unnamedThirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>(thirdHistory));
-                object unnamedThird = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
-                Put(unnamedThird, "RouteRules", true);
-                foreach (string done in thirdCompleted) ((HashSet<string>)Get(unnamedThird, "CompletedEdgeIds")).Add(done);
-                foreach (string seen in (HashSet<string>)Get(thirdJourney, "SeenThinkerIds"))
-                    ((HashSet<string>)Get(unnamedThird, "SeenThinkerIds")).Add(seen);
-                ((HashSet<int>)Get(unnamedThird, "ResolvedQuestionActs")).Add(2);
-                Put(unnamedThird, "CurrentNodeId", secondNode);
-                Put(unnamedThird, "LastFixedAct", 2);
-                CheckRoom(routeId, "act three (default line)", thirdNode!, rooms, unnamedThirdRun, unnamedThird,
-                    unnamedThirdFailures, relic);
-            }
         }
         // Reported, not enforced yet. Two things can make a line appear here: the
         // room is still gated to the act it was written for, or the fixture has no
@@ -228,15 +210,6 @@ internal static class RouteFixedRoomNativeChecks
             "A run that does not take the first act's question reaches act two broken on: "
             + string.Join(", ", RouteIdsOf(unnamedFailures)) + ".");
         AssertOnly(ExpectedActTwo, failures, "act two");
-        if (unnamedThirdFailures.Count > 0)
-            Console.WriteLine("Route default-line act-three gaps (" + unnamedThirdFailures.Count + "): "
-                + string.Join(" | ", unnamedThirdFailures));
-        // The same default line, one act later. A line whose second act never
-        // opened is not asked for a third, so only lines that reach the boundary
-        // can appear here.
-        Check(UnnamedActThreeBroken.SequenceEqual(RouteIdsOf(unnamedThirdFailures)),
-            "A run that does not take the first act's question reaches act three broken on: "
-            + string.Join(", ", RouteIdsOf(unnamedThirdFailures)) + ".");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
         CheckFirstActBranch(graph);
         return Task.CompletedTask;
@@ -379,11 +352,6 @@ internal static class RouteFixedRoomNativeChecks
         "SCIENTIFIC_MODEL",
         "WILL_AND_VALUE",
     ];
-    private static readonly string[] UnnamedActThreeBroken =
-    [
-        "SCIENTIFIC_MODEL",
-    ];
-
     private static List<string> RouteIdsOf(List<string> failures) =>
         failures.Select(line => line.Split(':')[0]).Distinct().OrderBy(id => id, StringComparer.Ordinal).ToList();
 

@@ -169,10 +169,11 @@ internal sealed class WesternRouteGraph
             || string.IsNullOrEmpty(state.EntryNodeId)) return;
         // A run that already answered the first act's question has made its
         // choice, even when that question named no single line; the default is
-        // only for runs that took no question at all.
-        if (state.ResolvedQuestionActs.Contains(1)) return;
-        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
-            .FirstOrDefault(candidate => candidate.EntryNodeId == state.EntryNodeId);
+        // only for runs that took no question at all. It also has to still be
+        // standing on its entry: a run that walked the first act's turn is on a
+        // different node, and the default line does not start there.
+        if (state.ResolvedQuestionActs.Contains(1) || state.CurrentNodeId != state.EntryNodeId) return;
+        WesternRouteDefinition? route = WesternRouteTable.Instance.ForEntry(state.EntryNodeId);
         if (route is not null) state.RouteId = route.RouteId;
     }
 

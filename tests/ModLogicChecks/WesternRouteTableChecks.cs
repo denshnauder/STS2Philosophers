@@ -163,6 +163,15 @@ internal static class WesternRouteTableChecks
         WesternRouteGraph.NameDefaultRoute(silent);
         Check(!string.IsNullOrEmpty(silent.RouteId),
             "A run that took no question must join its entry's default line.");
+        // The first act can also turn onto another node without a question (the
+        // fixed turn edge). That run is no longer standing on its entry, and the
+        // default line does not start where it is.
+        WesternJourneyState turned = graph.Start(answered.EntryNodeId);
+        turned.RouteRules = true;
+        turned.CurrentNodeId = "EDMUND_HUSSERL__SELF_AND_OTHER__CORE";
+        WesternRouteGraph.NameDefaultRoute(turned);
+        Check(string.IsNullOrEmpty(turned.RouteId),
+            "A run that turned away from its entry must not be named the default line.");
 
         var unreachable = new List<string>();
         foreach (WesternRouteDefinition route in table.Routes)
