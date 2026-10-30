@@ -81,7 +81,7 @@ internal static class AristotleCivicInquiryChecks
         Check(AristotleCivicInquiryTriggerPolicy.ShouldInsert(eligible), "Only the existing civic Plato source gets the act-two event.");
         foreach (var denied in new[]
         {
-            eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 }, eligible with { LastFixedAct = 2 },
+            eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 }, eligible with { LastFixedAct = 3 },
             eligible with { CurrentNodeId = "PLATO__VIRTUE_AND_HAPPINESS__CORE" }, eligible with { HasRequiredRelic = false },
             eligible with { CompletedCombatCount = 0 }, eligible with { RunInProgress = false }, eligible with { IsSingleplayer = false },
             eligible with { AtSafeMapBoundary = false }, eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true },

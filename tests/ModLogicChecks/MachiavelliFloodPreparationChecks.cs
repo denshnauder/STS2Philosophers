@@ -71,7 +71,7 @@ internal static class MachiavelliFloodPreparationChecks
         Check(MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(eligible), "Real history fixed is reachable.");
         foreach (var blocked in new[] { eligible with { AtSafeMapBoundary = false }, eligible with { IsSingleplayer = false },
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 }, eligible with { SourceIsCompletedNonBossCombat = false },
-            eligible with { LastFixedAct = 2 }, eligible with { CompletionEdgeEligible = false }, eligible with { HasRequiredRelic = false },
+            eligible with { LastFixedAct = 3 }, eligible with { CompletionEdgeEligible = false }, eligible with { HasRequiredRelic = false },
             eligible with { HasSavedInstance = true }, eligible with { ModelAvailable = false } })
             Check(!MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(blocked), "A missing native or route fact blocks insertion.");
         Check(MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(eligible with { HasSavedInstance = true,

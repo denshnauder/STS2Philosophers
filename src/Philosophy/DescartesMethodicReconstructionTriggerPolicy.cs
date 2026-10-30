@@ -34,7 +34,7 @@ internal static class DescartesMethodicReconstructionTriggerPolicy
 
         return context.CompletedCombatCount >= 1
             && context.CurrentNodeId == DescartesMethodicReconstructionState.RequiredNodeId
-            && context.LastFixedAct == 1
+            && context.LastFixedAct <= 2
             && !context.FixedActAlreadyDeclined
             && context.HasRequiredRelic
             && context.SextusEncounterClosed

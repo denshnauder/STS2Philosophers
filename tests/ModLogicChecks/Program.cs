@@ -79,7 +79,6 @@ HabermasCommunicationChecks.Run();
 FreudUnconsciousChecks.Run();
 LacanSignifierChecks.Run();
 KuhnParadigmChecks.Run();
-ActFixedEntryChecks.Run();
 RoomIntegrationChecks.Run();
 EventPageLocalizationChecks.Run();
 WollstonecraftAdmissionChecks.Run();

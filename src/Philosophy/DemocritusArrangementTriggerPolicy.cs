@@ -16,7 +16,7 @@ internal static class DemocritusArrangementTriggerPolicy
         if (context.HasSavedInstance) return context.SavedInstanceUsable && !context.SavedInstanceClosed
             && context.LastFixedAct is 1 or 2 && context.CurrentNodeId is
                 DemocritusArrangementState.RequiredNodeId or DemocritusArrangementState.AdoptedNodeId;
-        return context.CompletedCombatCount >= 1 && context.LastFixedAct == 1
+        return context.CompletedCombatCount >= 1 && context.LastFixedAct <= 2
             && context.CurrentNodeId == DemocritusArrangementState.RequiredNodeId && context.HasRequiredRelic;
     }
 }

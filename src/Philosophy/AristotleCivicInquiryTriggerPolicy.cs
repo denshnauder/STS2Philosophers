@@ -16,7 +16,7 @@ internal static class AristotleCivicInquiryTriggerPolicy
             && context.LastFixedAct is 1 or 2 && context.CurrentNodeId is
                 AristotleCivicInquiryState.RequiredNodeId or AristotleCivicInquiryState.AdoptedNodeId;
         return !context.AugustinePrerequisiteCompleted
-            && context.CompletedCombatCount >= 1 && context.LastFixedAct == 1
+            && context.CompletedCombatCount >= 1 && context.LastFixedAct <= 2
             && context.CurrentNodeId == AristotleCivicInquiryState.RequiredNodeId && context.HasRequiredRelic;
     }
 }

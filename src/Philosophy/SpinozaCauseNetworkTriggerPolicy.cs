@@ -34,7 +34,7 @@ internal static class SpinozaCauseNetworkTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed
                 && context.SavedInstanceConsistent;
         return context.CurrentNodeId == SourceNodeId
-            && context.LastFixedAct == 1
+            && context.LastFixedAct <= 2
             && !context.FixedActTwoResolved
             && !context.RetainedEnding
             && context.HasEligibleFixedEdge

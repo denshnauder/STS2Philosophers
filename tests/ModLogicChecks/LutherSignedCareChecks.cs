@@ -78,7 +78,7 @@ internal static class LutherSignedCareChecks
         foreach (var blocked in new[] { eligible with { AtSafeMapBoundary = false }, eligible with { IsSingleplayer = false },
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 },
             eligible with { SourceIsCompletedNonBossCombat = false }, eligible with { CompletedCombatCount = 0 },
-            eligible with { LastFixedAct = 1 }, eligible with { QuestionResolved = true },
+            eligible with { LastFixedAct = 3 }, eligible with { QuestionResolved = true },
             eligible with { HasRequiredRelic = false }, eligible with { PredecessorAdoptedAndClosed = false },
             eligible with { PredecessorRouteConsistent = false }, eligible with { EdgeEligible = false },
             eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true } })

@@ -76,7 +76,7 @@ internal static class OckhamNamesInquiryChecks
         Check(OckhamNamesInquiryTriggerPolicy.ShouldInsert(eligible), "Real language critique is reachable.");
         foreach (var blocked in new[] { eligible with { AtSafeMapBoundary = false }, eligible with { IsSingleplayer = false },
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 },
-            eligible with { SourceIsCompletedNonBossCombat = false }, eligible with { LastFixedAct = 2 },
+            eligible with { SourceIsCompletedNonBossCombat = false }, eligible with { LastFixedAct = 3 },
             eligible with { SecondQuestionResolved = true }, eligible with { HasRequiredRelic = false },
             eligible with { GorgiasClosed = false }, eligible with { GorgiasRouteConsistent = false },
             eligible with { ModelAvailable = false }, eligible with { HasSavedInstance = true } })

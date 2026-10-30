@@ -87,7 +87,7 @@ internal static class EmpedoclesRootsInquiryChecks
         foreach (var denied in new[]
         {
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentNodeId = "OTHER" },
-            eligible with { LastFixedAct = 1 }, eligible with { DemocritusAdopted = false },
+            eligible with { LastFixedAct = 3 }, eligible with { DemocritusAdopted = false },
             eligible with { PriorEventClosed = false }, eligible with { QuestionUnresolved = false },
             eligible with { EdgeEligible = false }, eligible with { IsSingleplayer = false },
             eligible with { AtSafeMapBoundary = false }, eligible with { ModelAvailable = false },

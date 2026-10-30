@@ -87,7 +87,7 @@ internal static class LeibnizMonadComparisonChecks
             "Leibniz comparison is offered after a real act-two combat.");
         Check(!LeibnizMonadComparisonTriggerPolicy.ShouldInsert(context with { CurrentActIndex = 0 }),
             "Leibniz comparison is not an act-one event.");
-        Check(!LeibnizMonadComparisonTriggerPolicy.ShouldInsert(context with { LastFixedAct = 1 }),
+        Check(!LeibnizMonadComparisonTriggerPolicy.ShouldInsert(context with { LastFixedAct = 3 }),
             "Leibniz comparison requires the act-two fixed state.");
         Check(!LeibnizMonadComparisonTriggerPolicy.ShouldInsert(context with { CompletionEdgeEligible = false }),
             "Leibniz comparison requires an eligible 024.");

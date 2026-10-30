@@ -249,7 +249,7 @@ internal static class DemocritusArrangementChecks
         foreach (var denied in new[]
         {
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 },
-            eligible with { LastFixedAct = 2 }, eligible with { CurrentNodeId = DemocritusArrangementState.AdoptedNodeId },
+            eligible with { LastFixedAct = 3 }, eligible with { CurrentNodeId = DemocritusArrangementState.AdoptedNodeId },
             eligible with { CurrentNodeId = null }, eligible with { CurrentNodeId = "HERACLITUS__BEING_AND_CHANGE__CORE" },
             eligible with { HasRequiredRelic = false }, eligible with { HasPrerequisite = false },
             eligible with { RetainedEnding = true }, eligible with { IsSafeRoomStack = false },
@@ -271,7 +271,7 @@ internal static class DemocritusArrangementChecks
             {
                 saved with { HasPrerequisite = false }, saved with { RetainedEnding = true },
                 saved with { IsSafeRoomStack = false }, saved with { SavedInstanceUsable = false },
-                saved with { SavedInstanceClosed = true }, saved with { LastFixedAct = 0 },
+                saved with { SavedInstanceClosed = true }, saved with { LastFixedAct = 3 },
                 saved with { CurrentNodeId = "OTHER" }, saved with { CurrentActIndex = 2 },
             }) Check(!DemocritusArrangementTriggerPolicy.ShouldInsert(denied), "Saved state does not waive route, act, safety or closure checks.");
         }

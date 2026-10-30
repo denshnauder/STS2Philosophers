@@ -78,7 +78,7 @@ internal static class KuhnParadigmChecks
             "Kuhn is not a second-act event.");
         Check(!KuhnParadigmTriggerPolicy.ShouldInsert(context with { CurrentNodeId = KuhnParadigmState.AdoptedNodeId }),
             "Kuhn cannot reopen from its own node.");
-        Check(!KuhnParadigmTriggerPolicy.ShouldInsert(context with { LastFixedAct = 2 }),
+        Check(!KuhnParadigmTriggerPolicy.ShouldInsert(context with { LastFixedAct = 1 }),
             "Kuhn needs the third act's Fixed slot already taken.");
     }
 

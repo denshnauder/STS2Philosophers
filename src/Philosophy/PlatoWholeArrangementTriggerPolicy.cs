@@ -34,7 +34,7 @@ internal static class PlatoWholeArrangementTriggerPolicy
 
         return context.CompletedCombatCount >= 1
             && context.CurrentNodeId == PlatoWholeArrangementState.SourceNodeId
-            && context.LastFixedAct == 1
+            && context.LastFixedAct <= 2
             && context.RequiredEdgeCompleted
             && !context.FixedActDeclined
             && !context.CompletionEdgeCompleted

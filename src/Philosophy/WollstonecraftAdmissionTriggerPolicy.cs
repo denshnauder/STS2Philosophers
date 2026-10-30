@@ -27,7 +27,7 @@ internal static class WollstonecraftAdmissionTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == WollstonecraftAdmissionState.SourceNodeId
-            && context.LastFixedAct == 1 && !context.RivalEdgeCompleted
+            && context.LastFixedAct <= 2 && !context.RivalEdgeCompleted
             && context.CompletionEdgeEligible;
     }
 }

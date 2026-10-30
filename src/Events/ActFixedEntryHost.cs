@@ -17,14 +17,11 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared?.WesternJourney is not { } journey)
             return false;
-        int act = run.CurrentActIndex + 1;
-        foreach (var edge in WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed"))
-        {
-            if (edge.Act != act || !ActFixedEntryCatalog.IsRegistered(edge.ToNodeId)) continue;
-            if (!ActFixedEntryCatalog.TrySelect(run, edge.ToNodeId, out EventModel? model) || model is null) continue;
-            room = new EventRoom(model);
-            return true;
-        }
-        return false;
+        if (journey.LastFixedAct != run.CurrentActIndex + 1) return false;
+        EventModel? model;
+        using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
+        if (model is null) return false;
+        room = new EventRoom(model);
+        return true;
     }
 }

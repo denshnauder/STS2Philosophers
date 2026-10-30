@@ -13,7 +13,7 @@ internal static class MachiavelliFloodPreparationTriggerPolicy
         if (!c.RunInProgress || !c.AtSafeMapBoundary || !c.IsSingleplayer || c.CurrentActIndex != 1
             || !c.ModelAvailable || !c.HasRequiredRelic) return false;
         if (c.HasSavedInstance) return c.SavedInstanceUsable && !c.SavedInstanceClosed && c.SavedRouteConsistent;
-        return c.SourceIsCompletedNonBossCombat && c.CompletedCombatCount >= 1 && c.LastFixedAct == 1
+        return c.SourceIsCompletedNonBossCombat && c.CompletedCombatCount >= 1 && c.LastFixedAct <= 2
             && c.CurrentNodeId == MachiavelliFloodPreparationState.SourceNodeId && c.CompletionEdgeEligible;
     }
 }

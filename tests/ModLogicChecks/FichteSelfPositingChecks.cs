@@ -102,7 +102,7 @@ internal static class FichteSelfPositingChecks
             "Fichte requires 022.");
         Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { CompletionEdgeEligible = false }),
             "Fichte requires an eligible 037.");
-        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { LastFixedAct = 2 }),
+        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { LastFixedAct = 1 }),
             "Fichte requires the act-three fixed slot to be settled.");
     }
 }

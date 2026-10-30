@@ -17,7 +17,7 @@ internal static class AnaximanderOriginInquiryTriggerPolicy
             return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.LastFixedAct == 2;
-        return context.CompletedCombatCount >= 1 && context.LastFixedAct == 1
+        return context.CompletedCombatCount >= 1 && context.LastFixedAct <= 2
             && context.HasRequiredRelic && context.FixedOpportunityUnresolved
             && context.NoFixedCandidate && context.SecondQuestionUnresolved;
     }

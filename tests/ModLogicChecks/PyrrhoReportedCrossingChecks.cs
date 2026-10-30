@@ -20,7 +20,7 @@ internal static class PyrrhoReportedCrossingChecks
         {
             eligible with { CurrentActIndex = 0 }, eligible with { AtSafeMapBoundary = false },
             eligible with { IsSingleplayer = false }, eligible with { SourceIsCompletedNonBossCombat = false },
-            eligible with { CurrentNodeId = "OTHER" }, eligible with { LastFixedAct = 1 },
+            eligible with { CurrentNodeId = "OTHER" }, eligible with { LastFixedAct = 3 },
             eligible with { FirstQuestionResolved = false }, eligible with { SecondQuestionResolved = true },
             eligible with { SecondFixedDeclined = false }, eligible with { HasRequiredRelic = false },
             eligible with { SextusClosed = false }, eligible with { DescartesDeclinedAndClosed = false },

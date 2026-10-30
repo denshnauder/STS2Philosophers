@@ -18,7 +18,7 @@ internal static class OckhamNamesInquiryTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == OckhamNamesInquiryState.RequiredNodeId
-            && context.LastFixedAct == 1 && context.FirstQuestionResolved
+            && context.LastFixedAct <= 2 && context.FirstQuestionResolved
             && !context.SecondQuestionResolved && context.GorgiasClosed && context.GorgiasRouteConsistent;
     }
 }

@@ -106,7 +106,7 @@ internal static class DescartesMethodicReconstructionChecks
         Assert(!DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { CurrentActIndex = 0 })
                && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { CompletedCombatCount = 0 })
                && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { CurrentNodeId = "OTHER" })
-               && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { LastFixedAct = 2 })
+               && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { LastFixedAct = 3 })
                && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { FixedActAlreadyDeclined = true })
                && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { HasRequiredRelic = false })
                && !DescartesMethodicReconstructionTriggerPolicy.ShouldInsert(eligible with { SextusEncounterClosed = false })

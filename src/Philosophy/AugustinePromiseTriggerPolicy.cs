@@ -28,7 +28,7 @@ internal static class AugustinePromiseTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == AugustinePromiseState.SourceNodeId
-            && context.LastFixedAct == 1 && context.RequiredEdgeCompleted
+            && context.LastFixedAct <= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible && context.HasRequiredRelic;
     }
 }

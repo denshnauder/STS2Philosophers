@@ -79,7 +79,7 @@ internal static class AnaxagorasMixtureInquiryChecks
         foreach (var denied in new[]
         {
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentNodeId = "OTHER" },
-            eligible with { LastFixedAct = 1 }, eligible with { ParmenidesReached = false },
+            eligible with { LastFixedAct = 3 }, eligible with { ParmenidesReached = false },
             eligible with { SecondFixedDeclined = false }, eligible with { PriorEventClosed = false },
             eligible with { QuestionUnresolved = false }, eligible with { IsSingleplayer = false },
             eligible with { AtSafeMapBoundary = false }, eligible with { ModelAvailable = false },

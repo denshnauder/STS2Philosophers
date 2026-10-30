@@ -14,6 +14,7 @@ internal static class NativeQuestionNodeEvents
     internal static bool IsEntry(RunState run)
     {
         RunManager manager = RunManager.Instance;
+        if (FixedEntryScope.Active) return IsActBoundaryEntry(run, manager);
         return manager.IsInProgress && manager.ShouldSave
             && ReferenceEquals(manager.DebugOnlyGetState(), run)
             && manager.NetService?.Type == NetGameType.Singleplayer
@@ -24,7 +25,18 @@ internal static class NativeQuestionNodeEvents
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared is not null;
     }
 
+    // The act's fixed room replaces the map question node as the anchor: the
+    // room is offered right after the ancient event, before any act combat.
+    private static bool IsActBoundaryEntry(RunState run, RunManager manager) =>
+        manager.IsInProgress && manager.ShouldSave
+        && ReferenceEquals(manager.DebugOnlyGetState(), run)
+        && manager.NetService?.Type == NetGameType.Singleplayer
+        && !run.IsGameOver && run.Players.Count == 1
+        && !CombatManager.Instance.IsInProgress
+        && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared is not null;
+
     internal static bool HasCompletedCombat(RunState run, bool normalOnly = false) =>
+        FixedEntryScope.Active ||
         run.CurrentActIndex >= 0 && run.MapPointHistory.Count > run.CurrentActIndex
         && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
         && shared?.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount > 0
@@ -114,7 +126,39 @@ internal static class NativeQuestionNodeEvents
 
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
-        EventModel? existing = ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
+        EventModel? existing = TryResumeExisting(run);
+        if (existing is not null) return existing;
+        if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
+
+        // These slots keep their business identity, but share the native node.
+        // Gaze has the same ModelId as the opening and uses continuation facts.
+        EventModel? special = ActTwoPhilosophersGazePatch.TrySelectNative(run)
+            ?? DiogenesStaySwitchEntrySession.TrySelectNative(run)
+            ?? ZenoRouteNativeTriggerRegistry.TrySelectNative(run);
+        if (special is not null) return special;
+        EventModel? james = JamesForcedBridgePatch.TrySelectNative(run);
+        if (james is not null) return james;
+
+        return TrySelectRoutedRoom(run, shared, carrier, nextEvent);
+        // ActModel.PullNextEvent registers the returned model as visited. We do
+        // not advance its event queue, append history, or consume another RNG roll.
+    }
+
+    // A legacy business checkpoint may predate its room. Resume the exact open
+    // page on a legal node without a factory, reroll, or new budget.
+    // Called right after the act's ancient event, before the map. Rooms keep
+    // their own route, relic, act, and saved-state gates; a run whose relics do
+    // not support this act simply gets no fixed room.
+    internal static EventModel? TrySelectAtActBoundary(RunState run)
+    {
+        if (!IsEntry(run)) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        EventModel? existing = TryResumeExisting(run);
+        return existing ?? TrySelectRoutedRoom(run, shared, null, null);
+    }
+
+    private static EventModel? TryResumeExisting(RunState run) =>
+ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
             ?? ParmenidesInquiryPatch.TrySelectExistingNative(run)
@@ -171,18 +215,13 @@ internal static class NativeQuestionNodeEvents
             ?? LacanSignifierPatch.TrySelectExistingNative(run)
             ?? KuhnParadigmPatch.TrySelectExistingNative(run)
             ?? FregeSensePatch.TrySelectExistingNative(run);
-        if (existing is not null) return existing;
-        if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 
-        // These slots keep their business identity, but share the native node.
-        // Gaze has the same ModelId as the opening and uses continuation facts.
-        EventModel? special = ActTwoPhilosophersGazePatch.TrySelectNative(run)
-            ?? DiogenesStaySwitchEntrySession.TrySelectNative(run)
-            ?? ZenoRouteNativeTriggerRegistry.TrySelectNative(run);
-        if (special is not null) return special;
-        EventModel? james = JamesForcedBridgePatch.TrySelectNative(run);
-        if (james is not null) return james;
-
+    // The routed chain is shared by the map question node (with the carrier
+    // relic and its question budget) and the act boundary (carrier null, so
+    // only rooms that own a fixed slot can answer).
+    private static EventModel? TrySelectRoutedRoom(
+        RunState run, PhilosophyRunState shared, RelicModel? carrier, EventModel? nextEvent)
+    {
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
         WesternQuestionKind kind = carrier is WesternPracticeRelic
             ? WesternQuestionNodePolicy.Select(shared, run.CurrentActIndex, carrier.Id.Entry, fork)
@@ -269,8 +308,6 @@ internal static class NativeQuestionNodeEvents
             ?? KuhnParadigmPatch.TrySelectNative(run)
             ?? FregeSensePatch.TrySelectNative(run)
             ?? nextEvent;
-        // ActModel.PullNextEvent registers the returned model as visited. We do
-        // not advance its event queue, append history, or consume another RNG roll.
     }
 
     private static EventModel Canonical(WesternQuestionKind kind) => kind switch
