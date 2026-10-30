@@ -122,7 +122,7 @@ internal static class WesternQuestionNodePolicy
                 if (!Reserve()) return false;
                 shared.ZenoCivicChallenge = ZenoCivicChallengeState.Create(Id("ZENO_CIVIC_CHALLENGE")); break;
             case WesternQuestionKind.Anaximander:
-                if (!graph.TryDecline(journey, "Fixed", 2) || !Reserve()) return false;
+                if (!graph.TrySkipEmptyFixedSlot(journey) || !Reserve()) return false;
                 shared.AnaximanderOriginInquiry = AnaximanderOriginInquiryState.Create(Id("ANAXIMANDER_ORIGIN_INQUIRY")); break;
             case WesternQuestionKind.Empedocles:
                 if (!Reserve()) return false;

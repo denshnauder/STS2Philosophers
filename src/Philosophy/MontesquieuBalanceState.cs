@@ -34,7 +34,7 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static MontesquieuBalanceState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+    public static MontesquieuBalanceState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
     public static MontesquieuBalanceState CreateAt(string instanceId, int actIndex, string edgeId) => new()
     {
@@ -134,8 +134,8 @@ internal static class MontesquieuBalanceFlow
         bool declines = action == MontesquieuBalanceAction.PreservePrivilege;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
-            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -144,14 +144,14 @@ internal static class MontesquieuBalanceFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
-        int declined = Math.Min(3, state.ActIndex + 1);
+        int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == MontesquieuBalanceState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
                 && journey.CurrentNodeId == MontesquieuBalanceState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1) && journey.DeclinedFixedActs.Contains(declined)
+        return !adopted && journey.LastFixedAct == state.ActIndex && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == MontesquieuBalanceState.SourceNodeId;
     }
 

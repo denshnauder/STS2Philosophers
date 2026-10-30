@@ -129,8 +129,8 @@ internal static class SchellingNatureFlow
         bool declines = action == SchellingNatureAction.KeepSpinoza;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
-            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -142,13 +142,13 @@ internal static class SchellingNatureFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == act && !adopted
-                && !journey.DeclinedFixedActs.Contains(Math.Min(3, act + 1))
+                && !journey.DeclinedFixedActs.Contains(act)
                 && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == act + 1
                 && journey.CurrentNodeId == SchellingNatureState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == act + 1
-            && journey.DeclinedFixedActs.Contains(Math.Min(3, act + 1))
+        return !adopted && journey.LastFixedAct == act
+            && journey.DeclinedFixedActs.Contains(act)
             && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 

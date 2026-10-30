@@ -38,7 +38,7 @@ internal static class SchellingNatureChecks
         var declined = Journey();
         Check(SchellingNatureFlow.TryCommitPending(kept, declined, graph),
             "Keeping Spinoza must decline the act's fixed slot.");
-        Check(declined.DeclinedFixedActs.Contains(3)
+        Check(declined.DeclinedFixedActs.Contains(2)
             && declined.CurrentNodeId == SchellingNatureState.SourceNodeId,
             "Declining must leave the player on Spinoza's node.");
 

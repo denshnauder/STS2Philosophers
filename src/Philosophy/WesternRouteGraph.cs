@@ -180,14 +180,17 @@ internal sealed class WesternRouteGraph
     public bool TryApply(WesternJourneyState state, string edgeId)
     {
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;
+        // A refused or answered question ends its own act: the same question
+        // cannot be walked later as if the refusal had not happened.
+        if (edge.Slot == "Question" && state.ResolvedQuestionActs.Contains(edge.Act)) return false;
         state.CompletedEdgeIds.Add(edgeId);
         state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
         if (edge.Slot == "Question")
         {
-            // The position keeps the legacy "a refused question may return as a
-            // later reflection" rule; the act records that this act's question is
-            // answered even when the fixed position has already moved past it.
-            state.ResolvedQuestionActs.Add(state.LastFixedAct);
+            // A question belongs to the act it is written for, not to wherever
+            // the fixed position happens to stand. Recording the position too
+            // made the second act's question spend the third act's, which the
+            // design forbids.
             state.ResolvedQuestionActs.Add(edge.Act);
             // The first act's question is how the design says a run picks its
             // mainline ("第一幕问号X转线后"). Name the route only when exactly one
@@ -212,7 +215,7 @@ internal sealed class WesternRouteGraph
         // This act's question stays answerable after the fixed slot moved the
         // position on: the act, not the position, decides whose question it is.
         return _nodes.ContainsKey(state.CurrentNodeId)
-            && state.LastFixedAct is var position && (expectedAct == position || expectedAct == position - 1)
+            && state.LastFixedAct is var position && expectedAct <= position
             && expectedAct is >= 1 and <= 3
             && !state.RetainedEnding
             && state.ResolvedQuestionActs.Add(expectedAct);
@@ -297,13 +300,32 @@ internal sealed class WesternRouteGraph
     public bool TryDecline(WesternJourneyState state, string slot, int expectedAct)
     {
         if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3 || state.RetainedEnding) return false;
-        if (slot == "Question") return expectedAct == state.LastFixedAct && state.ResolvedQuestionActs.Add(state.LastFixedAct);
-        if (slot != "Fixed" || state.LastFixedAct > 3
-            || expectedAct is < 1 or > 3
+        if (slot == "Question")
+            return expectedAct is >= 1 and <= 3 && expectedAct <= state.LastFixedAct
+                && state.ResolvedQuestionActs.Add(expectedAct);
+        // A refusal ends this act's event and nothing else. A room opens at the
+        // act boundary before the position has moved on, so the refused act may
+        // be the one the boundary is entering; the position then moves to that
+        // act and no further. A later act's slot is never spent here.
+        if (slot != "Fixed" || expectedAct is < 1 or > 3
             || state.DeclinedFixedActs.Contains(expectedAct)
             || expectedAct != state.LastFixedAct && expectedAct != state.LastFixedAct + 1) return false;
         state.LastFixedAct = expectedAct;
         state.DeclinedFixedActs.Add(expectedAct);
+        return true;
+    }
+
+    /// The act boundary entered an act whose fixed event is not available. The
+    /// slot stays empty: the act is recorded as declined and the position moves
+    /// on. This is the boundary's move, not a room refusing its own event.
+    public bool TrySkipEmptyFixedSlot(WesternJourneyState state)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding) return false;
+        if (state.LastFixedAct is < 1 or > 2) return false;
+        int act = state.LastFixedAct + 1;
+        if (state.DeclinedFixedActs.Contains(act)) return false;
+        state.LastFixedAct = act;
+        state.DeclinedFixedActs.Add(act);
         return true;
     }
 
@@ -366,8 +388,13 @@ internal sealed class WesternRouteGraph
         // Each branch consumes a fixed slot or the one question slot for that act; depth is bounded by three acts.
         if (GetEligibleEdges(state, "Fixed").Concat(GetEligibleEdges(state, "Question"))
             .Any(edge => CanFinishAfter(state, edge.EdgeId))) return true;
+        // Skipping an act's fixed event means the boundary moves the position
+        // on and the refusal is recorded for the act that was skipped; it does
+        // not spend a later act's slot.
+        if (state.LastFixedAct >= 3) return false;
         WesternJourneyState declined = CopyState(state);
-        return TryDecline(declined, "Fixed", state.LastFixedAct + 1) && CanFinish(declined);
+        declined.LastFixedAct++;
+        return TryDecline(declined, "Fixed", declined.LastFixedAct) && CanFinish(declined);
     }
 
     private bool CanFinishAfter(WesternJourneyState state, string edgeId)
@@ -400,6 +427,10 @@ internal sealed class WesternRouteGraph
             && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
                 && other.FromNodeId == edge.FromNodeId && other.Act == edge.Act
                 && other.RouteIds is { Length: > 0 } && RouteMatches(other, state)))
+        // A question edge is spent once its act has answered. Legacy edges are
+        // written for act one but carry a later handover, so the position is the
+        // only act they can be matched against; the act itself is recorded when
+        // the question is taken or refused.
         && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
         && (slot != "Fixed" || edge.Confidence != "Low");
 

@@ -7,8 +7,14 @@ internal static class MontesquieuBalanceChecks
         if (!value) throw new InvalidOperationException(message);
     }
 
-    private static WesternJourneyState Journey(WesternRouteGraph graph) =>
-        graph.Start(MontesquieuBalanceState.SourceNodeId);
+    private static WesternJourneyState Journey(WesternRouteGraph graph)
+    {
+        // The room opens in the second act, after the boundary moved the
+        // position on.
+        WesternJourneyState journey = graph.Start(MontesquieuBalanceState.SourceNodeId);
+        journey.LastFixedAct = 2;
+        return journey;
+    }
 
     internal static void Run()
     {
@@ -29,7 +35,7 @@ internal static class MontesquieuBalanceChecks
             "Separation must record its standard and stage.");
         Check(separated.CompletedEdgeIds.Contains(MontesquieuBalanceState.CompletionEdgeId)
             && separated.CurrentNodeId == MontesquieuBalanceState.AdoptedNodeId
-            && separated.LastFixedAct == 2,
+            && separated.LastFixedAct == 3,
             "Adopting must move the journey to Montesquieu and consume act one.");
         Check(MontesquieuBalanceFlow.IsRouteConsistent(state, separated),
             "The committed room must stay route-consistent.");
@@ -39,6 +45,7 @@ internal static class MontesquieuBalanceChecks
         Check(state.Closed && state.IsUsable(), "A closed room must stay replayable.");
 
         var kept = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:2");
+        kept.ActIndex = 2;
         MontesquieuBalanceFlow.TryPrepare(kept, MontesquieuBalanceAction.PreservePrivilege);
         var declinedJourney = Journey(graph);
         Check(MontesquieuBalanceFlow.TryCommitPending(kept, declinedJourney, graph),

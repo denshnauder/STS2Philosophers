@@ -16,6 +16,7 @@ internal static class HusserlEpocheChecks
         Check(HusserlEpocheFlow.TryPrepare(state, HusserlEpocheAction.DescribeAppearance),
             "The description must be selectable.");
         var journey = graph.Start(HusserlEpocheState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(HusserlEpocheFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(HusserlEpocheFlow.TryCommitPending(state, journey, graph),
@@ -24,12 +25,13 @@ internal static class HusserlEpocheChecks
             && state.Stage == HusserlEpocheStage.ResultAppearance,
             "The description must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(HusserlEpocheState.CompletionEdgeId)
-            && journey.CurrentNodeId == HusserlEpocheState.AdoptedNodeId && journey.LastFixedAct == 2,
+            && journey.CurrentNodeId == HusserlEpocheState.AdoptedNodeId && journey.LastFixedAct == 3,
             "Adopting must move the journey to Kierkegaard and consume act one.");
 
         var kept = HusserlEpocheState.Create("HUSSERL_EPOCHE:TEST:2");
         HusserlEpocheFlow.TryPrepare(kept, HusserlEpocheAction.KeepDescartes);
         var declined = graph.Start(HusserlEpocheState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(HusserlEpocheFlow.TryCommitPending(kept, declined, graph),
             "Keeping Socrates must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)

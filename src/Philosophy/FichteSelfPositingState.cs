@@ -111,8 +111,8 @@ internal static class FichteSelfPositingFlow
         bool declines = action == FichteSelfPositingAction.KeepKant;
         if (revises && !journey.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId)
             && !graph.TryApply(journey, FichteSelfPositingState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (declines && !journey.ResolvedQuestionActs.Contains(2)
+            && !graph.TryDecline(journey, "Question", 2)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -123,16 +123,18 @@ internal static class FichteSelfPositingFlow
             || !journey.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId)) return false;
         bool revised = journey.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
+            // 037 is act two's question. It may be answered while the run stands
+            // at position three, and it still only spends act two.
             return journey.LastFixedAct == 3 && !revised
-                && !journey.ResolvedQuestionActs.Contains(3)
+                && !journey.ResolvedQuestionActs.Contains(2)
                 && journey.CurrentNodeId == FichteSelfPositingState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && revised && journey.LastFixedAct == 3
-                && journey.ResolvedQuestionActs.Contains(3)
+                && journey.ResolvedQuestionActs.Contains(2)
                 && journey.CurrentNodeId == FichteSelfPositingState.SourceNodeId;
         return !revised && journey.LastFixedAct == 3
             && journey.CurrentNodeId == FichteSelfPositingState.SourceNodeId
-            && journey.ResolvedQuestionActs.Contains(3);
+            && journey.ResolvedQuestionActs.Contains(2);
     }
 
     public static string DescriptionKey(FichteSelfPositingState state) => state.Stage switch

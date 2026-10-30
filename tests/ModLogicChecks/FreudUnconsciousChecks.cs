@@ -18,6 +18,7 @@ internal static class FreudUnconsciousChecks
         // The route places this room in the second act now, so the journey that
         // meets it stands in that act's slot and on the unconscious line.
         var journey = graph.Start(FreudUnconsciousState.SourceNodeId);
+        journey.LastFixedAct = 2;
         journey.RouteId = "UNCONSCIOUS_AND_NORM";
         journey.LastFixedAct = 2;
         state = FreudUnconsciousState.CreateAt("FREUD_UNCONSCIOUS:TEST:1", 2,
@@ -37,6 +38,7 @@ internal static class FreudUnconsciousChecks
         var kept = FreudUnconsciousState.Create("FREUD_UNCONSCIOUS:TEST:2");
         FreudUnconsciousFlow.TryPrepare(kept, FreudUnconsciousAction.KeepDescartes);
         var declined = graph.Start(FreudUnconsciousState.SourceNodeId);
+        declined.LastFixedAct = 2;
         declined.RouteId = "UNCONSCIOUS_AND_NORM";
         declined.LastFixedAct = 2;
         kept = FreudUnconsciousState.CreateAt("FREUD_UNCONSCIOUS:TEST:2", 2,
@@ -44,7 +46,7 @@ internal static class FreudUnconsciousChecks
         FreudUnconsciousFlow.TryPrepare(kept, FreudUnconsciousAction.KeepDescartes);
         Check(FreudUnconsciousFlow.TryCommitPending(kept, declined, graph),
             "Keeping Descartes must decline the act's fixed slot.");
-        Check(declined.DeclinedFixedActs.Contains(3)
+        Check(declined.DeclinedFixedActs.Contains(2)
             && declined.CurrentNodeId == FreudUnconsciousState.SourceNodeId,
             "Declining must leave the player on Descartes' node.");
 

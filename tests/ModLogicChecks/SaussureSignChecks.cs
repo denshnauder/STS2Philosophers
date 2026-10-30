@@ -11,6 +11,7 @@ internal static class SaussureSignChecks
         Check(SaussureSignFlow.TryPrepare(state, SaussureSignAction.LanguageParole),
             "Language/speech must be selectable.");
         var journey = graph.Start(SaussureSignState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(SaussureSignFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(SaussureSignFlow.TryCommitPending(state, journey, graph),
@@ -20,12 +21,13 @@ internal static class SaussureSignChecks
             "The choice must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(SaussureSignState.CompletionEdgeId)
             && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId
-            && journey.LastFixedAct == 2,
-            "Adopting must move to Saussure and consume act one.");
+            && journey.LastFixedAct == 3,
+            "Adopting must move to Saussure and consume the act's fixed slot.");
 
         var kept = SaussureSignState.Create("SAUSSURE_SIGN:TEST:2");
         SaussureSignFlow.TryPrepare(kept, SaussureSignAction.KeepAristotle);
         var declined = graph.Start(SaussureSignState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(SaussureSignFlow.TryCommitPending(kept, declined, graph),
             "Keeping Aristotle must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)

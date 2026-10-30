@@ -75,8 +75,8 @@ internal static class WesternGraphChecks
         Check(graph.GetEligibleEdges(late, "Question").Any(edge => edge.EdgeId == "WESTERN_EDGE_021"),
             "The act's question stays open after its fixed event was taken.");
         Check(graph.TryApply(late, "WESTERN_EDGE_021")
-            && late.ResolvedQuestionActs.Contains(2) && late.ResolvedQuestionActs.Contains(3),
-            "A question taken at position three records both its own act and the position it was taken at.");
+            && late.ResolvedQuestionActs.Contains(2) && !late.ResolvedQuestionActs.Contains(3),
+            "A question taken after its own act's fixed event records that act only, so the next act's question stays open.");
         WesternJourneyState plato = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(plato, "WESTERN_EDGE_008") && graph.TryApply(plato, "WESTERN_EDGE_009"),
             "Plotinus requires the completed Socrates-to-Plato sequence.");
@@ -110,18 +110,29 @@ internal static class WesternGraphChecks
         Check(graph.TryDecline(rejecting, "Question", 1) && !graph.TryDecline(rejecting, "Question", 1), "Question refusal must consume exactly one act slot.");
         Check(graph.OfferCandidates(rejecting, "Question", 0).Count == 0, "A previously saved invitation window must not reopen after refusal.");
         Check(!graph.TryApply(rejecting, first.EdgeIds[1]), "Refusal must not satisfy an accepted-challenge prerequisite.");
+        rejecting.LastFixedAct = 2;
         Check(graph.TryDecline(rejecting, "Fixed", 2) && !graph.TryDecline(rejecting, "Fixed", 2), "A duplicate refusal callback must not skip two fixed acts.");
         Check(rejecting.CurrentNodeId == first.EntryNodeId && rejecting.CompletedEdgeIds.Count == 0 && rejecting.SeenThinkerIds.Count == 1,
             "Refusal must retain the doctrine without inventing historical choices or rewarding a new person.");
-        Check(graph.GetEligibleEdges(rejecting, "Question").Any(edge => edge.EdgeId == first.EdgeIds[0]), "An unaccepted earlier problem can return as a later reflection.");
-        Check(graph.TryApply(rejecting, first.EdgeIds[0]) && graph.TryApply(rejecting, first.EdgeIds[1]), "A deferred challenge can unlock its explicitly mediated continuation in the final act.");
-        Check(rejecting.LastFixedAct == 3 && graph.TryRetainEnding(rejecting) && graph.IsComplete(rejecting), "A delayed path may end by retaining its current position without claiming the sample's later conclusion.");
-        Check(!graph.TryRetainEnding(rejecting) && graph.OfferCandidates(rejecting, "Question", 99).Count == 0, "A retained ending must not create further rewards or re-open choices.");
+        // The refusal is recorded for the act it happened in. Act one's handover
+        // edges stay walkable because they are the branch the question names,
+        // and the next act's question must still be open: refusing act one may
+        // not spend act two's slot.
+        Check(rejecting.ResolvedQuestionActs.SetEquals([1])
+            && graph.GetEligibleEdges(rejecting, "Question").Any(edge => edge.Act == 2),
+            "A refused question is answered for its own act and leaves the next act's question open.");
+        Check(!graph.TryApply(rejecting, first.EdgeIds[0]) && !graph.TryApply(rejecting, first.EdgeIds[1]),
+            "A refused question cannot be taken later, and its continuation stays locked.");
+        Check(rejecting.LastFixedAct == 2, "A refused fixed event records its own act and leaves the position where it was.");
+        rejecting.LastFixedAct = 3;
+        Check(graph.CanFinish(rejecting), "A run that refused its first question and its second fixed event can still finish in the third act.");
 
         PhilosophyRunState shared = new() { WesternJourney = rejecting };
         shared.RecordCurrentDoctrine("KONGZI", "REN", ["CONFUCIAN"]);
         PhilosophyRunState roundTrip = PhilosophyRunStateCodec.Decode(PhilosophyRunStateCodec.Encode(shared));
-        Check(roundTrip.WesternJourney?.RetainedEnding == true && roundTrip.WesternJourney.DeclinedFixedActs.SetEquals([2])
+        Check(roundTrip.WesternJourney is not null
+            && roundTrip.WesternJourney.DeclinedFixedActs.SetEquals([2])
+            && roundTrip.WesternJourney.ResolvedQuestionActs.SetEquals([1])
             && roundTrip.CurrentDoctrine?.ThinkerId == "KONGZI" && roundTrip.ThoughtImprints.Count == 1,
             "Shared encoding must preserve western progress without rewriting existing eastern doctrine or imprints.");
         PhilosophyRunState old = PhilosophyRunStateCodec.Decode(Convert.ToHexString(System.Text.Encoding.UTF8.GetBytes("{}")));

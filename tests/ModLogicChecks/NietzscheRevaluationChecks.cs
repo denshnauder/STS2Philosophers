@@ -16,6 +16,7 @@ internal static class NietzscheRevaluationChecks
         Check(NietzscheRevaluationFlow.TryPrepare(state, NietzscheRevaluationAction.RevalueAllValues),
             "The revaluation must be selectable.");
         var journey = graph.Start(NietzscheRevaluationState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(NietzscheRevaluationFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(NietzscheRevaluationFlow.TryCommitPending(state, journey, graph),
@@ -24,12 +25,13 @@ internal static class NietzscheRevaluationChecks
             && state.Stage == NietzscheRevaluationStage.ResultRevalue,
             "The revaluation must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(NietzscheRevaluationState.CompletionEdgeId)
-            && journey.CurrentNodeId == NietzscheRevaluationState.AdoptedNodeId && journey.LastFixedAct == 2,
+            && journey.CurrentNodeId == NietzscheRevaluationState.AdoptedNodeId && journey.LastFixedAct == 3,
             "Adopting must move the journey to Kierkegaard and consume act one.");
 
         var kept = NietzscheRevaluationState.Create("NIETZSCHE_REVALUATION:TEST:2");
         NietzscheRevaluationFlow.TryPrepare(kept, NietzscheRevaluationAction.KeepRousseau);
         var declined = graph.Start(NietzscheRevaluationState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(NietzscheRevaluationFlow.TryCommitPending(kept, declined, graph),
             "Keeping Socrates must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)

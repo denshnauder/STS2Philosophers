@@ -16,6 +16,7 @@ internal static class BenthamUtilityChecks
         Check(BenthamUtilityFlow.TryPrepare(state, BenthamUtilityAction.AggregateUtility),
             "The utility calculation must be selectable.");
         var journey = graph.Start(BenthamUtilityState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(BenthamUtilityFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(BenthamUtilityFlow.TryCommitPending(state, journey, graph),
@@ -24,12 +25,13 @@ internal static class BenthamUtilityChecks
             && state.Stage == BenthamUtilityStage.ResultUtility,
             "The utility calculation must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(BenthamUtilityState.CompletionEdgeId)
-            && journey.CurrentNodeId == BenthamUtilityState.AdoptedNodeId && journey.LastFixedAct == 2,
+            && journey.CurrentNodeId == BenthamUtilityState.AdoptedNodeId && journey.LastFixedAct == 3,
             "Adopting must move the journey to Kierkegaard and consume act one.");
 
         var kept = BenthamUtilityState.Create("BENTHAM_UTILITY:TEST:2");
         BenthamUtilityFlow.TryPrepare(kept, BenthamUtilityAction.KeepSocrates);
         var declined = graph.Start(BenthamUtilityState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(BenthamUtilityFlow.TryCommitPending(kept, declined, graph),
             "Keeping Socrates must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)

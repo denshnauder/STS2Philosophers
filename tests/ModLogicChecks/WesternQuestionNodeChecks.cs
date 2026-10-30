@@ -132,6 +132,9 @@ internal static class WesternQuestionNodeChecks
     private static PhilosophyRunState Atomist(bool adopt)
     {
         var shared = Being(adopt: true);
+        // A refusal happens at the act's own position; adopting the event moves
+        // the position itself.
+        if (!adopt) shared.WesternJourney!.LastFixedAct = 2;
         var prior = shared.DemocritusArrangement = DemocritusArrangementState.Create("DEMOCRITUS:42:2");
         DemocritusArrangementAction[] actions = adopt
             ? [DemocritusArrangementAction.AcceptInvitation, DemocritusArrangementAction.StudyMotion,
@@ -180,7 +183,7 @@ internal static class WesternQuestionNodeChecks
         foreach (var action in new[] { SextusAppearancesAction.AcceptInvitation, SextusAppearancesAction.SuspendAssent, SextusAppearancesAction.Leave })
             Check(SextusOpposedAppearancesFlow.TryPrepare(sextus, action)
                 && SextusOpposedAppearancesFlow.TryCommitPending(sextus), "Actual Sextus predecessor.");
-        Check(Graph.TryDecline(shared.WesternJourney!, "Fixed", 2), "Actual declined Fixed2 opportunity.");
+        Check(Graph.TrySkipEmptyFixedSlot(shared.WesternJourney!), "Actual declined Fixed2 opportunity.");
         var descartes = shared.DescartesMethodicReconstruction = DescartesMethodicReconstructionState.Create("DESCARTES:42:2");
         foreach (var action in new[] { DescartesReconstructionAction.DeclineInvitation, DescartesReconstructionAction.Leave })
             Check(DescartesMethodicReconstructionFlow.TryPrepare(descartes, action)

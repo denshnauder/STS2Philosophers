@@ -42,6 +42,7 @@ internal static class LacanSignifierChecks
         var third = LacanSignifierState.CreateAt("LACAN_SIGNIFIER:TEST:3B", 3,
             LacanSignifierState.CompletionEdgeId);
         var thirdJourney = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        thirdJourney.LastFixedAct = 2;
         thirdJourney.RouteId = "UNCONSCIOUS_AND_NORM";
         thirdJourney.LastFixedAct = 1;
         Check(graph.TryApply(thirdJourney, LacanSignifierState.RequiredEdgeId),
@@ -74,7 +75,7 @@ internal static class LacanSignifierChecks
         Check(LacanSignifierFlow.TryCommitPending(refuse, refuseJourney, graph),
             "Refusing to name the object must decline the act's fixed slot.");
         Check(refuse.Standard == LacanSignifierStandard.Unresolved && refuse.FixedDeclined
-            && refuseJourney.DeclinedFixedActs.Contains(3)
+            && refuseJourney.DeclinedFixedActs.Contains(2)
             && refuseJourney.CurrentNodeId == LacanSignifierState.SourceNodeId,
             "Refusing must leave the player on Freud's node with the slot declined.");
 
@@ -94,6 +95,7 @@ internal static class LacanSignifierChecks
     private static WesternJourneyState Journey(WesternRouteGraph graph)
     {
         var journey = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        journey.LastFixedAct = 2;
         // Freud's handover belongs to the unconscious line and fills act two, so
         // the run has to be on that line before it can walk it.
         journey.RouteId = "UNCONSCIOUS_AND_NORM";

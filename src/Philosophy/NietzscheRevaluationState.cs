@@ -37,7 +37,7 @@ internal sealed class NietzscheRevaluationState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
-    public static NietzscheRevaluationState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+    public static NietzscheRevaluationState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
     public static NietzscheRevaluationState CreateAt(string instanceId, int actIndex, string edgeId) =>
         new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
@@ -128,8 +128,8 @@ internal static class NietzscheRevaluationFlow
         bool declines = action == NietzscheRevaluationAction.KeepRousseau;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
-            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -138,14 +138,14 @@ internal static class NietzscheRevaluationFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
-        int declined = Math.Min(3, state.ActIndex + 1);
+        int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && (journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
                 && journey.CurrentNodeId == NietzscheRevaluationState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1) && journey.DeclinedFixedActs.Contains(declined)
+        return !adopted && journey.LastFixedAct == state.ActIndex && journey.DeclinedFixedActs.Contains(declined)
             && (journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 

@@ -74,7 +74,8 @@ internal static class PlatoWholeArrangementChecks
             Assert(state.PracticeCompleted
                    && state.EdgeCommitted
                    && state.FixedSlotResolved
-                   && journey.LastFixedAct == 2
+                   // Taking the act two fixed event moves the position on.
+                   && journey.LastFixedAct == 3
                    && journey.CurrentNodeId == "PLATO__VIRTUE_AND_HAPPINESS__CORE"
                    && journey.CompletedEdgeIds.Count(id => id == PlatoWholeArrangementState.CompletionEdgeId) == 1
                    && !journey.DeclinedFixedActs.Contains(2),
@@ -179,6 +180,8 @@ internal static class PlatoWholeArrangementChecks
         WesternJourneyState journey = graph.Start(PlatoWholeArrangementState.SourceNodeId);
         Assert(graph.TryApply(journey, "WESTERN_EDGE_008"),
             "The fixture must complete Protagoras before offering Plato.");
+        // The act boundary moves the position on; a room never advances it.
+        journey.LastFixedAct = 2;
         return (PlatoWholeArrangementState.Create("TEST_INSTANCE"), journey, graph);
     }
 

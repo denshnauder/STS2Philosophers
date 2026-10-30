@@ -66,7 +66,12 @@ internal static class WesternGraphRevisionChecks
             Check(!revised.TryApply(accepted, id) && accepted.LastFixedAct == oldAct, "Retirement never replays an old reward or changes the saved act.");
             Check(revised.CanFinish(accepted), "An accepted legacy node must still admit a legal retained ending.");
             while (accepted.LastFixedAct < 3)
-                Check(revised.TryDecline(accepted, "Fixed", accepted.LastFixedAct + 1), "Legacy positions must be retainable across remaining acts.");
+            {
+                // The act boundary moves the position; a refusal only records
+                // that act's event.
+                accepted.LastFixedAct++;
+                Check(revised.TryDecline(accepted, "Fixed", accepted.LastFixedAct), "Legacy positions must be retainable across remaining acts.");
+            }
             if (!revised.IsComplete(accepted)) Check(revised.TryRetainEnding(accepted), "Nonterminal legacy nodes must admit explicit retention.");
             Check(revised.IsComplete(accepted) && accepted.CurrentNodeId == edge.ToNodeId, "Retention must not replace an accepted legacy node.");
         }
@@ -81,7 +86,8 @@ internal static class WesternGraphRevisionChecks
             {
                 Check(!revised.OfferCandidates(state, "Question", 0).Any(retiredIds.Contains), "An entry's question pool cannot offer a retired edge.");
                 Check(!revised.OfferCandidates(state, "Fixed", 0).Any(retiredIds.Contains), "An entry's fixed pool cannot offer a retired edge.");
-                if (act < 3) Check(revised.TryDecline(state, "Fixed", act + 1), "Retention must not require a removed succession edge.");
+                state.LastFixedAct = act;
+                Check(revised.TryDecline(state, "Fixed", act), "Retention must not require a removed succession edge.");
             }
         }
 

@@ -32,7 +32,7 @@ internal sealed class SaussureSignState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
-    public static SaussureSignState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+    public static SaussureSignState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
     public static SaussureSignState CreateAt(string instanceId, int actIndex, string edgeId) =>
         new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
@@ -123,8 +123,8 @@ internal static class SaussureSignFlow
         bool declines = action == SaussureSignAction.KeepAristotle;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
-            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -135,7 +135,7 @@ internal static class SaussureSignFlow
             || SaussureSignState.RequiredEdgeId.Length > 0
                 && !journey.CompletedEdgeIds.Contains(SaussureSignState.RequiredEdgeId)) return false;
         int act = state.ActIndex;
-        int declined = act + 1;
+        int declined = act;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == act && !adopted && !journey.DeclinedFixedActs.Contains(declined)
@@ -143,7 +143,7 @@ internal static class SaussureSignFlow
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == act + 1
                 && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == act + 1
+        return !adopted && journey.LastFixedAct == act
             && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
     }

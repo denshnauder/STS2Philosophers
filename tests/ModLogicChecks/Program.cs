@@ -2,6 +2,7 @@ using STS2Philosophers;
 using System.Text;
 using System.Text.Json;
 
+var failures = new List<string>();
 if (args.Contains("--spinoza-only"))
 {
     SpinozaCauseNetworkChecks.Run();
@@ -11,149 +12,155 @@ if (args.Contains("--spinoza-only"))
 if (args.Contains("--leibniz-only"))
 {
     LeibnizIndependentClocksChecks.Run();
-LeibnizMonadComparisonChecks.Run();
-HegelSubstanceSubjectChecks.Run();
+    LeibnizMonadComparisonChecks.Run();
+    HegelSubstanceSubjectChecks.Run();
     return;
 }
 
-SocratesKnowledgeRouteChecks.Run();
-SocratesCardProbeChecks.Run();
+try { SocratesKnowledgeRouteChecks.Run(); } catch (Exception e) { failures.Add("SocratesKnowledgeRouteChecks: " + e.Message); }
+try { SocratesCardProbeChecks.Run(); } catch (Exception e) { failures.Add("SocratesCardProbeChecks: " + e.Message); }
 
-WesternRouteChecks.Run();
-WesternResearchChecks.Run();
-WesternGraphChecks.Run();
-WesternRouteTableChecks.Run();
-ActPlacementSaveChecks.Run();
-WesternGraphRevisionChecks.Run();
-WesternPracticeChecks.Run();
-HeraclitusLyreChecks.Run();
-SocratesBoundedCommitmentChecks.Run();
-SocratesBoundedCommitmentSaveChecks.Run();
-SocratesVirtueUpstreamRecordChecks.Run();
-ProtagorasSharedDeliberationChecks.Run();
-PlatoWholeArrangementChecks.Run();
-PlotinusCommonGroundChecks.Run();
-ZenoCivicChallengeChecks.Run();
-ZenoCivicSealUpgradeChecks.Run();
-WesternQuestionNodeChecks.Run();
-AugustinePromiseChecks.Run();
-AquinasBridgeNoticeChecks.Run();
-AnselmUnfinishedProofChecks.Run();
-OckhamNamesInquiryChecks.Run();
-CopernicusShiftedCenterChecks.Run();
-GalileoMeasuredPracticeChecks.Run();
-NewtonTwoSitesChecks.Run();
-SpinozaCauseNetworkChecks.Run();
-LeibnizIndependentClocksChecks.Run();
-LeibnizMonadComparisonChecks.Run();
-HegelSubstanceSubjectChecks.Run();
-FichteSelfPositingChecks.Run();
-HobbesAuthorizedSovereigntyChecks.Run();
-LockeHumeChecks.Run();
+try { WesternRouteChecks.Run(); } catch (Exception e) { failures.Add("WesternRouteChecks: " + e.Message); }
+try { WesternResearchChecks.Run(); } catch (Exception e) { failures.Add("WesternResearchChecks: " + e.Message); }
+try { WesternGraphChecks.Run(); } catch (Exception e) { failures.Add("WesternGraphChecks: " + e.Message); }
+try { WesternRouteTableChecks.Run(); } catch (Exception e) { failures.Add("WesternRouteTableChecks: " + e.Message); }
+try { ActPlacementSaveChecks.Run(); } catch (Exception e) { failures.Add("ActPlacementSaveChecks: " + e.Message); }
+try { WesternGraphRevisionChecks.Run(); } catch (Exception e) { failures.Add("WesternGraphRevisionChecks: " + e.Message); }
+try { WesternPracticeChecks.Run(); } catch (Exception e) { failures.Add("WesternPracticeChecks: " + e.Message); }
+try { HeraclitusLyreChecks.Run(); } catch (Exception e) { failures.Add("HeraclitusLyreChecks: " + e.Message); }
+try { SocratesBoundedCommitmentChecks.Run(); } catch (Exception e) { failures.Add("SocratesBoundedCommitmentChecks: " + e.Message); }
+try { SocratesBoundedCommitmentSaveChecks.Run(); } catch (Exception e) { failures.Add("SocratesBoundedCommitmentSaveChecks: " + e.Message); }
+try { SocratesVirtueUpstreamRecordChecks.Run(); } catch (Exception e) { failures.Add("SocratesVirtueUpstreamRecordChecks: " + e.Message); }
+try { ProtagorasSharedDeliberationChecks.Run(); } catch (Exception e) { failures.Add("ProtagorasSharedDeliberationChecks: " + e.Message); }
+try { PlatoWholeArrangementChecks.Run(); } catch (Exception e) { failures.Add("PlatoWholeArrangementChecks: " + e.Message); }
+try { PlotinusCommonGroundChecks.Run(); } catch (Exception e) { failures.Add("PlotinusCommonGroundChecks: " + e.Message); }
+try { ZenoCivicChallengeChecks.Run(); } catch (Exception e) { failures.Add("ZenoCivicChallengeChecks: " + e.Message); }
+try { ZenoCivicSealUpgradeChecks.Run(); } catch (Exception e) { failures.Add("ZenoCivicSealUpgradeChecks: " + e.Message); }
+try { WesternQuestionNodeChecks.Run(); } catch (Exception e) { failures.Add("WesternQuestionNodeChecks: " + e.Message); }
+try { AugustinePromiseChecks.Run(); } catch (Exception e) { failures.Add("AugustinePromiseChecks: " + e.Message); }
+try { AquinasBridgeNoticeChecks.Run(); } catch (Exception e) { failures.Add("AquinasBridgeNoticeChecks: " + e.Message); }
+try { AnselmUnfinishedProofChecks.Run(); } catch (Exception e) { failures.Add("AnselmUnfinishedProofChecks: " + e.Message); }
+try { OckhamNamesInquiryChecks.Run(); } catch (Exception e) { failures.Add("OckhamNamesInquiryChecks: " + e.Message); }
+try { CopernicusShiftedCenterChecks.Run(); } catch (Exception e) { failures.Add("CopernicusShiftedCenterChecks: " + e.Message); }
+try { GalileoMeasuredPracticeChecks.Run(); } catch (Exception e) { failures.Add("GalileoMeasuredPracticeChecks: " + e.Message); }
+try { NewtonTwoSitesChecks.Run(); } catch (Exception e) { failures.Add("NewtonTwoSitesChecks: " + e.Message); }
+try { SpinozaCauseNetworkChecks.Run(); } catch (Exception e) { failures.Add("SpinozaCauseNetworkChecks: " + e.Message); }
+try { LeibnizIndependentClocksChecks.Run(); } catch (Exception e) { failures.Add("LeibnizIndependentClocksChecks: " + e.Message); }
+try { LeibnizMonadComparisonChecks.Run(); } catch (Exception e) { failures.Add("LeibnizMonadComparisonChecks: " + e.Message); }
+try { HegelSubstanceSubjectChecks.Run(); } catch (Exception e) { failures.Add("HegelSubstanceSubjectChecks: " + e.Message); }
+try { FichteSelfPositingChecks.Run(); } catch (Exception e) { failures.Add("FichteSelfPositingChecks: " + e.Message); }
+try { HobbesAuthorizedSovereigntyChecks.Run(); } catch (Exception e) { failures.Add("HobbesAuthorizedSovereigntyChecks: " + e.Message); }
+try { LockeHumeChecks.Run(); } catch (Exception e) { failures.Add("LockeHumeChecks: " + e.Message); }
 BerkeleyPerceivedMarkChecks.RunAsync().GetAwaiter().GetResult();
-MontesquieuBalanceChecks.Run();
-DiderotPracticeChecks.Run();
-SmithSympathyChecks.Run();
-SchellingNatureChecks.Run();
-KierkegaardFaithChecks.Run();
-MarxAlienationChecks.Run();
-NietzscheRevaluationChecks.Run();
-BenthamUtilityChecks.Run();
-ComtePositivismChecks.Run();
-PeirceInquiryChecks.Run();
-DeweyPublicExperimentChecks.Run();
-HusserlEpocheChecks.Run();
-HeideggerDaseinChecks.Run();
-SartreExistenceChecks.Run();
-MerleauPontyBodyChecks.Run();
-FregeSenseChecks.Run();
-RussellAnalysisChecks.Run();
-WittgensteinGameChecks.Run();
-SaussureSignChecks.Run();
-LeviStraussMythChecks.Run();
-FoucaultPowerChecks.Run();
-DerridaDeconstructionChecks.Run();
-DeleuzeDifferenceChecks.Run();
-GadamerFusionChecks.Run();
-HorkheimerReasonChecks.Run();
-AdornoNegativeChecks.Run();
-HabermasCommunicationChecks.Run();
-FreudUnconsciousChecks.Run();
-LacanSignifierChecks.Run();
-KuhnParadigmChecks.Run();
-RoomIntegrationChecks.Run();
-EventPageLocalizationChecks.Run();
-WollstonecraftAdmissionChecks.Run();
-KantApperceptionChecks.Run();
-SchopenhauerWillDenialChecks.Run();
-JamesForcedBridgeChecks.Run();
-CamusRevoltLimitChecks.Run();
-CarnapFrameworkChoiceChecks.Run();
-AustinSpeechActChecks.Run();
-PopperFalsificationChecks.Run();
-EventGoldCostProtocolChecks.Run();
-CrossActCombatHistoryChecks.Run();
-RoomRouteConsistencyReloadChecks.Run();
-RoomStateSaveRoundTripChecks.Run();
-RoomStateNormalizationChecks.Run();
-RousseauConsentChecks.Run();
-KantUniversalizationChecks.Run();
-MillHarmChecks.Run();
-BeauvoirOtherChecks.Run();
-NewtonCalibrationChecks.Run();
-BaconSampleLedgerChecks.Run();
-MachiavelliFloodPreparationChecks.Run();
-MachiavelliRealistChallengeChecks.Run();
-LutherSignedCareChecks.Run();
-PlotinusCombatPracticeChecks.Run();
-EpicurusSharedMarginChecks.Run();
-SextusOpposedAppearancesChecks.Run();
-ParmenidesInquiryChecks.Run();
-AnaximanderOriginInquiryChecks.Run();
-AnaximenesBreathInvitationChecks.Run();
-AristotleCivicInquiryChecks.Run();
-DemocritusArrangementChecks.Run();
-EmpedoclesRootsInquiryChecks.Run();
-AnaxagorasMixtureInquiryChecks.Run();
-GorgiasSpeechInquiryChecks.Run();
-SenecaDailyReviewChecks.Run();
-EpictetusGuidePracticeChecks.Run();
-MarcusAureliusCampPracticeChecks.Run();
-PyrrhoReportedCrossingChecks.Run();
-DescartesMethodicReconstructionChecks.Run();
-LaterActRelicEligibilityChecks.Run();
-HanFeiPublicStandardChecks.Run();
-ZenoRouteStateChecks.Run();
-ZenoRouteStateServiceChecks.Run();
-ZenoRouteSchedulingPolicyChecks.Run();
-ZenoRouteNativeTriggerPolicyChecks.Run();
-ZenoAssentBoundaryTestEntryPolicyChecks.Run();
-ZenoRoutePersistenceConfirmationChecks.Run();
-ZenoRoutePersistenceCoordinatorChecks.Run();
-ZenoRoutePersistenceAdapterChecks.Run();
-ZenoRoutePersistenceRuntimeChecks.Run();
-ZenoRouteRecoveryPlannerChecks.Run();
-ZenoRouteRecoveryExecutionChecks.Run();
-ZenoRouteRecoverySceneClassifierChecks.Run();
-DiogenesStaySwitchPageFlowChecks.Run();
-DiogenesStaySwitchEntryPolicyChecks.Run();
-DiogenesStaySwitchEntryIntegrationChecks.Run();
-DiogenesStaySwitchStateHostChecks.Run();
-ZenoAssentPageFlowChecks.Run();
-ZenoAssentBoundaryStateHostChecks.Run();
-ZenoAssentBoundaryCreationPolicyChecks.Run();
-ZenoAssentBoundaryEstablishmentChecks.Run();
-ZenoAssentBoundaryRoomEntryChecks.Run();
-RitsuRunPersistenceProbeStateChecks.Run();
-PhilosophyRunStateZenoCodecChecks.Run();
-PhilosophyRunStateMarkerCarrierChecks.Run();
-PhilosophyRunStateRitsuChecks.Run();
-WesternEntryChecks.Run();
-WesternBeingChecks.Run();
-HegelPracticeChecks.Run();
-WesternKnowledgeChecks.Run();
-WesternNodePracticeChecks.Run();
+try { MontesquieuBalanceChecks.Run(); } catch (Exception e) { failures.Add("MontesquieuBalanceChecks: " + e.Message); }
+try { DiderotPracticeChecks.Run(); } catch (Exception e) { failures.Add("DiderotPracticeChecks: " + e.Message); }
+try { SmithSympathyChecks.Run(); } catch (Exception e) { failures.Add("SmithSympathyChecks: " + e.Message); }
+try { SchellingNatureChecks.Run(); } catch (Exception e) { failures.Add("SchellingNatureChecks: " + e.Message); }
+try { KierkegaardFaithChecks.Run(); } catch (Exception e) { failures.Add("KierkegaardFaithChecks: " + e.Message); }
+try { MarxAlienationChecks.Run(); } catch (Exception e) { failures.Add("MarxAlienationChecks: " + e.Message); }
+try { NietzscheRevaluationChecks.Run(); } catch (Exception e) { failures.Add("NietzscheRevaluationChecks: " + e.Message); }
+try { BenthamUtilityChecks.Run(); } catch (Exception e) { failures.Add("BenthamUtilityChecks: " + e.Message); }
+try { ComtePositivismChecks.Run(); } catch (Exception e) { failures.Add("ComtePositivismChecks: " + e.Message); }
+try { PeirceInquiryChecks.Run(); } catch (Exception e) { failures.Add("PeirceInquiryChecks: " + e.Message); }
+try { DeweyPublicExperimentChecks.Run(); } catch (Exception e) { failures.Add("DeweyPublicExperimentChecks: " + e.Message); }
+try { HusserlEpocheChecks.Run(); } catch (Exception e) { failures.Add("HusserlEpocheChecks: " + e.Message); }
+try { HeideggerDaseinChecks.Run(); } catch (Exception e) { failures.Add("HeideggerDaseinChecks: " + e.Message); }
+try { SartreExistenceChecks.Run(); } catch (Exception e) { failures.Add("SartreExistenceChecks: " + e.Message); }
+try { MerleauPontyBodyChecks.Run(); } catch (Exception e) { failures.Add("MerleauPontyBodyChecks: " + e.Message); }
+try { FregeSenseChecks.Run(); } catch (Exception e) { failures.Add("FregeSenseChecks: " + e.Message); }
+try { RussellAnalysisChecks.Run(); } catch (Exception e) { failures.Add("RussellAnalysisChecks: " + e.Message); }
+try { WittgensteinGameChecks.Run(); } catch (Exception e) { failures.Add("WittgensteinGameChecks: " + e.Message); }
+try { SaussureSignChecks.Run(); } catch (Exception e) { failures.Add("SaussureSignChecks: " + e.Message); }
+try { LeviStraussMythChecks.Run(); } catch (Exception e) { failures.Add("LeviStraussMythChecks: " + e.Message); }
+try { FoucaultPowerChecks.Run(); } catch (Exception e) { failures.Add("FoucaultPowerChecks: " + e.Message); }
+try { DerridaDeconstructionChecks.Run(); } catch (Exception e) { failures.Add("DerridaDeconstructionChecks: " + e.Message); }
+try { DeleuzeDifferenceChecks.Run(); } catch (Exception e) { failures.Add("DeleuzeDifferenceChecks: " + e.Message); }
+try { GadamerFusionChecks.Run(); } catch (Exception e) { failures.Add("GadamerFusionChecks: " + e.Message); }
+try { HorkheimerReasonChecks.Run(); } catch (Exception e) { failures.Add("HorkheimerReasonChecks: " + e.Message); }
+try { AdornoNegativeChecks.Run(); } catch (Exception e) { failures.Add("AdornoNegativeChecks: " + e.Message); }
+try { HabermasCommunicationChecks.Run(); } catch (Exception e) { failures.Add("HabermasCommunicationChecks: " + e.Message); }
+try { FreudUnconsciousChecks.Run(); } catch (Exception e) { failures.Add("FreudUnconsciousChecks: " + e.Message); }
+try { LacanSignifierChecks.Run(); } catch (Exception e) { failures.Add("LacanSignifierChecks: " + e.Message); }
+try { KuhnParadigmChecks.Run(); } catch (Exception e) { failures.Add("KuhnParadigmChecks: " + e.Message); }
+try { RoomIntegrationChecks.Run(); } catch (Exception e) { failures.Add("RoomIntegrationChecks: " + e.Message); }
+try { EventPageLocalizationChecks.Run(); } catch (Exception e) { failures.Add("EventPageLocalizationChecks: " + e.Message); }
+try { WollstonecraftAdmissionChecks.Run(); } catch (Exception e) { failures.Add("WollstonecraftAdmissionChecks: " + e.Message); }
+try { KantApperceptionChecks.Run(); } catch (Exception e) { failures.Add("KantApperceptionChecks: " + e.Message); }
+try { SchopenhauerWillDenialChecks.Run(); } catch (Exception e) { failures.Add("SchopenhauerWillDenialChecks: " + e.Message); }
+try { JamesForcedBridgeChecks.Run(); } catch (Exception e) { failures.Add("JamesForcedBridgeChecks: " + e.Message); }
+try { CamusRevoltLimitChecks.Run(); } catch (Exception e) { failures.Add("CamusRevoltLimitChecks: " + e.Message); }
+try { CarnapFrameworkChoiceChecks.Run(); } catch (Exception e) { failures.Add("CarnapFrameworkChoiceChecks: " + e.Message); }
+try { AustinSpeechActChecks.Run(); } catch (Exception e) { failures.Add("AustinSpeechActChecks: " + e.Message); }
+try { PopperFalsificationChecks.Run(); } catch (Exception e) { failures.Add("PopperFalsificationChecks: " + e.Message); }
+try { EventGoldCostProtocolChecks.Run(); } catch (Exception e) { failures.Add("EventGoldCostProtocolChecks: " + e.Message); }
+try { CrossActCombatHistoryChecks.Run(); } catch (Exception e) { failures.Add("CrossActCombatHistoryChecks: " + e.Message); }
+try { RoomRouteConsistencyReloadChecks.Run(); } catch (Exception e) { failures.Add("RoomRouteConsistencyReloadChecks: " + e.Message); }
+try { RoomStateSaveRoundTripChecks.Run(); } catch (Exception e) { failures.Add("RoomStateSaveRoundTripChecks: " + e.Message); }
+try { RoomStateNormalizationChecks.Run(); } catch (Exception e) { failures.Add("RoomStateNormalizationChecks: " + e.Message); }
+try { RousseauConsentChecks.Run(); } catch (Exception e) { failures.Add("RousseauConsentChecks: " + e.Message); }
+try { KantUniversalizationChecks.Run(); } catch (Exception e) { failures.Add("KantUniversalizationChecks: " + e.Message); }
+try { MillHarmChecks.Run(); } catch (Exception e) { failures.Add("MillHarmChecks: " + e.Message); }
+try { BeauvoirOtherChecks.Run(); } catch (Exception e) { failures.Add("BeauvoirOtherChecks: " + e.Message); }
+try { NewtonCalibrationChecks.Run(); } catch (Exception e) { failures.Add("NewtonCalibrationChecks: " + e.Message); }
+try { BaconSampleLedgerChecks.Run(); } catch (Exception e) { failures.Add("BaconSampleLedgerChecks: " + e.Message); }
+try { MachiavelliFloodPreparationChecks.Run(); } catch (Exception e) { failures.Add("MachiavelliFloodPreparationChecks: " + e.Message); }
+try { MachiavelliRealistChallengeChecks.Run(); } catch (Exception e) { failures.Add("MachiavelliRealistChallengeChecks: " + e.Message); }
+try { LutherSignedCareChecks.Run(); } catch (Exception e) { failures.Add("LutherSignedCareChecks: " + e.Message); }
+try { PlotinusCombatPracticeChecks.Run(); } catch (Exception e) { failures.Add("PlotinusCombatPracticeChecks: " + e.Message); }
+try { EpicurusSharedMarginChecks.Run(); } catch (Exception e) { failures.Add("EpicurusSharedMarginChecks: " + e.Message); }
+try { SextusOpposedAppearancesChecks.Run(); } catch (Exception e) { failures.Add("SextusOpposedAppearancesChecks: " + e.Message); }
+try { ParmenidesInquiryChecks.Run(); } catch (Exception e) { failures.Add("ParmenidesInquiryChecks: " + e.Message); }
+try { AnaximanderOriginInquiryChecks.Run(); } catch (Exception e) { failures.Add("AnaximanderOriginInquiryChecks: " + e.Message); }
+try { AnaximenesBreathInvitationChecks.Run(); } catch (Exception e) { failures.Add("AnaximenesBreathInvitationChecks: " + e.Message); }
+try { AristotleCivicInquiryChecks.Run(); } catch (Exception e) { failures.Add("AristotleCivicInquiryChecks: " + e.Message); }
+try { DemocritusArrangementChecks.Run(); } catch (Exception e) { failures.Add("DemocritusArrangementChecks: " + e.Message); }
+try { EmpedoclesRootsInquiryChecks.Run(); } catch (Exception e) { failures.Add("EmpedoclesRootsInquiryChecks: " + e.Message); }
+try { AnaxagorasMixtureInquiryChecks.Run(); } catch (Exception e) { failures.Add("AnaxagorasMixtureInquiryChecks: " + e.Message); }
+try { GorgiasSpeechInquiryChecks.Run(); } catch (Exception e) { failures.Add("GorgiasSpeechInquiryChecks: " + e.Message); }
+try { SenecaDailyReviewChecks.Run(); } catch (Exception e) { failures.Add("SenecaDailyReviewChecks: " + e.Message); }
+try { EpictetusGuidePracticeChecks.Run(); } catch (Exception e) { failures.Add("EpictetusGuidePracticeChecks: " + e.Message); }
+try { MarcusAureliusCampPracticeChecks.Run(); } catch (Exception e) { failures.Add("MarcusAureliusCampPracticeChecks: " + e.Message); }
+try { PyrrhoReportedCrossingChecks.Run(); } catch (Exception e) { failures.Add("PyrrhoReportedCrossingChecks: " + e.Message); }
+try { DescartesMethodicReconstructionChecks.Run(); } catch (Exception e) { failures.Add("DescartesMethodicReconstructionChecks: " + e.Message); }
+try { LaterActRelicEligibilityChecks.Run(); } catch (Exception e) { failures.Add("LaterActRelicEligibilityChecks: " + e.Message); }
+try { HanFeiPublicStandardChecks.Run(); } catch (Exception e) { failures.Add("HanFeiPublicStandardChecks: " + e.Message); }
+try { ZenoRouteStateChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteStateChecks: " + e.Message); }
+try { ZenoRouteStateServiceChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteStateServiceChecks: " + e.Message); }
+try { ZenoRouteSchedulingPolicyChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteSchedulingPolicyChecks: " + e.Message); }
+try { ZenoRouteNativeTriggerPolicyChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteNativeTriggerPolicyChecks: " + e.Message); }
+try { ZenoAssentBoundaryTestEntryPolicyChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentBoundaryTestEntryPolicyChecks: " + e.Message); }
+try { ZenoRoutePersistenceConfirmationChecks.Run(); } catch (Exception e) { failures.Add("ZenoRoutePersistenceConfirmationChecks: " + e.Message); }
+try { ZenoRoutePersistenceCoordinatorChecks.Run(); } catch (Exception e) { failures.Add("ZenoRoutePersistenceCoordinatorChecks: " + e.Message); }
+try { ZenoRoutePersistenceAdapterChecks.Run(); } catch (Exception e) { failures.Add("ZenoRoutePersistenceAdapterChecks: " + e.Message); }
+try { ZenoRoutePersistenceRuntimeChecks.Run(); } catch (Exception e) { failures.Add("ZenoRoutePersistenceRuntimeChecks: " + e.Message); }
+try { ZenoRouteRecoveryPlannerChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteRecoveryPlannerChecks: " + e.Message); }
+try { ZenoRouteRecoveryExecutionChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteRecoveryExecutionChecks: " + e.Message); }
+try { ZenoRouteRecoverySceneClassifierChecks.Run(); } catch (Exception e) { failures.Add("ZenoRouteRecoverySceneClassifierChecks: " + e.Message); }
+try { DiogenesStaySwitchPageFlowChecks.Run(); } catch (Exception e) { failures.Add("DiogenesStaySwitchPageFlowChecks: " + e.Message); }
+try { DiogenesStaySwitchEntryPolicyChecks.Run(); } catch (Exception e) { failures.Add("DiogenesStaySwitchEntryPolicyChecks: " + e.Message); }
+try { DiogenesStaySwitchEntryIntegrationChecks.Run(); } catch (Exception e) { failures.Add("DiogenesStaySwitchEntryIntegrationChecks: " + e.Message); }
+try { DiogenesStaySwitchStateHostChecks.Run(); } catch (Exception e) { failures.Add("DiogenesStaySwitchStateHostChecks: " + e.Message); }
+try { ZenoAssentPageFlowChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentPageFlowChecks: " + e.Message); }
+try { ZenoAssentBoundaryStateHostChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentBoundaryStateHostChecks: " + e.Message); }
+try { ZenoAssentBoundaryCreationPolicyChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentBoundaryCreationPolicyChecks: " + e.Message); }
+try { ZenoAssentBoundaryEstablishmentChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentBoundaryEstablishmentChecks: " + e.Message); }
+try { ZenoAssentBoundaryRoomEntryChecks.Run(); } catch (Exception e) { failures.Add("ZenoAssentBoundaryRoomEntryChecks: " + e.Message); }
+try { RitsuRunPersistenceProbeStateChecks.Run(); } catch (Exception e) { failures.Add("RitsuRunPersistenceProbeStateChecks: " + e.Message); }
+try { PhilosophyRunStateZenoCodecChecks.Run(); } catch (Exception e) { failures.Add("PhilosophyRunStateZenoCodecChecks: " + e.Message); }
+try { PhilosophyRunStateMarkerCarrierChecks.Run(); } catch (Exception e) { failures.Add("PhilosophyRunStateMarkerCarrierChecks: " + e.Message); }
+try { PhilosophyRunStateRitsuChecks.Run(); } catch (Exception e) { failures.Add("PhilosophyRunStateRitsuChecks: " + e.Message); }
+try { WesternEntryChecks.Run(); } catch (Exception e) { failures.Add("WesternEntryChecks: " + e.Message); }
+try { WesternBeingChecks.Run(); } catch (Exception e) { failures.Add("WesternBeingChecks: " + e.Message); }
+try { HegelPracticeChecks.Run(); } catch (Exception e) { failures.Add("HegelPracticeChecks: " + e.Message); }
+try { WesternKnowledgeChecks.Run(); } catch (Exception e) { failures.Add("WesternKnowledgeChecks: " + e.Message); }
+try { WesternNodePracticeChecks.Run(); } catch (Exception e) { failures.Add("WesternNodePracticeChecks: " + e.Message); }
 
+if (failures.Count > 0)
+{
+    Console.WriteLine($"FAILURES {failures.Count}");
+    foreach (var failure in failures) Console.WriteLine("  " + failure);
+    Environment.Exit(1);
+}
 static void Check(bool condition, string message)
 {
     if (!condition)

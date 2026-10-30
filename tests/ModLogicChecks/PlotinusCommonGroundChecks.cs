@@ -39,6 +39,8 @@ internal static class PlotinusCommonGroundChecks
         WesternJourneyState journey = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(journey, "WESTERN_EDGE_008") && graph.TryApply(journey, "WESTERN_EDGE_009"),
             "Plato source fixture must complete its actual route.");
+        // The third act's boundary moves the position on; the room never does.
+        journey.LastFixedAct = 3;
         return (new PhilosophyRunState
         {
             WesternJourney = journey,

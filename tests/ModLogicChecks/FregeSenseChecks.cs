@@ -16,6 +16,7 @@ internal static class FregeSenseChecks
         Check(FregeSenseFlow.TryPrepare(state, FregeSenseAction.SenseAndReference),
             "The description must be selectable.");
         var journey = graph.Start(FregeSenseState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(FregeSenseFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(FregeSenseFlow.TryCommitPending(state, journey, graph),
@@ -24,12 +25,13 @@ internal static class FregeSenseChecks
             && state.Stage == FregeSenseStage.ResultSense,
             "The description must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(FregeSenseState.CompletionEdgeId)
-            && journey.CurrentNodeId == FregeSenseState.AdoptedNodeId && journey.LastFixedAct == 2,
+            && journey.CurrentNodeId == FregeSenseState.AdoptedNodeId && journey.LastFixedAct == 3,
             "Adopting must move the journey to Kierkegaard and consume act one.");
 
         var kept = FregeSenseState.Create("FREGE_SENSE:TEST:2");
         FregeSenseFlow.TryPrepare(kept, FregeSenseAction.KeepAristotle);
         var declined = graph.Start(FregeSenseState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(FregeSenseFlow.TryCommitPending(kept, declined, graph),
             "Keeping Socrates must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)

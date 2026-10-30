@@ -48,7 +48,7 @@ internal static class FichteSelfPositingChecks
             shared.WesternJourney!), "Fichte opens at Kant after 022.");
         Check(graph.GetEligibleEdges(shared.WesternJourney!, "Question")
             .Any(edge => edge.EdgeId == FichteSelfPositingState.CompletionEdgeId),
-            "037 is eligible as the act-three question.");
+            "037 stays eligible at position three because it is act two's question.");
         Check(!graph.GetEligibleEdges(shared.WesternJourney!, "Fixed")
             .Any(edge => edge.EdgeId == "WESTERN_EDGE_038"),
             "038 remains blocked because 022 already spent Fixed3.");
@@ -57,7 +57,7 @@ internal static class FichteSelfPositingChecks
         Check(shared.WesternJourney!.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId)
             && shared.WesternJourney.CurrentNodeId == FichteSelfPositingState.SourceNodeId
             && shared.WesternJourney.LastFixedAct == 3
-            && shared.WesternJourney.ResolvedQuestionActs.Contains(3)
+            && shared.WesternJourney.ResolvedQuestionActs.Contains(2)
             && shared.FichteSelfPositing!.SelfPosited
             && shared.FichteSelfPositing.EdgeCommitted,
             "Revising completes 037, keeps Kant, and records self-positing.");
@@ -83,7 +83,7 @@ internal static class FichteSelfPositingChecks
             && !shared.WesternJourney!.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId)
             && shared.WesternJourney.CurrentNodeId == FichteSelfPositingState.SourceNodeId
             && shared.WesternJourney.LastFixedAct == 3
-            && shared.WesternJourney.ResolvedQuestionActs.Contains(3),
+            && shared.WesternJourney.ResolvedQuestionActs.Contains(2),
             "Declining Fichte spends only the act-three question.");
         shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
 

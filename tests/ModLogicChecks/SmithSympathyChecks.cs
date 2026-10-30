@@ -16,6 +16,7 @@ internal static class SmithSympathyChecks
         Check(SmithSympathyFlow.TryPrepare(state, SmithSympathyAction.SympathyOrder),
             "Sympathy must be selectable.");
         var journey = graph.Start(SmithSympathyState.SourceNodeId);
+        journey.LastFixedAct = 2;
         Check(SmithSympathyFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(SmithSympathyFlow.TryCommitPending(state, journey, graph),
@@ -24,7 +25,7 @@ internal static class SmithSympathyChecks
             && state.Stage == SmithSympathyStage.ResultSympathy,
             "Sympathy must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(SmithSympathyState.CompletionEdgeId)
-            && journey.CurrentNodeId == SmithSympathyState.AdoptedNodeId && journey.LastFixedAct == 2,
+            && journey.CurrentNodeId == SmithSympathyState.AdoptedNodeId && journey.LastFixedAct == 3,
             "Adopting must move the journey to Smith and consume act one.");
         Check(SmithSympathyFlow.TryPrepare(state, SmithSympathyAction.Leave), "A finished room must close.");
         SmithSympathyFlow.Apply(state, SmithSympathyAction.Leave);
@@ -33,6 +34,7 @@ internal static class SmithSympathyChecks
         var kept = SmithSympathyState.Create("SMITH_SYMPATHY:TEST:2");
         SmithSympathyFlow.TryPrepare(kept, SmithSympathyAction.PreserveArrangement);
         var declined = graph.Start(SmithSympathyState.SourceNodeId);
+        declined.LastFixedAct = 2;
         Check(SmithSympathyFlow.TryCommitPending(kept, declined, graph),
             "Keeping Plato's arrangement must decline the act's fixed slot.");
         Check(declined.DeclinedFixedActs.Contains(2)
