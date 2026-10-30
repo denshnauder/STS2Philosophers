@@ -86,6 +86,19 @@ internal static class WesternBranchChainChecks
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
             "The knowledge entry must offer the scientific line.");
 
+        // The first act's question offers what the run could turn onto, plus the
+        // direction the shared Husserl figure asks about, plus staying.
+        Check(RouteTurnQuestionOptions.For(offer, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_KANT", "TO_FREUD", RouteTurnQuestionOptions.AppearanceKey, RouteTurnQuestionOptions.EmbodiedKey, RouteTurnQuestionOptions.StayKey]),
+            "Descartes' question must offer its three named lines, Husserl's two directions, and staying.");
+        Check(RouteTurnQuestionOptions.For(bacon, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_BACON", RouteTurnQuestionOptions.StayKey]),
+            "The knowledge entry must offer only the scientific line and staying.");
+        var quiet = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
+        quiet.RouteRules = true;
+        Check(!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
+            "An entry whose lines a branch already reaches must not open a turn question.");
+
         // The first act's fixed branch is the older way into a line. It names
         // the same line the question would, so the run can continue on that
         // line's own handovers instead of the edges written before routes.

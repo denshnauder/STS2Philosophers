@@ -36,7 +36,7 @@ internal static class RouteEventMapBoundary
         or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizMonadComparison or HegelSubstanceSubject or LeibnizIndependentClocks or HobbesAuthorizedSovereignty or LockeCargoIdentity or HumeInduction or WollstonecraftAdmission or KantApperception or SchopenhauerWillDenial or JamesForcedBridge or CamusRevoltLimit or CarnapFrameworkChoice or AustinSpeechAct or PopperFalsification or RousseauConsent or KantUniversalization or MillHarm or MontesquieuBalance or SmithSympathy or SchellingNature or KierkegaardFaith or MarxAlienation or NietzscheRevaluation or BenthamUtility or ComtePositivism or PeirceInquiry or DeweyPublicExperiment or HusserlEpoche or HeideggerDasein or SartreExistence or MerleauPontyBody or BeauvoirOther or FichteSelfPositing or FoucaultPower or DeleuzeDifference or GadamerFusion
         or RussellAnalysis or WittgensteinGame or SaussureSign or LeviStraussMyth or DerridaDeconstruction
         or HorkheimerReason or AdornoNegative or HabermasCommunication or FreudUnconscious
-        or LacanSignifier or FregeSense or KuhnParadigm;
+        or LacanSignifier or FregeSense or KuhnParadigm or RouteTurnQuestion;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 
