@@ -10,8 +10,9 @@ internal static class WesternRouteTableChecks
     // Figures the design's table names but the graph has no node for yet. The
     // list is asserted so that adding one of these figures fails this check and
     // forces the gap list to be updated with real content.
-    private static readonly string[] MissingFigures =
-        ["ALBERT_CAMUS"];
+    // The will-and-value line ends on Nietzsche: the design keeps Camus as an
+    // optional encounter after him, not as the figure that closes the line.
+    private static readonly string[] MissingFigures = [];
 
     // Routes whose default line the graph can already walk end to end with no
     // question mark. Moving a route onto this list is the deliverable of each

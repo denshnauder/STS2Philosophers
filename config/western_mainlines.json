@@ -1,207 +1,207 @@
 {
-  "schema_version": 1,
-  "scope": "00西哲当前路线.md 的三幕固定承接表（2026-10-30 未提交版）",
-  "note": "每行是一条默认主线：第一幕入口人物、第二幕固定人物、第三幕固定人物。第一幕固定事件就是入口人物自己的事件，因此没有额外边。",
-  "routes": [
-    {
-      "route_id": "EXPERIENCE_AND_SELF",
-      "display_name": "经验与自我",
-      "entry_thinker": "DESCARTES",
-      "entry_problem": "SELF_AND_OTHER",
-      "act_one_figure": "DESCARTES",
-      "act_two_figure": "JOHN_LOCKE",
-      "act_three_figure": "DAVID_HUME",
-      "closing_figure": "IMMANUEL_KANT"
-    },
-    {
-      "route_id": "AUTONOMY_AND_HISTORY",
-      "display_name": "自律与历史",
-      "entry_thinker": "DESCARTES",
-      "entry_problem": "SELF_AND_OTHER",
-      "act_one_figure": "DESCARTES",
-      "act_two_figure": "IMMANUEL_KANT",
-      "act_three_figure": "GEORG_WILHELM_FRIEDRICH_HEGEL",
-      "closing_figure": "KARL_MARX"
-    },
-    {
-      "route_id": "NATURE_AND_BECOMING",
-      "display_name": "自然与生成",
-      "entry_thinker": "HERACLITUS",
-      "entry_problem": "BEING_AND_CHANGE",
-      "act_one_figure": "HERACLITUS",
-      "act_two_figure": "BARUCH_SPINOZA",
-      "act_three_figure": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
-      "closing_figure": "GILLES_DELEUZE"
-    },
-    {
-      "route_id": "WILL_AND_VALUE",
-      "display_name": "意志与价值",
-      "entry_thinker": "SOCRATES",
-      "entry_problem": "VIRTUE_AND_HAPPINESS",
-      "act_one_figure": "SOCRATES",
-      "act_two_figure": "ARTHUR_SCHOPENHAUER",
-      "act_three_figure": "FRIEDRICH_NIETZSCHE",
-      "closing_figure": "ALBERT_CAMUS"
-    },
-    {
-      "route_id": "INDIVIDUAL_COMMITMENT",
-      "display_name": "个体承担",
-      "entry_thinker": "SOCRATES",
-      "entry_problem": "VIRTUE_AND_HAPPINESS",
-      "act_one_figure": "SOCRATES",
-      "act_two_figure": "SOREN_KIERKEGAARD",
-      "act_three_figure": "JEAN_PAUL_SARTRE",
-      "closing_figure": "SIMONE_DE_BEAUVOIR"
-    },
-    {
-      "route_id": "APPEARANCE_AND_INTERPRETATION",
-      "display_name": "现象与解释",
-      "entry_thinker": "DESCARTES",
-      "entry_problem": "SELF_AND_OTHER",
-      "act_one_figure": "DESCARTES",
-      "act_two_figure": "EDMUND_HUSSERL",
-      "act_three_figure": "MARTIN_HEIDEGGER",
-      "closing_figure": "HANS_GEORG_GADAMER"
-    },
-    {
-      "route_id": "EMBODIED_PERCEPTION",
-      "display_name": "具身知觉",
-      "entry_thinker": "DESCARTES",
-      "entry_problem": "SELF_AND_OTHER",
-      "act_one_figure": "DESCARTES",
-      "act_two_figure": "EDMUND_HUSSERL",
-      "act_three_figure": "MAURICE_MERLEAU_PONTY",
-      "closing_figure": "SIMONE_DE_BEAUVOIR"
-    },
-    {
-      "route_id": "FORMAL_LANGUAGE",
-      "display_name": "形式语言",
-      "entry_thinker": "ARISTOTLE",
-      "entry_problem": "LANGUAGE_AND_MEANING",
-      "act_one_figure": "ARISTOTLE",
-      "act_two_figure": "GOTTLOB_FREGE",
-      "act_three_figure": "BERTRAND_RUSSELL",
-      "closing_figure": "LUDWIG_WITTGENSTEIN"
-    },
-    {
-      "route_id": "ORDINARY_SPEECH",
-      "display_name": "日常言说",
-      "entry_thinker": "ARISTOTLE",
-      "entry_problem": "LANGUAGE_AND_MEANING",
-      "act_one_figure": "ARISTOTLE",
-      "act_two_figure": "LUDWIG_WITTGENSTEIN",
-      "act_three_figure": "LUDWIG_WITTGENSTEIN",
-      "closing_figure": "LUDWIG_WITTGENSTEIN"
-    },
-    {
-      "route_id": "STRUCTURE_AND_EXCLUSION",
-      "display_name": "结构与排除",
-      "entry_thinker": "ARISTOTLE",
-      "entry_problem": "LANGUAGE_AND_MEANING",
-      "act_one_figure": "ARISTOTLE",
-      "act_two_figure": "FERDINAND_DE_SAUSSURE",
-      "act_three_figure": "CLAUDE_LEVI_STRAUSS",
-      "closing_figure": "JACQUES_DERRIDA"
-    },
-    {
-      "route_id": "UNCONSCIOUS_AND_NORM",
-      "display_name": "无意识与规范",
-      "entry_thinker": "DESCARTES",
-      "entry_problem": "SELF_AND_OTHER",
-      "act_one_figure": "DESCARTES",
-      "act_two_figure": "SIGMUND_FREUD",
-      "act_three_figure": "JACQUES_LACAN",
-      "closing_figure": "JUDITH_BUTLER"
-    },
-    {
-      "route_id": "EDUCATION_AND_SITUATION",
-      "display_name": "教育与处境",
-      "entry_thinker": "ROUSSEAU",
-      "entry_problem": "HISTORY_AND_POWER",
-      "act_one_figure": "ROUSSEAU",
-      "act_two_figure": "MARY_WOLLSTONECRAFT",
-      "act_three_figure": "SIMONE_DE_BEAUVOIR",
-      "closing_figure": "JUDITH_BUTLER"
-    },
-    {
-      "route_id": "CHECKS_AND_JUSTICE",
-      "display_name": "制衡与公正",
-      "entry_thinker": "PLATO",
-      "entry_problem": "FREEDOM_AND_INSTITUTIONS",
-      "act_one_figure": "PLATO",
-      "act_two_figure": "MONTESQUIEU",
-      "act_three_figure": "IMMANUEL_KANT",
-      "closing_figure": "RAWLS"
-    },
-    {
-      "route_id": "CONSEQUENCE_AND_FREEDOM",
-      "display_name": "后果与自由",
-      "entry_thinker": "SOCRATES",
-      "entry_problem": "VIRTUE_AND_HAPPINESS",
-      "act_one_figure": "SOCRATES",
-      "act_two_figure": "JEREMY_BENTHAM",
-      "act_three_figure": "JOHN_STUART_MILL",
-      "closing_figure": "RAWLS"
-    },
-    {
-      "route_id": "SYMPATHY_AND_PUBLIC_ACTION",
-      "display_name": "同感与公共行动",
-      "entry_thinker": "PLATO",
-      "entry_problem": "FREEDOM_AND_INSTITUTIONS",
-      "act_one_figure": "PLATO",
-      "act_two_figure": "ADAM_SMITH",
-      "act_three_figure": "JOHN_STUART_MILL",
-      "closing_figure": "HANNAH_ARENDT"
-    },
-    {
-      "route_id": "SOCIAL_CRITIQUE",
-      "display_name": "社会批判",
-      "entry_thinker": "ROUSSEAU",
-      "entry_problem": "HISTORY_AND_POWER",
-      "act_one_figure": "ROUSSEAU",
-      "act_two_figure": "KARL_MARX",
-      "act_three_figure": "MAX_HORKHEIMER",
-      "closing_figure": "THEODOR_ADORNO"
-    },
-    {
-      "route_id": "GENEALOGY_AND_POWER",
-      "display_name": "谱系与权力",
-      "entry_thinker": "ROUSSEAU",
-      "entry_problem": "HISTORY_AND_POWER",
-      "act_one_figure": "ROUSSEAU",
-      "act_two_figure": "FRIEDRICH_NIETZSCHE",
-      "act_three_figure": "MICHEL_FOUCAULT",
-      "closing_figure": "HANNAH_ARENDT"
-    },
-    {
-      "route_id": "SCIENTIFIC_MODEL",
-      "display_name": "科学模型",
-      "entry_thinker": "SOCRATES",
-      "entry_problem": "KNOWLEDGE_AND_DOUBT",
-      "act_one_figure": "SOCRATES",
-      "act_two_figure": "FRANCIS_BACON",
-      "act_three_figure": "ISAAC_NEWTON",
-      "closing_figure": "THOMAS_KUHN"
-    },
-    {
-      "route_id": "SOCIAL_KNOWLEDGE",
-      "display_name": "社会知识",
-      "entry_thinker": "ROUSSEAU",
-      "entry_problem": "HISTORY_AND_POWER",
-      "act_one_figure": "ROUSSEAU",
-      "act_two_figure": "FRANCIS_BACON",
-      "act_three_figure": "AUGUSTE_COMTE",
-      "closing_figure": "THOMAS_KUHN"
-    },
-    {
-      "route_id": "FALLIBLE_INQUIRY",
-      "display_name": "可错探究",
-      "entry_thinker": "SOCRATES",
-      "entry_problem": "KNOWLEDGE_AND_DOUBT",
-      "act_one_figure": "SOCRATES",
-      "act_two_figure": "CHARLES_SANDERS_PEIRCE",
-      "act_three_figure": "JOHN_DEWEY",
-      "closing_figure": "JOHN_DEWEY"
-    }
-  ]
+ "schema_version": 1,
+ "scope": "00西哲当前路线.md 的三幕固定承接表（2026-10-30 未提交版）",
+ "note": "每行是一条默认主线：第一幕入口人物、第二幕固定人物、第三幕固定人物。第一幕固定事件就是入口人物自己的事件，因此没有额外边。",
+ "routes": [
+  {
+   "route_id": "EXPERIENCE_AND_SELF",
+   "display_name": "经验与自我",
+   "entry_thinker": "DESCARTES",
+   "entry_problem": "SELF_AND_OTHER",
+   "act_one_figure": "DESCARTES",
+   "act_two_figure": "JOHN_LOCKE",
+   "act_three_figure": "DAVID_HUME",
+   "closing_figure": "IMMANUEL_KANT"
+  },
+  {
+   "route_id": "AUTONOMY_AND_HISTORY",
+   "display_name": "自律与历史",
+   "entry_thinker": "DESCARTES",
+   "entry_problem": "SELF_AND_OTHER",
+   "act_one_figure": "DESCARTES",
+   "act_two_figure": "IMMANUEL_KANT",
+   "act_three_figure": "GEORG_WILHELM_FRIEDRICH_HEGEL",
+   "closing_figure": "KARL_MARX"
+  },
+  {
+   "route_id": "NATURE_AND_BECOMING",
+   "display_name": "自然与生成",
+   "entry_thinker": "HERACLITUS",
+   "entry_problem": "BEING_AND_CHANGE",
+   "act_one_figure": "HERACLITUS",
+   "act_two_figure": "BARUCH_SPINOZA",
+   "act_three_figure": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
+   "closing_figure": "GILLES_DELEUZE"
+  },
+  {
+   "route_id": "WILL_AND_VALUE",
+   "display_name": "意志与价值",
+   "entry_thinker": "SOCRATES",
+   "entry_problem": "VIRTUE_AND_HAPPINESS",
+   "act_one_figure": "SOCRATES",
+   "act_two_figure": "ARTHUR_SCHOPENHAUER",
+   "act_three_figure": "FRIEDRICH_NIETZSCHE",
+   "closing_figure": "FRIEDRICH_NIETZSCHE"
+  },
+  {
+   "route_id": "INDIVIDUAL_COMMITMENT",
+   "display_name": "个体承担",
+   "entry_thinker": "SOCRATES",
+   "entry_problem": "VIRTUE_AND_HAPPINESS",
+   "act_one_figure": "SOCRATES",
+   "act_two_figure": "SOREN_KIERKEGAARD",
+   "act_three_figure": "JEAN_PAUL_SARTRE",
+   "closing_figure": "SIMONE_DE_BEAUVOIR"
+  },
+  {
+   "route_id": "APPEARANCE_AND_INTERPRETATION",
+   "display_name": "现象与解释",
+   "entry_thinker": "DESCARTES",
+   "entry_problem": "SELF_AND_OTHER",
+   "act_one_figure": "DESCARTES",
+   "act_two_figure": "EDMUND_HUSSERL",
+   "act_three_figure": "MARTIN_HEIDEGGER",
+   "closing_figure": "HANS_GEORG_GADAMER"
+  },
+  {
+   "route_id": "EMBODIED_PERCEPTION",
+   "display_name": "具身知觉",
+   "entry_thinker": "DESCARTES",
+   "entry_problem": "SELF_AND_OTHER",
+   "act_one_figure": "DESCARTES",
+   "act_two_figure": "EDMUND_HUSSERL",
+   "act_three_figure": "MAURICE_MERLEAU_PONTY",
+   "closing_figure": "SIMONE_DE_BEAUVOIR"
+  },
+  {
+   "route_id": "FORMAL_LANGUAGE",
+   "display_name": "形式语言",
+   "entry_thinker": "ARISTOTLE",
+   "entry_problem": "LANGUAGE_AND_MEANING",
+   "act_one_figure": "ARISTOTLE",
+   "act_two_figure": "GOTTLOB_FREGE",
+   "act_three_figure": "BERTRAND_RUSSELL",
+   "closing_figure": "LUDWIG_WITTGENSTEIN"
+  },
+  {
+   "route_id": "ORDINARY_SPEECH",
+   "display_name": "日常言说",
+   "entry_thinker": "ARISTOTLE",
+   "entry_problem": "LANGUAGE_AND_MEANING",
+   "act_one_figure": "ARISTOTLE",
+   "act_two_figure": "LUDWIG_WITTGENSTEIN",
+   "act_three_figure": "LUDWIG_WITTGENSTEIN",
+   "closing_figure": "LUDWIG_WITTGENSTEIN"
+  },
+  {
+   "route_id": "STRUCTURE_AND_EXCLUSION",
+   "display_name": "结构与排除",
+   "entry_thinker": "ARISTOTLE",
+   "entry_problem": "LANGUAGE_AND_MEANING",
+   "act_one_figure": "ARISTOTLE",
+   "act_two_figure": "FERDINAND_DE_SAUSSURE",
+   "act_three_figure": "CLAUDE_LEVI_STRAUSS",
+   "closing_figure": "JACQUES_DERRIDA"
+  },
+  {
+   "route_id": "UNCONSCIOUS_AND_NORM",
+   "display_name": "无意识与规范",
+   "entry_thinker": "DESCARTES",
+   "entry_problem": "SELF_AND_OTHER",
+   "act_one_figure": "DESCARTES",
+   "act_two_figure": "SIGMUND_FREUD",
+   "act_three_figure": "JACQUES_LACAN",
+   "closing_figure": "JUDITH_BUTLER"
+  },
+  {
+   "route_id": "EDUCATION_AND_SITUATION",
+   "display_name": "教育与处境",
+   "entry_thinker": "ROUSSEAU",
+   "entry_problem": "HISTORY_AND_POWER",
+   "act_one_figure": "ROUSSEAU",
+   "act_two_figure": "MARY_WOLLSTONECRAFT",
+   "act_three_figure": "SIMONE_DE_BEAUVOIR",
+   "closing_figure": "JUDITH_BUTLER"
+  },
+  {
+   "route_id": "CHECKS_AND_JUSTICE",
+   "display_name": "制衡与公正",
+   "entry_thinker": "PLATO",
+   "entry_problem": "FREEDOM_AND_INSTITUTIONS",
+   "act_one_figure": "PLATO",
+   "act_two_figure": "MONTESQUIEU",
+   "act_three_figure": "IMMANUEL_KANT",
+   "closing_figure": "RAWLS"
+  },
+  {
+   "route_id": "CONSEQUENCE_AND_FREEDOM",
+   "display_name": "后果与自由",
+   "entry_thinker": "SOCRATES",
+   "entry_problem": "VIRTUE_AND_HAPPINESS",
+   "act_one_figure": "SOCRATES",
+   "act_two_figure": "JEREMY_BENTHAM",
+   "act_three_figure": "JOHN_STUART_MILL",
+   "closing_figure": "RAWLS"
+  },
+  {
+   "route_id": "SYMPATHY_AND_PUBLIC_ACTION",
+   "display_name": "同感与公共行动",
+   "entry_thinker": "PLATO",
+   "entry_problem": "FREEDOM_AND_INSTITUTIONS",
+   "act_one_figure": "PLATO",
+   "act_two_figure": "ADAM_SMITH",
+   "act_three_figure": "JOHN_STUART_MILL",
+   "closing_figure": "HANNAH_ARENDT"
+  },
+  {
+   "route_id": "SOCIAL_CRITIQUE",
+   "display_name": "社会批判",
+   "entry_thinker": "ROUSSEAU",
+   "entry_problem": "HISTORY_AND_POWER",
+   "act_one_figure": "ROUSSEAU",
+   "act_two_figure": "KARL_MARX",
+   "act_three_figure": "MAX_HORKHEIMER",
+   "closing_figure": "THEODOR_ADORNO"
+  },
+  {
+   "route_id": "GENEALOGY_AND_POWER",
+   "display_name": "谱系与权力",
+   "entry_thinker": "ROUSSEAU",
+   "entry_problem": "HISTORY_AND_POWER",
+   "act_one_figure": "ROUSSEAU",
+   "act_two_figure": "FRIEDRICH_NIETZSCHE",
+   "act_three_figure": "MICHEL_FOUCAULT",
+   "closing_figure": "HANNAH_ARENDT"
+  },
+  {
+   "route_id": "SCIENTIFIC_MODEL",
+   "display_name": "科学模型",
+   "entry_thinker": "SOCRATES",
+   "entry_problem": "KNOWLEDGE_AND_DOUBT",
+   "act_one_figure": "SOCRATES",
+   "act_two_figure": "FRANCIS_BACON",
+   "act_three_figure": "ISAAC_NEWTON",
+   "closing_figure": "THOMAS_KUHN"
+  },
+  {
+   "route_id": "SOCIAL_KNOWLEDGE",
+   "display_name": "社会知识",
+   "entry_thinker": "ROUSSEAU",
+   "entry_problem": "HISTORY_AND_POWER",
+   "act_one_figure": "ROUSSEAU",
+   "act_two_figure": "FRANCIS_BACON",
+   "act_three_figure": "AUGUSTE_COMTE",
+   "closing_figure": "THOMAS_KUHN"
+  },
+  {
+   "route_id": "FALLIBLE_INQUIRY",
+   "display_name": "可错探究",
+   "entry_thinker": "SOCRATES",
+   "entry_problem": "KNOWLEDGE_AND_DOUBT",
+   "act_one_figure": "SOCRATES",
+   "act_two_figure": "CHARLES_SANDERS_PEIRCE",
+   "act_three_figure": "JOHN_DEWEY",
+   "closing_figure": "JOHN_DEWEY"
+  }
+ ]
 }

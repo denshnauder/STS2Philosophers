@@ -106,6 +106,19 @@ internal static class WesternBranchChainChecks
         Check(graph.TryApply(rousseau, "WESTERN_EDGE_083") && rousseau.RouteId == "SOCIAL_CRITIQUE",
             "The branch to Marx must correct the default name.");
 
+        // The will-and-value line ends on Nietzsche: the design keeps Camus as an
+        // optional encounter after him, so reaching Nietzsche has to close the
+        // line instead of waiting for a successor that does not exist.
+        var will = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
+        will.RouteId = "WILL_AND_VALUE";
+        will.RouteRules = true;
+        Check(graph.TryApply(will, "WESTERN_EDGE_150") && graph.TryApply(will, "WESTERN_EDGE_151"),
+            "The will-and-value line must reach Nietzsche.");
+        Check(graph.IsComplete(will),
+            "The will-and-value line must close on its third-act figure.");
+        Check(graph.GetEligibleEdges(will, "Fixed").Count == 0,
+            "Nothing fixed may follow the figure that closes the line.");
+
         // A room may reserve the question and complete it later. That path must
         // name the line exactly like an edge applied outright, or the two ways
         // into the same turn disagree about which line the run is on.
