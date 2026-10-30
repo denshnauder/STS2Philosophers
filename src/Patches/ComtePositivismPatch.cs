@@ -29,19 +29,41 @@ internal static class ComtePositivismPatch
         ComtePositivism? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Question")
-            .Any(edge => edge.EdgeId == ComtePositivismState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "AUGUSTE_COMTE" ? 2
+                : route.ActThreeFigure == "AUGUSTE_COMTE" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == ComtePositivismState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? ComtePositivismState.CompletionEdgeId
+            : ComtePositivismState.CompletionEdgeId;
+        bool edgeEligible = journey is not null && (routeAct >= 2
+            ? graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId)
+            : graph.GetEligibleEdges(journey, "Question").Any(edge => edge.EdgeId == ComtePositivismState.CompletionEdgeId));
         ComtePositivismTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
-            journey?.CompletedEdgeIds.Contains(ComtePositivismState.RequiredEdgeId) == true, edgeEligible,
+            routeAct >= 2 || journey?.CompletedEdgeIds.Contains(ComtePositivismState.RequiredEdgeId) == true, edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && ComtePositivismFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!ComtePositivismTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? ComtePositivismState.Create($"COMTE_POSITIVISM:{run.Rng.Seed}:3");
+        var candidate = saved ?? (routeAct >= 2
+            ? ComtePositivismState.CreateAt($"COMTE_POSITIVISM:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : ComtePositivismState.Create($"COMTE_POSITIVISM:{run.Rng.Seed}:3"));
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !ComtePositivismFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.ComtePositivism = candidate;
         Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");

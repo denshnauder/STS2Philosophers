@@ -29,6 +29,18 @@ internal static class SchellingNaturePatch
         SchellingNature? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 2
+                : route.ActThreeFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == SchellingNatureState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? SchellingNatureState.CompletionEdgeId
+            : SchellingNatureState.CompletionEdgeId;
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == SchellingNatureState.CompletionEdgeId);
@@ -41,9 +53,19 @@ internal static class SchellingNaturePatch
                     SchellingNatureState.CompletionEdgeId),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && SchellingNatureFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!SchellingNatureTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? SchellingNatureState.Create($"SCHELLING_NATURE:{run.Rng.Seed}:2");
+        var candidate = saved ?? (routeAct >= 2
+            ? SchellingNatureState.CreateAt($"SCHELLING_NATURE:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : SchellingNatureState.Create($"SCHELLING_NATURE:{run.Rng.Seed}:2"));
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !SchellingNatureFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.SchellingNature = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");

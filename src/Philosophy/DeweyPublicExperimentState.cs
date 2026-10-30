@@ -21,6 +21,12 @@ internal sealed class DeweyPublicExperimentState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+
+    /// <summary>The act this room occupies; a route may move it to another one.</summary>
+    public int ActIndex { get; set; } = 3;
+
+    /// <summary>The edge this room's adoption commits.</summary>
+    public string EdgeId { get; set; } = DeweyPublicExperimentState.CompletionEdgeId;
     /// <summary>True when a route, not the default line, placed this room in its act.</summary>
     public bool RoutePlaced { get; set; }
 
@@ -36,6 +42,9 @@ internal sealed class DeweyPublicExperimentState : IJsonOnDeserialized
     public bool Closed { get; set; }
 
     public static DeweyPublicExperimentState Create(string instanceId) => new() { InstanceId = instanceId };
+
+    public static DeweyPublicExperimentState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
@@ -130,16 +139,16 @@ internal static class DeweyPublicExperimentFlow
     public static bool IsRouteConsistent(DeweyPublicExperimentState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId)) return false;
+            || !state.RoutePlaced && !journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
+            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.ResolvedQuestionActs.Contains(3)
                 && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
+            return !state.QuestionDeclined && adopted && journey.LastFixedAct == state.ActIndex
                 && journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == DeweyPublicExperimentState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
+        return !adopted && journey.LastFixedAct == state.ActIndex
             && journey.ResolvedQuestionActs.Contains(3)
             && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }

@@ -29,6 +29,18 @@ internal static class DeweyPublicExperimentPatch
         DeweyPublicExperiment? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "JOHN_DEWEY" ? 2
+                : route.ActThreeFigure == "JOHN_DEWEY" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == DeweyPublicExperimentState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? DeweyPublicExperimentState.CompletionEdgeId
+            : DeweyPublicExperimentState.CompletionEdgeId;
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")
             .Any(edge => edge.EdgeId == DeweyPublicExperimentState.CompletionEdgeId);
@@ -39,9 +51,19 @@ internal static class DeweyPublicExperimentPatch
             journey?.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId) == true, edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && DeweyPublicExperimentFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!DeweyPublicExperimentTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? DeweyPublicExperimentState.Create($"DEWEY_PUBLIC_EXPERIMENT:{run.Rng.Seed}:3");
+        var candidate = saved ?? (routeAct >= 2
+            ? DeweyPublicExperimentState.CreateAt($"DEWEY_PUBLIC_EXPERIMENT:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : DeweyPublicExperimentState.Create($"DEWEY_PUBLIC_EXPERIMENT:{run.Rng.Seed}:3"));
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !DeweyPublicExperimentFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.DeweyPublicExperiment = candidate;
         Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");

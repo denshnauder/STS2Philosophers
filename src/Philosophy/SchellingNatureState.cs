@@ -20,6 +20,12 @@ internal sealed class SchellingNatureState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+
+    /// <summary>The act this room occupies; a route may move it to another one.</summary>
+    public int ActIndex { get; set; } = 2;
+
+    /// <summary>The edge this room's adoption commits.</summary>
+    public string EdgeId { get; set; } = SchellingNatureState.CompletionEdgeId;
     /// <summary>True when a route, not the default line, placed this room in its act.</summary>
     public bool RoutePlaced { get; set; }
 
@@ -35,6 +41,9 @@ internal sealed class SchellingNatureState : IJsonOnDeserialized
     public bool Closed { get; set; }
 
     public static SchellingNatureState Create(string instanceId) => new() { InstanceId = instanceId };
+
+    public static SchellingNatureState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
@@ -131,7 +140,7 @@ internal static class SchellingNatureFlow
         if (!state.IsUsable() || journey.RetainedEnding) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(SchellingNatureState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
