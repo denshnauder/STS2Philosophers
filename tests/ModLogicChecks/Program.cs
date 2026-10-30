@@ -65,6 +65,7 @@ HeideggerDaseinChecks.Run();
 SartreExistenceChecks.Run();
 MerleauPontyBodyChecks.Run();
 FregeSenseChecks.Run();
+RussellAnalysisChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

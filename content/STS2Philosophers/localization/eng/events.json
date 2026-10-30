@@ -2482,5 +2482,22 @@
   "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.title": "Leave the laboratory",
   "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.description": "Close the record.",
   "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the laboratory",
-  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "RUSSELL_ANALYSIS.title": "Russell: Definite Descriptions",
+  "RUSSELL_ANALYSIS.pages.INVITATION.description": "The sentence \"the present king of France is bald\" seems to say something false, yet there is no king to be bald. Russell asks what the record should analyse.",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.DEFINITE_DESCRIPTION.title": "Analyse the definite description",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.DEFINITE_DESCRIPTION.description": "Rewrite the sentence so that existence and uniqueness become explicit claims.",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.LOGICAL_ATOMISM.title": "Build a logical atomism",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.LOGICAL_ATOMISM.description": "Resolve the sentence into atomic facts and truth-functions.",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.KEEP_FREGE.title": "Keep Frege",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.KEEP_FREGE.description": "Refuse the question and stay with sense and reference.",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.description": "You analyse the description. The sentence no longer presupposes a king; it asserts existence and uniqueness as separate claims, one of which fails.",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.description": "You build a logical atomism. The sentence resolves into atomic facts and truth-functions, and the failure is located in one of them.",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.description": "You keep Frege. The question remains open, and no fixed link is taken this act.",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.options.LEAVE.title": "Leave the study",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.options.LEAVE.description": "Close the record.",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.title": "Leave the study",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.description": "Close the record.",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.title": "Leave the study",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

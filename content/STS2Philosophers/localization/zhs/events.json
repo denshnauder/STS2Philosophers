@@ -2482,5 +2482,22 @@
   "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.title": "离开实验室",
   "MERLEAU_PONTY_BODY.pages.RESULT_OBJECTIVE.options.LEAVE.description": "关闭记录。",
   "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.title": "离开实验室",
-  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "MERLEAU_PONTY_BODY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "RUSSELL_ANALYSIS.title": "罗素：摹状词",
+  "RUSSELL_ANALYSIS.pages.INVITATION.description": "“当今法国国王是秃头”似乎说了一件假事，可并没有国王可以秃头。罗素问：记录应当分析什么？",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.DEFINITE_DESCRIPTION.title": "分析摹状词",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.DEFINITE_DESCRIPTION.description": "改写句子，让存在与唯一性成为明确的断言。",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.LOGICAL_ATOMISM.title": "建立逻辑原子论",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.LOGICAL_ATOMISM.description": "把句子分解为原子事实与真值函数。",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.KEEP_FREGE.title": "保留弗雷格",
+  "RUSSELL_ANALYSIS.pages.INVITATION.options.KEEP_FREGE.description": "拒绝这个问题，停留在涵义与指称。",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.description": "你分析摹状词。句子不再预设国王，而是把存在与唯一性作为两个断言，其中一个失败。",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.description": "你建立逻辑原子论。句子分解为原子事实与真值函数，失败被定位在其中一个原子上。",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.description": "你保留弗雷格。问题仍然敞开，本幕不再取得固定承接。",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.options.LEAVE.title": "离开书房",
+  "RUSSELL_ANALYSIS.pages.RESULT_DESCRIPTION.options.LEAVE.description": "关闭记录。",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.title": "离开书房",
+  "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.description": "关闭记录。",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.title": "离开书房",
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }
