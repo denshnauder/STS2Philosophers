@@ -55,6 +55,16 @@ internal static class WesternRouteTableChecks
         "FALLIBLE_INQUIRY",
     ];
 
+    // Every route names the figure it meets at the second and third acts. Where no
+    // fixed edge reaches that figure at all, the route cannot be walked however it
+    // is named; those are content gaps, not code gaps.
+    private static readonly string[] HandoverGaps =
+    [
+        "ORDINARY_SPEECH act three LUDWIG_WITTGENSTEIN",
+        "UNCONSCIOUS_AND_NORM act two SIGMUND_FREUD",
+        "UNCONSCIOUS_AND_NORM act three JACQUES_LACAN",
+    ];
+
     public static void Run()
     {
         WesternRouteTable table = WesternRouteTable.Instance;
@@ -129,6 +139,20 @@ internal static class WesternRouteTableChecks
         legacy.LastFixedAct = 2;
         Check(graph.GetEligibleEdges(legacy, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
             "A save written before routes existed still sees the handover it was saved with.");
+
+        var gaps = new List<string>();
+        foreach (WesternRouteDefinition route in table.Routes)
+        {
+            foreach (var (act, figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
+            {
+                bool any = graph.Edges.Any(edge => edge.Act == act && edge.Slot == "Fixed"
+                    && graph.GetNode(edge.ToNodeId).ThinkerId == figure);
+                if (!any) gaps.Add($"{route.RouteId} act {(act == 2 ? "two" : "three")} {figure}");
+            }
+        }
+        Check(gaps.SequenceEqual(HandoverGaps),
+            "Three routes name a figure no fixed edge reaches: "
+            + string.Join(", ", gaps) + ".");
 
         Check(missing.SetEquals(MissingFigures),
             "The gap list is exactly the set of named figures that have no node.");
