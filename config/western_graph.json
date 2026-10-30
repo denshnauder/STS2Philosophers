@@ -481,6 +481,22 @@
     "stage_id": "CORE",
     "display_name": "谢林",
     "terminal": false
+  },
+{
+    "node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+    "thinker_id": "SOREN_KIERKEGAARD",
+    "problem_id": "SELF_AND_OTHER",
+    "stage_id": "CORE",
+    "display_name": "克尔凯郭尔",
+    "terminal": false
+  },
+{
+    "node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+    "thinker_id": "JEAN_PAUL_SARTRE",
+    "problem_id": "SELF_AND_OTHER",
+    "stage_id": "CORE",
+    "display_name": "萨特",
+    "terminal": false
   }
   ],
   "edges": [
@@ -2260,6 +2276,93 @@
       "evidence_status": "LocalPlanning",
       "evidence_sources": [
         "00西哲当前路线.md:27",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_059",
+    "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+    "to_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+    "act": 1,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "问题重开，高；从德性追问转入个体承担与信仰的跳跃",
+    "source": "00西哲当前路线.md:28",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "VIRTUE_AND_HAPPINESS",
+      "to_problem_id": "SELF_AND_OTHER",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "个体承担须保留他人的不可替代性，不能写成孤立的自我决断。",
+      "interpretation_boundary": "作为同一问题面的重开，不伪造苏格拉底到克尔凯郭尔的直接师承。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:28",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_060",
+    "from_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+    "to_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+    "act": 2,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "问题展开，高；从信仰的跳跃转入处境中的自由与选择",
+    "source": "00西哲当前路线.md:28",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "SELF_AND_OTHER",
+      "to_problem_id": "SELF_AND_OTHER",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "自由选择须保留处境的限制与他人的目光，不能写成任意。",
+      "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:28",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_061",
+    "from_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+    "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+    "act": 3,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "收束，高；以处境中的自由与互惠检验个体承担",
+    "source": "00西哲当前路线.md:28",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "SELF_AND_OTHER",
+      "to_problem_id": "SELF_AND_OTHER",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "互惠须保留具体处境与不对称，不能把自由写成形式平等。",
+      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:28",
         "00西哲当前路线.md:53"
       ]
     }

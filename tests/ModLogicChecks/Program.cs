@@ -53,6 +53,7 @@ MontesquieuBalanceChecks.Run();
 DiderotPracticeChecks.Run();
 SmithSympathyChecks.Run();
 SchellingNatureChecks.Run();
+KierkegaardFaithChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

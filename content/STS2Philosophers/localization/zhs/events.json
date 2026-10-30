@@ -2261,5 +2261,22 @@
   "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.title": "离开标本室",
   "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.description": "关闭记录。",
   "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.title": "离开标本室",
-  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "KIERKEGAARD_FAITH.title": "克尔凯郭尔：信仰的跳跃",
+  "KIERKEGAARD_FAITH.pages.INVITATION.description": "一位教区居民被告知：他的义务必须能向所有人交代。他做不到，于是问：这是他的罪，还是说明普遍规则并不是全部？",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.FAITH_LEAP.title": "作出信仰的跳跃",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.FAITH_LEAP.description": "为这一个具体存在的人，悬置普遍规则。",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.ETHICAL_UNIVERSAL.title": "坚持伦理的普遍",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.ETHICAL_UNIVERSAL.description": "要求这项义务能向任何人说出，无论他要付出什么。",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.KEEP_SOCRATES.title": "留在苏格拉底",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.KEEP_SOCRATES.description": "拒绝这个问题，保留苏格拉底式的追问。",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.description": "你作出跳跃。单个的人站在无法向所有人交代的东西面前，代价是没有人能替他迈出这一步。",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.description": "你坚持普遍。义务变得能向任何人说出，而教区居民必须独自承担那些无法在他的个案里说出的部分。",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.description": "你留在苏格拉底。问题仍然敞开，本幕不再取得固定承接。",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.options.LEAVE.title": "离开教区",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.options.LEAVE.description": "关闭记录。",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.title": "离开教区",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.description": "关闭记录。",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.title": "离开教区",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

@@ -2261,5 +2261,22 @@
   "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.title": "Leave the collection",
   "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.description": "Close the record.",
   "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the collection",
-  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "KIERKEGAARD_FAITH.title": "Kierkegaard: The Leap",
+  "KIERKEGAARD_FAITH.pages.INVITATION.description": "A parishioner has been told that his duty must be justified to everyone. He cannot do it, and he asks whether that failure is guilt or a sign that the universal is not the whole story.",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.FAITH_LEAP.title": "Take the leap of faith",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.FAITH_LEAP.description": "Suspend the universal for this single existing person.",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.ETHICAL_UNIVERSAL.title": "Keep the ethical universal",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.ETHICAL_UNIVERSAL.description": "Demand that the duty be speakable to anyone, whatever it costs him.",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.KEEP_SOCRATES.title": "Stay with Socrates",
+  "KIERKEGAARD_FAITH.pages.INVITATION.options.KEEP_SOCRATES.description": "Refuse the question and keep the Socratic examination.",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.description": "You take the leap. The single person stands before what cannot be justified to everyone, and the cost is that no one can take the step for him.",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.description": "You keep the universal. The duty becomes speakable to anyone, and the parishioner must carry what cannot be said in his own case.",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.description": "You stay with Socrates. The question remains open, and no fixed link is taken this act.",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.options.LEAVE.title": "Leave the parish",
+  "KIERKEGAARD_FAITH.pages.RESULT_FAITH.options.LEAVE.description": "Close the record.",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.title": "Leave the parish",
+  "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.description": "Close the record.",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.title": "Leave the parish",
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
