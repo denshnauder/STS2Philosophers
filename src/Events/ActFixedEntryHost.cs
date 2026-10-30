@@ -25,6 +25,10 @@ internal static class ActFixedEntryHost
         // rules read the slot being filled, not the last one filled.
         int arrived = journey.LastFixedAct;
         if (arrived == act) journey.LastFixedAct = act + 1;
+        // A run that never took the first act's question still has to follow a
+        // line: the design gives every entry a default one, and it is the first
+        // line the route table lists for that entry.
+        WesternRouteGraph.NameDefaultRoute(journey);
         EventModel? model;
         using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
         if (model is null)

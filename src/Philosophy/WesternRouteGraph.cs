@@ -157,6 +157,21 @@ internal sealed class WesternRouteGraph
         return _edges.Values.Where(edge => IsEligible(state, edge, slot)).OrderBy(edge => edge.EdgeId, StringComparer.Ordinal).ToArray();
     }
 
+    /// <summary>
+    /// A run that takes no question still follows a line. The design gives every
+    /// entry a default one, and the route table lists that line first, so a run
+    /// that reaches the second act unnamed joins it. Runs that predate the route
+    /// rules keep whatever they were saved with.
+    /// </summary>
+    public static void NameDefaultRoute(WesternJourneyState state)
+    {
+        if (!state.RouteRules || !string.IsNullOrEmpty(state.RouteId)
+            || string.IsNullOrEmpty(state.EntryNodeId)) return;
+        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
+            .FirstOrDefault(candidate => candidate.EntryNodeId == state.EntryNodeId);
+        if (route is not null) state.RouteId = route.RouteId;
+    }
+
     public bool TryApply(WesternJourneyState state, string edgeId)
     {
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;

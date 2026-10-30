@@ -57,6 +57,12 @@ internal static class RouteFixedRoomNativeChecks
         List<string> thirdFailures = [];
         List<string> unnamedFailures = [];
         List<string> unnamedThirdFailures = [];
+        // A run that takes no question follows the default line of its entry:
+        // the first line the route table lists for that entry. The other lines
+        // of the same entry are only reachable through the first act's question.
+        var defaults = routes.Cast<object>()
+            .GroupBy(route => (string)Get(route, "EntryNodeId"), StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => (string)Get(group.First(), "RouteId"), StringComparer.Ordinal);
         List<List<MapPointHistoryEntry>> thirdHistory = [];
         foreach (object route in routes.Cast<object>())
         {
@@ -94,14 +100,17 @@ internal static class RouteFixedRoomNativeChecks
             // question, so it reaches this boundary with no route named. The
             // handover has to be visible and the room has to name the route
             // itself; this pass measures exactly that.
-            var unnamedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-                .Invoke(null, [relic, 1])!;
-            var unnamedRun = (RunState)unnamedTuple[1]!;
-            object unnamedJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
-            Put(unnamedJourney, "RouteRules", true);
-            Put(unnamedJourney, "LastFixedAct", 2);
-            CheckRoom(routeId, "act two (unnamed)", secondNode!, rooms, unnamedRun, unnamedJourney,
-                unnamedFailures, relic);
+            if (defaults[entry] == routeId)
+            {
+                var unnamedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                    .Invoke(null, [relic, 1])!;
+                var unnamedRun = (RunState)unnamedTuple[1]!;
+                object unnamedJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+                Put(unnamedJourney, "RouteRules", true);
+                Put(unnamedJourney, "LastFixedAct", 2);
+                CheckRoom(routeId, "act two (default line)", secondNode!, rooms, unnamedRun, unnamedJourney,
+                    unnamedFailures, relic);
+            }
             // Act three opens only after act two's room has been played out, and
             // its boundary belongs to the third act, so the fixture is rebuilt on
             // that act and the two handovers are replayed into it.
@@ -177,20 +186,23 @@ internal static class RouteFixedRoomNativeChecks
             CheckRoom(routeId, "act three", thirdNode!, rooms, thirdRun, thirdJourney, thirdFailures, relic);
             // The same act three boundary, with the route still unnamed: a run
             // that never took the first act's question has to reach it too.
-            var unnamedThirdTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-                .Invoke(null, [relic, 2])!;
-            var unnamedThirdRun = (RunState)unnamedThirdTuple[1]!;
-            Set(unnamedThirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>(thirdHistory));
-            object unnamedThird = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
-            Put(unnamedThird, "RouteRules", true);
-            foreach (string done in thirdCompleted) ((HashSet<string>)Get(unnamedThird, "CompletedEdgeIds")).Add(done);
-            foreach (string seen in (HashSet<string>)Get(thirdJourney, "SeenThinkerIds"))
-                ((HashSet<string>)Get(unnamedThird, "SeenThinkerIds")).Add(seen);
-            ((HashSet<int>)Get(unnamedThird, "ResolvedQuestionActs")).Add(2);
-            Put(unnamedThird, "CurrentNodeId", secondNode);
-            Put(unnamedThird, "LastFixedAct", 2);
-            CheckRoom(routeId, "act three (unnamed)", thirdNode!, rooms, unnamedThirdRun, unnamedThird,
-                unnamedThirdFailures, relic);
+            if (defaults[entry] == routeId)
+            {
+                var unnamedThirdTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                    .Invoke(null, [relic, 2])!;
+                var unnamedThirdRun = (RunState)unnamedThirdTuple[1]!;
+                Set(unnamedThirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>(thirdHistory));
+                object unnamedThird = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+                Put(unnamedThird, "RouteRules", true);
+                foreach (string done in thirdCompleted) ((HashSet<string>)Get(unnamedThird, "CompletedEdgeIds")).Add(done);
+                foreach (string seen in (HashSet<string>)Get(thirdJourney, "SeenThinkerIds"))
+                    ((HashSet<string>)Get(unnamedThird, "SeenThinkerIds")).Add(seen);
+                ((HashSet<int>)Get(unnamedThird, "ResolvedQuestionActs")).Add(2);
+                Put(unnamedThird, "CurrentNodeId", secondNode);
+                Put(unnamedThird, "LastFixedAct", 2);
+                CheckRoom(routeId, "act three (default line)", thirdNode!, rooms, unnamedThirdRun, unnamedThird,
+                    unnamedThirdFailures, relic);
+            }
         }
         // Reported, not enforced yet. Two things can make a line appear here: the
         // room is still gated to the act it was written for, or the fixture has no
@@ -203,16 +215,13 @@ internal static class RouteFixedRoomNativeChecks
         if (thirdFailures.Count > 0)
             Console.WriteLine("Route act-three gaps (" + thirdFailures.Count + "): "
                 + string.Join(" | ", thirdFailures));
-        // Eighteen of twenty routes cannot reach their second act when the run
-        // follows the default line. Two still open another figure's room, both
-        // through a room that gates itself instead of walking the graph; the rest
-        // open nothing, which is the honest state until act one names the route.
-        // The number is asserted so it cannot drift unnoticed.
+        // A run that takes no question joins the default line of its entry, so
+        // this pass measures the design's "未抽到额外问号也必须有完整默认主线".
+        // Every entry has one; only the ones that cannot open their second act
+        // may appear here.
         if (unnamedFailures.Count > 0)
-            Console.WriteLine("Route unnamed-act-two gaps (" + unnamedFailures.Count + "): "
+            Console.WriteLine("Route default-line act-two gaps (" + unnamedFailures.Count + "): "
                 + string.Join(" | ", unnamedFailures));
-        // Nineteen: Freud's handover now belongs to a route, so a run that has
-        // not named one cannot see it either.
         // A count alone would let one line drop out while another drops in. The
         // set is what has to hold.
         Check(UnnamedActTwoBroken.SequenceEqual(RouteIdsOf(unnamedFailures)),
@@ -220,14 +229,11 @@ internal static class RouteFixedRoomNativeChecks
             + string.Join(", ", RouteIdsOf(unnamedFailures)) + ".");
         AssertOnly(ExpectedActTwo, failures, "act two");
         if (unnamedThirdFailures.Count > 0)
-            Console.WriteLine("Route unnamed-act-three gaps (" + unnamedThirdFailures.Count + "): "
+            Console.WriteLine("Route default-line act-three gaps (" + unnamedThirdFailures.Count + "): "
                 + string.Join(" | ", unnamedThirdFailures));
-        // Eighteen of twenty routes open no third act at all without a route name:
-        // the third act's rooms are all route-scoped, so an unnamed run sees none
-        // of them. Asserted so the day act one names the route it has to fall.
-        // Eighteen, not twenty: two rooms want an answer the second act gave,
-        // and the legacy second-act edges are still visible to a run that never
-        // named a route.
+        // The same default line, one act later. A line whose second act never
+        // opened is not asked for a third, so only lines that reach the boundary
+        // can appear here.
         Check(UnnamedActThreeBroken.SequenceEqual(RouteIdsOf(unnamedThirdFailures)),
             "A run that does not take the first act's question reaches act three broken on: "
             + string.Join(", ", RouteIdsOf(unnamedThirdFailures)) + ".");
@@ -369,46 +375,13 @@ internal static class RouteFixedRoomNativeChecks
     // out so a swap cannot hide behind an unchanged count.
     private static readonly string[] UnnamedActTwoBroken =
     [
-        "APPEARANCE_AND_INTERPRETATION",
-        "AUTONOMY_AND_HISTORY",
-        "CHECKS_AND_JUSTICE",
-        "CONSEQUENCE_AND_FREEDOM",
-        "EDUCATION_AND_SITUATION",
-        "EMBODIED_PERCEPTION",
-        "EXPERIENCE_AND_SELF",
-        "FALLIBLE_INQUIRY",
-        "FORMAL_LANGUAGE",
-        "GENEALOGY_AND_POWER",
-        "INDIVIDUAL_COMMITMENT",
         "NATURE_AND_BECOMING",
         "SCIENTIFIC_MODEL",
-        "SOCIAL_CRITIQUE",
-        "SOCIAL_KNOWLEDGE",
-        "STRUCTURE_AND_EXCLUSION",
-        "SYMPATHY_AND_PUBLIC_ACTION",
-        "UNCONSCIOUS_AND_NORM",
         "WILL_AND_VALUE",
     ];
     private static readonly string[] UnnamedActThreeBroken =
     [
-        "APPEARANCE_AND_INTERPRETATION",
-        "AUTONOMY_AND_HISTORY",
-        "CHECKS_AND_JUSTICE",
-        "CONSEQUENCE_AND_FREEDOM",
-        "EDUCATION_AND_SITUATION",
-        "EMBODIED_PERCEPTION",
-        "EXPERIENCE_AND_SELF",
-        "FORMAL_LANGUAGE",
-        "GENEALOGY_AND_POWER",
-        "INDIVIDUAL_COMMITMENT",
-        "NATURE_AND_BECOMING",
         "SCIENTIFIC_MODEL",
-        "SOCIAL_CRITIQUE",
-        "SOCIAL_KNOWLEDGE",
-        "STRUCTURE_AND_EXCLUSION",
-        "SYMPATHY_AND_PUBLIC_ACTION",
-        "UNCONSCIOUS_AND_NORM",
-        "WILL_AND_VALUE",
     ];
 
     private static List<string> RouteIdsOf(List<string> failures) =>
