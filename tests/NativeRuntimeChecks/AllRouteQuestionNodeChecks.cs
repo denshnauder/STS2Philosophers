@@ -308,13 +308,18 @@ internal static class AllRouteQuestionNodeChecks
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
                 } });
         if (person == "HumeInduction")
-            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(),
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            {
                 new()
                 {
                     new() { MapPointType = MapPointType.Unknown,
                         Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<LockeCargoIdentity>() }] },
+                },
+                new()
+                {
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
-                } });
+                },
+            });
         if (person == "KantApperception")
             Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(), new(),
                 new()

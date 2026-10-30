@@ -39,7 +39,7 @@ internal static class HumeInductionPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
+            NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<LockeCargoIdentity>(), "LOCKE_CARGO_IDENTITY"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,
