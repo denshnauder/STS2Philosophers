@@ -20,7 +20,12 @@ internal static class WesternRouteTableChecks
     [
         "EXPERIENCE_AND_SELF",
         "AUTONOMY_AND_HISTORY",
+        "APPEARANCE_AND_INTERPRETATION",
+        "EMBODIED_PERCEPTION",
+        "FORMAL_LANGUAGE",
+        "STRUCTURE_AND_EXCLUSION",
         "EDUCATION_AND_SITUATION",
+        "FALLIBLE_INQUIRY",
     ];
 
     public static void Run()
