@@ -59,6 +59,7 @@ internal static class RouteFixedRoomNativeChecks
             .GetValue(table)!;
         List<string> failures = [];
         List<string> thirdFailures = [];
+        List<string> unnamedFailures = [];
         foreach (object route in routes.Cast<object>())
         {
             string routeId = (string)Get(route, "RouteId");
@@ -89,6 +90,17 @@ internal static class RouteFixedRoomNativeChecks
             }
             Put(journey, "LastFixedAct", 2);
             CheckRoom(routeId, "act two", secondNode!, rooms, run, journey, failures, relic);
+            // A run that follows the default line never takes the first act's
+            // question, so it reaches this boundary with no route named. The
+            // handover has to be visible and the room has to name the route
+            // itself; this pass measures exactly that.
+            var unnamedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                .Invoke(null, [relic, 1])!;
+            var unnamedRun = (RunState)unnamedTuple[1]!;
+            object unnamedJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+            Put(unnamedJourney, "LastFixedAct", 2);
+            CheckRoom(routeId, "act two (unnamed)", secondNode!, rooms, unnamedRun, unnamedJourney,
+                unnamedFailures, relic);
             // Act three opens only after act two's room has been played out, and
             // its boundary belongs to the third act, so the fixture is rebuilt on
             // that act and the two handovers are replayed into it.
@@ -158,6 +170,16 @@ internal static class RouteFixedRoomNativeChecks
         if (thirdFailures.Count > 0)
             Console.WriteLine("Route act-three gaps (" + thirdFailures.Count + "): "
                 + string.Join(" | ", thirdFailures));
+        // Seventeen of twenty routes cannot reach their second act when the run
+        // follows the default line: eleven open another figure's room and six open
+        // none. The number is asserted so it cannot drift unnoticed, and the day
+        // act one names the route it has to fall.
+        if (unnamedFailures.Count > 0)
+            Console.WriteLine("Route unnamed-act-two gaps (" + unnamedFailures.Count + "): "
+                + string.Join(" | ", unnamedFailures));
+        Check(unnamedFailures.Count == 17,
+            $"A run that does not take the first act's question reaches act two with {unnamedFailures.Count} "
+            + "routes broken, not the known seventeen.");
         AssertOnly(ExpectedActTwo, failures, "act two");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
         CheckFirstActBranch(graph);
