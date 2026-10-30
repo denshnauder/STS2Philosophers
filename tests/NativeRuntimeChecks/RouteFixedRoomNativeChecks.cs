@@ -24,6 +24,7 @@ internal static class RouteFixedRoomNativeChecks
         "NATURE_AND_BECOMING",         // Spinoza waits on a design decision (lens and doctrine)
         "WILL_AND_VALUE",              // Schopenhauer has no room
         "UNCONSCIOUS_AND_NORM",        // no fixed edge carries act two to Freud
+        "EDUCATION_AND_SITUATION",     // 040 and 042 are not scoped to this route
         "CONSEQUENCE_AND_FREEDOM",     // Bentham has no incoming edge
         "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
         "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
@@ -31,6 +32,8 @@ internal static class RouteFixedRoomNativeChecks
     private static readonly string[] ExpectedActThree =
     [
         "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
+        "NATURE_AND_BECOMING",         // no scoped edge carries act three to Schelling
+        "EDUCATION_AND_SITUATION",     // 042 is not scoped to this route
         "CHECKS_AND_JUSTICE",          // Kant asks for a handover from another route
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
@@ -137,6 +140,7 @@ internal static class RouteFixedRoomNativeChecks
             Set(thirdRun, "_mapPointHistory", thirdHistory);
             object thirdJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
             Put(thirdJourney, "RouteId", routeId);
+            Put(thirdJourney, "RouteRules", true);
             // The act-one handover into the figure that opens act two is part of
             // the room chain act three inherits, so it is recorded as completed.
             string secondFrom = "";
@@ -223,10 +227,10 @@ internal static class RouteFixedRoomNativeChecks
         // Eighteen of twenty routes open no third act at all without a route name:
         // the third act's rooms are all route-scoped, so an unnamed run sees none
         // of them. Asserted so the day act one names the route it has to fall.
-        // Seventeen, not eighteen: Beauvoir's requirement is the answer the
-        // Wollstonecraft room gave, and the legacy second-act edges are still
-        // visible to a run that never named a route.
-        Check(unnamedThirdFailures.Count == 17,
+        // Sixteen, not eighteen: two rooms want an answer the second act gave,
+        // and the legacy second-act edges are still visible to a run that never
+        // named a route.
+        Check(unnamedThirdFailures.Count == 16,
             $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
             + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
@@ -330,6 +334,8 @@ internal static class RouteFixedRoomNativeChecks
             Put(journey, "LastFixedAct", 2);
             // Walking the handover may rewrite the route, so name it last.
             Put(journey, "RouteId", routeId);
+            // A new run walks only the content its route names.
+            Put(journey, "RouteRules", true);
         }
         ModelDb.Inject(room);
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
