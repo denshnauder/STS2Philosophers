@@ -31,7 +31,6 @@ internal static class RouteFixedRoomNativeChecks
     [
         "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
         "NATURE_AND_BECOMING",         // no scoped edge carries act three to Schelling
-        "CHECKS_AND_JUSTICE",          // Kant asks for a handover from another route
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
         "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room

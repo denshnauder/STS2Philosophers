@@ -26,11 +26,22 @@ internal sealed class KantUniversalizationState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static KantUniversalizationState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool RoutePlaced { get; set; }
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
+    public static KantUniversalizationState Create(string instanceId) => CreateAt(instanceId, 3, CompletionEdgeId);
+
+    public static KantUniversalizationState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        RouteSourceNodeId ??= string.Empty;
+        if (ActIndex is < 1 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -47,7 +58,7 @@ internal sealed class KantUniversalizationState : IJsonOnDeserialized
             || PendingAction != KantUniversalizationAction.None
                 && !KantUniversalizationFlow.Options(Stage).Contains(PendingAction)) return false;
 
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (KantUniversalizationAction action in ConfirmedActions)
         {
             if (replay.Closed || !KantUniversalizationFlow.Options(replay.Stage).Contains(action)) return false;
@@ -123,29 +134,33 @@ internal static class KantUniversalizationFlow
         bool adopts = action is KantUniversalizationAction.UniversalRule
             or KantUniversalizationAction.PublicEmergencyException or KantUniversalizationAction.PrivateException;
         bool declines = action == KantUniversalizationAction.KeepRousseau;
-        if (adopts && !journey.CompletedEdgeIds.Contains(KantUniversalizationState.CompletionEdgeId)
-            && !graph.TryApply(journey, KantUniversalizationState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(KantUniversalizationState state, WesternJourneyState journey)
     {
+        int act = state.ActIndex;
+        bool onRoute = state.RoutePlaced;
+        bool atSource = journey.CurrentNodeId == KantUniversalizationState.SourceNodeId
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(KantUniversalizationState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(KantUniversalizationState.CompletionEdgeId);
+            || !onRoute && !journey.CompletedEdgeIds.Contains(KantUniversalizationState.RequiredEdgeId)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct >= 2 && !adopted
-                && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == KantUniversalizationState.SourceNodeId;
+            return journey.LastFixedAct >= (onRoute ? act : 2) && !adopted
+                && !journey.DeclinedFixedActs.Contains(act)
+                && (onRoute || atSource);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
-                && journey.CurrentNodeId == KantUniversalizationState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.CurrentNodeId == KantUniversalizationState.SourceNodeId
-            && journey.DeclinedFixedActs.Contains(3);
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == act
+                && (onRoute || journey.CurrentNodeId == KantUniversalizationState.AdoptedNodeId);
+        return !adopted && journey.LastFixedAct == act
+            && (onRoute || atSource)
+            && journey.DeclinedFixedActs.Contains(act);
     }
 
     public static string DescriptionKey(KantUniversalizationState state) => state.Stage switch
