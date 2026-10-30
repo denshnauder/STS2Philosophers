@@ -47,6 +47,29 @@ internal static class MontesquieuBalanceChecks
             && declinedJourney.CurrentNodeId == MontesquieuBalanceState.SourceNodeId,
             "Declining must leave the player on Plato's institutions node.");
 
+        var voltairian = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:4");
+        VoltaireToleranceState segment = voltairian.Voltaire!;
+        Check(segment is { Closed: false } && segment.IsUsable(),
+            "A new room must carry an open Voltaire segment.");
+        Check(VoltaireToleranceFlow.Options(segment.Stage).Count == 3,
+            "Voltaire must offer protection, restriction, or keeping the balance.");
+        Check(!VoltaireToleranceFlow.TryPrepare(segment, VoltaireToleranceAction.Leave),
+            "Voltaire must not close before a verdict.");
+        Check(VoltaireToleranceFlow.TryPrepare(segment, VoltaireToleranceAction.ProtectSpeech),
+            "Protecting the pamphlet must be selectable.");
+        VoltaireToleranceFlow.Apply(segment, VoltaireToleranceAction.ProtectSpeech);
+        Check(segment.Conclusion == VoltaireToleranceConclusion.Protect
+            && segment.Stage == VoltaireToleranceStage.ResultProtect,
+            "Protection must record its conclusion.");
+        Check(VoltaireToleranceFlow.TryPrepare(segment, VoltaireToleranceAction.Leave),
+            "A verdict page must close.");
+        VoltaireToleranceFlow.Apply(segment, VoltaireToleranceAction.Leave);
+        Check(segment.Closed && segment.IsUsable(), "A closed Voltaire segment must stay replayable.");
+        var reopened = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:5");
+        reopened.Inspecting = true;
+        reopened.Voltaire!.Closed = true;
+        Check(!reopened.IsUsable(), "Inspecting a closed Voltaire segment must be rejected.");
+
         var tampered = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:3");
         tampered.Standard = MontesquieuBalanceStandard.Balance;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

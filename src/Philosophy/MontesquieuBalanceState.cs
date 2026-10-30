@@ -24,16 +24,23 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
     public MontesquieuBalanceAction PendingAction { get; set; }
     public List<MontesquieuBalanceAction> ConfirmedActions { get; set; } = [];
     public MontesquieuBalanceStandard Standard { get; set; }
+    public bool Inspecting { get; set; }
+    public VoltaireToleranceState? Voltaire { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static MontesquieuBalanceState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static MontesquieuBalanceState Create(string instanceId) => new()
+    {
+        InstanceId = instanceId,
+        Voltaire = VoltaireToleranceState.Create($"{instanceId}:VOLTAIRE"),
+    };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
+        Voltaire?.NormalizeAfterLoad();
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -42,6 +49,8 @@ internal sealed class MontesquieuBalanceState : IJsonOnDeserialized
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Standard)
+            || Inspecting && (Voltaire is null || Voltaire.Closed)
+            || Voltaire is not null && !Voltaire.IsUsable()
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
             || Closed && PendingAction != MontesquieuBalanceAction.None
