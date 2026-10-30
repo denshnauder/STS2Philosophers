@@ -101,33 +101,46 @@ internal static class RouteFixedRoomNativeChecks
             failures.Add($"{routeId}: {act} has no room for {node}.");
             return;
         }
-        // A room the route places in act two sits where act one's fixed event
-        // leaves the run, so play that handover before asking the boundary.
+        // Act one's question has been answered by the time act two opens; the
+        // handover edge itself belongs to act one's own room and is not needed to
+        // ask whether this act's boundary opens the figure's room.
         if (act == "act two")
         {
-            string source = (string)T(room.Name + "State").GetField("SourceNodeId", Methods)!
-                .GetRawConstantValue()!;
             object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+            string from = "";
             foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
                 .Invoke(graph, [journey, "Fixed"])!).Cast<object>())
             {
-                if ((int)Get(edge, "Act") != 1 || (string)Get(edge, "ToNodeId") != source) continue;
-                graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, (string)Get(edge, "EdgeId")]);
-                break;
+                if ((int)Get(edge, "Act") == 2 && (string)Get(edge, "ToNodeId") == node)
+                    from = (string)Get(edge, "FromNodeId");
             }
+            if (from.Length > 0)
+                foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+                    .Invoke(graph, [journey, "Fixed"])!).Cast<object>())
+                {
+                    if ((int)Get(edge, "Act") != 1 || (string)Get(edge, "ToNodeId") != from) continue;
+                    graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, (string)Get(edge, "EdgeId")]);
+                    break;
+                }
             ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Add(1);
             Put(journey, "LastFixedAct", 2);
+            // Walking the handover may rewrite the route, so name it last.
+            Put(journey, "RouteId", routeId);
         }
         ModelDb.Inject(room);
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(shared, "CurrentDoctrine", Doctrine(relic));
         Put(shared, "WesternJourney", journey);
         Call("PhilosophyRunStateService", "Restore", run, shared);
+        object?[] reread = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", reread);
+        string rereadRoute = reread[1] is null ? "none"
+            : (string?)Get(Get(reread[1]!, "WesternJourney")!, "RouteId") ?? "null";
         object?[] prepare = [run, null];
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
         if (!selected)
         {
-            failures.Add($"{routeId}: {act} does not open {room.Name} at its boundary (run act {run.CurrentActIndex}, route {Get(journey, "RouteId")}).");
+            failures.Add($"{routeId}: {act} does not open {room.Name} at its boundary (run act {run.CurrentActIndex}, route {Get(journey, "RouteId")}, reread {rereadRoute}).");
             return;
         }
         var chosen = ((EventRoom)prepare[1]!).CanonicalEvent.GetType();

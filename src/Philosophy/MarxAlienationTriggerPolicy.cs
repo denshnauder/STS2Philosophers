@@ -22,7 +22,7 @@ internal static class MarxAlienationTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && (context.RouteAct >= 2 || context.CurrentNodeId == MarxAlienationState.SourceNodeId)
-            && context.LastFixedAct == 3 && context.RequiredEdgeCompleted
+            && context.LastFixedAct == position && (context.RouteAct >= 2 || context.RequiredEdgeCompleted)
             && context.CompletionEdgeEligible;
     }
 }

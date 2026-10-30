@@ -121,29 +121,32 @@ internal static class MarxAlienationFlow
         MarxAlienationAction action = state.PendingAction;
         bool adopts = action is MarxAlienationAction.AlienatedLabor or MarxAlienationAction.HistoricalProgress;
         bool declines = action == MarxAlienationAction.KeepHegel;
-        if (adopts && !journey.CompletedEdgeIds.Contains(MarxAlienationState.CompletionEdgeId)
-            && !graph.TryApply(journey, MarxAlienationState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(MarxAlienationState state, WesternJourneyState journey)
     {
+        int act = state.ActIndex;
+        // A route may place this room in act two, where the boundary opens it
+        // directly and there is no act-three question to answer.
+        bool onRoute = act != 3;
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(MarxAlienationState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(MarxAlienationState.CompletionEdgeId);
+            || !onRoute && !journey.CompletedEdgeIds.Contains(MarxAlienationState.RequiredEdgeId)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool asked = journey.ResolvedQuestionActs.Contains(act);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
-                && journey.CurrentNodeId == MarxAlienationState.SourceNodeId;
+            return journey.LastFixedAct == act && !adopted && !asked
+                && (onRoute || journey.CurrentNodeId == MarxAlienationState.SourceNodeId);
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
-                && journey.ResolvedQuestionActs.Contains(3)
-                && journey.CurrentNodeId == MarxAlienationState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.ResolvedQuestionActs.Contains(3)
-            && journey.CurrentNodeId == MarxAlienationState.SourceNodeId;
+            return !state.QuestionDeclined && adopted && journey.LastFixedAct == act && asked
+                && (onRoute || journey.CurrentNodeId == MarxAlienationState.AdoptedNodeId);
+        return !adopted && journey.LastFixedAct == act && asked
+            && (onRoute || journey.CurrentNodeId == MarxAlienationState.SourceNodeId);
     }
 
     public static string DescriptionKey(MarxAlienationState state) => state.Stage switch

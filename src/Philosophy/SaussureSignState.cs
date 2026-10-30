@@ -134,15 +134,17 @@ internal static class SaussureSignFlow
         if (!state.IsUsable() || journey.RetainedEnding
             || SaussureSignState.RequiredEdgeId.Length > 0
                 && !journey.CompletedEdgeIds.Contains(SaussureSignState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(SaussureSignState.CompletionEdgeId);
+        int act = state.ActIndex;
+        int declined = act + 1;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 1 && !adopted && !journey.DeclinedFixedActs.Contains(2)
+            return journey.LastFixedAct == act && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 2
+            return !state.QuestionDeclined && adopted && journey.LastFixedAct == act + 1
                 && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2
-            && journey.DeclinedFixedActs.Contains(2)
+        return !adopted && journey.LastFixedAct == act + 1
+            && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
     }
 

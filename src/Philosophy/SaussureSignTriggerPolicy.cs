@@ -22,7 +22,7 @@ internal static class SaussureSignTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && (context.RouteAct >= 2 || context.CurrentNodeId == SaussureSignState.SourceNodeId)
-            && context.LastFixedAct == 1 && context.RequiredEdgeCompleted
+            && context.LastFixedAct == position && (context.RouteAct >= 2 || context.RequiredEdgeCompleted)
             && context.CompletionEdgeEligible;
     }
 }
