@@ -193,13 +193,17 @@ internal sealed class WesternRouteGraph
     /// </summary>
     private void NameFromFirstAct(WesternJourneyState state, WesternGraphEdge edge)
     {
-        if (edge.Act != 1 || !string.IsNullOrEmpty(state.RouteId)
-            || string.IsNullOrEmpty(state.EntryNodeId)) return;
+        if (edge.Act != 1 || string.IsNullOrEmpty(state.EntryNodeId)) return;
         string target = _nodes[edge.ToNodeId].ThinkerId;
         string[] candidates = WesternRouteTable.Instance.Routes
             .Where(route => route.EntryNodeId == state.EntryNodeId && route.ActTwoFigure == target)
             .Select(route => route.RouteId)
             .ToArray();
+        // The boundary names the entry's default line before the map is drawn.
+        // A first-act step onto another line's figure corrects that name: the
+        // run demonstrably entered the other line, and keeping the default would
+        // hide every handover that line has. A figure two lines share still
+        // decides nothing.
         if (candidates.Length == 1) state.RouteId = candidates[0];
     }
 

@@ -85,6 +85,27 @@ internal static class WesternBranchChainChecks
         Check(graph.TryApply(branch, "WESTERN_EDGE_185") && graph.IsComplete(branch),
             "A named line must reach its own third-act conclusion.");
 
+        // The boundary names the entry's default line before the map is drawn.
+        // A branch onto another line's figure has to correct that name, or the
+        // run keeps the default's handovers and dead-ends on a figure it is not
+        // standing on.
+        var corrected = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
+        corrected.RouteRules = true;
+        WesternRouteGraph.NameDefaultRoute(corrected);
+        Check(corrected.RouteId == "FORMAL_LANGUAGE", "The entry's first line is its default.");
+        Check(graph.TryApply(corrected, "WESTERN_EDGE_080") && corrected.RouteId == "STRUCTURE_AND_EXCLUSION",
+            "A first-act branch onto another line's figure must correct the default name.");
+        Check(graph.TryApply(corrected, "WESTERN_EDGE_187") && graph.TryApply(corrected, "WESTERN_EDGE_188")
+            && graph.IsComplete(corrected),
+            "The corrected line must reach its own third-act conclusion.");
+
+        var rousseau = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        rousseau.RouteRules = true;
+        WesternRouteGraph.NameDefaultRoute(rousseau);
+        Check(rousseau.RouteId == "EDUCATION_AND_SITUATION", "The education line is the Rousseau entry's default.");
+        Check(graph.TryApply(rousseau, "WESTERN_EDGE_083") && rousseau.RouteId == "SOCIAL_CRITIQUE",
+            "The branch to Marx must correct the default name.");
+
         // Two lines share Husserl, so the first act's branch cannot name one of
         // them: that is exactly the case the direction option has to answer.
         var shared = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
