@@ -40,6 +40,29 @@ internal static class ActPlacementSaveChecks
                 || edge is { CanWrite: true } && (string?)edge.GetValue(restored) != "WESTERN_EDGE_TEST")
                 lost.Add(type.Name);
         }
+        // The route a run follows, the entry it started from and the rules it was
+        // started under all live in the same record. A reload that dropped any of
+        // them would leave the run unable to open its later acts.
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState journey = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        journey.RouteRules = true;
+        journey.RouteId = "UNCONSCIOUS_AND_NORM";
+        journey.LastFixedAct = 2;
+        journey.DeclinedFixedActs.Add(2);
+        journey.ResolvedQuestionActs.Add(1);
+        journey.CandidateWindows["2:Fixed:DESCARTES__SELF_AND_OTHER__CORE:"] = ["WESTERN_EDGE_087"];
+        string journeyPayload = JsonSerializer.Serialize(journey);
+        WesternJourneyState? reloaded = JsonSerializer.Deserialize<WesternJourneyState>(journeyPayload);
+        Check(reloaded is not null
+            && reloaded.RouteId == "UNCONSCIOUS_AND_NORM"
+            && reloaded.EntryNodeId == "DESCARTES__SELF_AND_OTHER__CORE"
+            && reloaded.RouteRules
+            && reloaded.LastFixedAct == 2
+            && reloaded.DeclinedFixedActs.Contains(2)
+            && reloaded.ResolvedQuestionActs.Contains(1)
+            && reloaded.CandidateWindows.Count == 1,
+            "A saved journey must keep its route, entry and rules across a reload.");
+
         Check(lost.Count == 0,
             "These room states lose the act they were placed in when saved: " + string.Join(", ", lost) + ".");
     }
