@@ -306,7 +306,11 @@ internal static class RouteFixedRoomNativeChecks
     {
         if (!rooms.TryGetValue(node, out Type? room))
         {
-            failures.Add($"{routeId}: {act} has no room for {node}.");
+            Type? starting = RoomsStartingAt().GetValueOrDefault(node);
+            failures.Add(starting is null
+                ? $"{routeId}: {act} has no room for {node}."
+                : $"{routeId}: {act} has no room for {node}; only {starting.Name} starts there, "
+                    + "and it adopts another figure.");
             return;
         }
         // Act one's question has been answered by the time act two opens; the
@@ -412,12 +416,22 @@ internal static class RouteFixedRoomNativeChecks
             Type? room = Mod.GetType("STS2Philosophers." + type.Name[..^"State".Length]);
             if (adopted is not null && room is not null) map[adopted] = room;
         }
+        return map;
+    }
+
+    // A room that starts at a figure without adopting it belongs to an older
+    // act: Marx's room starts at Hegel but adopts Marx, so it is not the room a
+    // route's Hegel slot is asking for. The sweep keeps those apart and names
+    // the difference instead of testing the wrong room.
+    private static Dictionary<string, Type> RoomsStartingAt()
+    {
+        var map = new Dictionary<string, Type>(StringComparer.Ordinal);
         foreach (Type type in Mod.GetTypes())
         {
             if (!type.Name.EndsWith("State", StringComparison.Ordinal)) continue;
             string? source = type.GetField("SourceNodeId", Methods)?.GetRawConstantValue() as string;
             Type? room = Mod.GetType("STS2Philosophers." + type.Name[..^"State".Length]);
-            if (source is not null && room is not null && !map.ContainsKey(source)) map[source] = room;
+            if (source is not null && room is not null) map[source] = room;
         }
         return map;
     }
