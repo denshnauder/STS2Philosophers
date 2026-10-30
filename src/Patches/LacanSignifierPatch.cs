@@ -29,18 +29,32 @@ internal static class LacanSignifierPatch
         LacanSignifier? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == LacanSignifierState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "JACQUES_LACAN" ? 2
+                : route.ActThreeFigure == "JACQUES_LACAN" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == LacanSignifierState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? LacanSignifierState.CompletionEdgeId
+            : LacanSignifierState.CompletionEdgeId;
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         LacanSignifierTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible, saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && LacanSignifierFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            routeAct);
         if (!LacanSignifierTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? LacanSignifierState.Create($"LACAN_SIGNIFIER:{run.Rng.Seed}:2");
+        var candidate = saved ?? (routeAct >= 2
+            ? LacanSignifierState.CreateAt($"LACAN_SIGNIFIER:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : LacanSignifierState.Create($"LACAN_SIGNIFIER:{run.Rng.Seed}:2"));
         if (journey is null || !LacanSignifierFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LacanSignifier = candidate;
         Log.Info("[STS2Philosophers] Presenting Lacan's signifier question.");

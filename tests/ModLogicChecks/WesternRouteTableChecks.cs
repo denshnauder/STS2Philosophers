@@ -28,6 +28,7 @@ internal static class WesternRouteTableChecks
         "FORMAL_LANGUAGE",
         "ORDINARY_SPEECH",
         "STRUCTURE_AND_EXCLUSION",
+        "UNCONSCIOUS_AND_NORM",
         "EDUCATION_AND_SITUATION",
         "CHECKS_AND_JUSTICE",
         "CONSEQUENCE_AND_FREEDOM",
@@ -61,7 +62,6 @@ internal static class WesternRouteTableChecks
     private static readonly string[] HandoverGaps =
     [
         "ORDINARY_SPEECH act three LUDWIG_WITTGENSTEIN",
-        "UNCONSCIOUS_AND_NORM act three JACQUES_LACAN",
     ];
 
     public static void Run()

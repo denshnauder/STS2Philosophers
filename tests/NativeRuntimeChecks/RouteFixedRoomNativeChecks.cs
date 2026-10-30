@@ -29,7 +29,6 @@ internal static class RouteFixedRoomNativeChecks
     private static readonly string[] ExpectedActThree =
     [
         "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
-        "UNCONSCIOUS_AND_NORM",        // Lacan's room is still a second-act room
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
         "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room
@@ -224,10 +223,10 @@ internal static class RouteFixedRoomNativeChecks
         // Eighteen of twenty routes open no third act at all without a route name:
         // the third act's rooms are all route-scoped, so an unnamed run sees none
         // of them. Asserted so the day act one names the route it has to fall.
-        // Sixteen, not eighteen: two rooms want an answer the second act gave,
+        // Eighteen, not twenty: two rooms want an answer the second act gave,
         // and the legacy second-act edges are still visible to a run that never
         // named a route.
-        Check(unnamedThirdFailures.Count == 17,
+        Check(unnamedThirdFailures.Count == 18,
             $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
             + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");

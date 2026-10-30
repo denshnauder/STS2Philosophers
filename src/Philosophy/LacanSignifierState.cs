@@ -37,7 +37,13 @@ internal sealed class LacanSignifierState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static LacanSignifierState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 2;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public static LacanSignifierState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
+
+    public static LacanSignifierState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
@@ -60,7 +66,7 @@ internal sealed class LacanSignifierState : IJsonOnDeserialized
             || Closed && PendingAction != LacanSignifierAction.None
             || PendingAction != LacanSignifierAction.None
                 && !LacanSignifierFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (LacanSignifierAction action in ConfirmedActions)
         {
             if (replay.Closed || !LacanSignifierFlow.Options(replay.Stage).Contains(action)) return false;
@@ -143,10 +149,10 @@ internal static class LacanSignifierFlow
         LacanSignifierAction action = state.PendingAction;
         bool adopts = action is LacanSignifierAction.Clarify or LacanSignifierAction.ClaimNow;
         bool declines = action == LacanSignifierAction.RefuseObject;
-        if (adopts && !journey.CompletedEdgeIds.Contains(LacanSignifierState.CompletionEdgeId)
-            && !graph.TryApply(journey, LacanSignifierState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex + 1)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex + 1)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -154,15 +160,18 @@ internal static class LacanSignifierFlow
     public static bool IsRouteConsistent(LacanSignifierState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(LacanSignifierState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declined = state.ActIndex + 1;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == state.ActIndex && !adopted
+                && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
                 && journey.CompletedEdgeIds.Contains(LacanSignifierState.RequiredEdgeId);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex + 1
                 && journey.CurrentNodeId == LacanSignifierState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
+        return !adopted && journey.LastFixedAct == state.ActIndex + 1
+            && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == LacanSignifierState.SourceNodeId;
     }
 
