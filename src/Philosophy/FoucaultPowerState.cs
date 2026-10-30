@@ -2,8 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace STS2Philosophers;
 
-internal enum FoucaultPowerStage { Invitation, ResultPower, ResultDiscipline, ResultKept }
-internal enum FoucaultPowerAction { None, PowerKnowledge, Discipline, KeepNietzsche, Leave }
+internal enum FoucaultPowerStage { Invitation, ResultPower, ResultDiscipline, ResultKept, Benjamin }
+internal enum FoucaultPowerAction { None, PowerKnowledge, Discipline, KeepNietzsche, BenjaminHistory, Leave }
 internal enum FoucaultPowerStandard { None, Power, Discipline, Nietzschean }
 
 /// <summary>
@@ -67,7 +67,8 @@ internal static class FoucaultPowerFlow
                 FoucaultPowerAction.KeepNietzsche],
         FoucaultPowerStage.ResultPower or FoucaultPowerStage.ResultDiscipline
             or FoucaultPowerStage.ResultKept =>
-            [FoucaultPowerAction.Leave],
+            [FoucaultPowerAction.BenjaminHistory, FoucaultPowerAction.Leave],
+        FoucaultPowerStage.Benjamin => [FoucaultPowerAction.Leave],
         _ => [],
     };
 
@@ -97,6 +98,9 @@ internal static class FoucaultPowerFlow
                 state.Standard = FoucaultPowerStandard.Nietzschean;
                 state.FixedDeclined = true;
                 state.Stage = FoucaultPowerStage.ResultKept;
+                break;
+            case FoucaultPowerAction.BenjaminHistory:
+                state.Stage = FoucaultPowerStage.Benjamin;
                 break;
             case FoucaultPowerAction.Leave:
                 state.Closed = true;
