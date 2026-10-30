@@ -82,7 +82,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(shared, "CurrentDoctrine", doctrineState);
         Put(shared, "WesternJourney", journey);
-        Call("PhilosophyRunStateService", "Restore", run, shared);
+        // Restore refuses runs that were isolated, and then the room would read a
+        // state the fixture never wrote; install the record directly instead.
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
 
         object?[] prepare = [run, null];
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;

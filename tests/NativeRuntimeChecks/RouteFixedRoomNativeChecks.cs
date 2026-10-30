@@ -90,7 +90,9 @@ internal static class RouteFixedRoomNativeChecks
                 failures.Add($"{routeId}: no fixed edge carries act two to {second}.");
                 continue;
             }
-            Put(journey, "LastFixedAct", 2);
+            // The second act's boundary is reached with the first act's slot still
+            // the last one recorded; the host advances it before asking.
+            Put(journey, "LastFixedAct", 1);
             CheckRoom(routeId, "act two", secondNode!, rooms, run, journey, failures, relic);
             // A run that follows the default line never takes the first act's
             // question, so it reaches this boundary with no route named. The

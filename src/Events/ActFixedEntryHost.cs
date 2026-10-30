@@ -21,9 +21,17 @@ internal static class ActFixedEntryHost
         // (act index + 1) or when it was not (act index). Both are real runs.
         int act = run.CurrentActIndex;
         if (journey.LastFixedAct is var position && (position < act || position > act + 1)) return false;
+        // The boundary fills this act's slot: the rooms and their own consistency
+        // rules read the slot being filled, not the last one filled.
+        int arrived = journey.LastFixedAct;
+        if (arrived == act) journey.LastFixedAct = act + 1;
         EventModel? model;
         using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
-        if (model is null) return false;
+        if (model is null)
+        {
+            journey.LastFixedAct = arrived;
+            return false;
+        }
         room = new EventRoom(model);
         return true;
     }
