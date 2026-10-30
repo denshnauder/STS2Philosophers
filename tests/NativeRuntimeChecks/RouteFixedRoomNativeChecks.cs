@@ -100,6 +100,7 @@ internal static class RouteFixedRoomNativeChecks
                 .Invoke(null, [relic, 1])!;
             var unnamedRun = (RunState)unnamedTuple[1]!;
             object unnamedJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+            Put(unnamedJourney, "RouteRules", true);
             Put(unnamedJourney, "LastFixedAct", 2);
             CheckRoom(routeId, "act two (unnamed)", secondNode!, rooms, unnamedRun, unnamedJourney,
                 unnamedFailures, relic);
@@ -168,6 +169,7 @@ internal static class RouteFixedRoomNativeChecks
             var unnamedThirdRun = (RunState)unnamedThirdTuple[1]!;
             Set(unnamedThirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>(thirdHistory));
             object unnamedThird = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+            Put(unnamedThird, "RouteRules", true);
             foreach (string done in thirdCompleted) ((HashSet<string>)Get(unnamedThird, "CompletedEdgeIds")).Add(done);
             foreach (string seen in (HashSet<string>)Get(thirdJourney, "SeenThinkerIds"))
                 ((HashSet<string>)Get(unnamedThird, "SeenThinkerIds")).Add(seen);
@@ -188,16 +190,17 @@ internal static class RouteFixedRoomNativeChecks
         if (thirdFailures.Count > 0)
             Console.WriteLine("Route act-three gaps (" + thirdFailures.Count + "): "
                 + string.Join(" | ", thirdFailures));
-        // Seventeen of twenty routes cannot reach their second act when the run
-        // follows the default line: eleven open another figure's room and six open
-        // none. The number is asserted so it cannot drift unnoticed, and the day
-        // act one names the route it has to fall.
+        // Eighteen of twenty routes cannot reach their second act when the run
+        // follows the default line. Two still open another figure's room, both
+        // through a room that gates itself instead of walking the graph; the rest
+        // open nothing, which is the honest state until act one names the route.
+        // The number is asserted so it cannot drift unnoticed.
         if (unnamedFailures.Count > 0)
             Console.WriteLine("Route unnamed-act-two gaps (" + unnamedFailures.Count + "): "
                 + string.Join(" | ", unnamedFailures));
-        Check(unnamedFailures.Count == 17,
+        Check(unnamedFailures.Count == 18,
             $"A run that does not take the first act's question reaches act two with {unnamedFailures.Count} "
-            + "routes broken, not the known seventeen.");
+            + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActTwo, failures, "act two");
         if (unnamedThirdFailures.Count > 0)
             Console.WriteLine("Route unnamed-act-three gaps (" + unnamedThirdFailures.Count + "): "

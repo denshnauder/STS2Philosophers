@@ -26,6 +26,7 @@ internal static class WesternEntryPolicy
         if (!CanChoose(state, candidates, thinkerId, problemId, 0, false, false)
             || string.IsNullOrWhiteSpace(relicId) || relicId != RelicIdFor(problemId)) return false;
         WesternJourneyState journey = WesternRouteGraph.LoadEmbedded().Start($"{thinkerId}__{problemId}__CORE");
+        journey.RouteRules = true;
         state.RecordCurrentDoctrine(thinkerId, relicId, ["WESTERN", problemId]);
         state.WesternJourney = journey;
         return true;

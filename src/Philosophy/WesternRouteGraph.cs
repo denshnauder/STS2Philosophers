@@ -68,6 +68,14 @@ internal sealed class WesternJourneyState
     /// <summary>The entry node the run started from, kept so a route can be named later.</summary>
     public string EntryNodeId { get; set; } = string.Empty;
 
+    /// <summary>
+    /// True for a run started under the route rules. Those runs only ever walk
+    /// content that belongs to a route; the edges written before routes existed
+    /// stay visible to older saves, which is why this is a saved fact and not a
+    /// build constant.
+    /// </summary>
+    public bool RouteRules { get; set; }
+
     internal void NormalizeAfterLoad()
     {
         CurrentNodeId ??= string.Empty;
@@ -78,6 +86,7 @@ internal sealed class WesternJourneyState
         DeclinedFixedActs ??= [];
         RouteId ??= string.Empty;
         EntryNodeId ??= string.Empty;
+        if (EntryNodeId.Length == 0) RouteRules = false;
     }
 }
 
@@ -226,10 +235,18 @@ internal sealed class WesternRouteGraph
     /// identity, so new route content cannot hijack a save written before routes
     /// existed. Unscoped edges stay visible to everyone.
     /// </summary>
-    private static bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state) =>
-        edge.RouteIds is null or { Length: 0 }
-        || !string.IsNullOrEmpty(state.RouteId)
-        && edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
+    private static bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state)
+    {
+        if (edge.RouteIds is null or { Length: 0 })
+        {
+            // A run under the route rules never walks the edges written before
+            // routes existed: they belong to no mainline, so any of them could
+            // open another figure's room at this act's boundary.
+            return !state.RouteRules || edge.Slot != "Fixed" || edge.Act <= 1;
+        }
+        return !string.IsNullOrEmpty(state.RouteId)
+            && edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
+    }
 
     /// <summary>
     /// A figure can close one route and stand in the middle of another. The route

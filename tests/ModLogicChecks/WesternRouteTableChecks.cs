@@ -118,6 +118,18 @@ internal static class WesternRouteTableChecks
             "A default line reaches its second act only after act one names the route, but the "
             + $"routes that still cannot are: {string.Join(", ", unreachable)}.");
 
+        // A run started under the route rules never walks an edge written before
+        // routes existed: the second act's legacy handovers belong to no mainline.
+        WesternJourneyState routed = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        routed.RouteRules = true;
+        routed.LastFixedAct = 2;
+        Check(!graph.GetEligibleEdges(routed, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
+            "A route-rules run does not walk the legacy Descartes-to-Spinoza handover.");
+        WesternJourneyState legacy = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        legacy.LastFixedAct = 2;
+        Check(graph.GetEligibleEdges(legacy, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
+            "A save written before routes existed still sees the handover it was saved with.");
+
         Check(missing.SetEquals(MissingFigures),
             "The gap list is exactly the set of named figures that have no node.");
 
