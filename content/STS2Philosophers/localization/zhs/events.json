@@ -2670,5 +2670,22 @@
   "FOUCAULT_POWER.pages.RESULT_KEPT.options.BENJAMIN_HISTORY.description": "用碎片与当下重新看同一份档案。",
   "FOUCAULT_POWER.pages.BENJAMIN.description": "本雅明逆着纹理读这份档案：监狱的记录同时也是被它排除者的记录，过去在当下接手之前并未定案。房间把它记为一种视角，而不是新的问题。",
   "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.title": "关闭记录",
-  "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.description": "离开档案馆。"
+  "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.description": "离开档案馆。",
+  "HABERMAS_COMMUNICATION.title": "哈贝马斯：交往行动",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.description": "研讨班被要求为自己的程序辩护。哈贝马斯问：记录能把什么算作有效？",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.COMMUNICATIVE_ACTION.title": "记录交往行动",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.COMMUNICATIVE_ACTION.description": "把理解记为参与者可兑现的声称所达成的同意。",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.DISCOURSE_ETHICS.title": "记录商谈伦理",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.DISCOURSE_ETHICS.description": "只把受影响者能够接受的规范记为有效。",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.KEEP_HORKHEIMER.title": "保留霍克海默",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.KEEP_HORKHEIMER.description": "拒绝这个问题，停留在工具理性。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.description": "你记录交往行动。理解被记为依赖参与者可兑现的声称，记录注明系统未被当作主体。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.description": "你记录商谈伦理。规范只有在受影响者能够接受时才被记为有效，记录注明交往行动未被单独命名。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.description": "你保留霍克海默。问题没有得到回答，本幕不再取得问号承接。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.options.LEAVE.title": "离开研讨班",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.options.LEAVE.description": "关闭记录。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.title": "离开研讨班",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.description": "关闭记录。",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

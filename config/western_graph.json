@@ -609,6 +609,14 @@
       "stage_id": "CORE",
       "display_name": "阿多诺",
       "terminal": true
+    },
+    {
+      "node_id": "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE",
+      "thinker_id": "JURGEN_HABERMAS",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "哈贝马斯",
+      "terminal": true
     }
   ],
   "edges": [
@@ -3135,6 +3143,36 @@
         "compressed_mediators": "",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "否定辩证法须保留对象的非同一性，不能把批判本身写成新的总体系。",
+        "interpretation_boundary": "问题收束，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_086",
+      "from_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "to_node_id": "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问题收束，高；从工具理性批判转入交往行动",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_084"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "交往理性须由参与者可兑现的声称支撑，不能写成新的独白式总体系。",
         "interpretation_boundary": "问题收束，不伪造直接师承。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [

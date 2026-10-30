@@ -75,6 +75,7 @@ DeleuzeDifferenceChecks.Run();
 GadamerFusionChecks.Run();
 HorkheimerReasonChecks.Run();
 AdornoNegativeChecks.Run();
+HabermasCommunicationChecks.Run();
 EventPageLocalizationChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();

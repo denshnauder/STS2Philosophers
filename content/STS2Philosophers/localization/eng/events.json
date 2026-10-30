@@ -2670,5 +2670,22 @@
   "FOUCAULT_POWER.pages.RESULT_KEPT.options.BENJAMIN_HISTORY.description": "Look at the same archive through the fragment and the now.",
   "FOUCAULT_POWER.pages.BENJAMIN.description": "Benjamin reads the archive against the grain: the record of the prison is also the record of those it left out, and the past is not settled until the present takes it up. The room keeps this as a perspective, not as a new question.",
   "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.title": "Close the record",
-  "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.description": "Leave the archive."
+  "FOUCAULT_POWER.pages.BENJAMIN.options.LEAVE.description": "Leave the archive.",
+  "HABERMAS_COMMUNICATION.title": "Habermas: Communicative Action",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.description": "The seminar is asked to justify its own procedure. Habermas asks what the record can count as valid.",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.COMMUNICATIVE_ACTION.title": "Record communicative action",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.COMMUNICATIVE_ACTION.description": "Record the agreement reached by participants who can redeem their claims.",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.DISCOURSE_ETHICS.title": "Record discourse ethics",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.DISCOURSE_ETHICS.description": "Record the norms only those affected could accept.",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.KEEP_HORKHEIMER.title": "Keep Horkheimer",
+  "HABERMAS_COMMUNICATION.pages.INVITATION.options.KEEP_HORKHEIMER.description": "Refuse the question and stay with instrumental reason.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.description": "You record communicative action. Understanding is recorded as resting on claims participants can redeem, and the record notes that the system was not treated as a subject.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.description": "You record discourse ethics. Norms are recorded as valid only if those affected could accept them, and the record notes that communicative action was not named separately.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.description": "You keep Horkheimer. The question goes unanswered, and no question link is taken this act.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.options.LEAVE.title": "Leave the seminar",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ACTION.options.LEAVE.description": "Close the record.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.title": "Leave the seminar",
+  "HABERMAS_COMMUNICATION.pages.RESULT_ETHICS.options.LEAVE.description": "Close the record.",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "HABERMAS_COMMUNICATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
