@@ -93,6 +93,7 @@ AustinSpeechActChecks.Run();
 PopperFalsificationChecks.Run();
 EventGoldCostProtocolChecks.Run();
 CrossActCombatHistoryChecks.Run();
+RoomStateNormalizationChecks.Run();
 RousseauConsentChecks.Run();
 KantUniversalizationChecks.Run();
 MillHarmChecks.Run();
