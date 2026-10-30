@@ -21,7 +21,8 @@ $packerProject = Join-Path $PSScriptRoot 'ContentPckPacker\ContentPckPacker.cspr
 $temporary = "$OutputPath.tmp.$PID"
 try
 {
-    & (Join-Path $DotNetRoot 'dotnet.exe') run --project $packerProject -c Release -- $ProjectDirectory $temporary
+    $dotnet = Join-Path $DotNetRoot $(if (Test-Path -LiteralPath (Join-Path $DotNetRoot 'dotnet.exe')) { 'dotnet.exe' } else { 'dotnet' })
+    & $dotnet run --project $packerProject -c Release -- $ProjectDirectory $temporary
     $packerExit = $LASTEXITCODE
     if ($packerExit -eq 0)
     {
