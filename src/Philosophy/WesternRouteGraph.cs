@@ -45,7 +45,8 @@ internal sealed record WesternGraphSample(
     [property: JsonPropertyName("edge_ids")] string[] EdgeIds,
     [property: JsonPropertyName("terminal_node_id")] string TerminalNodeId,
     [property: JsonPropertyName("disposition")] string Disposition,
-    [property: JsonPropertyName("review_note")] string ReviewNote);
+    [property: JsonPropertyName("review_note")] string ReviewNote,
+    [property: JsonPropertyName("route_id")] string? RouteId = null);
 
 internal sealed class WesternJourneyState
 {
@@ -198,22 +199,30 @@ internal sealed class WesternRouteGraph
         return true;
     }
 
+    /// <summary>
+    /// An edge that belongs to a route is invisible to a run that has no route
+    /// identity, so new route content cannot hijack a save written before routes
+    /// existed. Unscoped edges stay visible to everyone.
+    /// </summary>
     private static bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state) =>
-        string.IsNullOrEmpty(state.RouteId) || edge.RouteIds is null or { Length: 0 }
-        || edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
+        edge.RouteIds is null or { Length: 0 }
+        || !string.IsNullOrEmpty(state.RouteId)
+        && edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
 
     /// <summary>
     /// A figure can close one route and stand in the middle of another. The route
     /// table names the figure each route ends on, so a terminal node only ends the
     /// run when the route has already reached its own third-act figure.
     /// </summary>
-    private static bool RouteStillHasActs(WesternJourneyState state)
+    private bool RouteStillHasActs(WesternJourneyState state)
     {
         if (string.IsNullOrEmpty(state.RouteId)) return false;
         WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
             .FirstOrDefault(candidate => candidate.RouteId == state.RouteId);
         return route is not null
-            && !state.CurrentNodeId.StartsWith(route.ActThreeFigure + "__", StringComparison.Ordinal);
+            && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)
+            && node.ThinkerId != route.ActThreeFigure
+            && node.ThinkerId != route.ClosingFigure;
     }
 
     public bool IsComplete(WesternJourneyState state) => state.LastFixedAct >= 3
@@ -370,6 +379,7 @@ internal sealed class WesternRouteGraph
                     throw new InvalidDataException($"Source sample must retain its original endpoint and a retired edge: {sample.SampleId}");
                 continue;
             }
+            state.RouteId = sample.RouteId ?? string.Empty;
             foreach (string id in sample.EdgeIds)
                 if (!TryApply(state, id)) throw new InvalidDataException($"Sample {sample.SampleId} has an unreachable or repeated edge: {id}");
             if (!IsComplete(state) || state.CurrentNodeId != sample.TerminalNodeId)

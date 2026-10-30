@@ -16,6 +16,7 @@ internal static class WesternGraphChecks
         foreach (WesternGraphSample sample in graph.ExecutableSamples)
         {
             WesternJourneyState state = graph.Start(sample.EntryNodeId);
+            state.RouteId = sample.RouteId ?? string.Empty;
             Check(graph.CanFinish(state), "Every entry problem must have a complete three-act path.");
             foreach (string id in sample.EdgeIds)
             {
