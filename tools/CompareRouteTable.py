@@ -124,6 +124,36 @@ KNOWN_BRANCH_GAPS = {
 }
 
 
+# One line cannot be chained from the graph: the document gives it an early and
+# a late Wittgenstein, and the graph has a single node for him. Splitting the
+# node is a content decision, so this stays a known gap.
+KNOWN_CHAIN_GAPS = {
+    "日常言说": "the graph has one Wittgenstein node, so his early and late stages cannot be two acts",
+}
+
+
+def default_chain_problems(routes, graph):
+    """The table's three columns are the default order, so the graph needs a
+    fixed edge for act two and act three of every line. Without them the line
+    exists in the table and nowhere the player can walk."""
+    by_thinker = {}
+    for node in graph["nodes"]:
+        by_thinker.setdefault(node["thinker_id"], []).append(node)
+    problems = []
+    for route in routes.values():
+        figures = [route["act_one_figure"], route["act_two_figure"], route["act_three_figure"]]
+        starts, middles, ends = (by_thinker.get(figure, []) for figure in figures)
+        walkable = any(
+            any(edge["act"] == 2 and edge["slot"] == "Fixed" and edge["from_node_id"] == start["node_id"]
+                and edge["to_node_id"] == middle["node_id"] for edge in graph["edges"])
+            and any(edge["act"] == 3 and edge["slot"] == "Fixed" and edge["from_node_id"] == middle["node_id"]
+                and edge["to_node_id"] == end["node_id"] for edge in graph["edges"])
+            for start in starts for middle in middles for end in ends)
+        if not walkable:
+            problems.append((route["display_name"], " -> ".join(figures)))
+    return problems
+
+
 def branch_problems(rows, routes, graph):
     """The document also says where each line goes when its first-act question
     turns it. Nothing else checks those branches, and a branch the graph cannot
@@ -198,19 +228,25 @@ def main() -> int:
     for name in sorted(set(routes) - seen):
         problems.append(f"{name}: the route table names a line the design table does not have")
     graph = json.loads((ROOT / "config/western_graph.json").read_text())
+    for name, chain in default_chain_problems(routes, graph):
+        if name in KNOWN_CHAIN_GAPS:
+            print(f"known gap: {name} has no walkable default chain ({chain}): {KNOWN_CHAIN_GAPS[name]}")
+        else:
+            problems.append(f"{name}: the route table's own order {chain} cannot be walked in the graph")
     branch, notes = branch_problems(rows, routes, graph)
     known = [issue for issue in branch if issue.split(":")[0].split(" act ")[0] in KNOWN_BRANCH_GAPS]
     problems.extend(issue for issue in branch if issue not in known)
     if known:
-        print(f"{len(known)} documented branch step(s) belong to the known act-shift gap: "
-            + ", ".join(sorted({issue.split(":")[0] for issue in known})))
+        print(f"known gap: {len(known)} documented branch step(s) across "
+            + f"{len({issue.split(':')[0].split(' act ')[0] for issue in known})} lines describe the act-shift the graph does not store")
     for note in notes:
         print("note: " + note)
     if problems:
         print("\n".join(problems))
         print(f"{len(problems)} disagreement(s) between the design table and the route table.")
         return 1
-    print(f"{len(rows)} lines agree across all three acts; every branch step outside the known act-shift gap is walkable.")
+    print(f"{len(rows)} lines agree across all three acts; {len(known)} branch steps and "
+        + f"{len(KNOWN_CHAIN_GAPS)} default chain are known gaps; everything else is walkable.")
     return 0
 
 
