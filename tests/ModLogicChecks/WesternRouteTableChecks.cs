@@ -148,6 +148,22 @@ internal static class WesternRouteTableChecks
         Check(seamsChecked >= 15, $"Only {seamsChecked} routes have both handovers to join.");
         Check(seams.Count == 0, "Every handover must start where the one before it landed: " + string.Join("; ", seams) + ".");
 
+        // The default line is for runs that took no question. A run that answered
+        // the first act's question has chosen, even when the answer named no
+        // single line, and must not be renamed onto the default.
+        WesternJourneyState answered = graph.Start(
+            table.Routes.First(route => route.EntryNodeId.EndsWith("DESCARTES__SELF_AND_OTHER__CORE", StringComparison.Ordinal)).EntryNodeId);
+        answered.RouteRules = true;
+        answered.ResolvedQuestionActs.Add(1);
+        WesternRouteGraph.NameDefaultRoute(answered);
+        Check(string.IsNullOrEmpty(answered.RouteId),
+            "A run that answered the first act's question must not fall back to the default line.");
+        WesternJourneyState silent = graph.Start(answered.EntryNodeId);
+        silent.RouteRules = true;
+        WesternRouteGraph.NameDefaultRoute(silent);
+        Check(!string.IsNullOrEmpty(silent.RouteId),
+            "A run that took no question must join its entry's default line.");
+
         var unreachable = new List<string>();
         foreach (WesternRouteDefinition route in table.Routes)
         {
