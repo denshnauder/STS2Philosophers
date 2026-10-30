@@ -118,6 +118,9 @@ internal static class WesternBranchChainChecks
         turned.LastFixedAct = 2;
         Check(graph.GetEligibleEdges(turned, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_154"),
             "A turned line must still have its second act's fixed step.");
+        Check(!graph.GetEligibleEdges(turned, "Fixed")
+                .Any(edge => edge.RouteIds?.Contains("EXPERIENCE_AND_SELF") == true),
+            "Turning onto another line must close the line the run was on.");
 
         // An open record keeps every later question closed, so a record that
         // claims a later act is not a question left open: it is closed on load.
