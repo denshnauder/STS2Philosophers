@@ -172,6 +172,10 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(lacan, Plays("SASP", "abcd"), previous, 3) == default,
             "Lacan's room resolves its own signifier choice; the node must not add a generic reward.");
         covered.Add(lacan);
+        const string kuhn = "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(kuhn, Plays("SASP", "abcd"), previous, 3) == default,
+            "Kuhn's room resolves its own paradigm choice; the node must not add a generic reward.");
+        covered.Add(kuhn);
         const string bentham = "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE";
         Check(WesternNodePracticePolicy.Evaluate(bentham, Plays("SASP", "abcd"), previous, 3) == default,
             "Bentham's room resolves its own utility choice; the node must not add a generic reward.");
@@ -205,7 +209,7 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(rawls, Plays("SASP", "abcd"), previous, 3) == default,
             "Rawls's closing choice resolves its own distribution test; the node must not add a generic reward.");
         covered.Add(rawls);
-        Check(covered.Count == 79 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 80 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")

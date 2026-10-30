@@ -169,6 +169,7 @@ internal static class NativeQuestionNodeEvents
             ?? HabermasCommunicationPatch.TrySelectExistingNative(run)
             ?? FreudUnconsciousPatch.TrySelectExistingNative(run)
             ?? LacanSignifierPatch.TrySelectExistingNative(run)
+            ?? KuhnParadigmPatch.TrySelectExistingNative(run)
             ?? FregeSensePatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
@@ -265,6 +266,7 @@ internal static class NativeQuestionNodeEvents
             ?? HabermasCommunicationPatch.TrySelectNative(run)
             ?? FreudUnconsciousPatch.TrySelectNative(run)
             ?? LacanSignifierPatch.TrySelectNative(run)
+            ?? KuhnParadigmPatch.TrySelectNative(run)
             ?? FregeSensePatch.TrySelectNative(run)
             ?? nextEvent;
         // ActModel.PullNextEvent registers the returned model as visited. We do

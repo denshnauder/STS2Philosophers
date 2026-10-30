@@ -633,6 +633,14 @@
       "stage_id": "CORE",
       "display_name": "拉康",
       "terminal": false
+    },
+    {
+      "node_id": "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "THOMAS_KUHN",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "库恩：异常与范式",
+      "terminal": false
     }
   ],
   "edges": [
@@ -3252,6 +3260,36 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:29"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_090",
+      "from_node_id": "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从有条件的两处试验转入范式、常规科学与革命",
+      "source": "00西哲当前路线.md:37",
+      "required_edge_ids": [
+        "WESTERN_EDGE_049"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "范式转换须保留可比较的理性理由，不写成任意相对主义或一次异常即革命。",
+        "interpretation_boundary": "第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:37"
         ]
       }
     }
