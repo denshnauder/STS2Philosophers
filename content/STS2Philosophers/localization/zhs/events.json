@@ -2346,5 +2346,22 @@
   "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.title": "离开户籍所",
   "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.description": "关闭记录。",
   "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.title": "离开户籍所",
-  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "PEIRCE_INQUIRY.title": "皮尔士：可错探究",
+  "PEIRCE_INQUIRY.pages.INVITATION.description": "一位测量员报告了与既定表格矛盾的读数。皮尔士问：这个房间应当如何安放一个可能出错的信念？",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.TEST_BY_CONSEQUENCES.title": "按后果检验",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.TEST_BY_CONSEQUENCES.description": "只有当它的实际后果站得住时，才保留这个信念。",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.FALLIBLE_COMMUNITY.title": "交给共同体",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.FALLIBLE_COMMUNITY.description": "让其他探究者试着推翻它，即使结果会动摇表格也保留。",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.KEEP_HUME.title": "保留休谟",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.KEEP_HUME.description": "拒绝这个问题，停留在休谟的怀疑。",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.description": "你按后果检验。信念变成关于它能让你做什么的主张，表格必须对此作答。",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.description": "你交给共同体。读数成为共同的工作，没有单个探究者能独自关闭这个问题。",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.description": "你保留休谟。问题仍然敞开，本幕不再取得固定承接。",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.LEAVE.title": "离开测量所",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.LEAVE.description": "关闭记录。",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.title": "离开测量所",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.description": "关闭记录。",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.title": "离开测量所",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

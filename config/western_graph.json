@@ -529,6 +529,22 @@
       "stage_id": "CORE",
       "display_name": "孔德",
       "terminal": false
+    },
+    {
+      "node_id": "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "CHARLES_SANDERS_PEIRCE",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "皮尔士",
+      "terminal": false
+    },
+    {
+      "node_id": "JOHN_DEWEY__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "JOHN_DEWEY",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "杜威",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2606,6 +2622,90 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:37"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_069",
+      "from_node_id": "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "DAVID_HUME__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从苏格拉底追问转入推断的不确定性",
+      "source": "00西哲当前路线.md:38",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "共同检验须保留反例与异议，不能把共识写成真理的证明。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:38"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_070",
+      "from_node_id": "DAVID_HUME__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从怀疑转入可错探究与共同检验",
+      "source": "00西哲当前路线.md:38",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "共同检验须保留反例与异议，不能把共识写成真理的证明。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:38"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_071",
+      "from_node_id": "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "JOHN_DEWEY__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从共同检验转入公共实验",
+      "source": "00西哲当前路线.md:38",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "共同检验须保留反例与异议，不能把共识写成真理的证明。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:38"
         ]
       }
     }

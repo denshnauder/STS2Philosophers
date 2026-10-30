@@ -2346,5 +2346,22 @@
   "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.title": "Leave the census office",
   "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.description": "Close the record.",
   "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.title": "Leave the census office",
-  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "PEIRCE_INQUIRY.title": "Peirce: Fallible Inquiry",
+  "PEIRCE_INQUIRY.pages.INVITATION.description": "A surveyor reports a measurement that contradicts the settled table. Peirce asks how the room should hold a belief that may be wrong.",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.TEST_BY_CONSEQUENCES.title": "Test it by consequences",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.TEST_BY_CONSEQUENCES.description": "Keep the belief only while its practical consequences hold up.",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.FALLIBLE_COMMUNITY.title": "Submit it to a community",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.FALLIBLE_COMMUNITY.description": "Let other inquirers try to break it, and keep the result even if it unsettles the table.",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.KEEP_HUME.title": "Keep Hume",
+  "PEIRCE_INQUIRY.pages.INVITATION.options.KEEP_HUME.description": "Refuse the question and stay with Hume's uncertainty.",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.description": "You test by consequences. The belief becomes a claim about what it lets you do, and the table must answer to that.",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.description": "You submit it to the community. The measurement becomes shared work, and no single inquirer can close the question alone.",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.description": "You keep Hume. The question remains open, and no fixed link is taken this act.",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.LEAVE.title": "Leave the survey",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.LEAVE.description": "Close the record.",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.title": "Leave the survey",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.description": "Close the record.",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the survey",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
