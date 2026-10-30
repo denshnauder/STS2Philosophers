@@ -119,8 +119,8 @@ def node_for(graph, figure_cell, fallback_problem):
 # any other line that grows a branch problem still fails the check.
 KNOWN_BRANCH_GAPS = {
     "形式语言", "结构与排除",
-    "无意识与规范", "教育与处境", "制衡与公正", "后果与自由", "同感与公共行动",
-    "社会批判", "谱系与权力", "科学模型",
+    "无意识与规范", "教育与处境",
+    "社会批判", "谱系与权力",
 }
 
 
@@ -169,7 +169,11 @@ def branch_problems(rows, routes, graph):
         match = BRANCH.search(text)
         if not match:
             continue
-        entry_problem = node_for(graph, first, "SELF_AND_OTHER")
+        # The route table names the line's entry problem; the table cell's
+        # qualifier is a display hint, not the authority. Using the cell alone
+        # picked the thinker's first node and reported edges from the wrong act.
+        entry_node = f"{route['entry_thinker']}__{route['entry_problem']}__CORE"
+        entry_problem = next((node for node in graph["nodes"] if node["node_id"] == entry_node), None)
         if entry_problem is None:
             problems.append(f"{name}: cannot place the entry figure '{first}'")
             continue

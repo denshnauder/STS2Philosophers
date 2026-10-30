@@ -171,22 +171,6 @@ internal sealed class WesternRouteGraph
     /// that reaches the second act unnamed joins it. Runs that predate the route
     /// rules keep whatever they were saved with.
     /// </summary>
-    /// <summary>
-    /// Two lines can share the same first-act figure; the design then asks the
-    /// player for a direction inside the event ("选择具身方向"). The event names
-    /// the line it put the player on, once, before the second act opens.
-    /// </summary>
-    public bool TryNameRoute(WesternJourneyState state, string routeId)
-    {
-        if (string.IsNullOrEmpty(routeId) || !string.IsNullOrEmpty(state.RouteId)
-            || !state.RouteRules || !state.ResolvedQuestionActs.Contains(1)) return false;
-        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
-            .FirstOrDefault(candidate => candidate.RouteId == routeId);
-        if (route is null || route.EntryNodeId != state.EntryNodeId) return false;
-        state.RouteId = route.RouteId;
-        return true;
-    }
-
     public static void NameDefaultRoute(WesternJourneyState state)
     {
         if (!state.RouteRules || !string.IsNullOrEmpty(state.RouteId)
