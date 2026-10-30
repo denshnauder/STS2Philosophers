@@ -140,6 +140,9 @@ internal static class WesternBranchChainChecks
         var stale = new RouteTurnQuestionState { InstanceId = "question:stale", Act = 2 };
         stale.NormalizeAfterLoad();
         Check(stale.Closed, "A question that claims the second act is not left open.");
+        var nonsense = new RouteTurnQuestionState { InstanceId = "question:nonsense", Act = 7 };
+        nonsense.NormalizeAfterLoad();
+        Check(nonsense.Closed, "A question that claims an act that cannot exist is not left open.");
         var legacy = new RouteTurnQuestionState { InstanceId = "question:legacy" };
         legacy.NormalizeAfterLoad();
         Check(legacy.Act == 1 && !legacy.Closed, "A record from before the act was recorded stays open in the first act.");
