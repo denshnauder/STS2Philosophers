@@ -95,6 +95,12 @@ internal sealed class WesternJourneyState
         EntryNodeId ??= string.Empty;
         if (EntryNodeId.Length == 0) RouteRules = false;
         if (Act is < 1 or > 3) Act = 0;
+        // A save written before the fixed position was recorded cannot say which
+        // slot it has already passed. The run's own act does: the first act's slot
+        // is its entry, so a run in act two or three has passed one fewer slot
+        // than its act number. Guessing a position is what keeps such a save
+        // playable — no position at all leaves every edge ineligible.
+        if (LastFixedAct is < 1 or > 3) LastFixedAct = Act is >= 2 and <= 3 ? Act - 1 : 1;
     }
 }
 

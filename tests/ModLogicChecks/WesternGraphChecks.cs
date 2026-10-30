@@ -10,6 +10,14 @@ internal static class WesternGraphChecks
         {
             if (!condition) throw new InvalidOperationException(message);
         }
+        // A save written before the fixed position was recorded has no position at
+        // all; without one no edge is eligible and the run cannot move.
+        var legacy = new WesternJourneyState { CurrentNodeId = "DESCARTES__SELF_AND_OTHER__CORE", EntryNodeId = "DESCARTES__SELF_AND_OTHER__CORE", LastFixedAct = 0 };
+        legacy.NormalizeAfterLoad();
+        Check(legacy.LastFixedAct == 1, "A save with no recorded position starts at the entry's slot.");
+        var thirdAct = new WesternJourneyState { CurrentNodeId = "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE", EntryNodeId = "DESCARTES__SELF_AND_OTHER__CORE", LastFixedAct = 0, Act = 3 };
+        thirdAct.NormalizeAfterLoad();
+        Check(thirdAct.LastFixedAct == 2, "A run in the third act has passed the second act's slot.");
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         Check(graph.Samples.Count == 14 && graph.ExecutableSamples.Count() == 10,
             "Preserve twelve source sequences and the Plotinus/Aquinas continuations; withdrawn paths stay non-executable.");
