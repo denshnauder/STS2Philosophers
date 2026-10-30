@@ -2162,5 +2162,22 @@
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_WITNESS.options.LEAVE.title": "离开货栈",
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_WITNESS.options.LEAVE.description": "不再作进一步判定，关闭记录。",
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.title": "离开货栈",
-  "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.description": "不再作进一步判定，关闭记录。"
+  "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.description": "不再作进一步判定，关闭记录。",
+  "MONTESQUIEU_BALANCE.title": "孟德斯鸠：权力的三个抽屉",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.description": "一位官员把立法、行政、司法三份文书塞进同一个抽屉，说这样办事更快。你可以要求分置三权、以派系相互制衡，或保留柏拉图式的统一安排。",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.SEPARATE_POWERS.title": "分置三权",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.SEPARATE_POWERS.description": "让三种权力各占一个抽屉，各自设防。",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.BALANCE_FACTIONS.title": "以派系相互制衡",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.BALANCE_FACTIONS.description": "让相互对立的派系各守一个抽屉，谁也不能一次关掉三个。",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.PRESERVE_PRIVILEGE.title": "保留统一安排",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.PRESERVE_PRIVILEGE.description": "拒绝拆分，保留柏拉图的单一安排，放弃本幕固定承接。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.description": "你把立法、行政、司法分开。每种权力都能阻挡另外两种，代价是办事更慢。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.description": "你让相互对立的派系各掌一权。只要没有派系同时握住两个抽屉，制衡就成立。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.description": "你保留统一安排。路线在此停住，本幕不再取得固定承接。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.options.LEAVE.title": "离开议事厅",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.options.LEAVE.description": "关闭记录。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.options.LEAVE.title": "离开议事厅",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.options.LEAVE.description": "关闭记录。",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.LEAVE.title": "离开议事厅",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.LEAVE.description": "关闭记录。"
 }

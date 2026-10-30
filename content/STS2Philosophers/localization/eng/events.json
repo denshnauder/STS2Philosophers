@@ -2162,5 +2162,22 @@
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_WITNESS.options.LEAVE.title": "Leave the storeroom",
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_WITNESS.options.LEAVE.description": "Close the record without a further verdict.",
   "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.title": "Leave the storeroom",
-  "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.description": "Close the record without a further verdict."
+  "BERKELEY_PERCEIVED_MARK.pages.RESULT_SCOPE.options.LEAVE.description": "Close the record without a further verdict.",
+  "MONTESQUIEU_BALANCE.title": "Montesquieu: Three Powers in One Drawer",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.description": "A magistrate drops the legislative, executive and judicial papers into one drawer and says it will speed things up. You may separate the three powers, balance them through rival factions, or keep Plato's unified arrangement.",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.SEPARATE_POWERS.title": "Separate the three powers",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.SEPARATE_POWERS.description": "Give each power its own drawer and its own check.",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.BALANCE_FACTIONS.title": "Balance rival factions",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.BALANCE_FACTIONS.description": "Let opposing factions hold different drawers so no one can close all three.",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.PRESERVE_PRIVILEGE.title": "Keep the unified arrangement",
+  "MONTESQUIEU_BALANCE.pages.INVITATION.options.PRESERVE_PRIVILEGE.description": "Refuse the split and keep Plato's single arrangement, giving up this act's fixed link.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.description": "You separate legislation, execution and judgment. Each power can block the others, so speed is traded for a check.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.description": "You let rival factions hold different powers. The balance works only while no faction holds two drawers at once.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.description": "You keep the unified arrangement. The route stops here and no fixed link is taken this act.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.options.LEAVE.title": "Leave the chamber",
+  "MONTESQUIEU_BALANCE.pages.RESULT_SEPARATION.options.LEAVE.description": "Close the record.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.options.LEAVE.title": "Leave the chamber",
+  "MONTESQUIEU_BALANCE.pages.RESULT_BALANCE.options.LEAVE.description": "Close the record.",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.LEAVE.title": "Leave the chamber",
+  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.LEAVE.description": "Close the record."
 }

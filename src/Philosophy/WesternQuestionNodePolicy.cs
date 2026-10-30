@@ -164,6 +164,7 @@ internal static class WesternQuestionNodePolicy
         || shared.MachiavelliFloodPreparation is { Closed: false }
         || shared.WollstonecraftAdmission is { Closed: false }
         || shared.MillHarm is { Closed: false }
+        || shared.MontesquieuBalance is { Closed: false }
         || shared.BeauvoirOther is { Closed: false }
         || shared.FichteSelfPositing is { Closed: false }
         || shared.LockeCargoIdentity is { Closed: false }

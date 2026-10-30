@@ -165,6 +165,7 @@
     <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyState.cs" Link="HobbesAuthorizedSovereigntyState.cs" />
     <Compile Include="..\..\src\Philosophy\HobbesAuthorizedSovereigntyTriggerPolicy.cs" Link="HobbesAuthorizedSovereigntyTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\LockeCargoIdentityState.cs" Link="LockeCargoIdentityState.cs" />
+    <Compile Include="..\..\src\Philosophy\MontesquieuBalanceState.cs" Link="MontesquieuBalanceState.cs" />
     <Compile Include="..\..\src\Philosophy\BerkeleyPerceivedMarkState.cs" Link="BerkeleyPerceivedMarkState.cs" />
     <Compile Include="..\..\src\Philosophy\LockeCargoIdentityTriggerPolicy.cs" Link="LockeCargoIdentityTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HumeInductionState.cs" Link="HumeInductionState.cs" />
