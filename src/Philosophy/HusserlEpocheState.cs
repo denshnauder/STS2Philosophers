@@ -31,7 +31,9 @@ internal sealed class HusserlEpocheState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
-    public static HusserlEpocheState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
+    // The room opens at the first act's question node, standing on Descartes:
+    // the fixed link it commits is the first act's, so its position is one.
+    public static HusserlEpocheState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
 
     public static HusserlEpocheState CreateAt(string instanceId, int actIndex, string edgeId) =>
         new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };

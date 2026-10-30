@@ -17,7 +17,6 @@ internal static class HusserlEpocheChecks
             "The description must be selectable.");
         var journey = graph.Start(HusserlEpocheState.SourceNodeId);
         journey.RouteRules = true;
-        journey.LastFixedAct = 2;
         Check(HusserlEpocheFlow.IsRouteConsistent(state, journey),
             "The room must sit on the first-act fixed slot.");
         Check(HusserlEpocheFlow.TryCommitPending(state, journey, graph),
@@ -26,18 +25,17 @@ internal static class HusserlEpocheChecks
             && state.Stage == HusserlEpocheStage.ResultAppearance,
             "The description must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(HusserlEpocheState.CompletionEdgeId)
-            && journey.CurrentNodeId == HusserlEpocheState.AdoptedNodeId && journey.LastFixedAct == 3,
-            "Adopting must move the journey to Kierkegaard and consume act one.");
+            && journey.CurrentNodeId == HusserlEpocheState.AdoptedNodeId && journey.LastFixedAct == 2,
+            "Adopting must move the journey to Husserl and consume act one.");
 
         var kept = HusserlEpocheState.Create("HUSSERL_EPOCHE:TEST:2");
         HusserlEpocheFlow.TryPrepare(kept, HusserlEpocheAction.KeepDescartes);
         var declined = graph.Start(HusserlEpocheState.SourceNodeId);
-        declined.LastFixedAct = 2;
         Check(HusserlEpocheFlow.TryCommitPending(kept, declined, graph),
             "Keeping Socrates must decline the act's fixed slot.");
-        Check(declined.DeclinedFixedActs.Contains(2)
+        Check(declined.DeclinedFixedActs.Contains(1)
             && declined.CurrentNodeId == HusserlEpocheState.SourceNodeId,
-            "Declining must leave the player on Descartes' node.");
+            "Declining must leave the player on Descartes' node and spend act one.");
 
         // Husserl stands on two lines. Describing the appearance names the
         // appearance line; the direction option names the embodied one, and the
@@ -48,12 +46,11 @@ internal static class HusserlEpocheChecks
             && graph.TryApply(journey, "WESTERN_EDGE_161") && graph.IsComplete(journey),
             "The appearance line must reach its own closing figure.");
 
-        var embodied = HusserlEpocheState.CreateAt("HUSSERL_EPOCHE:TEST:4", 2, HusserlEpocheState.CompletionEdgeId);
+        var embodied = HusserlEpocheState.Create("HUSSERL_EPOCHE:TEST:4");
         Check(HusserlEpocheFlow.TryPrepare(embodied, HusserlEpocheAction.TurnEmbodied),
             "The embodied direction must be selectable.");
         var turning = graph.Start(HusserlEpocheState.SourceNodeId);
         turning.RouteRules = true;
-        turning.LastFixedAct = 2;
         Check(HusserlEpocheFlow.TryCommitPending(embodied, turning, graph),
             "The embodied direction must take the first-act link.");
         Check(turning.RouteId == "EMBODIED_PERCEPTION"
