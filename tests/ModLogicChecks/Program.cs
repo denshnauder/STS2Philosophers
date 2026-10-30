@@ -23,6 +23,7 @@ WesternRouteChecks.Run();
 WesternResearchChecks.Run();
 WesternGraphChecks.Run();
 WesternRouteTableChecks.Run();
+ActPlacementSaveChecks.Run();
 WesternGraphRevisionChecks.Run();
 WesternPracticeChecks.Run();
 HeraclitusLyreChecks.Run();
