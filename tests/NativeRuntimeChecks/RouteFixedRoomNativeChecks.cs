@@ -272,6 +272,15 @@ internal static class RouteFixedRoomNativeChecks
         return null;
     }
 
+    // A run the harness built in memory is marked isolated by the state service,
+    // and TryGet then refuses to hand any record back; the fixture lifts that mark
+    // so the room reads the state it was given.
+    private static void Unisolate(RunState run)
+    {
+        object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
+        table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
     private static void CheckRoom(string routeId, string act, string node, Dictionary<string, Type> rooms,
         RunState run, object journey, List<string> failures, Type relic)
     {
@@ -310,7 +319,9 @@ internal static class RouteFixedRoomNativeChecks
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(shared, "CurrentDoctrine", Doctrine(relic));
         Put(shared, "WesternJourney", journey);
-        Call("PhilosophyRunStateService", "Restore", run, shared);
+        Unisolate(run);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
         object?[] reread = [run, null];
         Call("PhilosophyRunStateService", "TryGet", reread);
         string rereadRoute = reread[1] is null ? "none"
@@ -322,7 +333,9 @@ internal static class RouteFixedRoomNativeChecks
         if (!selected && act == "act three")
         {
             Put(journey, "LastFixedAct", 3);
-            Call("PhilosophyRunStateService", "Restore", run, shared);
+            Unisolate(run);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
             prepare = [run, null];
             selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
         }

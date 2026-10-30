@@ -52,6 +52,15 @@ internal static class ActBoundaryFixedEntryNativeChecks
         return Task.CompletedTask;
     }
 
+    // A run the harness built in memory is marked isolated by the state service,
+    // and TryGet then refuses to hand any record back; the fixture lifts that mark
+    // so the room reads the state it was given.
+    private static void Unisolate(RunState run)
+    {
+        object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
+        table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
     private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
