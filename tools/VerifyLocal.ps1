@@ -15,6 +15,10 @@ try {
     $env:DOTNET_ROOT = $dotNetRoot
     $env:DOTNET_ROLL_FORWARD = 'Major'
 
+    $stage = 'Design and route table'
+    & python3 (Join-Path $repository 'tools/CompareRouteTable.py')
+    if ($LASTEXITCODE -ne 0) { throw "Design and route table disagree: $LASTEXITCODE" }
+
     $stage = 'Delivery selection checks'
     & pwsh -NoProfile -File (Join-Path $repository 'tests/DeliverySelectionChecks.ps1')
     if ($LASTEXITCODE -ne 0) { throw "Delivery selection checks failed: $LASTEXITCODE" }
