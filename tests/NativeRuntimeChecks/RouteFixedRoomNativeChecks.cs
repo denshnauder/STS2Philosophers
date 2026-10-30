@@ -33,6 +33,7 @@ internal static class RouteFixedRoomNativeChecks
         var routes = (System.Collections.IEnumerable)table.GetType().GetProperty("Routes", Methods)!
             .GetValue(table)!;
         List<string> failures = [];
+        List<string> thirdFailures = [];
         foreach (object route in routes.Cast<object>())
         {
             string routeId = (string)Get(route, "RouteId");
@@ -63,9 +64,41 @@ internal static class RouteFixedRoomNativeChecks
             }
             Put(journey, "LastFixedAct", 2);
             CheckRoom(routeId, "act two", secondNode!, rooms, run, journey, failures, relic);
-            // Act three is not measured here: its rooms require the act-two room
-            // to have been played out (predecessor and combat history), which a
-            // boundary fixture does not have. Act two has no such predecessor.
+            // Act three opens only after act two's room has been played out, and
+            // its boundary belongs to the third act, so the fixture is rebuilt on
+            // that act and the two handovers are replayed into it.
+            var thirdTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                .Invoke(null, [relic, 2])!;
+            var thirdRun = (RunState)thirdTuple[1]!;
+            Set(CombatManager.Instance, "_turnState", null);
+            object thirdJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+            Put(thirdJourney, "RouteId", routeId);
+            Put(thirdJourney, "LastFixedAct", 1);
+            // The act-one handover into the figure that opens act two is part of
+            // the room chain act three inherits, so replay it as well.
+            string secondFrom = "";
+            foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+                .Invoke(graph, [thirdJourney, "Fixed"])!).Cast<object>())
+                if ((string)Get(edge, "EdgeId") == secondEdge) secondFrom = (string)Get(edge, "FromNodeId");
+            if (secondFrom.Length > 0)
+                foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+                    .Invoke(graph, [thirdJourney, "Fixed"])!).Cast<object>())
+                {
+                    if ((int)Get(edge, "Act") != 1 || (string)Get(edge, "ToNodeId") != secondFrom) continue;
+                    graph.GetType().GetMethod("TryApply")!.Invoke(graph, [thirdJourney, (string)Get(edge, "EdgeId")]);
+                    break;
+                }
+            graph.GetType().GetMethod("TryApply")!.Invoke(graph, [thirdJourney, secondEdge]);
+            ((HashSet<string>)Get(thirdJourney, "SeenThinkerIds")).Add(second);
+            ((HashSet<int>)Get(thirdJourney, "ResolvedQuestionActs")).Add(2);
+            Put(thirdJourney, "LastFixedAct", 3);
+            string? thirdEdge = FindEdge(graph, thirdJourney, 3, third, out string? thirdNode);
+            if (thirdEdge is null)
+            {
+                thirdFailures.Add($"{routeId}: no fixed edge carries act three to {third}.");
+                continue;
+            }
+            CheckRoom(routeId, "act three", thirdNode!, rooms, thirdRun, thirdJourney, thirdFailures, relic);
         }
         // Reported, not enforced yet. Two things can make a line appear here: the
         // room is still gated to the act it was written for, or the fixture has no
@@ -73,6 +106,11 @@ internal static class RouteFixedRoomNativeChecks
         // must shrink to zero before this becomes an assertion.
         if (failures.Count > 0)
             Console.WriteLine("Route room gaps (" + failures.Count + "): " + string.Join(" | ", failures));
+        // Act three is measured separately: its rooms still expect the second
+        // act's room to have been played out, which this fixture cannot do yet.
+        if (thirdFailures.Count > 0)
+            Console.WriteLine("Route act-three gaps (" + thirdFailures.Count + "): "
+                + string.Join(" | ", thirdFailures));
         return Task.CompletedTask;
     }
 
