@@ -2244,5 +2244,22 @@
   "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.title": "Leave the square",
   "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.description": "Close the record.",
   "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.title": "Leave the square",
-  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "Close the record."
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "Close the record.",
+  "SCHELLING_NATURE.title": "Schelling: Nature Organizing Itself",
+  "SCHELLING_NATURE.pages.INVITATION.description": "A naturalist lays out a fossil sequence: each layer seems to answer the one below it. Schelling asks whether nature is visible spirit, a mechanism, or something Spinoza already settled.",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_SPIRIT.title": "Nature as visible spirit",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_SPIRIT.description": "Read the sequence as spirit becoming visible in matter.",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_MECHANISM.title": "Nature as mechanism",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_MECHANISM.description": "Keep the sequence mechanical: causes below, effects above.",
+  "SCHELLING_NATURE.pages.INVITATION.options.KEEP_SPINOZA.title": "Keep Spinoza",
+  "SCHELLING_NATURE.pages.INVITATION.options.KEEP_SPINOZA.description": "Refuse the question and stay with Spinoza's one substance.",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.description": "You read nature as visible spirit. The sequence becomes intelligible as self-organization, though the reading risks seeing purpose everywhere.",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.description": "You keep nature mechanical. The sequence stays predictable, and the appearance of purpose is only an effect of blind causes.",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.description": "You keep Spinoza. The fossil question goes unanswered and no fixed link is taken this act.",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.options.LEAVE.title": "Leave the collection",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.options.LEAVE.description": "Close the record.",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.title": "Leave the collection",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.description": "Close the record.",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the collection",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

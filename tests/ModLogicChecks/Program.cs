@@ -52,6 +52,7 @@ BerkeleyPerceivedMarkChecks.Run();
 MontesquieuBalanceChecks.Run();
 DiderotPracticeChecks.Run();
 SmithSympathyChecks.Run();
+SchellingNatureChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

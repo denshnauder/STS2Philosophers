@@ -2244,5 +2244,22 @@
   "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.title": "离开集市",
   "SMITH_SYMPATHY.pages.RESULT_EXCHANGE.options.LEAVE.description": "关闭记录。",
   "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.title": "离开集市",
-  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "关闭记录。"
+  "SMITH_SYMPATHY.pages.RESULT_ARRANGEMENT.options.LEAVE.description": "关闭记录。",
+  "SCHELLING_NATURE.title": "谢林：自然的自我组织",
+  "SCHELLING_NATURE.pages.INVITATION.description": "一位博物学家摊开化石层序：每一层似乎都在回答下面那一层。谢林问你：自然是可见的精神、一台机械，还是斯宾诺莎已经处理完的东西？",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_SPIRIT.title": "自然是可见的精神",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_SPIRIT.description": "把层序读成精神在物质中逐渐可见。",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_MECHANISM.title": "自然只是机械",
+  "SCHELLING_NATURE.pages.INVITATION.options.NATURE_AS_MECHANISM.description": "让层序保持机械：下层是原因，上层是结果。",
+  "SCHELLING_NATURE.pages.INVITATION.options.KEEP_SPINOZA.title": "保留斯宾诺莎",
+  "SCHELLING_NATURE.pages.INVITATION.options.KEEP_SPINOZA.description": "拒绝这个问题，停留在斯宾诺莎的单一实体。",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.description": "你把自然读成可见的精神。层序作为自我组织变得可理解，但这样读也有把目的论塞进一切的风险。",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.description": "你让自然保持机械。层序仍然可预测，所谓目的只是盲目原因造成的效果。",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.description": "你保留斯宾诺莎。化石问题没有得到回答，本幕不再取得固定承接。",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.options.LEAVE.title": "离开标本室",
+  "SCHELLING_NATURE.pages.RESULT_SPIRIT.options.LEAVE.description": "关闭记录。",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.title": "离开标本室",
+  "SCHELLING_NATURE.pages.RESULT_MECHANISM.options.LEAVE.description": "关闭记录。",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.title": "离开标本室",
+  "SCHELLING_NATURE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

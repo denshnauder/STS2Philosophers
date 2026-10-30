@@ -473,6 +473,14 @@
     "stage_id": "CORE",
     "display_name": "阿伦特",
     "terminal": false
+  },
+{
+    "node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+    "thinker_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
+    "problem_id": "BEING_AND_CHANGE",
+    "stage_id": "CORE",
+    "display_name": "谢林",
+    "terminal": false
   }
   ],
   "edges": [
@@ -2194,6 +2202,64 @@
       "evidence_status": "LocalPlanning",
       "evidence_sources": [
         "00西哲当前路线.md:33",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_057",
+    "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+    "to_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+    "act": 2,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "问题展开，高；从实体统一转入自然的自我组织与可见精神",
+    "source": "00西哲当前路线.md:27",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "BEING_AND_CHANGE",
+      "to_problem_id": "BEING_AND_CHANGE",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "自然哲学须保留自然的独立性，不能把自然只写成精神的工具。",
+      "interpretation_boundary": "作为同一问题面的展开，不复活旧直接继承边。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:27",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_058",
+    "from_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+    "to_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
+    "act": 3,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "收束，高；从自然的自我组织转入差异与生成",
+    "source": "00西哲当前路线.md:27",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "BEING_AND_CHANGE",
+      "to_problem_id": "BEING_AND_CHANGE",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "差异哲学须保留生成的风险与不可化约性，不能写成无代价的流动。",
+      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:27",
         "00西哲当前路线.md:53"
       ]
     }

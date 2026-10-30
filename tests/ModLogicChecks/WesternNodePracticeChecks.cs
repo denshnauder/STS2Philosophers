@@ -132,11 +132,15 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(arendt, Plays("SASP", "abcd"), previous, 3) == default,
             "Arendt's closing choice resolves its own public-action test; the node must not add a generic reward.");
         covered.Add(arendt);
+        const string schelling = "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(schelling, Plays("SASP", "abcd"), previous, 3) == default,
+            "Schelling's room resolves its own nature choice; the node must not add a generic reward.");
+        covered.Add(schelling);
         const string rawls = "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE";
         Check(WesternNodePracticePolicy.Evaluate(rawls, Plays("SASP", "abcd"), previous, 3) == default,
             "Rawls's closing choice resolves its own distribution test; the node must not add a generic reward.");
         covered.Add(rawls);
-        Check(covered.Count == 59 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 60 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
