@@ -18,6 +18,11 @@ internal static class AristotleCivicInquiryPatch
         WesternJourneyState? journey = philosophy.WesternJourney;
         AristotleCivicInquiry? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        // No route of the route table meets Aristotle at the second act, so this
+        // room is content from before the route rules. A run started under them
+        // must not open it: it would displace the figure the route names. Older
+        // saves keep it exactly as it was.
+        if (journey is { RouteRules: true }) return null;
         AristotleCivicInquiryState? saved = philosophy.AristotleCivicInquiry;
         ActBehaviorState? behavior = philosophy.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         var player = run.Players.Count == 1 ? run.Players[0] : null;
