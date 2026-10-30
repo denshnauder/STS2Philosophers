@@ -2499,5 +2499,22 @@
   "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.title": "Leave the study",
   "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.description": "Close the record.",
   "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.title": "Leave the study",
-  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "WITTGENSTEIN_GAME.title": "Wittgenstein: Language Games",
+  "WITTGENSTEIN_GAME.pages.INVITATION.description": "The analysis has purified the sentence, yet the room still uses it to ask for a cup. Wittgenstein asks what the record should keep.",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.LANGUAGE_GAME.title": "Language game",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.LANGUAGE_GAME.description": "Record the sentence inside the practice that gives it a use.",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.PICTURE_THEORY.title": "Picture theory",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.PICTURE_THEORY.description": "Record the sentence as a picture that must share a form with the fact.",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.KEEP_RUSSELL.title": "Keep Russell",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.KEEP_RUSSELL.description": "Refuse the question and stay with the logical analysis.",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.description": "You record the language game. The sentence is now part of an activity, and the request for a cup is what gives it sense.",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.description": "You record the picture theory. The sentence is a picture of the fact, and the room notes that the practice of asking was not entered.",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.description": "You keep Russell. The question goes unanswered, and no question link is taken this act.",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.options.LEAVE.title": "Leave the room",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.options.LEAVE.description": "Close the record.",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.title": "Leave the room",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.description": "Close the record.",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.title": "Leave the room",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

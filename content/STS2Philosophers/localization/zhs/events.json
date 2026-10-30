@@ -2499,5 +2499,22 @@
   "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.title": "离开书房",
   "RUSSELL_ANALYSIS.pages.RESULT_ATOMISM.options.LEAVE.description": "关闭记录。",
   "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.title": "离开书房",
-  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "RUSSELL_ANALYSIS.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "WITTGENSTEIN_GAME.title": "维特根斯坦：语言游戏",
+  "WITTGENSTEIN_GAME.pages.INVITATION.description": "分析把句子提纯了，可房间里的人仍用它来要一只杯子。维特根斯坦问：记录应当保留什么？",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.LANGUAGE_GAME.title": "语言游戏",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.LANGUAGE_GAME.description": "把句子放回赋予它用法的实践里记录。",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.PICTURE_THEORY.title": "图像论",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.PICTURE_THEORY.description": "把句子记为必须与事实共享形式的图像。",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.KEEP_RUSSELL.title": "保留罗素",
+  "WITTGENSTEIN_GAME.pages.INVITATION.options.KEEP_RUSSELL.description": "拒绝这个问题，停留在逻辑分析。",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.description": "你记录语言游戏。句子成为活动的一部分，要杯子的请求才赋予它意义。",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.description": "你记录图像论。句子是事实的图像，记录注明要杯子的实践没有被写入。",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.description": "你保留罗素。问题没有得到回答，本幕不再取得问号承接。",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.options.LEAVE.title": "离开房间",
+  "WITTGENSTEIN_GAME.pages.RESULT_GAME.options.LEAVE.description": "关闭记录。",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.title": "离开房间",
+  "WITTGENSTEIN_GAME.pages.RESULT_PICTURE.options.LEAVE.description": "关闭记录。",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.title": "离开房间",
+  "WITTGENSTEIN_GAME.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

@@ -76,6 +76,7 @@ internal sealed class PhilosophyRunState
     public MerleauPontyBodyState? MerleauPontyBody { get; set; }
     public FregeSenseState? FregeSense { get; set; }
     public RussellAnalysisState? RussellAnalysis { get; set; }
+    public WittgensteinGameState? WittgensteinGame { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -167,6 +168,7 @@ internal sealed class PhilosophyRunState
         || MerleauPontyBody is not null
         || FregeSense is not null
         || RussellAnalysis is not null
+        || WittgensteinGame is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -389,6 +391,7 @@ internal sealed class PhilosophyRunState
         MerleauPontyBody?.NormalizeAfterLoad();
         FregeSense?.NormalizeAfterLoad();
         RussellAnalysis?.NormalizeAfterLoad();
+        WittgensteinGame?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
