@@ -266,12 +266,15 @@ internal static class RouteFixedRoomNativeChecks
 
     private static void AssertOnly(string[] expected, List<string> failures, string act)
     {
-        foreach (string failure in failures)
-        {
-            string routeId = failure[..failure.IndexOf(':')];
+        var broken = failures.Select(failure => failure[..failure.IndexOf(':')]).ToHashSet(StringComparer.Ordinal);
+        foreach (string routeId in broken)
             Check(expected.Contains(routeId),
-                $"{act}: {routeId} stopped opening its fixed room and is not on the known-gap list: {failure}");
-        }
+                $"{act}: {routeId} stopped opening its fixed room and is not on the known-gap list.");
+        // The list is a budget, not a memory: a route that starts opening again
+        // has to leave it, or the number stops meaning anything.
+        foreach (string routeId in expected)
+            Check(broken.Contains(routeId),
+                $"{act}: {routeId} opens its fixed room now, so it must leave the known-gap list.");
     }
 
     private static string? FindEdge(object graph, object journey, int act, string thinker, out string? target)

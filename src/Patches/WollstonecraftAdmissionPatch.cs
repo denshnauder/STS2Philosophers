@@ -31,9 +31,15 @@ internal static class WollstonecraftAdmissionPatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
 
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == WollstonecraftAdmissionState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "MARY_WOLLSTONECRAFT" ? 2
+                : route.ActThreeFigure == "MARY_WOLLSTONECRAFT" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == WollstonecraftAdmissionState.CompletionEdgeId);
         WollstonecraftAdmissionTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
@@ -49,7 +55,8 @@ internal static class WollstonecraftAdmissionPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             saved is not null && journey is not null && WollstonecraftAdmissionFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            routeAct);
         if (!WollstonecraftAdmissionTriggerPolicy.ShouldInsert(context)) return null;
 
         var candidate = saved ?? WollstonecraftAdmissionState.Create(
