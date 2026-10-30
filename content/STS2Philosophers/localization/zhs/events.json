@@ -2363,5 +2363,22 @@
   "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.title": "离开测量所",
   "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.description": "关闭记录。",
   "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.title": "离开测量所",
-  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.ASK_JAMES.title": "问詹姆斯",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.ASK_JAMES.description": "把测量带给詹姆斯，看它在实践上会改变什么。",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.ASK_JAMES.title": "问詹姆斯",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.ASK_JAMES.description": "把测量带给詹姆斯，看它在实践上会改变什么。",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.ASK_JAMES.title": "问詹姆斯",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.ASK_JAMES.description": "把测量带给詹姆斯，看它在实践上会改变什么。",
+  "JAMES_PRAGMATISM.pages.INVITATION.description": "詹姆斯听完，问：这个信念在实践上会造成什么差别？他给出两种回答方式。",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.TEST_PUBLICLY.title": "公开检验",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.TEST_PUBLICLY.description": "把信念放进共同的检验里，让结果可以反对它。",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.KEEP_PRIVATE.title": "保留为私人假设",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.KEEP_PRIVATE.description": "把信念当作私人的工作假设保留下来。",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.description": "你公开检验。信念有了任何人都能核对的结果，失败也会属于共同的记录。",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.description": "你保留为私人假设。信念仍是工作假设，房间不能声称它已被检验。",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.title": "离开詹姆斯",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.description": "回到测量记录。",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.title": "离开詹姆斯",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "回到测量记录。"
 }

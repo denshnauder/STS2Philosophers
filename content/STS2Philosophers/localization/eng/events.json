@@ -2363,5 +2363,22 @@
   "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.title": "Leave the survey",
   "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.LEAVE.description": "Close the record.",
   "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the survey",
-  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.ASK_JAMES.title": "Ask James",
+  "PEIRCE_INQUIRY.pages.RESULT_TEST.options.ASK_JAMES.description": "Bring the measurement to James and see what it changes in practice.",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.ASK_JAMES.title": "Ask James",
+  "PEIRCE_INQUIRY.pages.RESULT_COMMUNITY.options.ASK_JAMES.description": "Bring the measurement to James and see what it changes in practice.",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.ASK_JAMES.title": "Ask James",
+  "PEIRCE_INQUIRY.pages.RESULT_KEPT.options.ASK_JAMES.description": "Bring the measurement to James and see what it changes in practice.",
+  "JAMES_PRAGMATISM.pages.INVITATION.description": "James listens and asks what difference the belief would make in practice. He offers two ways to answer.",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.TEST_PUBLICLY.title": "Test it publicly",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.TEST_PUBLICLY.description": "Put the belief into a shared test and let the result count against it.",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.KEEP_PRIVATE.title": "Keep it private",
+  "JAMES_PRAGMATISM.pages.INVITATION.options.KEEP_PRIVATE.description": "Keep the belief as a private working hypothesis.",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.description": "You test it publicly. The belief now has a result anyone can check, and a failure would belong to the shared record.",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.description": "You keep it private. The belief stays a working hypothesis, and the room cannot claim it has been tested.",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.title": "Leave James",
+  "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.description": "Return to the survey record.",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.title": "Leave James",
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "Return to the survey record."
 }

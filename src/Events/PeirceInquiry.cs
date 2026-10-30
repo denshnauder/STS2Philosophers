@@ -124,6 +124,13 @@ public sealed class PeirceInquiry : EventModel
 
     private IReadOnlyList<EventOption> GenerateOptions(PeirceInquiryState state)
     {
+        if (state.InspectingJames && state.James is { } james)
+            return JamesPragmatismFlow.Options(james.Stage)
+                .Select(action => new EventOption(this,
+                    () => ChooseJames(state, james.InstanceId, james.Stage, james.ConfirmedActions.Count, action),
+                    $"JAMES_PRAGMATISM.pages.{JamesPragmatismFlow.StageKey(james.Stage)}.options.{JamesPragmatismFlow.ActionKey(action)}",
+                    Array.Empty<IHoverTip>()))
+                .ToArray();
         string instanceId = state.InstanceId;
         PeirceInquiryStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
@@ -133,6 +140,35 @@ public sealed class PeirceInquiry : EventModel
                 $"{LocalizationRoot}.pages.{PeirceInquiryFlow.StageKey(stage)}.options.{PeirceInquiryFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
+    }
+
+    private async Task ChooseJames(PeirceInquiryState expectedState, string expectedInstanceId,
+        JamesPragmatismStage expectedStage, int expectedActionCount, JamesPragmatismAction action)
+    {
+        if (!_ready || _blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
+        {
+            if (Owner?.RunState is not RunState run || !IsActiveRoom(run)) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
+            {
+                Block("PeirceInquiry run state is unavailable."); return;
+            }
+            if (shared.PeirceInquiry is not { } state || !ReferenceEquals(state, expectedState)
+                || !state.InspectingJames || state.James is not { } james
+                || james.InstanceId != expectedInstanceId || james.Stage != expectedStage
+                || james.ConfirmedActions.Count != expectedActionCount
+                || james.PendingAction != JamesPragmatismAction.None || james.Closed
+                || !JamesPragmatismFlow.TryPrepare(james, action)) return;
+            JamesPragmatismFlow.Apply(james, action);
+            if (james.Closed) state.InspectingJames = false;
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block($"PeirceInquiry James persistence is unknown: {action}."); return;
+            }
+            if (IsActiveRoom(run)) ShowConfirmedState(state);
+        }
+        catch (Exception exception) { Block($"PeirceInquiry James choice failed: {exception}"); }
+        finally { Volatile.Write(ref _resolving, 0); }
     }
 
     private PeirceInquiryState? TryRestoreState()
@@ -157,6 +193,8 @@ public sealed class PeirceInquiry : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(PeirceInquiryState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{PeirceInquiryFlow.DescriptionKey(state)}.description");
+        state.InspectingJames && state.James is { } james
+            ? L10NLookup($"JAMES_PRAGMATISM.pages.{JamesPragmatismFlow.StageKey(james.Stage)}.description")
+            : L10NLookup($"{LocalizationRoot}.pages.{PeirceInquiryFlow.DescriptionKey(state)}.description");
 
 }

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace STS2Philosophers;
 
 internal enum PeirceInquiryStage { Invitation, ResultTest, ResultCommunity, ResultKept }
-internal enum PeirceInquiryAction { None, TestByConsequences, FallibleCommunity, KeepHume, Leave }
+internal enum PeirceInquiryAction { None, TestByConsequences, FallibleCommunity, KeepHume, AskJames, Leave }
 internal enum PeirceInquiryStandard { None, Consequences, Community, Humean }
 
 /// <summary>
@@ -27,6 +27,8 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
     public bool EdgeCommitted { get; set; }
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
+    public JamesPragmatismState? James { get; set; }
+    public bool InspectingJames { get; set; }
 
     public static PeirceInquiryState Create(string instanceId) => new() { InstanceId = instanceId };
 
@@ -44,6 +46,8 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Standard)
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
+            || InspectingJames && James is null
+            || James is not null && !James.IsUsable()
             || Closed && PendingAction != PeirceInquiryAction.None
             || PendingAction != PeirceInquiryAction.None
                 && !PeirceInquiryFlow.Options(Stage).Contains(PendingAction)) return false;
@@ -66,7 +70,8 @@ internal static class PeirceInquiryFlow
             [PeirceInquiryAction.TestByConsequences, PeirceInquiryAction.FallibleCommunity,
                 PeirceInquiryAction.KeepHume],
         PeirceInquiryStage.ResultTest or PeirceInquiryStage.ResultCommunity
-            or PeirceInquiryStage.ResultKept => [PeirceInquiryAction.Leave],
+            or PeirceInquiryStage.ResultKept =>
+            [PeirceInquiryAction.Leave, PeirceInquiryAction.AskJames],
         _ => [],
     };
 
@@ -96,6 +101,10 @@ internal static class PeirceInquiryFlow
                 state.Standard = PeirceInquiryStandard.Humean;
                 state.FixedDeclined = true;
                 state.Stage = PeirceInquiryStage.ResultKept;
+                break;
+            case PeirceInquiryAction.AskJames:
+                state.James ??= JamesPragmatismState.Create($"{state.InstanceId}:JAMES");
+                state.InspectingJames = true;
                 break;
             case PeirceInquiryAction.Leave:
                 state.Closed = true;

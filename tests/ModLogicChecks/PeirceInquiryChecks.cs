@@ -42,6 +42,30 @@ internal static class PeirceInquiryChecks
             && declined.CurrentNodeId == PeirceInquiryState.SourceNodeId,
             "Declining must leave the player on Hume's node.");
 
+        var jamesHost = PeirceInquiryState.Create("PEIRCE_INQUIRY:TEST:J");
+        PeirceInquiryFlow.TryPrepare(jamesHost, PeirceInquiryAction.TestByConsequences);
+        var jamesJourney = new WesternJourneyState
+        {
+            CurrentNodeId = PeirceInquiryState.SourceNodeId,
+            LastFixedAct = 2,
+        };
+        PeirceInquiryFlow.TryCommitPending(jamesHost, jamesJourney, graph);
+        Check(PeirceInquiryFlow.TryPrepare(jamesHost, PeirceInquiryAction.AskJames),
+            "The result page must offer James' in-batch segment.");
+        PeirceInquiryFlow.Apply(jamesHost, PeirceInquiryAction.AskJames);
+        JamesPragmatismState james = jamesHost.James!;
+        Check(jamesHost.InspectingJames && james.IsUsable(),
+            "Asking James must open a usable in-batch segment.");
+        Check(JamesPragmatismFlow.TryPrepare(james, JamesPragmatismAction.TestPublicly),
+            "James must offer a public test or a private hypothesis.");
+        JamesPragmatismFlow.Apply(james, JamesPragmatismAction.TestPublicly);
+        Check(james.Standard == JamesPragmatismStandard.Public
+            && james.Stage == JamesPragmatismStage.ResultPublic,
+            "The public test must record its standard and stage.");
+        JamesPragmatismFlow.TryPrepare(james, JamesPragmatismAction.Leave);
+        JamesPragmatismFlow.Apply(james, JamesPragmatismAction.Leave);
+        Check(james.Closed, "Leaving James must close the segment.");
+
         var tampered = PeirceInquiryState.Create("PEIRCE_INQUIRY:TEST:3");
         tampered.Standard = PeirceInquiryStandard.Community;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
