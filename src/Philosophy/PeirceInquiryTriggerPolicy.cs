@@ -4,7 +4,8 @@ internal sealed record PeirceInquiryTriggerContext(
     bool RunInProgress, bool AtSafeMapBoundary, bool IsSingleplayer, int CurrentActIndex,
     bool SourceIsCompletedNonBossCombat, int CompletedCombatCount, string? CurrentNodeId,
     int LastFixedAct, bool CompletionEdgeEligible, bool HasSavedInstance, bool SavedInstanceUsable,
-    bool SavedInstanceClosed, bool SavedRouteConsistent, bool ModelAvailable);
+    bool SavedInstanceClosed, bool SavedRouteConsistent, bool ModelAvailable,
+    string? RouteSourceNodeId = null);
 
 internal static class PeirceInquiryTriggerPolicy
 {
@@ -15,7 +16,9 @@ internal static class PeirceInquiryTriggerPolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == PeirceInquiryState.SourceNodeId
+            && (context.CurrentNodeId == PeirceInquiryState.SourceNodeId
+                || context.RouteSourceNodeId is { Length: > 0 }
+                && context.CurrentNodeId == context.RouteSourceNodeId)
             && context.LastFixedAct == 2 && context.CompletionEdgeEligible;
     }
 }

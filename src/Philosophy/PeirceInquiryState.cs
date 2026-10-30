@@ -20,6 +20,9 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+
+    /// <summary>The node a route arrives from when it places this room outside its own act.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
     public PeirceInquiryStage Stage { get; set; }
     public PeirceInquiryAction PendingAction { get; set; }
     public List<PeirceInquiryAction> ConfirmedActions { get; set; } = [];
@@ -132,15 +135,19 @@ internal static class PeirceInquiryFlow
     public static bool IsRouteConsistent(PeirceInquiryState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
+        // A route may reach the room from a different question node; the edge it
+        // uses is recorded when the room is created for that act.
+        bool atSource = journey.CurrentNodeId == PeirceInquiryState.SourceNodeId
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         bool adopted = journey.CompletedEdgeIds.Contains(PeirceInquiryState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == PeirceInquiryState.SourceNodeId;
+                && atSource;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == PeirceInquiryState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && journey.CurrentNodeId == PeirceInquiryState.SourceNodeId;
+            && atSource;
     }
 
     public static string DescriptionKey(PeirceInquiryState state) => state.Stage switch

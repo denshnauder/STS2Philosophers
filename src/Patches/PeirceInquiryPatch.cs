@@ -29,21 +29,33 @@ internal static class PeirceInquiryPatch
         PeirceInquiry? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "CHARLES_SANDERS_PEIRCE" ? 2
+                : route.ActThreeFigure == "CHARLES_SANDERS_PEIRCE" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string routeSource = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == PeirceInquiryState.AdoptedNodeId)
+                .Select(edge => edge.FromNodeId).FirstOrDefault() ?? string.Empty
+            : string.Empty;
+        bool edgeEligible = journey is not null && graph.GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == PeirceInquiryState.CompletionEdgeId);
         PeirceInquiryTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
-                && WesternFirstActBranch.IsChosen(run, journey, WesternRouteGraph.LoadEmbedded(),
-                    PeirceInquiryState.CompletionEdgeId),
+                && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph,
+                    PeirceInquiryState.CompletionEdgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && PeirceInquiryFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            routeSource);
         if (!PeirceInquiryTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? PeirceInquiryState.Create($"PEIRCE_INQUIRY:{run.Rng.Seed}:2");
+        candidate.RouteSourceNodeId = routeSource;
         if (journey is null || !PeirceInquiryFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.PeirceInquiry = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
