@@ -160,7 +160,35 @@ internal static class RouteFixedRoomNativeChecks
                 + string.Join(" | ", thirdFailures));
         AssertOnly(ExpectedActTwo, failures, "act two");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
+        CheckFirstActBranch(graph);
         return Task.CompletedTask;
+    }
+
+    // A run without route identity still has to pick one first-act branch. The
+    // branch is asked about with the node a room opens from, so exactly one
+    // destination may answer yes; asking with a room's own act-two or act-three
+    // edge could only ever answer no.
+    private static void CheckFirstActBranch(object graph)
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var run = (RunState)tuple[1]!;
+        foreach (object node in ((System.Collections.IEnumerable)Get(graph, "Nodes")).Cast<object>())
+        {
+            string nodeId = (string)Get(node, "NodeId");
+            object journey;
+            try { journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [nodeId])!; }
+            catch (TargetInvocationException) { continue; }
+            var branch = ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+                .Invoke(graph, [journey, "Fixed"])!).Cast<object>()
+                .Where(edge => (int)Get(edge, "Act") == 1)
+                .ToList();
+            var destinations = branch.Select(edge => (string)Get(edge, "ToNodeId")).Distinct().ToList();
+            if (destinations.Count < 2) continue;
+            int taken = destinations.Count(destination =>
+                (bool)Call("WesternFirstActBranch", "IsOnBranch", run, journey, graph, destination)!);
+            Check(taken == 1, $"{nodeId}: the first act must take exactly one branch, but {taken} answered yes.");
+        }
     }
 
     private static void AssertOnly(string[] expected, List<string> failures, string act)

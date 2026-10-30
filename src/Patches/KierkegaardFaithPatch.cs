@@ -48,7 +48,7 @@ internal static class KierkegaardFaithPatch
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
-                && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
+                && (routeAct >= 2 || WesternFirstActBranch.IsOnBranch(run, journey, graph, KierkegaardFaithState.SourceNodeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && KierkegaardFaithFlow.IsRouteConsistent(saved, journey),
             canonical is not null,
