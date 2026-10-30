@@ -63,23 +63,14 @@ internal static class RouteFixedRoomNativeChecks
             }
             Put(journey, "LastFixedAct", 2);
             CheckRoom(routeId, "act two", secondNode!, rooms, run, journey, failures, relic);
-            // Act three opens from the second figure's node, after that handover.
-            if (!(bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, secondEdge])!)
-            {
-                failures.Add($"{routeId}: the act-two handover {secondEdge} does not apply.");
-                continue;
-            }
-            string? thirdEdge = FindEdge(graph, journey, 3, third, out string? thirdNode);
-            if (thirdEdge is null)
-            {
-                failures.Add($"{routeId}: no fixed edge carries act three to {third}.");
-                continue;
-            }
-            Put(journey, "LastFixedAct", 3);
-            CheckRoom(routeId, "act three", thirdNode!, rooms, run, journey, failures, relic);
+            // Act three is not measured here: its rooms require the act-two room
+            // to have been played out (predecessor and combat history), which a
+            // boundary fixture does not have. Act two has no such predecessor.
         }
-        // Reported, not enforced yet: each line here is a room still gated to the
-        // act it was written for. The list is the work queue, and it must shrink.
+        // Reported, not enforced yet. Two things can make a line appear here: the
+        // room is still gated to the act it was written for, or the fixture has no
+        // combat history for this entry relic. Both are worth fixing, and the list
+        // must shrink to zero before this becomes an assertion.
         if (failures.Count > 0)
             Console.WriteLine("Route room gaps (" + failures.Count + "): " + string.Join(" | ", failures));
         return Task.CompletedTask;
@@ -119,7 +110,7 @@ internal static class RouteFixedRoomNativeChecks
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
         if (!selected)
         {
-            failures.Add($"{routeId}: {act} does not open {room.Name} at its boundary.");
+            failures.Add($"{routeId}: {act} does not open {room.Name} at its boundary (run act {run.CurrentActIndex}, route {Get(journey, "RouteId")}).");
             return;
         }
         var chosen = ((EventRoom)prepare[1]!).CanonicalEvent.GetType();
@@ -159,16 +150,21 @@ internal static class RouteFixedRoomNativeChecks
     private static Dictionary<string, Type> RoomsByNode()
     {
         var map = new Dictionary<string, Type>(StringComparer.Ordinal);
+        // A room owns the figure it adopts; the node it starts from is only a
+        // fallback, because several rooms start at the same question node.
         foreach (Type type in Mod.GetTypes())
         {
             if (!type.Name.EndsWith("State", StringComparison.Ordinal)) continue;
-            foreach (string field in new[] { "SourceNodeId", "AdoptedNodeId" })
-            {
-                string? node = type.GetField(field, Methods)?.GetRawConstantValue() as string;
-                if (node is null) continue;
-                Type? room = Mod.GetType("STS2Philosophers." + type.Name[..^"State".Length]);
-                if (room is not null) map[node] = room;
-            }
+            string? adopted = type.GetField("AdoptedNodeId", Methods)?.GetRawConstantValue() as string;
+            Type? room = Mod.GetType("STS2Philosophers." + type.Name[..^"State".Length]);
+            if (adopted is not null && room is not null) map[adopted] = room;
+        }
+        foreach (Type type in Mod.GetTypes())
+        {
+            if (!type.Name.EndsWith("State", StringComparison.Ordinal)) continue;
+            string? source = type.GetField("SourceNodeId", Methods)?.GetRawConstantValue() as string;
+            Type? room = Mod.GetType("STS2Philosophers." + type.Name[..^"State".Length]);
+            if (source is not null && room is not null && !map.ContainsKey(source)) map[source] = room;
         }
         return map;
     }

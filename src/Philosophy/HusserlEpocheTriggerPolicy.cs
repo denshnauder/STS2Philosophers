@@ -18,7 +18,7 @@ internal static class HusserlEpocheTriggerPolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == HusserlEpocheState.SourceNodeId
+            && (context.RouteAct >= 2 || context.CurrentNodeId == HusserlEpocheState.SourceNodeId)
             && context.LastFixedAct == position && context.CompletionEdgeEligible;
     }
 }

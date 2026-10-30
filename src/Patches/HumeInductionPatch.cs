@@ -47,7 +47,8 @@ internal static class HumeInductionPatch
             journey?.LastFixedAct ?? 0,
             journey is not null
                 && (journey.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId)
-                    || journey.CompletedEdgeIds.Contains(HumeInductionState.SecondActEdgeId)),
+                    || journey.CompletedEdgeIds.Contains(HumeInductionState.SecondActEdgeId)
+                    || journey.CompletedEdgeIds.Contains(LockeCargoIdentityState.SecondActEdgeId)),
             edgeEligible,
             saved is not null,
             saved?.IsUsable() == true,

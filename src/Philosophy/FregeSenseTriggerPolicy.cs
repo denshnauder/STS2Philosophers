@@ -18,7 +18,7 @@ internal static class FregeSenseTriggerPolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == FregeSenseState.SourceNodeId
+            && (context.RouteAct >= 2 || context.CurrentNodeId == FregeSenseState.SourceNodeId)
             && context.LastFixedAct == position && context.CompletionEdgeEligible;
     }
 }

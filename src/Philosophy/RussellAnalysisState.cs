@@ -28,11 +28,19 @@ internal sealed class RussellAnalysisState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static RussellAnalysisState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 1;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public static RussellAnalysisState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+
+    public static RussellAnalysisState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
 
@@ -47,7 +55,7 @@ internal sealed class RussellAnalysisState : IJsonOnDeserialized
             || Closed && PendingAction != RussellAnalysisAction.None
             || PendingAction != RussellAnalysisAction.None
                 && !RussellAnalysisFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (RussellAnalysisAction action in ConfirmedActions)
         {
             if (replay.Closed || !RussellAnalysisFlow.Options(replay.Stage).Contains(action)) return false;
