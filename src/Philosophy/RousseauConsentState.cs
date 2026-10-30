@@ -130,14 +130,14 @@ internal static class RousseauConsentFlow
             || !journey.CompletedEdgeIds.Contains(RousseauConsentState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(RousseauConsentState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 2 && !adopted
+            return journey.LastFixedAct is 2 or 3 && !adopted
                 && !journey.ResolvedQuestionActs.Contains(2)
                 && journey.CurrentNodeId == RousseauConsentState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 2
+            return !state.QuestionDeclined && adopted && journey.LastFixedAct is 2 or 3
                 && journey.ResolvedQuestionActs.Contains(2)
                 && journey.CurrentNodeId == RousseauConsentState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2
+        return !adopted && journey.LastFixedAct is 2 or 3
             && journey.CurrentNodeId == RousseauConsentState.SourceNodeId
             && journey.ResolvedQuestionActs.Contains(2);
     }

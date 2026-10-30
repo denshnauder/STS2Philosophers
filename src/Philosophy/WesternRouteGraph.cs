@@ -134,7 +134,14 @@ internal sealed class WesternRouteGraph
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;
         state.CompletedEdgeIds.Add(edgeId);
         state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
-        if (edge.Slot == "Question") state.ResolvedQuestionActs.Add(state.LastFixedAct);
+        if (edge.Slot == "Question")
+        {
+            // The position keeps the legacy "a refused question may return as a
+            // later reflection" rule; the act records that this act's question is
+            // answered even when the fixed position has already moved past it.
+            state.ResolvedQuestionActs.Add(state.LastFixedAct);
+            state.ResolvedQuestionActs.Add(edge.Act);
+        }
         else state.LastFixedAct = Math.Min(3, state.LastFixedAct + 1);
         if (edge.Outcome is "Adopt" or "Switch") state.CurrentNodeId = edge.ToNodeId;
         return true;

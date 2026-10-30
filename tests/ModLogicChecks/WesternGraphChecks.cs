@@ -58,6 +58,19 @@ internal static class WesternGraphChecks
             Check(graph.GetEligibleEdges(state, "Fixed").Any(candidate => candidate.EdgeId == edge.EdgeId),
                 $"Fixed edge {edge.EdgeId} in act {edge.Act} must be open at its own act's position.");
         }
+        // Sol's sequence: a run that takes the second act's fixed event at the
+        // untouched position two lands on three, and the same act's question must
+        // still settle as act two rather than leaking into act three.
+        var late = graph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        Check(graph.TryApply(late, "WESTERN_EDGE_019"), "The first act's question settles at position one.");
+        late.LastFixedAct = 2;
+        Check(graph.TryApply(late, "WESTERN_EDGE_020") && late.LastFixedAct == 3,
+            "The second act's fixed event moves the position from two to three.");
+        Check(graph.GetEligibleEdges(late, "Question").Any(edge => edge.EdgeId == "WESTERN_EDGE_021"),
+            "The act's question stays open after its fixed event was taken.");
+        Check(graph.TryApply(late, "WESTERN_EDGE_021")
+            && late.ResolvedQuestionActs.Contains(2) && late.ResolvedQuestionActs.Contains(3),
+            "A question taken at position three records both its own act and the position it was taken at.");
         WesternJourneyState plato = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(plato, "WESTERN_EDGE_008") && graph.TryApply(plato, "WESTERN_EDGE_009"),
             "Plotinus requires the completed Socrates-to-Plato sequence.");
