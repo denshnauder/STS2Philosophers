@@ -2278,5 +2278,22 @@
   "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.title": "Leave the parish",
   "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.description": "Close the record.",
   "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.title": "Leave the parish",
-  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "MARX_ALIENATION.title": "Marx: Alienated Labor",
+  "MARX_ALIENATION.pages.INVITATION.description": "A factory inspector shows you the new machines: output has doubled, and the workers say the product no longer belongs to them. Marx asks what this room should record.",
+  "MARX_ALIENATION.pages.INVITATION.options.ALIENATED_LABOR.title": "Record alienated labor",
+  "MARX_ALIENATION.pages.INVITATION.options.ALIENATED_LABOR.description": "Name the separation between the worker and what the work produces.",
+  "MARX_ALIENATION.pages.INVITATION.options.HISTORICAL_PROGRESS.title": "Record historical progress",
+  "MARX_ALIENATION.pages.INVITATION.options.HISTORICAL_PROGRESS.description": "Read the machines as a stage that will be surpassed, whatever it costs now.",
+  "MARX_ALIENATION.pages.INVITATION.options.KEEP_HEGEL.title": "Keep Hegel",
+  "MARX_ALIENATION.pages.INVITATION.options.KEEP_HEGEL.description": "Refuse the question and stay with Hegel's history of spirit.",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.description": "You record alienated labor. The worker stands beside a product that is not his, and the machine that should extend him now commands him.",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.description": "You record historical progress. The machines become a stage with a direction, and the workers' present loss is booked as a cost of that direction.",
+  "MARX_ALIENATION.pages.RESULT_KEPT.description": "You keep Hegel. The question goes unanswered, no fixed link is taken this act, and the journey keeps its ending.",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.options.LEAVE.title": "Leave the factory",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.options.LEAVE.description": "Close the record.",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.title": "Leave the factory",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.description": "Close the record.",
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the factory",
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

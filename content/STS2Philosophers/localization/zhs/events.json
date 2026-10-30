@@ -2278,5 +2278,22 @@
   "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.title": "离开教区",
   "KIERKEGAARD_FAITH.pages.RESULT_ETHICAL.options.LEAVE.description": "关闭记录。",
   "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.title": "离开教区",
-  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "KIERKEGAARD_FAITH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "MARX_ALIENATION.title": "马克思：异化劳动",
+  "MARX_ALIENATION.pages.INVITATION.description": "一位工厂视察员带你去看新机器：产量翻倍，工人却说产品不再属于他们。马克思问你：这个房间应当记录什么？",
+  "MARX_ALIENATION.pages.INVITATION.options.ALIENATED_LABOR.title": "记录异化劳动",
+  "MARX_ALIENATION.pages.INVITATION.options.ALIENATED_LABOR.description": "把工人与劳动产品之间的分离明确写下来。",
+  "MARX_ALIENATION.pages.INVITATION.options.HISTORICAL_PROGRESS.title": "记录历史进步",
+  "MARX_ALIENATION.pages.INVITATION.options.HISTORICAL_PROGRESS.description": "把机器读成一个终将被超越的阶段，无论当下代价如何。",
+  "MARX_ALIENATION.pages.INVITATION.options.KEEP_HEGEL.title": "保留黑格尔",
+  "MARX_ALIENATION.pages.INVITATION.options.KEEP_HEGEL.description": "拒绝这个问题，停留在黑格尔的精神历史。",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.description": "你记录异化劳动。工人站在不属于他的产品旁边，本应延长他的机器如今指挥他。",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.description": "你记录历史进步。机器成为一个有方向的阶段，工人当下的损失被记成这个方向的成本。",
+  "MARX_ALIENATION.pages.RESULT_KEPT.description": "你保留黑格尔。问题没有得到回答，本幕不再取得固定承接，旅程保留原有结尾。",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.options.LEAVE.title": "离开工厂",
+  "MARX_ALIENATION.pages.RESULT_ALIENATION.options.LEAVE.description": "关闭记录。",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.title": "离开工厂",
+  "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.description": "关闭记录。",
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.title": "离开工厂",
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

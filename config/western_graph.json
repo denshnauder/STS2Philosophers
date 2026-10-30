@@ -442,62 +442,62 @@
       "display_name": "莱布尼茨",
       "terminal": true
     },
-{
-    "node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
-    "thinker_id": "MONTESQUIEU",
-    "problem_id": "FREEDOM_AND_INSTITUTIONS",
-    "stage_id": "CORE",
-    "display_name": "孟德斯鸠",
-    "terminal": false
-  },
-{
-    "node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
-    "thinker_id": "RAWLS",
-    "problem_id": "FREEDOM_AND_INSTITUTIONS",
-    "stage_id": "CORE",
-    "display_name": "罗尔斯",
-    "terminal": false
-  },
-{
-    "node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
-    "thinker_id": "ADAM_SMITH",
-    "problem_id": "FREEDOM_AND_INSTITUTIONS",
-    "stage_id": "CORE",
-    "display_name": "亚当·斯密",
-    "terminal": false
-  },
-{
-    "node_id": "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
-    "thinker_id": "HANNAH_ARENDT",
-    "problem_id": "FREEDOM_AND_INSTITUTIONS",
-    "stage_id": "CORE",
-    "display_name": "阿伦特",
-    "terminal": false
-  },
-{
-    "node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
-    "thinker_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
-    "problem_id": "BEING_AND_CHANGE",
-    "stage_id": "CORE",
-    "display_name": "谢林",
-    "terminal": false
-  },
-{
-    "node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
-    "thinker_id": "SOREN_KIERKEGAARD",
-    "problem_id": "SELF_AND_OTHER",
-    "stage_id": "CORE",
-    "display_name": "克尔凯郭尔",
-    "terminal": false
-  },
-{
-    "node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
-    "thinker_id": "JEAN_PAUL_SARTRE",
-    "problem_id": "SELF_AND_OTHER",
-    "stage_id": "CORE",
-    "display_name": "萨特",
-    "terminal": false
-  }
+    {
+      "node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "MONTESQUIEU",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "孟德斯鸠",
+      "terminal": false
+    },
+    {
+      "node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "RAWLS",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "罗尔斯",
+      "terminal": false
+    },
+    {
+      "node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "ADAM_SMITH",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "亚当·斯密",
+      "terminal": false
+    },
+    {
+      "node_id": "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "HANNAH_ARENDT",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "阿伦特",
+      "terminal": false
+    },
+    {
+      "node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+      "thinker_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "谢林",
+      "terminal": false
+    },
+    {
+      "node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "thinker_id": "SOREN_KIERKEGAARD",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "克尔凯郭尔",
+      "terminal": false
+    },
+    {
+      "node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "thinker_id": "JEAN_PAUL_SARTRE",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "萨特",
+      "terminal": false
+    }
   ],
   "edges": [
     {
@@ -1664,7 +1664,7 @@
       "edge_id": "WESTERN_EDGE_038",
       "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
       "to_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
-      "act": 3,
+      "act": 2,
       "slot": "Fixed",
       "outcome": "Adopt",
       "confidence": "High",
@@ -1831,13 +1831,17 @@
       "context": {
         "from_problem_id": "BEING_AND_CHANGE",
         "to_problem_id": "BEING_AND_CHANGE",
-        "relation_types": ["ParallelComparison"],
+        "relation_types": [
+          "ParallelComparison"
+        ],
         "compressed_mediators": "",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "记录有限追问不授予战斗收益，也不自动替换当前学说。",
         "interpretation_boundary": "古代证言不完整；不声称两人直接影响、面对面争辩或无定者构成完整机制证明。",
         "evidence_status": "LocalPlanning",
-        "evidence_sources": ["13阿那克西曼德当前设计.md"]
+        "evidence_sources": [
+          "13阿那克西曼德当前设计.md"
+        ]
       }
     },
     {
@@ -1850,12 +1854,17 @@
       "confidence": "Medium",
       "relation_summary": "柏拉图传统的晚古代重释；从德性与教育追问共同根据与有差异的回归",
       "source": "https://plato.stanford.edu/entries/plotinus/",
-      "required_edge_ids": ["WESTERN_EDGE_009"],
+      "required_edge_ids": [
+        "WESTERN_EDGE_009"
+      ],
       "enabled": true,
       "context": {
         "from_problem_id": "VIRTUE_AND_HAPPINESS",
         "to_problem_id": "VIRTUE_AND_HAPPINESS",
-        "relation_types": ["LaterReinterpretation", "InheritanceAndRevision"],
+        "relation_types": [
+          "LaterReinterpretation",
+          "InheritanceAndRevision"
+        ],
         "compressed_mediators": "柏拉图文本与后世解读传统；不设历史人物面对面会晤。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "有限的结构核查与现场修订不评判玩家的灵魂等级，也不否定公共德性。",
@@ -1878,12 +1887,17 @@
       "confidence": "Medium",
       "relation_summary": "经翻译注释网络重构亚里士多德政治思想；从具体共同体转向法律的理性、共同善、权限与公布",
       "source": "https://www.newadvent.org/summa/2090.htm",
-      "required_edge_ids": ["WESTERN_EDGE_016"],
+      "required_edge_ids": [
+        "WESTERN_EDGE_016"
+      ],
       "enabled": true,
       "context": {
         "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
         "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-        "relation_types": ["InheritanceAndRevision", "TextualCritique"],
+        "relation_types": [
+          "InheritanceAndRevision",
+          "TextualCritique"
+        ],
         "compressed_mediators": "晚期古代与中世纪阿拉伯语、希伯来语、拉丁语翻译及注释网络；不设历史人物直接会面。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "只记录公布、权限及具体例外的行动；不由程序判定法律、人格或信仰的终极正当性。",
@@ -2048,325 +2062,325 @@
         ]
       }
     },
-{
-    "edge_id": "WESTERN_EDGE_051",
-    "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 1,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题重开，高；从柏拉图式制度设计转入权力制衡与宽窄不同的制度条件",
-    "source": "00西哲当前路线.md:31",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "制度比较须保留权力滥用与宽容边界，不能写成对任一政体的无条件赞美。",
-      "interpretation_boundary": "以同一问题面重开，不伪造柏拉图到孟德斯鸠的直接师承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:31",
-        "00西哲当前路线.md:53"
-      ]
+    {
+      "edge_id": "WESTERN_EDGE_051",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从柏拉图式制度设计转入权力制衡与宽窄不同的制度条件",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "制度比较须保留权力滥用与宽容边界，不能写成对任一政体的无条件赞美。",
+        "interpretation_boundary": "以同一问题面重开，不伪造柏拉图到孟德斯鸠的直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_052",
+      "from_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从制衡经验转入普遍规则与制度正当性",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "普遍化检验须保留例外与强制边界，不能把制度正当性写成形式合规。",
+        "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_053",
+      "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "收束，高；以制度公正检验普遍规则对最不利者的后果",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "分配检验须保留最不利者与基本自由的优先次序，不能把公正化约为效率。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_054",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从制度安排转入同感、交换与公共行动",
+      "source": "00西哲当前路线.md:33",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "同感与自利都须保留其社会条件，不能写成单方面的道德赞歌或市场万能。",
+        "interpretation_boundary": "作为同一问题面的重开，不伪造柏拉图到斯密的直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:33",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_055",
+      "from_node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从同感与交换转入自由与伤害原则",
+      "source": "00西哲当前路线.md:33",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "自由原则须保留对他人的实际伤害边界，不能化约为放任。",
+        "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:33",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_056",
+      "from_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "收束，高；以公共行动检验自由制度是否留下共同世界",
+      "source": "00西哲当前路线.md:33",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "公共行动须保留plurality与行动者的风险，不能写成对一致性的要求。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:33",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_057",
+      "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "to_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从实体统一转入自然的自我组织与可见精神",
+      "source": "00西哲当前路线.md:27",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "自然哲学须保留自然的独立性，不能把自然只写成精神的工具。",
+        "interpretation_boundary": "作为同一问题面的展开，不复活旧直接继承边。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:27",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_058",
+      "from_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+      "to_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "收束，高；从自然的自我组织转入差异与生成",
+      "source": "00西哲当前路线.md:27",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "差异哲学须保留生成的风险与不可化约性，不能写成无代价的流动。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:27",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_059",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从德性追问转入个体承担与信仰的跳跃",
+      "source": "00西哲当前路线.md:28",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "个体承担须保留他人的不可替代性，不能写成孤立的自我决断。",
+        "interpretation_boundary": "作为同一问题面的重开，不伪造苏格拉底到克尔凯郭尔的直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:28",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_060",
+      "from_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "to_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从信仰的跳跃转入处境中的自由与选择",
+      "source": "00西哲当前路线.md:28",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "自由选择须保留处境的限制与他人的目光，不能写成任意。",
+        "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:28",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_061",
+      "from_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "收束，高；以处境中的自由与互惠检验个体承担",
+      "source": "00西哲当前路线.md:28",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "互惠须保留具体处境与不对称，不能把自由写成形式平等。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:28",
+          "00西哲当前路线.md:53"
+        ]
+      }
     }
-  },
-{
-    "edge_id": "WESTERN_EDGE_052",
-    "from_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 2,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题展开，高；从制衡经验转入普遍规则与制度正当性",
-    "source": "00西哲当前路线.md:31",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "普遍化检验须保留例外与强制边界，不能把制度正当性写成形式合规。",
-      "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:31",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_053",
-    "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 3,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "收束，高；以制度公正检验普遍规则对最不利者的后果",
-    "source": "00西哲当前路线.md:31",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "分配检验须保留最不利者与基本自由的优先次序，不能把公正化约为效率。",
-      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:31",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_054",
-    "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 1,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题重开，高；从制度安排转入同感、交换与公共行动",
-    "source": "00西哲当前路线.md:33",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "同感与自利都须保留其社会条件，不能写成单方面的道德赞歌或市场万能。",
-      "interpretation_boundary": "作为同一问题面的重开，不伪造柏拉图到斯密的直接师承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:33",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_055",
-    "from_node_id": "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 2,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题展开，高；从同感与交换转入自由与伤害原则",
-    "source": "00西哲当前路线.md:33",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "自由原则须保留对他人的实际伤害边界，不能化约为放任。",
-      "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:33",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_056",
-    "from_node_id": "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
-    "to_node_id": "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
-    "act": 3,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "收束，高；以公共行动检验自由制度是否留下共同世界",
-    "source": "00西哲当前路线.md:33",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "公共行动须保留plurality与行动者的风险，不能写成对一致性的要求。",
-      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:33",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_057",
-    "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
-    "to_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
-    "act": 2,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题展开，高；从实体统一转入自然的自我组织与可见精神",
-    "source": "00西哲当前路线.md:27",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "BEING_AND_CHANGE",
-      "to_problem_id": "BEING_AND_CHANGE",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "自然哲学须保留自然的独立性，不能把自然只写成精神的工具。",
-      "interpretation_boundary": "作为同一问题面的展开，不复活旧直接继承边。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:27",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_058",
-    "from_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
-    "to_node_id": "GILLES_DELEUZE__BEING_AND_CHANGE__CORE",
-    "act": 3,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "收束，高；从自然的自我组织转入差异与生成",
-    "source": "00西哲当前路线.md:27",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "BEING_AND_CHANGE",
-      "to_problem_id": "BEING_AND_CHANGE",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "差异哲学须保留生成的风险与不可化约性，不能写成无代价的流动。",
-      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:27",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_059",
-    "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
-    "to_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
-    "act": 1,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题重开，高；从德性追问转入个体承担与信仰的跳跃",
-    "source": "00西哲当前路线.md:28",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "VIRTUE_AND_HAPPINESS",
-      "to_problem_id": "SELF_AND_OTHER",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "个体承担须保留他人的不可替代性，不能写成孤立的自我决断。",
-      "interpretation_boundary": "作为同一问题面的重开，不伪造苏格拉底到克尔凯郭尔的直接师承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:28",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_060",
-    "from_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
-    "to_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
-    "act": 2,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "问题展开，高；从信仰的跳跃转入处境中的自由与选择",
-    "source": "00西哲当前路线.md:28",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "SELF_AND_OTHER",
-      "to_problem_id": "SELF_AND_OTHER",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "自由选择须保留处境的限制与他人的目光，不能写成任意。",
-      "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:28",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  },
-{
-    "edge_id": "WESTERN_EDGE_061",
-    "from_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
-    "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
-    "act": 3,
-    "slot": "Fixed",
-    "outcome": "Adopt",
-    "confidence": "High",
-    "relation_summary": "收束，高；以处境中的自由与互惠检验个体承担",
-    "source": "00西哲当前路线.md:28",
-    "required_edge_ids": [],
-    "enabled": true,
-    "context": {
-      "from_problem_id": "SELF_AND_OTHER",
-      "to_problem_id": "SELF_AND_OTHER",
-      "relation_types": [
-        "ProblemShift"
-      ],
-      "compressed_mediators": "",
-      "behavior_requirement": "NoAdditionalGate",
-      "ethical_boundary": "互惠须保留具体处境与不对称，不能把自由写成形式平等。",
-      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
-      "evidence_status": "LocalPlanning",
-      "evidence_sources": [
-        "00西哲当前路线.md:28",
-        "00西哲当前路线.md:53"
-      ]
-    }
-  }
   ],
   "samples": [
     {
@@ -2423,7 +2437,10 @@
     {
       "sample_id": "SAMPLE_14",
       "entry_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-      "edge_ids": ["WESTERN_EDGE_016", "WESTERN_EDGE_045"],
+      "edge_ids": [
+        "WESTERN_EDGE_016",
+        "WESTERN_EDGE_045"
+      ],
       "terminal_node_id": "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE",
       "disposition": "Executable",
       "review_note": ""

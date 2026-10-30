@@ -54,6 +54,7 @@ DiderotPracticeChecks.Run();
 SmithSympathyChecks.Run();
 SchellingNatureChecks.Run();
 KierkegaardFaithChecks.Run();
+MarxAlienationChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
