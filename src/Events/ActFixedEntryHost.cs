@@ -17,7 +17,10 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared?.WesternJourney is not { } journey)
             return false;
-        if (journey.LastFixedAct != run.CurrentActIndex + 1) return false;
+        // The position is open when the previous act's fixed event was taken
+        // (act index + 1) or when it was not (act index). Both are real runs.
+        int act = run.CurrentActIndex;
+        if (journey.LastFixedAct is var position && (position < act || position > act + 1)) return false;
         EventModel? model;
         using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
         if (model is null) return false;

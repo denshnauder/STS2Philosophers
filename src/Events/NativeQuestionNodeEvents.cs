@@ -168,7 +168,7 @@ internal static class NativeQuestionNodeEvents
         // Rousseau's act-two slot is shared by two rooms; the seed decides which
         // one opens the slot, so the pair is asked before the plain chain.
         EventModel? sharedSlot = TrySelectRousseauSecondAct(run);
-        return sharedSlot ?? TrySelectRoutedRoom(run, shared, null, null);
+        return sharedSlot ?? TrySelectRoutedRoom(run, shared, null, null, fixedOnly: true);
     }
 
     private static EventModel? TryResumeExisting(RunState run) =>
@@ -234,7 +234,8 @@ ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
     // relic and its question budget) and the act boundary (carrier null, so
     // only rooms that own a fixed slot can answer).
     private static EventModel? TrySelectRoutedRoom(
-        RunState run, PhilosophyRunState shared, RelicModel? carrier, EventModel? nextEvent)
+        RunState run, PhilosophyRunState shared, RelicModel? carrier, EventModel? nextEvent,
+        bool fixedOnly = false)
     {
         // Only the question branches read the fork; at the act boundary there is
         // no carrier relic and therefore no question claim.
@@ -272,10 +273,10 @@ ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? HumeInductionPatch.TrySelectNative(run)
             ?? KantApperceptionPatch.TrySelectNative(run)
             ?? SchopenhauerWillDenialPatch.TrySelectNative(run)
-            ?? CamusRevoltLimitPatch.TrySelectNative(run)
-            ?? CarnapFrameworkChoicePatch.TrySelectNative(run)
-            ?? AustinSpeechActPatch.TrySelectNative(run)
-            ?? PopperFalsificationPatch.TrySelectNative(run)
+            ?? (fixedOnly ? null : CamusRevoltLimitPatch.TrySelectNative(run))
+            ?? (fixedOnly ? null : CarnapFrameworkChoicePatch.TrySelectNative(run))
+            ?? (fixedOnly ? null : AustinSpeechActPatch.TrySelectNative(run))
+            ?? (fixedOnly ? null : PopperFalsificationPatch.TrySelectNative(run))
             ?? KantUniversalizationPatch.TrySelectNative(run)
             ?? MillHarmPatch.TrySelectNative(run) ?? MontesquieuBalancePatch.TrySelectNative(run) ?? SmithSympathyPatch.TrySelectNative(run) ?? SchellingNaturePatch.TrySelectNative(run) ?? KierkegaardFaithPatch.TrySelectNative(run) ?? MarxAlienationPatch.TrySelectNative(run) ?? NietzscheRevaluationPatch.TrySelectNative(run) ?? BenthamUtilityPatch.TrySelectNative(run) ?? ComtePositivismPatch.TrySelectNative(run) ?? PeirceInquiryPatch.TrySelectNative(run) ?? DeweyPublicExperimentPatch.TrySelectNative(run) ?? HusserlEpochePatch.TrySelectNative(run) ?? HeideggerDaseinPatch.TrySelectNative(run) ?? SartreExistencePatch.TrySelectNative(run) ?? MerleauPontyBodyPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run)
             ?? BeauvoirOtherPatch.TrySelectNative(run)

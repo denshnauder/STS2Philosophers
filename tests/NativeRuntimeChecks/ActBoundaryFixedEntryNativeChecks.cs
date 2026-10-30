@@ -27,13 +27,14 @@ internal static class ActBoundaryFixedEntryNativeChecks
     public static Task Run()
     {
         ModelDb.Inject(typeof(SpinozaCauseNetwork));
-        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true);
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 2);
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 1);
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
-        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false);
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
     }
 
-    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine)
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, 1])!;
@@ -42,7 +43,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
 
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
-        Put(journey, "LastFixedAct", 2);
+        Put(journey, "LastFixedAct", position);
         object? doctrineState = doctrine
             ? Activator.CreateInstance(T("CurrentDoctrine"), nonPublic: true)!
             : null;
