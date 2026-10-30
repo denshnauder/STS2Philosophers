@@ -163,15 +163,18 @@ internal static class NativeQuestionNodeEvents
     {
         if (!IsEntry(run)) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
-        EventModel? existing = TryResumeExisting(run);
-        if (existing is not null) return existing;
         // Rousseau's act-two slot is shared by two rooms; the seed decides which
         // one opens the slot, so the pair is asked before the plain chain.
         EventModel? sharedSlot = TrySelectRousseauSecondAct(run);
-        return sharedSlot ?? TrySelectRoutedRoom(run, shared, null, null, fixedOnly: true);
+        EventModel? fixedSlot = sharedSlot ?? TrySelectRoutedRoom(run, shared, null, null, fixedOnly: true);
+        if (fixedSlot is not null) return fixedSlot;
+        // The boundary belongs to this act's fixed event. A saved question page is
+        // resumed here only when no fixed room can open, so an open question can
+        // never take the fixed slot; its own node resumes it.
+        return TryResumeExisting(run, fixedOnly: true);
     }
 
-    private static EventModel? TryResumeExisting(RunState run) =>
+    private static EventModel? TryResumeExisting(RunState run, bool fixedOnly = false) =>
 ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
@@ -208,10 +211,10 @@ ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? KantApperceptionPatch.TrySelectExistingNative(run)
             ?? SchopenhauerWillDenialPatch.TrySelectExistingNative(run)
             ?? JamesForcedBridgePatch.TrySelectExistingNative(run)
-            ?? CamusRevoltLimitPatch.TrySelectExistingNative(run)
-            ?? CarnapFrameworkChoicePatch.TrySelectExistingNative(run)
-            ?? AustinSpeechActPatch.TrySelectExistingNative(run)
-            ?? PopperFalsificationPatch.TrySelectExistingNative(run)
+            ?? (fixedOnly ? null : CamusRevoltLimitPatch.TrySelectExistingNative(run))
+            ?? (fixedOnly ? null : CarnapFrameworkChoicePatch.TrySelectExistingNative(run))
+            ?? (fixedOnly ? null : AustinSpeechActPatch.TrySelectExistingNative(run))
+            ?? (fixedOnly ? null : PopperFalsificationPatch.TrySelectExistingNative(run))
             ?? RousseauConsentPatch.TrySelectExistingNative(run)
             ?? KantUniversalizationPatch.TrySelectExistingNative(run)
             ?? FoucaultPowerPatch.TrySelectExistingNative(run)

@@ -136,9 +136,43 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(SocratesBalanceWeight), "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, actIndex: 2,
             route: "WILL_AND_VALUE", required: ["WESTERN_EDGE_150"]);
+        // A saved question page must not take the fixed slot: the boundary only
+        // resumes rooms that own this act's fixed edge, and Camus owns none.
+        CheckQuestionPageWaitsForItsNode();
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
+    }
+
+    private static void CheckQuestionPageWaitsForItsNode()
+    {
+        ModelDb.Inject(typeof(CamusRevoltLimit));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 2])!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!
+            .Invoke(graph, ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+        Put(journey, "CurrentNodeId", "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE");
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_011");
+        Put(journey, "LastFixedAct", 3);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "CurrentDoctrine", null);
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "CamusRevoltLimit", Call("CamusRevoltLimitState", "Create", "CAMUS:BOUNDARY:1")!);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        // The page itself is open and resumable on its own node.
+        Check(Call("CamusRevoltLimitPatch", "TrySelectExistingNative", run) is not null,
+            "The saved question page is resumable on its own node.");
+        // At the act boundary the same page must not be resumed: it owns no fixed edge.
+        Put(journey, "LastFixedAct", 2);
+        object?[] prepare = [run, null];
+        bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
+        Check(!selected,
+            "A saved question page must not take the act boundary's fixed slot, got "
+            + ((EventRoom?)prepare[1])?.CanonicalEvent.GetType().Name + ".");
     }
 
     // A run the harness built in memory is marked isolated by the state service,
