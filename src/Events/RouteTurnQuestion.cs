@@ -45,7 +45,20 @@ public sealed class RouteTurnQuestion : EventModel
             .ToArray();
     }
 
-    private static IReadOnlyList<EventOption> Locked() => [];
+    /// <summary>
+    /// An event with no options cannot be left, so the room that cannot read the
+    /// run still offers the one answer that ends it: leaving unchanged.
+    /// </summary>
+    private IReadOnlyList<EventOption> Locked() =>
+    [
+        new EventOption(this, Leave, $"{LocalizationRoot}.pages.INVITATION.options.{RouteTurnQuestionOptions.StayKey}", Array.Empty<IHoverTip>()),
+    ];
+
+    private Task Leave()
+    {
+        if (!_blocked) SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.RESULT.description"));
+        return Task.CompletedTask;
+    }
 
     private (RunState Run, PhilosophyRunState Shared, WesternJourneyState Journey, WesternRouteGraph Graph)? TryGetRun()
     {
