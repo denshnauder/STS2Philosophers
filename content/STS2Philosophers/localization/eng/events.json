@@ -2550,5 +2550,22 @@
   "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.title": "Leave the seminar",
   "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.description": "Close the record.",
   "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "FOUCAULT_POWER.title": "Foucault: Power and Knowledge",
+  "FOUCAULT_POWER.pages.INVITATION.description": "The prison record lists every inmate, and the list itself changes how they are treated. Foucault asks what the record should say about that.",
+  "FOUCAULT_POWER.pages.INVITATION.options.POWER_KNOWLEDGE.title": "Link power to knowledge",
+  "FOUCAULT_POWER.pages.INVITATION.options.POWER_KNOWLEDGE.description": "Record the list as an instrument that produces what it describes.",
+  "FOUCAULT_POWER.pages.INVITATION.options.DISCIPLINE.title": "Describe the disciplinary institution",
+  "FOUCAULT_POWER.pages.INVITATION.options.DISCIPLINE.description": "Record the timetable, the inspection, and the examination as the machinery.",
+  "FOUCAULT_POWER.pages.INVITATION.options.KEEP_NIETZSCHE.title": "Keep Nietzsche",
+  "FOUCAULT_POWER.pages.INVITATION.options.KEEP_NIETZSCHE.description": "Refuse the question and stay with the revaluation of values.",
+  "FOUCAULT_POWER.pages.RESULT_POWER.description": "You link power to knowledge. The list is recorded as an instrument that produces the inmate it describes, not as a neutral description.",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.description": "You describe the disciplinary institution. The timetable and the examination are recorded as the machinery, and the record notes that the list was not analysed.",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.description": "You keep Nietzsche. The question goes unanswered, and no fixed link is taken this act.",
+  "FOUCAULT_POWER.pages.RESULT_POWER.options.LEAVE.title": "Leave the archive",
+  "FOUCAULT_POWER.pages.RESULT_POWER.options.LEAVE.description": "Close the record.",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.title": "Leave the archive",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.description": "Close the record.",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.title": "Leave the archive",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

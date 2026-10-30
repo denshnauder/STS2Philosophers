@@ -69,6 +69,7 @@ RussellAnalysisChecks.Run();
 WittgensteinGameChecks.Run();
 SaussureSignChecks.Run();
 LeviStraussMythChecks.Run();
+FoucaultPowerChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

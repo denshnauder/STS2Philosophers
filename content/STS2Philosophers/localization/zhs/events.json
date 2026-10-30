@@ -2550,5 +2550,22 @@
   "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.title": "离开研讨班",
   "LEVI_STRAUSS_MYTH.pages.RESULT_HISTORY.options.LEAVE.description": "关闭记录。",
   "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "LEVI_STRAUSS_MYTH.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "FOUCAULT_POWER.title": "福柯：权力与知识",
+  "FOUCAULT_POWER.pages.INVITATION.description": "监狱名册记录了每个囚犯，而名册本身改变了他们被对待的方式。福柯问：记录应当怎么写下这一点？",
+  "FOUCAULT_POWER.pages.INVITATION.options.POWER_KNOWLEDGE.title": "连接权力与知识",
+  "FOUCAULT_POWER.pages.INVITATION.options.POWER_KNOWLEDGE.description": "把名册记为生产它所描述之物的工具。",
+  "FOUCAULT_POWER.pages.INVITATION.options.DISCIPLINE.title": "描述规训机构",
+  "FOUCAULT_POWER.pages.INVITATION.options.DISCIPLINE.description": "把时间表、检查与考核记为机制本身。",
+  "FOUCAULT_POWER.pages.INVITATION.options.KEEP_NIETZSCHE.title": "保留尼采",
+  "FOUCAULT_POWER.pages.INVITATION.options.KEEP_NIETZSCHE.description": "拒绝这个问题，停留在价值重估。",
+  "FOUCAULT_POWER.pages.RESULT_POWER.description": "你连接权力与知识。名册被记为生产其所描述之囚犯的工具，而不是中立的描述。",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.description": "你描述规训机构。时间表与考核被记为机制，记录注明名册本身未被分析。",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.description": "你保留尼采。问题没有得到回答，本幕不再取得固定承接。",
+  "FOUCAULT_POWER.pages.RESULT_POWER.options.LEAVE.title": "离开档案馆",
+  "FOUCAULT_POWER.pages.RESULT_POWER.options.LEAVE.description": "关闭记录。",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.title": "离开档案馆",
+  "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.description": "关闭记录。",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.title": "离开档案馆",
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }
