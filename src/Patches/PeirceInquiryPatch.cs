@@ -40,8 +40,14 @@ internal static class PeirceInquiryPatch
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == PeirceInquiryState.AdoptedNodeId)
                 .Select(edge => edge.FromNodeId).FirstOrDefault() ?? string.Empty
             : string.Empty;
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == PeirceInquiryState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? PeirceInquiryState.CompletionEdgeId
+            : PeirceInquiryState.CompletionEdgeId;
         bool edgeEligible = journey is not null && graph.GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == PeirceInquiryState.CompletionEdgeId);
+            .Any(edge => edge.EdgeId == edgeId);
         PeirceInquiryTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
