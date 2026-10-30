@@ -641,6 +641,14 @@
       "stage_id": "CORE",
       "display_name": "库恩：异常与范式",
       "terminal": false
+    },
+    {
+      "node_id": "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
+      "thinker_id": "ARTHUR_SCHOPENHAUER",
+      "problem_id": "VIRTUE_AND_HAPPINESS",
+      "stage_id": "CORE",
+      "display_name": "叔本华",
+      "terminal": false
     }
   ],
   "edges": [
@@ -4218,6 +4226,161 @@
       },
       "route_ids": [
         "CONSEQUENCE_AND_FREEDOM"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_140",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_KNOWLEDGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_141",
+      "from_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_KNOWLEDGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_150",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "VIRTUE_AND_HAPPINESS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "WILL_AND_VALUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_151",
+      "from_node_id": "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "WILL_AND_VALUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_152",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "ORDINARY_SPEECH"
       ]
     }
   ],

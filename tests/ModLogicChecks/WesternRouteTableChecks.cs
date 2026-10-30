@@ -11,7 +11,7 @@ internal static class WesternRouteTableChecks
     // list is asserted so that adding one of these figures fails this check and
     // forces the gap list to be updated with real content.
     private static readonly string[] MissingFigures =
-        ["ALBERT_CAMUS", "ARTHUR_SCHOPENHAUER", "JUDITH_BUTLER"];
+        ["ALBERT_CAMUS", "JUDITH_BUTLER"];
 
     // Routes whose default line the graph can already walk end to end with no
     // question mark. Moving a route onto this list is the deliverable of each
@@ -21,10 +21,12 @@ internal static class WesternRouteTableChecks
         "EXPERIENCE_AND_SELF",
         "AUTONOMY_AND_HISTORY",
         "NATURE_AND_BECOMING",
+        "WILL_AND_VALUE",
         "INDIVIDUAL_COMMITMENT",
         "APPEARANCE_AND_INTERPRETATION",
         "EMBODIED_PERCEPTION",
         "FORMAL_LANGUAGE",
+        "ORDINARY_SPEECH",
         "STRUCTURE_AND_EXCLUSION",
         "EDUCATION_AND_SITUATION",
         "CHECKS_AND_JUSTICE",
@@ -33,6 +35,7 @@ internal static class WesternRouteTableChecks
         "SOCIAL_CRITIQUE",
         "GENEALOGY_AND_POWER",
         "SCIENTIFIC_MODEL",
+        "SOCIAL_KNOWLEDGE",
         "FALLIBLE_INQUIRY",
     ];
 
@@ -68,8 +71,13 @@ internal static class WesternRouteTableChecks
             state.RouteId = route.RouteId;
             state.LastFixedAct = 1;
             bool ok = true;
+            string previousFigure = route.ActOneFigure;
             foreach ((int act, string figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
             {
+                // A route whose next act stays with the same figure has nothing to
+                // hand over; the act passes without an edge.
+                if (figure == previousFigure) continue;
+                previousFigure = figure;
                 string? edgeId = graph.GetEligibleEdges(state, "Fixed")
                     .Where(edge => edge.Act == act && ThinkerOf(edge.ToNodeId) == figure)
                     .Select(edge => edge.EdgeId)

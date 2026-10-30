@@ -209,7 +209,11 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(rawls, Plays("SASP", "abcd"), previous, 3) == default,
             "Rawls's closing choice resolves its own distribution test; the node must not add a generic reward.");
         covered.Add(rawls);
-        Check(covered.Count == 80 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        const string schopenhauer = "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE";
+        Check(WesternNodePracticePolicy.Evaluate(schopenhauer, Plays("SASP", "abcd"), previous, 3) == default,
+            "Schopenhauer's denial room resolves its own choice; the node adds no generic reward.");
+        covered.Add(schopenhauer);
+        Check(covered.Count == 81 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
