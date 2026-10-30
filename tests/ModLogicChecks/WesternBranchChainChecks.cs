@@ -47,6 +47,26 @@ internal static class WesternBranchChainChecks
             ["WESTERN_EDGE_174", "WESTERN_EDGE_175", "WESTERN_EDGE_176"],
             "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE");
 
+        CheckTurn(graph, "SOCIAL_CRITIQUE", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            ["WESTERN_EDGE_177", "WESTERN_EDGE_178", "WESTERN_EDGE_179"],
+            "THEODOR_ADORNO__HISTORY_AND_POWER__CORE");
+        CheckTurn(graph, "GENEALOGY_AND_POWER", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            ["WESTERN_EDGE_180", "WESTERN_EDGE_181", "WESTERN_EDGE_182"],
+            "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE");
+        CheckTurn(graph, "FORMAL_LANGUAGE", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            ["WESTERN_EDGE_183", "WESTERN_EDGE_184", "WESTERN_EDGE_185"],
+            "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE");
+        CheckTurn(graph, "STRUCTURE_AND_EXCLUSION", "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            ["WESTERN_EDGE_186", "WESTERN_EDGE_187", "WESTERN_EDGE_188"],
+            "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE");
+
+        CheckTurn(graph, "UNCONSCIOUS_AND_NORM", "DESCARTES__SELF_AND_OTHER__CORE",
+            ["WESTERN_EDGE_189", "WESTERN_EDGE_190", "WESTERN_EDGE_191"],
+            "JUDITH_BUTLER__SELF_AND_OTHER__CORE");
+        CheckTurn(graph, "EDUCATION_AND_SITUATION", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            ["WESTERN_EDGE_192", "WESTERN_EDGE_193", "WESTERN_EDGE_194"],
+            "JUDITH_BUTLER__SELF_AND_OTHER__CORE");
+
         // The default chain of a turned line still ends where the table says it
         // does: the turn's closing step is only open to a run that took the turn.
         WesternJourneyState defaultChain = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");

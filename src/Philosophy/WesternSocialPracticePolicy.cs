@@ -38,6 +38,9 @@ internal static class WesternSocialPracticePolicy
             ("SELF_AND_OTHER", "DAVID_HUME") when n == 4 && names == 2 && plays[0].CardModelId == plays[2].CardModelId && plays[1].CardModelId == plays[3].CardModelId => new(Draw: 2),
             ("SELF_AND_OTHER", "IMMANUEL_KANT") when n == 3 && manual && kinds[0] == s && attacks == 1 && skills == 1 && powers == 1 => new(Draw: 2),
             ("SELF_AND_OTHER", "SIMONE_DE_BEAUVOIR") when manual && kinds.SequenceEqual([s, a, s, a]) => new(Energy: 1, Draw: 1),
+            // Repetition that never repeats identically: the same kind returns
+            // after a different one, and every card is a different card.
+            ("SELF_AND_OTHER", "JUDITH_BUTLER") when n == 3 && names == 3 && kinds[0] == kinds[2] && kinds[1] != kinds[0] => new(Block: 5),
             ("LANGUAGE_AND_MEANING", "THOMAS_AQUINAS") when n == 4 && kinds[0] == s && attacks == 1 && skills == 2 && powers == 1 => new(Draw: 1, Block: 4),
             ("LANGUAGE_AND_MEANING", "WILLIAM_OF_OCKHAM") when n == 2 && names == 2 && skills > 0 => new(Draw: 1),
             ("LANGUAGE_AND_MEANING", "GOTTLOB_FREGE") when kinds.SequenceEqual([a, s, a, s]) && plays[0].CardModelId == plays[2].CardModelId && plays[1].CardModelId != plays[3].CardModelId => new(Draw: 2, Block: 2),

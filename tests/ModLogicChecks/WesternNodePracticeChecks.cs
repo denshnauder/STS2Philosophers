@@ -52,6 +52,7 @@ internal static class WesternNodePracticeChecks
             (self, "DAVID_HUME", "ASAS", "abab", "ASAS", "abba", new(Draw: 2)),
             (self, "IMMANUEL_KANT", "SAP", "abc", "ASP", "abc", new(Draw: 2)),
             (self, "SIMONE_DE_BEAUVOIR", "SASA", "abcd", "ASAS", "abcd", new(Energy: 1, Draw: 1)),
+            (self, "JUDITH_BUTLER", "ASA", "abc", "ASA", "aba", new(Block: 5)),
             (language, "THOMAS_AQUINAS", "SASP", "abcd", "ASSP", "abcd", new(Draw: 1, Block: 4)),
             (language, "WILLIAM_OF_OCKHAM", "AS", "ab", "AS", "aa", new(Draw: 1)),
             (language, "GOTTLOB_FREGE", "ASAS", "abac", "ASAS", "abab", new(Draw: 2, Block: 2)),
@@ -213,7 +214,7 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(schopenhauer, Plays("SASP", "abcd"), previous, 3) == default,
             "Schopenhauer's denial room resolves its own choice; the node adds no generic reward.");
         covered.Add(schopenhauer);
-        Check(covered.Count == 81 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 82 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")

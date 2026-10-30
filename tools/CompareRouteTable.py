@@ -117,11 +117,7 @@ def node_for(graph, figure_cell, fallback_problem):
 # move down. The graph instead stores the default order (the table's columns),
 # so these branches cannot be walked. This is a known design gap, not drift;
 # any other line that grows a branch problem still fails the check.
-KNOWN_BRANCH_GAPS = {
-    "形式语言", "结构与排除",
-    "无意识与规范", "教育与处境",
-    "社会批判", "谱系与权力",
-}
+KNOWN_BRANCH_GAPS = set()
 
 
 # One line cannot be chained from the graph: the document gives it an early and

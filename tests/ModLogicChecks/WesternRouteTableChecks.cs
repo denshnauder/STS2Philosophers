@@ -11,7 +11,7 @@ internal static class WesternRouteTableChecks
     // list is asserted so that adding one of these figures fails this check and
     // forces the gap list to be updated with real content.
     private static readonly string[] MissingFigures =
-        ["ALBERT_CAMUS", "JUDITH_BUTLER"];
+        ["ALBERT_CAMUS"];
 
     // Routes whose default line the graph can already walk end to end with no
     // question mark. Moving a route onto this list is the deliverable of each
@@ -59,10 +59,10 @@ internal static class WesternRouteTableChecks
     // Every route names the figure it meets at the second and third acts. Where no
     // fixed edge reaches that figure at all, the route cannot be walked however it
     // is named; those are content gaps, not code gaps.
-    private static readonly string[] HandoverGaps =
-    [
-        "ORDINARY_SPEECH act three LUDWIG_WITTGENSTEIN",
-    ];
+    // Every route's second- and third-act figure is reached by some fixed edge
+    // now. 日常言说 still cannot chain because it names one Wittgenstein node
+    // for two acts; that is a different gap, tracked by the route audit.
+    private static readonly string[] HandoverGaps = [];
 
     public static void Run()
     {

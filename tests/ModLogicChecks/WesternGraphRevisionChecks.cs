@@ -43,7 +43,11 @@ internal static class WesternGraphRevisionChecks
                 CompletedEdgeIds = new(edge.RequiredEdgeIds, StringComparer.Ordinal),
             };
             IReadOnlyList<string> oldOffer = previous.OfferCandidates(before, edge.Slot, 0);
-            Check(oldOffer.Contains(id), $"The fixture must reproduce the former invitation: {id}");
+            // The invitation has to exist in the reconstructed graph, but a
+            // withdrawn edge can be superseded by a newer edge to the same
+            // figure: only one option per destination figure is ever offered.
+            Check(oldOffer.Contains(id) || oldOffer.Any(offered => previous.GetEdge(offered).ToNodeId == edge.ToNodeId),
+                $"The fixture must reproduce the former invitation: {id}");
             WesternJourneyState restored = JsonSerializer.Deserialize<WesternJourneyState>(JsonSerializer.Serialize(before))!;
             string snapshot = JsonSerializer.Serialize(restored);
             Check(!revised.TryAcceptOffered(restored, edge.Slot, id) && !revised.TryApply(restored, id),

@@ -272,8 +272,13 @@ internal sealed class WesternRouteGraph
             // written before routes existed. A route that has none (the education
             // line's 040 and 042) still needs them, or its boundary opens nothing.
             if (string.IsNullOrEmpty(state.RouteId)) return false;
+            // A legacy edge that duplicates a route edge leads to the same
+            // figure, so it displaces nothing. Only a different destination is
+            // a route-specific alternative the legacy edge must not override.
             return !_edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
-                && other.Act == edge.Act && other.RouteIds is { Length: > 0 }
+                && other.Act == edge.Act && other.FromNodeId == edge.FromNodeId
+                && other.ToNodeId != edge.ToNodeId
+                && other.RouteIds is { Length: > 0 }
                 && other.RouteIds.Contains(state.RouteId, StringComparer.Ordinal));
         }
         return !string.IsNullOrEmpty(state.RouteId)
@@ -461,6 +466,7 @@ internal sealed class WesternRouteGraph
         && !(slot == "Fixed" && edge.RouteIds is not { Length: > 0 } && !string.IsNullOrEmpty(state.RouteId)
             && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
                 && other.FromNodeId == edge.FromNodeId && other.Act == edge.Act
+                && other.ToNodeId != edge.ToNodeId
                 && other.RouteIds is { Length: > 0 } && RouteMatches(other, state)))
         // A question edge is spent once the act it actually happens in has
         // answered. An edge written for act one but used at act two is an act
