@@ -2380,5 +2380,22 @@
   "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.title": "离开詹姆斯",
   "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.description": "回到测量记录。",
   "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.title": "离开詹姆斯",
-  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "回到测量记录。"
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "回到测量记录。",
+  "DEWEY_PUBLIC_EXPERIMENT.title": "杜威：公共实验",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.description": "一个学区试行了新方法并公布了数据，但承担代价的家长从未被问过。杜威问：这个房间应当记录什么？",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.PUBLIC_EXPERIMENT.title": "做成公共实验",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.PUBLIC_EXPERIMENT.description": "把方法、代价和失败放进受影响者可以参与的检验。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_INQUIRY_COMMUNITY.title": "保留探究共同体",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_INQUIRY_COMMUNITY.description": "把结果留给研究者，把家长留在外面。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_PEIRCE.title": "保留皮尔士",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_PEIRCE.description": "拒绝这个问题，停留在皮尔士的探究共同体。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.description": "你把它公开。方法成为共同的实验，家长可以争议代价，而不只是接收结果。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.description": "你保留封闭的共同体。数据留在研究者手里，家长仍然是实验的对象。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.description": "你保留皮尔士。问题没有得到回答，本幕不再取得问号承接，记录保留原有探究。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.options.LEAVE.title": "离开学区",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.options.LEAVE.description": "关闭记录。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.title": "离开学区",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.description": "关闭记录。",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.title": "离开学区",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

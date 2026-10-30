@@ -59,6 +59,7 @@ NietzscheRevaluationChecks.Run();
 BenthamUtilityChecks.Run();
 ComtePositivismChecks.Run();
 PeirceInquiryChecks.Run();
+DeweyPublicExperimentChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

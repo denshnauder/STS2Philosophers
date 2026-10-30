@@ -2380,5 +2380,22 @@
   "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.title": "Leave James",
   "JAMES_PRAGMATISM.pages.RESULT_PUBLIC.options.LEAVE.description": "Return to the survey record.",
   "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.title": "Leave James",
-  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "Return to the survey record."
+  "JAMES_PRAGMATISM.pages.RESULT_PRIVATE.options.LEAVE.description": "Return to the survey record.",
+  "DEWEY_PUBLIC_EXPERIMENT.title": "Dewey: The Public Experiment",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.description": "A school board has tested a new method and published the numbers, but the parents who bear the cost were never asked. Dewey asks what the room should record.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.PUBLIC_EXPERIMENT.title": "Make it a public experiment",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.PUBLIC_EXPERIMENT.description": "Put the method, its costs, and its failures into a test the affected can join.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_INQUIRY_COMMUNITY.title": "Keep the inquiry community",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_INQUIRY_COMMUNITY.description": "Leave the result with the researchers and keep the parents outside.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_PEIRCE.title": "Keep Peirce",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.INVITATION.options.KEEP_PEIRCE.description": "Refuse the question and stay with Peirce's community of inquirers.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.description": "You make it public. The method becomes a shared experiment, and the parents can contest the cost rather than receive its results.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.description": "You keep the community closed. The numbers stay with the researchers, and the parents remain the object of the test.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.description": "You keep Peirce. The question goes unanswered, no question link is taken this act, and the record keeps its inquiry.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.options.LEAVE.title": "Leave the school board",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_EXPERIMENT.options.LEAVE.description": "Close the record.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.title": "Leave the school board",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.description": "Close the record.",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.title": "Leave the school board",
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
