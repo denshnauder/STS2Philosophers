@@ -21,6 +21,12 @@ internal sealed class ComtePositivismState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public ComtePositivismStage Stage { get; set; }
     public ComtePositivismAction PendingAction { get; set; }
     public List<ComtePositivismAction> ConfirmedActions { get; set; } = [];
@@ -128,14 +134,14 @@ internal static class ComtePositivismFlow
         bool adopted = journey.CompletedEdgeIds.Contains(ComtePositivismState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
-                && journey.CurrentNodeId == ComtePositivismState.SourceNodeId;
+                && (journey.CurrentNodeId == ComtePositivismState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
                 && journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == ComtePositivismState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3
             && journey.ResolvedQuestionActs.Contains(3)
-            && journey.CurrentNodeId == ComtePositivismState.SourceNodeId;
+            && (journey.CurrentNodeId == ComtePositivismState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(ComtePositivismState state) => state.Stage switch

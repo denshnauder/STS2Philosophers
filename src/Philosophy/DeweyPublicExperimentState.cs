@@ -21,6 +21,12 @@ internal sealed class DeweyPublicExperimentState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public DeweyPublicExperimentStage Stage { get; set; }
     public DeweyPublicExperimentAction PendingAction { get; set; }
     public List<DeweyPublicExperimentAction> ConfirmedActions { get; set; } = [];
@@ -128,14 +134,14 @@ internal static class DeweyPublicExperimentFlow
         bool adopted = journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
-                && journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId;
+                && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
                 && journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == DeweyPublicExperimentState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3
             && journey.ResolvedQuestionActs.Contains(3)
-            && journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId;
+            && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(DeweyPublicExperimentState state) => state.Stage switch

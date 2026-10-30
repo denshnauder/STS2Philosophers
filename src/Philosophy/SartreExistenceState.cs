@@ -20,6 +20,12 @@ internal sealed class SartreExistenceState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public SartreExistenceStage Stage { get; set; }
     public SartreExistenceAction PendingAction { get; set; }
     public List<SartreExistenceAction> ConfirmedActions { get; set; } = [];
@@ -134,12 +140,12 @@ internal static class SartreExistenceFlow
         bool adopted = journey.CompletedEdgeIds.Contains(SartreExistenceState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == SartreExistenceState.SourceNodeId;
+                && (journey.CurrentNodeId == SartreExistenceState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == SartreExistenceState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && journey.CurrentNodeId == SartreExistenceState.SourceNodeId;
+            && (journey.CurrentNodeId == SartreExistenceState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(SartreExistenceState state) => UpperSnake(state.Stage.ToString());

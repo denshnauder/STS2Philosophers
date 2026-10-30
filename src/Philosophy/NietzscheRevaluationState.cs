@@ -20,6 +20,12 @@ internal sealed class NietzscheRevaluationState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public NietzscheRevaluationStage Stage { get; set; }
     public NietzscheRevaluationAction PendingAction { get; set; }
     public List<NietzscheRevaluationAction> ConfirmedActions { get; set; } = [];
@@ -135,12 +141,12 @@ internal static class NietzscheRevaluationFlow
         int declined = state.ActIndex + 1;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId;
+                && (journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex + 1
                 && journey.CurrentNodeId == NietzscheRevaluationState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == state.ActIndex + 1 && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId;
+            && (journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(NietzscheRevaluationState state) => state.Stage switch

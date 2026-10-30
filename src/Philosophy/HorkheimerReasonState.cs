@@ -20,6 +20,12 @@ internal sealed class HorkheimerReasonState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public HorkheimerReasonStage Stage { get; set; }
     public HorkheimerReasonAction PendingAction { get; set; }
     public List<HorkheimerReasonAction> ConfirmedActions { get; set; } = [];
@@ -135,12 +141,12 @@ internal static class HorkheimerReasonFlow
         bool adopted = journey.CompletedEdgeIds.Contains(HorkheimerReasonState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId;
+                && (journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == HorkheimerReasonState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId;
+            && (journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(HorkheimerReasonState state) => UpperSnake(state.Stage.ToString());

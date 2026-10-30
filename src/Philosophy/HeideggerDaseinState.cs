@@ -20,6 +20,12 @@ internal sealed class HeideggerDaseinState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public HeideggerDaseinStage Stage { get; set; }
     public HeideggerDaseinAction PendingAction { get; set; }
     public List<HeideggerDaseinAction> ConfirmedActions { get; set; } = [];
@@ -135,12 +141,12 @@ internal static class HeideggerDaseinFlow
         bool adopted = journey.CompletedEdgeIds.Contains(HeideggerDaseinState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == HeideggerDaseinState.SourceNodeId;
+                && (journey.CurrentNodeId == HeideggerDaseinState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == HeideggerDaseinState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && journey.CurrentNodeId == HeideggerDaseinState.SourceNodeId;
+            && (journey.CurrentNodeId == HeideggerDaseinState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(HeideggerDaseinState state) => UpperSnake(state.Stage.ToString());

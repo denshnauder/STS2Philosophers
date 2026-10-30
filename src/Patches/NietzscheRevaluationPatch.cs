@@ -57,6 +57,14 @@ internal static class NietzscheRevaluationPatch
         var candidate = saved ?? (routeAct >= 2
             ? NietzscheRevaluationState.CreateAt($"NIETZSCHE_REVALUATION:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
             : NietzscheRevaluationState.Create($"NIETZSCHE_REVALUATION:{run.Rng.Seed}:1"));
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !NietzscheRevaluationFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.NietzscheRevaluation = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");

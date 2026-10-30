@@ -54,6 +54,14 @@ internal static class HeideggerDaseinPatch
             canonical is not null);
         if (!HeideggerDaseinTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? HeideggerDaseinState.Create($"HEIDEGGER_DASEIN:{run.Rng.Seed}:2");
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !HeideggerDaseinFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HeideggerDasein = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");

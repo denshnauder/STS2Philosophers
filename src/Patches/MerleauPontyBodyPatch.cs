@@ -54,6 +54,14 @@ internal static class MerleauPontyBodyPatch
             canonical is not null);
         if (!MerleauPontyBodyTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? MerleauPontyBodyState.Create($"MERLEAU_PONTY_BODY:{run.Rng.Seed}:2");
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !MerleauPontyBodyFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.MerleauPontyBody = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");

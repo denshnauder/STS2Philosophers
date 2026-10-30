@@ -54,6 +54,14 @@ internal static class FoucaultPowerPatch
             canonical is not null);
         if (!FoucaultPowerTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? FoucaultPowerState.Create($"FOUCAULT_POWER:{run.Rng.Seed}:2");
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !FoucaultPowerFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.FoucaultPower = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");

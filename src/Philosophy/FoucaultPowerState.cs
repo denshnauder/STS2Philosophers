@@ -20,6 +20,12 @@ internal sealed class FoucaultPowerState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
+
     public FoucaultPowerStage Stage { get; set; }
     public FoucaultPowerAction PendingAction { get; set; }
     public List<FoucaultPowerAction> ConfirmedActions { get; set; } = [];
@@ -139,12 +145,12 @@ internal static class FoucaultPowerFlow
         bool adopted = journey.CompletedEdgeIds.Contains(FoucaultPowerState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == FoucaultPowerState.SourceNodeId;
+                && (journey.CurrentNodeId == FoucaultPowerState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == FoucaultPowerState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && journey.CurrentNodeId == FoucaultPowerState.SourceNodeId;
+            && (journey.CurrentNodeId == FoucaultPowerState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
     public static string DescriptionKey(FoucaultPowerState state) => UpperSnake(state.Stage.ToString());
