@@ -35,7 +35,7 @@ internal static class DeleuzeDifferencePatch
         DeleuzeDifferenceTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
-            behavior?.CompletedCombatCount ?? 0, journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             DeleuzeDifferenceState.RequiredEdgeId.Length == 0
                 || journey?.CompletedEdgeIds.Contains(DeleuzeDifferenceState.RequiredEdgeId) == true, edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,

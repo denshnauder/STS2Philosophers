@@ -40,7 +40,7 @@ internal static class WollstonecraftAdmissionPatch
             run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombat(run),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             edgeEligible,

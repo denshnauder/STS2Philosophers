@@ -41,7 +41,7 @@ internal static class FichteSelfPositingPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                 ModelDb.GetId<KantUniversalization>(), "KANT_UNIVERSALIZATION"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId) == true,

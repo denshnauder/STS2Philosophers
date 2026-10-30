@@ -27,7 +27,7 @@ internal static class HobbesAuthorizedSovereigntyPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                 ModelDb.GetId<AristotleCivicInquiry>(), "ARISTOTLE_CIVIC_INQUIRY"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(HobbesAuthorizedSovereigntyState.RequiredEdgeId) == true,

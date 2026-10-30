@@ -108,7 +108,7 @@ internal static class OckhamNamesInquiryFlow
         && (state.SecondFixedDeclined
             ? journey.LastFixedAct == 2 && journey.DeclinedFixedActs.Contains(2)
                 && journey.ResolvedQuestionActs.Contains(2)
-            : journey.LastFixedAct == 1 && !journey.DeclinedFixedActs.Contains(2)
+            : journey.LastFixedAct is 1 or 2 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.ResolvedQuestionActs.Contains(2));
 
     public static bool TryPrepare(OckhamNamesInquiryState state, OckhamNamesAction action)

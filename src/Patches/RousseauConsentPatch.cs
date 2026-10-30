@@ -41,7 +41,7 @@ internal static class RousseauConsentPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                 ModelDb.GetId<AugustinePromise>(), "AUGUSTINE_PROMISE"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(RousseauConsentState.RequiredEdgeId) == true,

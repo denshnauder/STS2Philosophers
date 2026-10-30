@@ -27,7 +27,7 @@ internal static class LeibnizMonadComparisonPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                 ModelDb.GetId<SpinozaCauseNetwork>(), "SPINOZA_CAUSE_NETWORK"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(LeibnizMonadComparisonState.RequiredEdgeId) == true,

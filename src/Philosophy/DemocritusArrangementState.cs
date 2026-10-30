@@ -135,7 +135,7 @@ internal static class DemocritusArrangementFlow
                 && !journey.CompletedEdgeIds.Contains(DemocritusArrangementState.EdgeId));
 
     private static bool AwaitingFixed(WesternJourneyState journey, WesternRouteGraph graph) =>
-        journey.LastFixedAct == 1 && journey.CurrentNodeId == DemocritusArrangementState.RequiredNodeId
+        journey.LastFixedAct is 1 or 2 && journey.CurrentNodeId == DemocritusArrangementState.RequiredNodeId
         && !journey.RetainedEnding && journey.CompletedEdgeIds.Contains(DemocritusArrangementState.PrerequisiteEdgeId)
         && !journey.CompletedEdgeIds.Contains(DemocritusArrangementState.EdgeId)
         && !journey.DeclinedFixedActs.Contains(2)

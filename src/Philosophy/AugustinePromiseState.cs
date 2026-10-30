@@ -130,7 +130,7 @@ internal static class AugustinePromiseFlow
         if (!state.IsUsable() || !journey.CompletedEdgeIds.Contains(AugustinePromiseState.RequiredEdgeId)
             || !journey.ResolvedQuestionActs.Contains(1) || journey.RetainedEnding) return false;
         if (!state.FixedSlotResolved)
-            return journey.LastFixedAct == 1 && journey.CurrentNodeId == AugustinePromiseState.SourceNodeId
+            return journey.LastFixedAct is 1 or 2 && journey.CurrentNodeId == AugustinePromiseState.SourceNodeId
                 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.CompletedEdgeIds.Contains(AugustinePromiseState.CompletionEdgeId);
         return journey.LastFixedAct == 2 && (state.EdgeCommitted

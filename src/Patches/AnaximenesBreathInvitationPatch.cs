@@ -22,7 +22,7 @@ internal static class AnaximenesBreathInvitationPatch
         var player = run.Players.Count == 1 ? run.Players[0] : null;
         AnaximenesBreathInvitationTriggerContext context = new(
             manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
-            run.CurrentActIndex, behavior?.CompletedCombatCount ?? 0, journey?.CurrentNodeId,
+            run.CurrentActIndex, NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId,
             player?.GetRelicById(ModelDb.GetId<HeraclitusLyre>()) is not null,
             player?.GetRelicById(ModelDb.GetId<AnaximenesBreath>()) is not null,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,

@@ -27,43 +27,55 @@ internal static class ActBoundaryFixedEntryNativeChecks
     public static Task Run()
     {
         ModelDb.Inject(typeof(SpinozaCauseNetwork));
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true);
+        ModelDb.Inject(typeof(MachiavelliFloodPreparation));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false);
+        return Task.CompletedTask;
+    }
+
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine)
+    {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+            .Invoke(null, [relic, 1])!;
         var run = (RunState)tuple[1]!;
         Set(CombatManager.Instance, "_turnState", null);
 
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
-            ["DESCARTES__SELF_AND_OTHER__CORE"])!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
         Put(journey, "LastFixedAct", 2);
-        object doctrine = Activator.CreateInstance(T("CurrentDoctrine"), nonPublic: true)!;
-        Put(doctrine, "ThinkerId", "DESCARTES");
-        Put(doctrine, "DoctrineId", "DESCARTES_THINKING_LENS");
+        object? doctrineState = doctrine
+            ? Activator.CreateInstance(T("CurrentDoctrine"), nonPublic: true)!
+            : null;
+        if (doctrineState is not null)
+        {
+            Put(doctrineState, "ThinkerId", "DESCARTES");
+            Put(doctrineState, "DoctrineId", "DESCARTES_THINKING_LENS");
+        }
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
-        Put(shared, "CurrentDoctrine", doctrine);
+        Put(shared, "CurrentDoctrine", doctrineState);
         Put(shared, "WesternJourney", journey);
         Call("PhilosophyRunStateService", "Restore", run, shared);
 
         object?[] prepare = [run, null];
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
-        Check(selected, "The second act's fixed room must be selectable at the ancient boundary without a question point.");
+        Check(selected, string.Join("/", expectedRooms.Select(room => room.Name)) + ": the second act's fixed room must be selectable at the ancient boundary without a question point.");
         var room = (EventRoom)prepare[1]!;
-        Check(room.CanonicalEvent is SpinozaCauseNetwork,
-            "The boundary selects the room that owns this act's fixed edge, got " + room.CanonicalEvent.GetType().Name + ".");
+        Type expected = expectedRooms.Single(candidate => candidate == room.CanonicalEvent.GetType());
+        Check(expected is not null,
+            "The boundary selects a room that owns this act's fixed edge, got " + room.CanonicalEvent.GetType().Name + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
-        object current = Get(query[1]!, "SpinozaCauseNetwork");
+        object current = Get(query[1]!, expected.Name);
         Check(current is not null && (bool)current.GetType().GetMethod("IsUsable")!.Invoke(current, null)!,
             "The boundary selection persists a usable room state for save recovery.");
 
         Put(journey, "LastFixedAct", 3);
         object spent = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
-        Put(spent, "CurrentDoctrine", doctrine);
+        Put(spent, "CurrentDoctrine", doctrineState);
         Put(spent, "WesternJourney", journey);
         Call("PhilosophyRunStateService", "Restore", run, spent);
         object?[] again = [run, null];
         Check(!(bool)Call("ActFixedEntryHost", "TryPrepare", again)!,
             "A spent fixed position must not present a second room at the same boundary.");
-        return Task.CompletedTask;
     }
 }

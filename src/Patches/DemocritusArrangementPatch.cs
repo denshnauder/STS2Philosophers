@@ -25,7 +25,7 @@ internal static class DemocritusArrangementPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             LaterActRelicEligibilityRuntime.IsEligible(player, LaterActCandidateIds.Democritus, run.CurrentActIndex),

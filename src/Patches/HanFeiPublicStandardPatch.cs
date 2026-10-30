@@ -26,7 +26,7 @@ internal static class HanFeiPublicStandardPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             LaterActRelicEligibilityRuntime.IsEligible(
                 player,
                 LaterActCandidateIds.HanFei,

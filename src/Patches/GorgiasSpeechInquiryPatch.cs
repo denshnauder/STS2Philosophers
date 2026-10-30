@@ -28,7 +28,7 @@ internal static class GorgiasSpeechInquiryPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey is not null && !journey.ResolvedQuestionActs.Contains(1),

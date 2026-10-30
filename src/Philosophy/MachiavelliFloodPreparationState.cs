@@ -85,11 +85,11 @@ internal static class MachiavelliFloodPreparationFlow
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_040")) return false;
         bool edge = journey.CompletedEdgeIds.Contains(MachiavelliFloodPreparationState.CompletionEdgeId);
         if (!state.FixedSlotResolved)
-            return !edge && !journey.RetainedEnding && journey.LastFixedAct == 1
+            return !edge && !journey.RetainedEnding && journey.LastFixedAct is 1 or 2
                 && journey.CurrentNodeId == MachiavelliFloodPreparationState.SourceNodeId
                 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.SeenThinkerIds.Contains("NICCOLO_MACHIAVELLI");
-        return (journey.LastFixedAct == 2 && !journey.RetainedEnding
+        return (journey.LastFixedAct is 2 or 3 && !journey.RetainedEnding
                 || state.Closed && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3))
             && (state.EdgeCommitted
                 ? edge && journey.CurrentNodeId == MachiavelliFloodPreparationState.AdoptedNodeId

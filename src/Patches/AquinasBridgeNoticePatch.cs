@@ -27,7 +27,7 @@ internal static class AquinasBridgeNoticePatch
             manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombat(run),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(AquinasBridgeNoticeState.RequiredEdgeId) == true,
             journey?.CompletedEdgeIds.Contains("WESTERN_EDGE_017") == true,

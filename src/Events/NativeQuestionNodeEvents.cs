@@ -35,6 +35,12 @@ internal static class NativeQuestionNodeEvents
         && !CombatManager.Instance.IsInProgress
         && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared is not null;
 
+    // At the act boundary the room is offered before any combat in this act.
+    // The boolean and count anchors therefore report one satisfied encounter;
+    // room-specific predecessor, relic, and route facts are still required.
+    internal static int CombatCount(ActBehaviorState? behavior) =>
+        FixedEntryScope.Active ? Math.Max(1, behavior?.CompletedCombatCount ?? 0) : behavior?.CompletedCombatCount ?? 0;
+
     internal static bool HasCompletedCombat(RunState run, bool normalOnly = false) =>
         FixedEntryScope.Active ||
         run.CurrentActIndex >= 0 && run.MapPointHistory.Count > run.CurrentActIndex
@@ -154,7 +160,11 @@ internal static class NativeQuestionNodeEvents
         if (!IsEntry(run)) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         EventModel? existing = TryResumeExisting(run);
-        return existing ?? TrySelectRoutedRoom(run, shared, null, null);
+        if (existing is not null) return existing;
+        // Rousseau's act-two slot is shared by two rooms; the seed decides which
+        // one opens the slot, so the pair is asked before the plain chain.
+        EventModel? sharedSlot = TrySelectRousseauSecondAct(run);
+        return sharedSlot ?? TrySelectRoutedRoom(run, shared, null, null);
     }
 
     private static EventModel? TryResumeExisting(RunState run) =>

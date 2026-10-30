@@ -41,7 +41,7 @@ internal static class HumeInductionPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<LockeCargoIdentity>(), "LOCKE_CARGO_IDENTITY"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId) == true,

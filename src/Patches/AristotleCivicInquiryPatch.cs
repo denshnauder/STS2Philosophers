@@ -26,7 +26,7 @@ internal static class AristotleCivicInquiryPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             player?.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) is not null,

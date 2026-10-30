@@ -117,7 +117,7 @@ internal static class HumeInductionFlow
             || !journey.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(HumeInductionState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 1 && !adopted
+            return journey.LastFixedAct is 1 or 2 && !adopted
                 && !journey.DeclinedFixedActs.Contains(2)
                 && journey.CurrentNodeId == HumeInductionState.SourceNodeId;
         if (state.EdgeCommitted)

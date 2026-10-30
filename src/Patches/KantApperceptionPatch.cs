@@ -41,7 +41,7 @@ internal static class KantApperceptionPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<HumeInduction>(), "HUME_INDUCTION"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(KantApperceptionState.RequiredEdgeId) == true,

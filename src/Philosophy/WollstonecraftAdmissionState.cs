@@ -138,7 +138,7 @@ internal static class WollstonecraftAdmissionFlow
             || journey.CompletedEdgeIds.Contains(WollstonecraftAdmissionState.RivalEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(WollstonecraftAdmissionState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 1 && !adopted
+            return journey.LastFixedAct is 1 or 2 && !adopted
                 && !journey.DeclinedFixedActs.Contains(2)
                 && journey.CurrentNodeId == WollstonecraftAdmissionState.SourceNodeId;
         if (state.EdgeCommitted)

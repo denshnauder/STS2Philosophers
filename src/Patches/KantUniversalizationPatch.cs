@@ -41,7 +41,7 @@ internal static class KantUniversalizationPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<RousseauConsent>(), "ROUSSEAU_CONSENT"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(KantUniversalizationState.RequiredEdgeId) == true,

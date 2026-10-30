@@ -30,7 +30,7 @@ internal static class PlotinusCommonGroundPatch
             run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                 ModelDb.GetId<EpicurusSharedMargin>(), "EPICURUS_SHARED_MARGIN"),
-            behavior?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             journey?.CompletedEdgeIds.Contains(PlotinusCommonGroundState.RequiredEdgeId) == true,
