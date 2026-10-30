@@ -7,8 +7,26 @@ internal static class HusserlEpocheChecks
         if (!value) throw new InvalidOperationException(message);
     }
 
+    // A room record a save can no longer replay must not count as an open
+    // question: it would suppress every other question room for the rest of the
+    // run while never being able to open itself.
+    private static void AnUnusableRecordIsNotAnOpenQuestion()
+    {
+        var shared = new PhilosophyRunState();
+        HusserlEpocheState state = HusserlEpocheState.Create("HUSSERL_EPOCHE:test:1");
+        state.Version = 0;
+        shared.HusserlEpoche = state;
+        Check(!state.IsUsable(), "A record from another version must be unusable.");
+        Check(!WesternQuestionNodePolicy.HasOpenQuestion(shared),
+            "An unusable record must not count as an open question.");
+        state.Version = HusserlEpocheState.CurrentVersion;
+        Check(WesternQuestionNodePolicy.HasOpenQuestion(shared),
+            "A usable record that is still open must count as an open question.");
+    }
+
     internal static void Run()
     {
+        AnUnusableRecordIsNotAnOpenQuestion();
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         var state = HusserlEpocheState.Create("HUSSERL_EPOCHE:TEST:1");
         Check(HusserlEpocheFlow.Options(state.Stage).Count == 4,
