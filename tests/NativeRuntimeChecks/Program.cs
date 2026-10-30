@@ -112,6 +112,7 @@ await PhilosophersGazeSaveRecoveryNativeChecks.Run();
 await SlyCostReceiptNativeChecks.Run();
 await AllRouteQuestionNodeChecks.Run();
 await ActBoundaryFixedEntryNativeChecks.Run();
+await RouteFixedRoomNativeChecks.Run();
 await CopernicusQuestionEntryNativeChecks.Run();
 await EasternQuestionEntryNativeChecks.Run();
 
