@@ -353,6 +353,10 @@ internal sealed class WesternRouteGraph
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
         && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
         && RouteMatches(edge, state)
+        && !(slot == "Fixed" && edge.RouteIds is not { Length: > 0 } && !string.IsNullOrEmpty(state.RouteId)
+            && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
+                && other.FromNodeId == edge.FromNodeId && other.Act == edge.Act
+                && other.RouteIds is { Length: > 0 } && RouteMatches(other, state)))
         && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
         && (slot != "Fixed" || edge.Confidence != "Low");
 

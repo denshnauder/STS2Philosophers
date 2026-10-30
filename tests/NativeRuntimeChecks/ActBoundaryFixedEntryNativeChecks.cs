@@ -38,6 +38,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SmithSympathy));
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(SmithSympathy)], doctrine: false, position: 2, route: "SYMPATHY_AND_PUBLIC_ACTION");
+        ModelDb.Inject(typeof(HusserlEpoche));
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
+            [typeof(HusserlEpoche)], doctrine: true, position: 2, route: "APPEARANCE_AND_INTERPRETATION");
+        ModelDb.Inject(typeof(FregeSense));
+        CheckBoundary(typeof(SocratesBalanceWeight), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(FregeSense)], doctrine: false, position: 2, route: "FORMAL_LANGUAGE");
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
@@ -77,7 +83,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
 
         object?[] prepare = [run, null];
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
-        Check(selected, string.Join("/", expectedRooms.Select(room => room.Name)) + ": the second act's fixed room must be selectable at the ancient boundary without a question point.");
+        var edges = (System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
+            .Invoke(graph, [journey, "Fixed"])!;
+        string open = string.Join(",", edges.Cast<object>().Select(edge => Get(edge, "EdgeId") + "@" + Get(edge, "Act")));
+        Check(selected, string.Join("/", expectedRooms.Select(room => room.Name))
+            + ": the second act's fixed room must be selectable at the ancient boundary without a question point. Open: " + open);
         var room = (EventRoom)prepare[1]!;
         Type? expected = expectedRooms.FirstOrDefault(candidate => candidate == room.CanonicalEvent.GetType());
         Check(expected is not null,

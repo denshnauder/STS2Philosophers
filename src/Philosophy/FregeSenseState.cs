@@ -28,11 +28,19 @@ internal sealed class FregeSenseState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static FregeSenseState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 1;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public static FregeSenseState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+
+    public static FregeSenseState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
 
@@ -47,7 +55,7 @@ internal sealed class FregeSenseState : IJsonOnDeserialized
             || Closed && PendingAction != FregeSenseAction.None
             || PendingAction != FregeSenseAction.None
                 && !FregeSenseFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (FregeSenseAction action in ConfirmedActions)
         {
             if (replay.Closed || !FregeSenseFlow.Options(replay.Stage).Contains(action)) return false;
@@ -112,10 +120,10 @@ internal static class FregeSenseFlow
         FregeSenseAction action = state.PendingAction;
         bool adopts = action is FregeSenseAction.SenseAndReference or FregeSenseAction.ConceptScript;
         bool declines = action == FregeSenseAction.KeepAristotle;
-        if (adopts && !journey.CompletedEdgeIds.Contains(FregeSenseState.CompletionEdgeId)
-            && !graph.TryApply(journey, FregeSenseState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(2)
-            && !graph.TryDecline(journey, "Fixed", 2)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex + 1)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex + 1)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -123,14 +131,15 @@ internal static class FregeSenseFlow
     public static bool IsRouteConsistent(FregeSenseState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(FregeSenseState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declined = state.ActIndex + 1;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 1 && !adopted && !journey.DeclinedFixedActs.Contains(2)
+            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == FregeSenseState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex + 1
                 && journey.CurrentNodeId == FregeSenseState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2 && journey.DeclinedFixedActs.Contains(2)
+        return !adopted && journey.LastFixedAct == state.ActIndex + 1 && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == FregeSenseState.SourceNodeId;
     }
 
