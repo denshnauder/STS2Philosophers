@@ -28,11 +28,19 @@ internal sealed class BenthamUtilityState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static BenthamUtilityState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 1;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public static BenthamUtilityState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+
+    public static BenthamUtilityState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
 
@@ -47,7 +55,7 @@ internal sealed class BenthamUtilityState : IJsonOnDeserialized
             || Closed && PendingAction != BenthamUtilityAction.None
             || PendingAction != BenthamUtilityAction.None
                 && !BenthamUtilityFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (BenthamUtilityAction action in ConfirmedActions)
         {
             if (replay.Closed || !BenthamUtilityFlow.Options(replay.Stage).Contains(action)) return false;
@@ -112,10 +120,10 @@ internal static class BenthamUtilityFlow
         BenthamUtilityAction action = state.PendingAction;
         bool adopts = action is BenthamUtilityAction.AggregateUtility or BenthamUtilityAction.KeepIndividualBoundary;
         bool declines = action == BenthamUtilityAction.KeepSocrates;
-        if (adopts && !journey.CompletedEdgeIds.Contains(BenthamUtilityState.CompletionEdgeId)
-            && !graph.TryApply(journey, BenthamUtilityState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(2)
-            && !graph.TryDecline(journey, "Fixed", 2)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex + 1)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex + 1)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -123,14 +131,15 @@ internal static class BenthamUtilityFlow
     public static bool IsRouteConsistent(BenthamUtilityState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(BenthamUtilityState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declined = state.ActIndex + 1;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 1 && !adopted && !journey.DeclinedFixedActs.Contains(2)
+            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == BenthamUtilityState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex + 1
                 && journey.CurrentNodeId == BenthamUtilityState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2 && journey.DeclinedFixedActs.Contains(2)
+        return !adopted && journey.LastFixedAct == state.ActIndex + 1 && journey.DeclinedFixedActs.Contains(declined)
             && journey.CurrentNodeId == BenthamUtilityState.SourceNodeId;
     }
 

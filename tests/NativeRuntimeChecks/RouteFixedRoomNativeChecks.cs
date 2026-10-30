@@ -25,7 +25,6 @@ internal static class RouteFixedRoomNativeChecks
         "WILL_AND_VALUE",              // Schopenhauer has no room
         "UNCONSCIOUS_AND_NORM",        // no fixed edge carries act two to Freud
         "EDUCATION_AND_SITUATION",     // 040 and 042 are not scoped to this route
-        "CONSEQUENCE_AND_FREEDOM",     // Bentham has no incoming edge
         "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
         "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
     ];
