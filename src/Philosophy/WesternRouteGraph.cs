@@ -126,7 +126,13 @@ internal sealed class WesternRouteGraph
         Samples = Array.AsReadOnly(data.Samples);
     }
 
-    public static WesternRouteGraph LoadEmbedded()
+    // The graph is read-only content, and every room asks for it; parsing it once
+    // keeps a save load from re-reading the whole table per question.
+    private static WesternRouteGraph? _embedded;
+
+    public static WesternRouteGraph LoadEmbedded() => _embedded ??= ReadEmbedded();
+
+    private static WesternRouteGraph ReadEmbedded()
     {
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("STS2Philosophers.config.western_graph.json")
             ?? throw new InvalidOperationException("Missing western graph resource.");
