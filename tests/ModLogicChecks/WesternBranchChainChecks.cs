@@ -114,6 +114,7 @@ internal static class WesternBranchChainChecks
         Check(turned.CurrentNodeId == "IMMANUEL_KANT__SELF_AND_OTHER__CORE", "The turn must land on the figure it names.");
         Check(turned.SeenThinkerIds.Contains("IMMANUEL_KANT"), "A figure a turn reaches counts as met.");
         Check(turned.LastFixedAct == 1, "A question does not take the act's fixed slot.");
+        Check(turned.ResolvedQuestionActs.Contains(1), "The act's question is answered once, where it was asked.");
         turned.LastFixedAct = 2;
         Check(graph.GetEligibleEdges(turned, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_154"),
             "A turned line must still have its second act's fixed step.");
