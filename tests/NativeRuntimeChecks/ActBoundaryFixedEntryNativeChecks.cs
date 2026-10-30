@@ -86,6 +86,25 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE");
+        // The third acts of the same lines, one room each. The boundary is
+        // reached with the second act's slot recorded, so the host has to move
+        // it on before asking.
+        ModelDb.Inject(typeof(SchellingNature));
+        CheckBoundary(typeof(DescartesThinkingLens), "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+            [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
+            route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"]);
+        ModelDb.Inject(typeof(RussellAnalysis));
+        CheckBoundary(typeof(AristotleCategoryTablet), "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(RussellAnalysis)], doctrine: false, position: 2, actIndex: 2,
+            route: "FORMAL_LANGUAGE", required: ["WESTERN_EDGE_104"]);
+        ModelDb.Inject(typeof(LeviStraussMyth));
+        CheckBoundary(typeof(AristotleCategoryTablet), "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(LeviStraussMyth)], doctrine: false, position: 2, actIndex: 2,
+            route: "STRUCTURE_AND_EXCLUSION", required: ["WESTERN_EDGE_106"]);
+        ModelDb.Inject(typeof(SartreExistence));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+            [typeof(SartreExistence)], doctrine: false, position: 2, actIndex: 2,
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_112"]);
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
