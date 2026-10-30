@@ -213,9 +213,11 @@ internal static class RouteFixedRoomNativeChecks
                 + string.Join(" | ", unnamedFailures));
         // Nineteen: Freud's handover now belongs to a route, so a run that has
         // not named one cannot see it either.
-        Check(unnamedFailures.Count == 19,
-            $"A run that does not take the first act's question reaches act two with {unnamedFailures.Count} "
-            + "routes broken, not the known nineteen.");
+        // A count alone would let one line drop out while another drops in. The
+        // set is what has to hold.
+        Check(UnnamedActTwoBroken.SequenceEqual(RouteIdsOf(unnamedFailures)),
+            "A run that does not take the first act's question reaches act two broken on: "
+            + string.Join(", ", RouteIdsOf(unnamedFailures)) + ".");
         AssertOnly(ExpectedActTwo, failures, "act two");
         if (unnamedThirdFailures.Count > 0)
             Console.WriteLine("Route unnamed-act-three gaps (" + unnamedThirdFailures.Count + "): "
@@ -226,9 +228,9 @@ internal static class RouteFixedRoomNativeChecks
         // Eighteen, not twenty: two rooms want an answer the second act gave,
         // and the legacy second-act edges are still visible to a run that never
         // named a route.
-        Check(unnamedThirdFailures.Count == 18,
-            $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
-            + "routes broken, not the known eighteen.");
+        Check(UnnamedActThreeBroken.SequenceEqual(RouteIdsOf(unnamedThirdFailures)),
+            "A run that does not take the first act's question reaches act three broken on: "
+            + string.Join(", ", RouteIdsOf(unnamedThirdFailures)) + ".");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
         CheckFirstActBranch(graph);
         return Task.CompletedTask;
@@ -361,6 +363,56 @@ internal static class RouteFixedRoomNativeChecks
         var chosen = ((EventRoom)prepare[1]!).CanonicalEvent.GetType();
         if (chosen != room) failures.Add($"{routeId}: {act} opens {chosen.Name} instead of {room.Name}.");
     }
+
+    // The default line has no route name, so every route-scoped handover is
+    // invisible to it. These are the lines that therefore open nothing, written
+    // out so a swap cannot hide behind an unchanged count.
+    private static readonly string[] UnnamedActTwoBroken =
+    [
+        "APPEARANCE_AND_INTERPRETATION",
+        "AUTONOMY_AND_HISTORY",
+        "CHECKS_AND_JUSTICE",
+        "CONSEQUENCE_AND_FREEDOM",
+        "EDUCATION_AND_SITUATION",
+        "EMBODIED_PERCEPTION",
+        "EXPERIENCE_AND_SELF",
+        "FALLIBLE_INQUIRY",
+        "FORMAL_LANGUAGE",
+        "GENEALOGY_AND_POWER",
+        "INDIVIDUAL_COMMITMENT",
+        "NATURE_AND_BECOMING",
+        "SCIENTIFIC_MODEL",
+        "SOCIAL_CRITIQUE",
+        "SOCIAL_KNOWLEDGE",
+        "STRUCTURE_AND_EXCLUSION",
+        "SYMPATHY_AND_PUBLIC_ACTION",
+        "UNCONSCIOUS_AND_NORM",
+        "WILL_AND_VALUE",
+    ];
+    private static readonly string[] UnnamedActThreeBroken =
+    [
+        "APPEARANCE_AND_INTERPRETATION",
+        "AUTONOMY_AND_HISTORY",
+        "CHECKS_AND_JUSTICE",
+        "CONSEQUENCE_AND_FREEDOM",
+        "EDUCATION_AND_SITUATION",
+        "EMBODIED_PERCEPTION",
+        "EXPERIENCE_AND_SELF",
+        "FORMAL_LANGUAGE",
+        "GENEALOGY_AND_POWER",
+        "INDIVIDUAL_COMMITMENT",
+        "NATURE_AND_BECOMING",
+        "SCIENTIFIC_MODEL",
+        "SOCIAL_CRITIQUE",
+        "SOCIAL_KNOWLEDGE",
+        "STRUCTURE_AND_EXCLUSION",
+        "SYMPATHY_AND_PUBLIC_ACTION",
+        "UNCONSCIOUS_AND_NORM",
+        "WILL_AND_VALUE",
+    ];
+
+    private static List<string> RouteIdsOf(List<string> failures) =>
+        failures.Select(line => line.Split(':')[0]).Distinct().OrderBy(id => id, StringComparer.Ordinal).ToList();
 
     private static readonly Dictionary<string, Type> EntryRelics = new(StringComparer.Ordinal)
     {
