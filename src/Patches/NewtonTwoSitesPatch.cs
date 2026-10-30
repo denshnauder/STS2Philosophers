@@ -69,7 +69,7 @@ internal static class NewtonTwoSitesPatch
             HasOpenRouteQuestion: WesternQuestionNodePolicy.HasOpenQuestion(shared),
             CurrentNodeId: journey?.CurrentNodeId,
             LastFixedAct: journey?.LastFixedAct ?? 0,
-            FixedActThreeResolved: (journey?.LastFixedAct >= 3) || journey?.DeclinedFixedActs.Contains(3) == true,
+            FixedActThreeResolved: journey?.DeclinedFixedActs.Contains(3) == true,
             RetainedEnding: journey?.RetainedEnding == true,
             HasEligibleFixedEdge: journey is not null
                 && WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == NewtonTwoSitesState.CompletionEdgeId),

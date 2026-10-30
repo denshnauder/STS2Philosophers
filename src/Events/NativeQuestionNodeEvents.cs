@@ -53,6 +53,10 @@ internal static class NativeQuestionNodeEvents
     internal static bool HasCompletedCombatAfter(RunState run, ModelId predecessor, string localizationRoot,
         bool normalOnly = false)
     {
+        // At the act boundary this act has no history at all, so the in-act
+        // "fight after the predecessor" anchor cannot be satisfied. The
+        // predecessor and its later fight may both be in an earlier act.
+        if (FixedEntryScope.Active) return HasCompletedCombatAfterAcrossActs(run, predecessor, localizationRoot, normalOnly);
         if (!HasCompletedCombat(run, normalOnly)) return false;
         var history = run.MapPointHistory[run.CurrentActIndex];
         int last = LastPredecessorIndex(history, predecessor, localizationRoot);

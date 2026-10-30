@@ -147,7 +147,7 @@ internal static class DemocritusArrangementChecks
             {
                 journey => journey.CurrentNodeId = "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
                 journey => journey.CompletedEdgeIds.Remove(DemocritusArrangementState.PrerequisiteEdgeId),
-                journey => journey.LastFixedAct = 2,
+                journey => journey.LastFixedAct = 3,
                 journey => journey.RetainedEnding = true,
                 journey => journey.DeclinedFixedActs.Add(2),
                 journey => journey.CompletedEdgeIds.Add(DemocritusArrangementState.EdgeId),
