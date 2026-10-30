@@ -42,7 +42,9 @@ internal static class RouteTurnQuestionPatch
         if (journey.CurrentNodeId != journey.EntryNodeId) return null;
         // The fork is asked once per run: an answered record means the run already
         // chose, and staying is an answer too.
-        if (shared.RouteTurnQuestion is { } previous) return null;
+        // An unreadable record is no answer: it must not spend the fork, or a save
+        // that lost the record's shape would close the question forever.
+        if (shared.RouteTurnQuestion is { } previous && previous.IsUsable()) return null;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         if (!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(journey, graph))) return null;
         RouteTurnQuestion? canonical = TryGetCanonicalEvent();

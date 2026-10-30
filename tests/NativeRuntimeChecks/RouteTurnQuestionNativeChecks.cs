@@ -95,6 +95,14 @@ internal static class RouteTurnQuestionNativeChecks
                 $"{item.Node}: an answered question must not come back.");
             Put(record, "Closed", false);
 
+            // A record that cannot be read is no answer: the fork must still be
+            // available rather than closed by a shape the run cannot use.
+            Put(record, "Version", 0);
+            ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+            Check(Call("RouteTurnQuestionPatch", "TrySelectNative", run) is not null,
+                $"{item.Node}: an unreadable record must not spend the fork.");
+            Put(record, "Version", 1);
+
             // The fork is asked once per run: an answered record means the run
             // already chose, so the next question node must not ask it again.
             Put(record, "Closed", true);
