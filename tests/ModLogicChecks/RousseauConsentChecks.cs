@@ -40,7 +40,28 @@ internal static class RousseauConsentChecks
     public static void Run()
     {
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState late = graph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        Check(graph.TryApply(late, "WESTERN_EDGE_019"), "019 must be completed first.");
+        // The act boundary hands over the second act with its position already
+        // recorded, so 020 leaves the position at three.
+        late.LastFixedAct = 2;
+        Check(graph.TryApply(late, "WESTERN_EDGE_020"), "020 must be completed first.");
+        Check(late.LastFixedAct == 3, "020 moves the fixed position to three.");
+        // The second act's fixed slot is spent by the time its question is asked,
+        // so the question has to be found by its act rather than by the position.
+        Check(graph.TryReserveQuestion(late, 2),
+            "The second act's question stays answerable after the fixed slot moved on.");
+        Check(late.ResolvedQuestionActs.Contains(2), "The reservation records the second act.");
+        Check(graph.TryCompleteReservedQuestion(late, RousseauConsentState.CompletionEdgeId),
+            "The reserved question completes at the same position.");
         PhilosophyRunState shared = Fixture(graph);
+        Check(graph.TryReserveQuestion(shared.WesternJourney, 2),
+            "The second act's question stays answerable after the fixed slot moved on.");
+        Check(shared.WesternJourney.ResolvedQuestionActs.Contains(2),
+            "The reservation records the second act.");
+        Check(graph.TryCompleteReservedQuestion(shared.WesternJourney, RousseauConsentState.CompletionEdgeId),
+            "The reserved question completes at the same position.");
+        shared = Fixture(graph);
         Check(RousseauConsentFlow.IsRouteConsistent(shared.RousseauConsent!, shared.WesternJourney!),
             "Rousseau opens at Augustine after 020.");
         shared = Commit(shared, graph, RousseauConsentAction.InspectConvention);

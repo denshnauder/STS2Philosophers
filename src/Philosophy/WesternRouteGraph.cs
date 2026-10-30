@@ -209,8 +209,10 @@ internal sealed class WesternRouteGraph
 
     public bool TryReserveQuestion(WesternJourneyState state, int expectedAct)
     {
+        // This act's question stays answerable after the fixed slot moved the
+        // position on: the act, not the position, decides whose question it is.
         return _nodes.ContainsKey(state.CurrentNodeId)
-            && state.LastFixedAct == expectedAct
+            && state.LastFixedAct is var position && (expectedAct == position || expectedAct == position - 1)
             && expectedAct is >= 1 and <= 3
             && !state.RetainedEnding
             && state.ResolvedQuestionActs.Add(expectedAct);
@@ -224,7 +226,7 @@ internal sealed class WesternRouteGraph
             || edge.FromNodeId != state.CurrentNodeId
             || state.LastFixedAct is < 1 or > 3
             || edge.Act > state.LastFixedAct
-            || !state.ResolvedQuestionActs.Contains(state.LastFixedAct)
+            || !state.ResolvedQuestionActs.Contains(edge.Act)
             || edge.RequiredEdgeIds.Any(required => !state.CompletedEdgeIds.Contains(required)))
         {
             return false;
