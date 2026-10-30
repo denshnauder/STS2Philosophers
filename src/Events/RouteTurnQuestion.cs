@@ -77,6 +77,9 @@ public sealed class RouteTurnQuestion : EventModel
                     return;
                 }
             }
+            // Staying is an answer: the act's question is spent either way, or the
+            // next question node would ask the same fork again.
+            if (choice.EdgeId is null) journey.ResolvedQuestionActs.Add(1);
             if (shared.RouteTurnQuestion is { } record) record.Closed = true;
             if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {

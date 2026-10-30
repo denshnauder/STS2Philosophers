@@ -37,7 +37,9 @@ internal static class RouteTurnQuestionPatch
         if (journey.RetainedEnding || journey.ResolvedQuestionActs.Contains(1)) return null;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return null;
         if (journey.CurrentNodeId != journey.EntryNodeId) return null;
-        if (shared.RouteTurnQuestion is { } open && !open.Closed) return null;
+        // The fork is asked once per run: an answered record means the run already
+        // chose, and staying is an answer too.
+        if (shared.RouteTurnQuestion is { } previous) return null;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         if (!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(journey, graph))) return null;
         RouteTurnQuestion? canonical = TryGetCanonicalEvent();

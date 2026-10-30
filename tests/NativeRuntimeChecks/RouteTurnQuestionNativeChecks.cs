@@ -95,6 +95,14 @@ internal static class RouteTurnQuestionNativeChecks
                 $"{item.Node}: an answered question must not come back.");
             Put(record, "Closed", false);
 
+            // The fork is asked once per run: an answered record means the run
+            // already chose, so the next question node must not ask it again.
+            Put(record, "Closed", true);
+            ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+            Check(Call("RouteTurnQuestionPatch", "TrySelectNative", run) is null,
+                $"{item.Node}: an answered fork must not be asked again.");
+            Put(record, "Closed", false);
+
             // Answering is the graph's own step: the edge names the line, and the
             // shared figure's edge is followed by the direction the answer gives.
             Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, item.Edge])!,
