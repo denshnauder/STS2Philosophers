@@ -69,6 +69,21 @@ public sealed class BaconSampleLedger : EventModel
                 Block("The saved BaconSampleLedger choice remains blocked for recovery.");
                 return;
             }
+            if (state.Diderot is { PendingAction: not DiderotPracticeAction.None } segment)
+            {
+                if (!DiderotPracticeFlow.Options(segment.Stage).Contains(segment.PendingAction))
+                {
+                    Block("The saved Diderot choice is not valid for its page.");
+                    return;
+                }
+                DiderotPracticeFlow.Apply(segment, segment.PendingAction);
+                if (segment.Closed) state.Inspecting = false;
+                if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+                {
+                    Block("The saved Diderot choice persistence is unknown.");
+                    return;
+                }
+            }
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)

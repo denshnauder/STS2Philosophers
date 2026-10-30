@@ -62,6 +62,19 @@ public sealed class MontesquieuBalance : EventModel
             {
                 Block("The saved MontesquieuBalance choice remains blocked for recovery."); return;
             }
+            if (state.Voltaire is { PendingAction: not VoltaireToleranceAction.None } segment)
+            {
+                if (!VoltaireToleranceFlow.Options(segment.Stage).Contains(segment.PendingAction))
+                {
+                    Block("The saved Voltaire choice is not valid for its page."); return;
+                }
+                VoltaireToleranceFlow.Apply(segment, segment.PendingAction);
+                if (segment.Closed) state.Inspecting = false;
+                if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+                {
+                    Block("The saved Voltaire choice persistence is unknown."); return;
+                }
+            }
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception) { Block($"MontesquieuBalance entry failed: {exception}"); }

@@ -70,6 +70,34 @@ internal static class MontesquieuBalanceChecks
         reopened.Voltaire!.Closed = true;
         Check(!reopened.IsUsable(), "Inspecting a closed Voltaire segment must be rejected.");
 
+        // Sol P1: a prepared action is persisted before it is applied, so a crash
+        // leaves a legal pending action. Recovery applies exactly that action, and
+        // the pending action must always be one of the page's own options.
+        foreach (VoltaireToleranceStage stage in Enum.GetValues<VoltaireToleranceStage>())
+        {
+            var page = VoltaireToleranceState.Create("VOLTAIRE_TOLERANCE:PENDING:1");
+            if (stage != VoltaireToleranceStage.Invitation)
+                VoltaireToleranceFlow.Apply(page, VoltaireToleranceAction.ProtectSpeech);
+            if (page.Stage != stage) continue;
+            foreach (VoltaireToleranceAction action in VoltaireToleranceFlow.Options(stage))
+            {
+                var pending = VoltaireToleranceState.Create("VOLTAIRE_TOLERANCE:PENDING:2");
+                if (stage != VoltaireToleranceStage.Invitation)
+                    VoltaireToleranceFlow.Apply(pending, VoltaireToleranceAction.ProtectSpeech);
+                Check(VoltaireToleranceFlow.TryPrepare(pending, action),
+                    $"The legal {action} choice must be preparable on {stage}.");
+                var restored = System.Text.Json.JsonSerializer.Deserialize<VoltaireToleranceState>(
+                    System.Text.Json.JsonSerializer.Serialize(pending))!;
+                Check(restored.IsUsable() && !restored.Closed
+                    && restored.PendingAction == action
+                    && VoltaireToleranceFlow.Options(restored.Stage).Contains(restored.PendingAction),
+                    "A pending segment action must survive a reload as a recoverable choice.");
+                VoltaireToleranceFlow.Apply(restored, restored.PendingAction);
+                Check(restored.PendingAction == VoltaireToleranceAction.None && restored.IsUsable(),
+                    "Applying the recovered action must clear the pending slot.");
+            }
+        }
+
         var tampered = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:3");
         tampered.Standard = MontesquieuBalanceStandard.Balance;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

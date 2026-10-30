@@ -34,6 +34,34 @@ internal static class DiderotPracticeChecks
         DiderotPracticeFlow.Apply(refused, DiderotPracticeAction.RefuseSummary);
         Check(refused.Conclusion == DiderotPracticeConclusion.Refused, "Refusal must stay unclassified.");
 
+        // Sol P1: a prepared action is persisted before it is applied, so a crash
+        // leaves a legal pending action. Recovery applies exactly that action, and
+        // the pending action must always be one of the page's own options.
+        foreach (DiderotPracticeStage stage in Enum.GetValues<DiderotPracticeStage>())
+        {
+            var page = DiderotPracticeState.Create("DIDEROT_PRACTICE:PENDING:1");
+            if (stage != DiderotPracticeStage.Invitation)
+                DiderotPracticeFlow.Apply(page, DiderotPracticeAction.CollectIntoSystem);
+            if (page.Stage != stage) continue;
+            foreach (DiderotPracticeAction action in DiderotPracticeFlow.Options(stage))
+            {
+                var pending = DiderotPracticeState.Create("DIDEROT_PRACTICE:PENDING:2");
+                if (stage != DiderotPracticeStage.Invitation)
+                    DiderotPracticeFlow.Apply(pending, DiderotPracticeAction.CollectIntoSystem);
+                Check(DiderotPracticeFlow.TryPrepare(pending, action),
+                    $"The legal {action} choice must be preparable on {stage}.");
+                var restored = System.Text.Json.JsonSerializer.Deserialize<DiderotPracticeState>(
+                    System.Text.Json.JsonSerializer.Serialize(pending))!;
+                Check(restored.IsUsable() && !restored.Closed
+                    && restored.PendingAction == action
+                    && DiderotPracticeFlow.Options(restored.Stage).Contains(restored.PendingAction),
+                    "A pending segment action must survive a reload as a recoverable choice.");
+                DiderotPracticeFlow.Apply(restored, restored.PendingAction);
+                Check(restored.PendingAction == DiderotPracticeAction.None && restored.IsUsable(),
+                    "Applying the recovered action must clear the pending slot.");
+            }
+        }
+
         var tampered = DiderotPracticeState.Create("DIDEROT_PRACTICE:TEST:4");
         tampered.Conclusion = DiderotPracticeConclusion.System;
         Check(!tampered.IsUsable(), "A conclusion without its action must be rejected.");
