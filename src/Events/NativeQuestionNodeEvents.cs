@@ -124,7 +124,24 @@ internal static class NativeQuestionNodeEvents
         or MoziMoSeZhuJian or MoziShouChengTu or LaoziWuWeiShuJian or LaoziShuiYu
         or QinGuliShouChengXie or ZhuangziDaHu or YangzhuQuanShengBi or HuishiLiWuChou;
 
+    /// <summary>
+    /// The relic hook that asks for the next event must always hand the game an
+    /// event back: a room that throws costs the run its question, not the map.
+    /// </summary>
     internal static EventModel ModifyNextEvent(RelicModel carrier, EventModel nextEvent)
+    {
+        try
+        {
+            return ModifyNextEventCore(carrier, nextEvent);
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] The question node failed: {exception}");
+            return nextEvent;
+        }
+    }
+
+    private static EventModel ModifyNextEventCore(RelicModel carrier, EventModel nextEvent)
     {
         if (!carrier.IsMutable || !IsDoctrineCarrier(carrier) || carrier.Owner?.RunState is not RunState run
             || !carrier.Owner.Relics.Any(relic => ReferenceEquals(relic, carrier))
