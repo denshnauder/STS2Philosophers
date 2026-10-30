@@ -39,7 +39,7 @@ internal static class KantApperceptionPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
+            NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<HumeInduction>(), "HUME_INDUCTION"),
             behavior?.CompletedCombatCount ?? 0,
             journey?.CurrentNodeId,

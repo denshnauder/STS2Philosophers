@@ -322,13 +322,19 @@ internal static class AllRouteQuestionNodeChecks
                 },
             });
         if (person == "KantApperception")
-            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(), new(),
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            {
+                new(),
                 new()
                 {
                     new() { MapPointType = MapPointType.Unknown,
                         Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<HumeInduction>() }] },
+                },
+                new()
+                {
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
-                } });
+                },
+            });
         if (person == "RousseauConsent")
             Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(),
                 new()
@@ -338,13 +344,19 @@ internal static class AllRouteQuestionNodeChecks
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
                 } });
         if (person == "KantUniversalization")
-            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(), new(),
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            {
+                new(),
                 new()
                 {
                     new() { MapPointType = MapPointType.Unknown,
                         Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<RousseauConsent>() }] },
+                },
+                new()
+                {
                     new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
-                } });
+                },
+            });
         if (person == "MillHarm")
             Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(),
                 new()
