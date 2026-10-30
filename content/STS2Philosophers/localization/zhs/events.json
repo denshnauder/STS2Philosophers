@@ -2431,5 +2431,22 @@
   "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.title": "离开研讨班",
   "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.description": "关闭记录。",
   "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "SARTRE_EXISTENCE.title": "萨特：存在先于本质",
+  "SARTRE_EXISTENCE.pages.INVITATION.description": "一位学生坚称自己一向谨慎，仿佛谨慎先于她的选择。萨特问：记录应当怎么写？",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.EXISTENCE_PRECEDES_ESSENCE.title": "存在先于本质",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.EXISTENCE_PRECEDES_ESSENCE.description": "先记录选择；性格是选择所造就的东西。",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.FREEDOM_IN_SITUATION.title": "处境中的自由",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.FREEDOM_IN_SITUATION.description": "把选择与使它变窄的处境一起记录。",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.KEEP_KIERKEGAARD.title": "保留克尔凯郭尔",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.KEEP_KIERKEGAARD.description": "拒绝这个问题，停留在信仰的一跃。",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.description": "你先记录选择。谨慎是她对处境所做之事，而不是先于存在的本性。",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.description": "你记录处境中的自由。选择是真实的，使选择变窄的处境也必须进入记录。",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.description": "你保留克尔凯郭尔。问题没有得到回答，本幕不再取得固定承接。",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.options.LEAVE.title": "离开咖啡馆",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.options.LEAVE.description": "关闭记录。",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.title": "离开咖啡馆",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.description": "关闭记录。",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.title": "离开咖啡馆",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

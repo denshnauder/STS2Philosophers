@@ -2431,5 +2431,22 @@
   "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.title": "Leave the seminar",
   "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.description": "Close the record.",
   "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "SARTRE_EXISTENCE.title": "Sartre: Existence Precedes Essence",
+  "SARTRE_EXISTENCE.pages.INVITATION.description": "A student insists she has always been a cautious person, as if the caution came first. Sartre asks what the record should say about that.",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.EXISTENCE_PRECEDES_ESSENCE.title": "Existence precedes essence",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.EXISTENCE_PRECEDES_ESSENCE.description": "Record the choice first; the character is what the choice has made of it.",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.FREEDOM_IN_SITUATION.title": "Freedom in situation",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.FREEDOM_IN_SITUATION.description": "Record the choice together with the situation that narrowed it.",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.KEEP_KIERKEGAARD.title": "Keep Kierkegaard",
+  "SARTRE_EXISTENCE.pages.INVITATION.options.KEEP_KIERKEGAARD.description": "Refuse the question and stay with the leap of faith.",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.description": "You record the choice first. The caution is what she has done with her situation, not a nature that preceded it.",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.description": "You record freedom in its situation. The choice is real, and so is the narrowing the record must carry with it.",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.description": "You keep Kierkegaard. The question goes unanswered, and no fixed link is taken this act.",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.options.LEAVE.title": "Leave the cafe",
+  "SARTRE_EXISTENCE.pages.RESULT_EXISTENCE.options.LEAVE.description": "Close the record.",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.title": "Leave the cafe",
+  "SARTRE_EXISTENCE.pages.RESULT_FREEDOM.options.LEAVE.description": "Close the record.",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the cafe",
+  "SARTRE_EXISTENCE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

@@ -72,6 +72,7 @@ internal sealed class PhilosophyRunState
     public DeweyPublicExperimentState? DeweyPublicExperiment { get; set; }
     public HusserlEpocheState? HusserlEpoche { get; set; }
     public HeideggerDaseinState? HeideggerDasein { get; set; }
+    public SartreExistenceState? SartreExistence { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -159,6 +160,7 @@ internal sealed class PhilosophyRunState
         || DeweyPublicExperiment is not null
         || HusserlEpoche is not null
         || HeideggerDasein is not null
+        || SartreExistence is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -377,6 +379,7 @@ internal sealed class PhilosophyRunState
         DeweyPublicExperiment?.NormalizeAfterLoad();
         HusserlEpoche?.NormalizeAfterLoad();
         HeideggerDasein?.NormalizeAfterLoad();
+        SartreExistence?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

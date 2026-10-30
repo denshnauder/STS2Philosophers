@@ -177,6 +177,7 @@
     <Compile Include="..\..\src\Philosophy\DeweyPublicExperimentState.cs" Link="DeweyPublicExperimentState.cs" />
     <Compile Include="..\..\src\Philosophy\HusserlEpocheState.cs" Link="HusserlEpocheState.cs" />
     <Compile Include="..\..\src\Philosophy\HeideggerDaseinState.cs" Link="HeideggerDaseinState.cs" />
+    <Compile Include="..\..\src\Philosophy\SartreExistenceState.cs" Link="SartreExistenceState.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />
