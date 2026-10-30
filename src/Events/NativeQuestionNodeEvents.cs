@@ -174,7 +174,8 @@ internal static class NativeQuestionNodeEvents
     }
 
     private static EventModel? TryResumeExisting(RunState run, bool fixedOnly = false) =>
-RouteTurnQuestionPatch.TrySelectExistingNative(run)
+// A question is not a fixed room: an act boundary may only resume fixed ones.
+(fixedOnly ? null : RouteTurnQuestionPatch.TrySelectExistingNative(run))
             ?? ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
