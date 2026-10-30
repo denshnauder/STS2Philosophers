@@ -118,7 +118,7 @@ def node_for(graph, figure_cell, fallback_problem):
 # so these branches cannot be walked. This is a known design gap, not drift;
 # any other line that grows a branch problem still fails the check.
 KNOWN_BRANCH_GAPS = {
-    "自律与历史", "自然与生成", "个体承担", "现象与解释", "形式语言", "结构与排除",
+    "形式语言", "结构与排除",
     "无意识与规范", "教育与处境", "制衡与公正", "后果与自由", "同感与公共行动",
     "社会批判", "谱系与权力", "科学模型",
 }

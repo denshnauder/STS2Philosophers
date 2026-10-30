@@ -23,6 +23,7 @@ try { SocratesCardProbeChecks.Run(); } catch (Exception e) { failures.Add("Socra
 try { WesternRouteChecks.Run(); } catch (Exception e) { failures.Add("WesternRouteChecks: " + e.Message); }
 try { WesternResearchChecks.Run(); } catch (Exception e) { failures.Add("WesternResearchChecks: " + e.Message); }
 try { WesternGraphChecks.Run(); } catch (Exception e) { failures.Add("WesternGraphChecks: " + e.Message); }
+try { WesternBranchChainChecks.Run(); } catch (Exception e) { failures.Add("WesternBranchChainChecks: " + e.Message); }
 try { WesternRouteTableChecks.Run(); } catch (Exception e) { failures.Add("WesternRouteTableChecks: " + e.Message); }
 try { ActPlacementSaveChecks.Run(); } catch (Exception e) { failures.Add("ActPlacementSaveChecks: " + e.Message); }
 try { WesternGraphRevisionChecks.Run(); } catch (Exception e) { failures.Add("WesternGraphRevisionChecks: " + e.Message); }

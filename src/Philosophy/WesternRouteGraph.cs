@@ -171,6 +171,22 @@ internal sealed class WesternRouteGraph
     /// that reaches the second act unnamed joins it. Runs that predate the route
     /// rules keep whatever they were saved with.
     /// </summary>
+    /// <summary>
+    /// Two lines can share the same first-act figure; the design then asks the
+    /// player for a direction inside the event ("选择具身方向"). The event names
+    /// the line it put the player on, once, before the second act opens.
+    /// </summary>
+    public bool TryNameRoute(WesternJourneyState state, string routeId)
+    {
+        if (string.IsNullOrEmpty(routeId) || !string.IsNullOrEmpty(state.RouteId)
+            || !state.RouteRules || !state.ResolvedQuestionActs.Contains(1)) return false;
+        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
+            .FirstOrDefault(candidate => candidate.RouteId == routeId);
+        if (route is null || route.EntryNodeId != state.EntryNodeId) return false;
+        state.RouteId = route.RouteId;
+        return true;
+    }
+
     public static void NameDefaultRoute(WesternJourneyState state)
     {
         if (!state.RouteRules || !string.IsNullOrEmpty(state.RouteId)
@@ -290,15 +306,38 @@ internal sealed class WesternRouteGraph
         if (string.IsNullOrEmpty(state.RouteId)) return false;
         WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
             .FirstOrDefault(candidate => candidate.RouteId == state.RouteId);
-        return route is not null
-            && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)
-            && node.ThinkerId != route.ActThreeFigure
-            && node.ThinkerId != route.ClosingFigure;
+        if (route is null || !_nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)) return false;
+        if (node.ThinkerId == route.ClosingFigure) return false;
+        if (node.ThinkerId != route.ActThreeFigure) return true;
+        // The route's own third act can still have a documented closing step:
+        // the design's turn reaches a further figure from here. Only a run that
+        // walked the turn can take it, so the default chain still ends here.
+        return ClosingStepReachable(state, route);
     }
+
+    private bool ClosingStepReachable(WesternJourneyState state, WesternRouteDefinition route) =>
+        _edges.Values.Any(edge => edge.Enabled && edge.Slot == "Fixed"
+            && edge.FromNodeId == state.CurrentNodeId && edge.Act <= 3
+            && edge.RouteIds is { Length: > 0 }
+            && edge.RouteIds.Contains(route.RouteId, StringComparer.Ordinal)
+            && _nodes.TryGetValue(edge.ToNodeId, out WesternGraphNode? target)
+            && target.ThinkerId == route.ClosingFigure
+            && !state.CompletedEdgeIds.Contains(edge.EdgeId)
+            && !state.SeenThinkerIds.Contains(target.ThinkerId)
+            && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains));
 
     public bool IsComplete(WesternJourneyState state) => state.LastFixedAct >= 3
         && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)
-        && (state.RetainedEnding || node.Terminal && !RouteStillHasActs(state));
+        && (state.RetainedEnding
+            || (node.Terminal || IsClosingFigure(state, node)) && !RouteStillHasActs(state));
+
+    // A line can end on a figure the graph keeps talking past: the design calls
+    // Gadamer the end of its line and Ricœur only an echo. Reaching that figure
+    // ends the run even though the node has a successor.
+    private bool IsClosingFigure(WesternJourneyState state, WesternGraphNode node) =>
+        !string.IsNullOrEmpty(state.RouteId)
+        && WesternRouteTable.Instance.Routes.FirstOrDefault(route => route.RouteId == state.RouteId)
+            is { } route && node.ThinkerId == route.ClosingFigure;
 
     public bool TryDecline(WesternJourneyState state, string slot, int expectedAct)
     {
