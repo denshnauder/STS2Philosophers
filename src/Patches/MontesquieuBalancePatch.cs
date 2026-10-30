@@ -30,7 +30,7 @@ internal static class MontesquieuBalancePatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Question")
+            .GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == MontesquieuBalanceState.CompletionEdgeId);
         MontesquieuBalanceTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
@@ -41,7 +41,7 @@ internal static class MontesquieuBalancePatch
             saved is not null && journey is not null && MontesquieuBalanceFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
         if (!MontesquieuBalanceTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? MontesquieuBalanceState.Create($"MONTESQUIEU_BALANCE:{run.Rng.Seed}:2");
+        var candidate = saved ?? MontesquieuBalanceState.Create($"MONTESQUIEU_BALANCE:{run.Rng.Seed}:1");
         if (journey is null || !MontesquieuBalanceFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.MontesquieuBalance = candidate;
         Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
