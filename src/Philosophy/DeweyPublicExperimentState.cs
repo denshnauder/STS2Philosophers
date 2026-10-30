@@ -130,8 +130,8 @@ internal static class DeweyPublicExperimentFlow
         bool declines = action == DeweyPublicExperimentAction.KeepPeirce;
         if (adopts && !journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.CompletionEdgeId)
             && !graph.TryApply(journey, DeweyPublicExperimentState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }

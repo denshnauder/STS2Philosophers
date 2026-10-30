@@ -140,8 +140,8 @@ internal static class LockeCargoIdentityFlow
         bool declines = action == LockeCargoAction.KeepDescartes;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.CompletionEdgeId)
             && !graph.TryApply(journey, state.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(1)
-            && !graph.TryDecline(journey, "Question", 1)) return false;
+        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }

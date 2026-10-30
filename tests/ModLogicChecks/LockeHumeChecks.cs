@@ -110,6 +110,28 @@ internal static class LockeHumeChecks
             "Declining Hume spends the act-two fixed slot without entering Hume.");
         shared = CommitHume(shared, graph, HumeInductionAction.Leave);
 
+        // The route can place these rooms later than the act they were written
+        // for. Refusing has to work in the act the room was actually placed in.
+        WesternJourneyState thirdActHume = graph.Start(LockeCargoIdentityState.SourceNodeId);
+        Check(graph.TryApply(thirdActHume, LockeCargoIdentityState.EdgeId), "Locke 026 must be completed first.");
+        thirdActHume.LastFixedAct = 3;
+        thirdActHume.CompletedEdgeIds.Add(HumeInductionState.SecondActEdgeId);
+        var lateHume = HumeInductionState.CreateAt("HUME_INDUCTION:TEST:4", 3);
+        Check(HumeInductionFlow.TryPrepare(lateHume, HumeInductionAction.KeepLocke),
+            "A third-act Hume room must offer keeping Locke.");
+        Check(HumeInductionFlow.TryCommitPending(lateHume, thirdActHume, graph)
+            && thirdActHume.DeclinedFixedActs.Contains(3) && thirdActHume.LastFixedAct == 3,
+            "Refusing a third-act Hume room must spend the third act's slot, not fail.");
+
+        WesternJourneyState secondActLocke = graph.Start(LockeCargoIdentityState.SourceNodeId);
+        secondActLocke.LastFixedAct = 2;
+        var lateLocke = LockeCargoIdentityState.CreateAt("LOCKE_CARGO:TEST:4", 2);
+        Check(LockeCargoIdentityFlow.TryPrepare(lateLocke, LockeCargoAction.KeepDescartes),
+            "A second-act Locke room must offer keeping Descartes.");
+        Check(LockeCargoIdentityFlow.TryCommitPending(lateLocke, secondActLocke, graph)
+            && secondActLocke.ResolvedQuestionActs.Contains(2),
+            "Refusing a second-act Locke room must spend the second act's question slot, not fail.");
+
         shared = new PhilosophyRunState
         {
             WesternJourney = graph.Start(LockeCargoIdentityState.SourceNodeId),

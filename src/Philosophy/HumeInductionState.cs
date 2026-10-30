@@ -114,8 +114,8 @@ internal static class HumeInductionFlow
         bool declines = action == HumeInductionAction.KeepLocke;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.CompletionEdgeIdFor)
             && !graph.TryApply(journey, state.CompletionEdgeIdFor)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(2)
-            && !graph.TryDecline(journey, "Fixed", 2)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex))
+            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex))) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -127,14 +127,14 @@ internal static class HumeInductionFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeIdFor);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct is 1 or 2 or 3 && !adopted
-                && !journey.DeclinedFixedActs.Contains(2)
+                && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex))
                 && journey.CurrentNodeId == HumeInductionState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct is 2 or 3
                 && journey.CurrentNodeId == HumeInductionState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct is 2 or 3
             && journey.CurrentNodeId == HumeInductionState.SourceNodeId
-            && journey.DeclinedFixedActs.Contains(2);
+            && journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex));
     }
 
     public static string DescriptionKey(HumeInductionState state) => state.Stage switch
