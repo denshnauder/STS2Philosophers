@@ -50,6 +50,7 @@ HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
 BerkeleyPerceivedMarkChecks.Run();
 MontesquieuBalanceChecks.Run();
+DiderotPracticeChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

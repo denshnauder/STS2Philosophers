@@ -25,16 +25,20 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     public BaconReportDisposition Disposition { get; set; }
     public bool FixedSlotResolved { get; set; }
     public bool EdgeCommitted { get; set; }
+    public bool Inspecting { get; set; }
+    public DiderotPracticeState? Diderot { get; set; }
     public bool Closed { get => _closed ?? false; set => _closed = value; }
     public static BaconSampleLedgerState Create(string instanceId, string ockhamInstanceId) => new()
     {
         Version = 1, InstanceId = instanceId, OckhamInstanceId = ockhamInstanceId,
         Stage = BaconSampleLedgerStage.Invitation, PendingAction = BaconSampleLedgerAction.None,
         ConfirmedActions = [], Samples = [BaconObservedSample.WarmRich, BaconObservedSample.ColdPoor], Closed = false,
+        Diderot = DiderotPracticeState.Create($"{instanceId}:DIDEROT"),
     };
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty; OckhamInstanceId ??= string.Empty;
+        Diderot?.NormalizeAfterLoad();
         if (!_closed.HasValue) Version = 0;
     }
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -42,6 +46,8 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     {
         if (Version != 1 || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(OckhamInstanceId)
             || !_closed.HasValue || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction)
+            || Inspecting && (Diderot is null || Diderot.Closed)
+            || Diderot is not null && !Diderot.IsUsable()
             || ConfirmedActions is null || ConfirmedActions.Count > 5 || Samples is null) return false;
         var replay = Create(InstanceId, OckhamInstanceId);
         foreach (var action in ConfirmedActions)

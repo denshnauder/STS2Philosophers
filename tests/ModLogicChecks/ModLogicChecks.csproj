@@ -76,8 +76,8 @@
     <Compile Include="..\..\src\Philosophy\AquinasCombatPracticeState.cs" Link="AquinasCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\CopernicusShiftedCenterState.cs" Link="CopernicusShiftedCenterState.cs" />
     <Compile Include="..\..\src\Philosophy\CopernicusShiftedCenterTriggerPolicy.cs" Link="CopernicusShiftedCenterTriggerPolicy.cs" />
-    <Compile Include="..\..\src\Philosophy\BaconSampleLedgerState.cs" Link="BaconSampleLedgerState.cs" />
     <Compile Include="..\..\src\Philosophy\BaconSampleLedgerTriggerPolicy.cs" Link="BaconSampleLedgerTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\BaconSampleLedgerState.cs" Link="BaconSampleLedgerState.cs" />
     <Compile Include="..\..\src\Philosophy\BaconCombatComparisonState.cs" Link="BaconCombatComparisonState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationState.cs" Link="MachiavelliFloodPreparationState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationTriggerPolicy.cs" Link="MachiavelliFloodPreparationTriggerPolicy.cs" />
@@ -167,6 +167,7 @@
     <Compile Include="..\..\src\Philosophy\LockeCargoIdentityState.cs" Link="LockeCargoIdentityState.cs" />
     <Compile Include="..\..\src\Philosophy\MontesquieuBalanceState.cs" Link="MontesquieuBalanceState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
+    <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\BerkeleyPerceivedMarkState.cs" Link="BerkeleyPerceivedMarkState.cs" />
     <Compile Include="..\..\src\Philosophy\LockeCargoIdentityTriggerPolicy.cs" Link="LockeCargoIdentityTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HumeInductionState.cs" Link="HumeInductionState.cs" />
