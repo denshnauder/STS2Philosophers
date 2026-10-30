@@ -127,10 +127,10 @@ internal static class SchellingNatureFlow
         SchellingNatureAction action = state.PendingAction;
         bool adopts = action is SchellingNatureAction.NatureAsSpirit or SchellingNatureAction.NatureAsMechanism;
         bool declines = action == SchellingNatureAction.KeepSpinoza;
-        if (adopts && !journey.CompletedEdgeIds.Contains(SchellingNatureState.CompletionEdgeId)
-            && !graph.TryApply(journey, SchellingNatureState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
+            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -138,14 +138,17 @@ internal static class SchellingNatureFlow
     public static bool IsRouteConsistent(SchellingNatureState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(SchellingNatureState.CompletionEdgeId);
+        int act = state.RoutePlaced ? state.ActIndex : 2;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == act && !adopted
+                && !journey.DeclinedFixedActs.Contains(Math.Min(3, act + 1))
                 && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == act + 1
                 && journey.CurrentNodeId == SchellingNatureState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
+        return !adopted && journey.LastFixedAct == act + 1
+            && journey.DeclinedFixedActs.Contains(Math.Min(3, act + 1))
             && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 

@@ -41,16 +41,15 @@ internal static class SchellingNaturePatch
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? SchellingNatureState.CompletionEdgeId
             : SchellingNatureState.CompletionEdgeId;
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == SchellingNatureState.CompletionEdgeId);
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         SchellingNatureTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
-                && WesternFirstActBranch.IsChosen(run, journey, WesternRouteGraph.LoadEmbedded(),
-                    SchellingNatureState.CompletionEdgeId),
+                && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph,
+                    SchellingNatureState.CompletionEdgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && SchellingNatureFlow.IsRouteConsistent(saved, journey),
             canonical is not null, routeAct);
