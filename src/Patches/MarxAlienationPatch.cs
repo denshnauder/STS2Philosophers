@@ -57,6 +57,14 @@ internal static class MarxAlienationPatch
         var candidate = saved ?? (routeAct >= 2
             ? MarxAlienationState.CreateAt($"MARX_ALIENATION:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
             : MarxAlienationState.Create($"MARX_ALIENATION:{run.Rng.Seed}:3"));
+        if (routeAct >= 2)
+        {
+            candidate.RoutePlaced = true;
+            if (candidate.RouteSourceNodeId.Length == 0)
+                candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)
+                    .FirstOrDefault() ?? string.Empty;
+        }
         if (journey is null || !MarxAlienationFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.MarxAlienation = candidate;
         Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");

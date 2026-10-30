@@ -21,6 +21,12 @@ internal sealed class MarxAlienationState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+
+    /// <summary>True when a route, not the default line, placed this room in its act.</summary>
+    public bool RoutePlaced { get; set; }
+
+    /// <summary>The node a route arrives from when it places this room.</summary>
+    public string RouteSourceNodeId { get; set; } = string.Empty;
     public MarxAlienationStage Stage { get; set; }
     public MarxAlienationAction PendingAction { get; set; }
     public List<MarxAlienationAction> ConfirmedActions { get; set; } = [];
@@ -134,19 +140,21 @@ internal static class MarxAlienationFlow
         int act = state.ActIndex;
         // A route may place this room in act two, where the boundary opens it
         // directly and there is no act-three question to answer.
-        bool onRoute = act != 3;
+        bool onRoute = state.RoutePlaced || act != 3;
+        bool atSource = journey.CurrentNodeId == MarxAlienationState.SourceNodeId
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         if (!state.IsUsable() || journey.RetainedEnding
-            || !onRoute && !journey.CompletedEdgeIds.Contains(MarxAlienationState.RequiredEdgeId)) return false;
+            || !state.RoutePlaced && !journey.CompletedEdgeIds.Contains(MarxAlienationState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         bool asked = journey.ResolvedQuestionActs.Contains(act);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == act && !adopted && !asked
-                && (onRoute || journey.CurrentNodeId == MarxAlienationState.SourceNodeId);
+                && (onRoute || atSource);
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == act && asked
                 && (onRoute || journey.CurrentNodeId == MarxAlienationState.AdoptedNodeId);
         return !adopted && journey.LastFixedAct == act && asked
-            && (onRoute || journey.CurrentNodeId == MarxAlienationState.SourceNodeId);
+            && (onRoute || atSource);
     }
 
     public static string DescriptionKey(MarxAlienationState state) => state.Stage switch

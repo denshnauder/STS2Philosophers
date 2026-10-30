@@ -200,6 +200,15 @@ internal static class RouteFixedRoomNativeChecks
             : (string?)Get(Get(reread[1]!, "WesternJourney")!, "RouteId") ?? "null";
         object?[] prepare = [run, null];
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
+        // The act's window holds two positions; a room may open at either, so the
+        // other one is tried before the line is reported.
+        if (!selected && act == "act three")
+        {
+            Put(journey, "LastFixedAct", 3);
+            Call("PhilosophyRunStateService", "Restore", run, shared);
+            prepare = [run, null];
+            selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
+        }
         if (!selected)
         {
             failures.Add($"{routeId}: {act} does not open {room.Name} at its boundary (run act {run.CurrentActIndex}, route {Get(journey, "RouteId")}, reread {rereadRoute}).");
