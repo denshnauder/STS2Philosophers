@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -38,8 +39,19 @@ internal static class ActFixedEntryHost
         // line: the design gives every entry a default one, and it is the first
         // line the route table lists for that entry.
         WesternRouteGraph.NameDefaultRoute(journey);
+        // The boundary runs inside the game's proceed flow: a room that throws must
+        // cost the run its fixed event, not its transition into the act.
         EventModel? model;
-        using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
+        try
+        {
+            using (FixedEntryScope.Begin()) model = NativeQuestionNodeEvents.TrySelectAtActBoundary(run);
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] The act boundary failed: {exception}");
+            journey.LastFixedAct = arrived;
+            return false;
+        }
         if (model is null)
         {
             journey.LastFixedAct = arrived;
