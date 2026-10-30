@@ -81,6 +81,14 @@ internal static class WesternBranchChainChecks
         Check(graph.FirstActTurnOptions(offer).Select(edge => edge.EdgeId)
             .SequenceEqual(["WESTERN_EDGE_026", "WESTERN_EDGE_153", "WESTERN_EDGE_189"]),
             "Descartes' question must offer the three lines a figure of his own names, and not Husserl's shared one.");
+        // The boundary names the default line before the map is drawn; that name
+        // must not narrow the question to the line it already picked.
+        WesternRouteGraph.NameDefaultRoute(offer);
+        Check(offer.RouteId == "EXPERIENCE_AND_SELF", "The boundary must name the entry's default line.");
+        Check(graph.FirstActTurnOptions(offer).Select(edge => edge.EdgeId)
+            .SequenceEqual(["WESTERN_EDGE_026", "WESTERN_EDGE_153", "WESTERN_EDGE_189"]),
+            "Naming the default line must not take the other lines off the question.");
+
         var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
         bacon.RouteRules = true;
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
