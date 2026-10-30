@@ -47,6 +47,19 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(LockeCargoIdentity));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
             [typeof(LockeCargoIdentity)], doctrine: true, position: 2, route: "EXPERIENCE_AND_SELF");
+        // The rooms the routes place later in the run: the boundary has to hand
+        // over the act they were placed in, not the act they were written for.
+        ModelDb.Inject(typeof(FreudUnconscious));
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
+            [typeof(FreudUnconscious)], doctrine: true, position: 2, route: "UNCONSCIOUS_AND_NORM");
+        ModelDb.Inject(typeof(LacanSignifier));
+        CheckBoundary(typeof(DescartesThinkingLens), "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+            [typeof(LacanSignifier)], doctrine: true, position: 2, actIndex: 2,
+            route: "UNCONSCIOUS_AND_NORM", required: ["WESTERN_EDGE_087"]);
+        ModelDb.Inject(typeof(KantUniversalization));
+        CheckBoundary(typeof(DescartesThinkingLens), "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(KantUniversalization)], doctrine: true, position: 2, actIndex: 2,
+            route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_114"]);
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
