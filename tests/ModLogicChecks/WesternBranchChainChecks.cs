@@ -74,6 +74,18 @@ internal static class WesternBranchChainChecks
             ["WESTERN_EDGE_197", "WESTERN_EDGE_198", "WESTERN_EDGE_199"],
             "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE");
 
+        // What the first act's question may offer: the lines this run could turn
+        // onto. A figure two lines share is not an option on its own.
+        var offer = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        offer.RouteRules = true;
+        Check(graph.FirstActTurnOptions(offer).Select(edge => edge.EdgeId)
+            .SequenceEqual(["WESTERN_EDGE_026", "WESTERN_EDGE_153", "WESTERN_EDGE_189"]),
+            "Descartes' question must offer the three lines a figure of his own names, and not Husserl's shared one.");
+        var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
+        bacon.RouteRules = true;
+        Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
+            "The knowledge entry must offer the scientific line.");
+
         // The first act's fixed branch is the older way into a line. It names
         // the same line the question would, so the run can continue on that
         // line's own handovers instead of the edges written before routes.

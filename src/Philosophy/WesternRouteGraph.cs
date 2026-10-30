@@ -250,6 +250,21 @@ internal sealed class WesternRouteGraph
         return true;
     }
 
+    /// <summary>
+    /// The first act's question offers the lines this run could turn onto: the
+    /// question edges open here whose figure belongs to exactly one line of this
+    /// entry. A figure two lines share is not an option by itself — it is what
+    /// the event has to ask a direction about.
+    /// </summary>
+    public IReadOnlyList<WesternGraphEdge> FirstActTurnOptions(WesternJourneyState state) =>
+        GetEligibleEdges(state, "Question")
+            .Where(edge => edge.Act == 1
+                && WesternRouteTable.Instance.Routes.Count(route =>
+                    route.EntryNodeId == state.EntryNodeId
+                    && route.ActTwoFigure == _nodes[edge.ToNodeId].ThinkerId) == 1)
+            .OrderBy(edge => edge.EdgeId, StringComparer.Ordinal)
+            .ToList();
+
     public bool TryReserveQuestion(WesternJourneyState state, int expectedAct)
     {
         // This act's question stays answerable after the fixed slot moved the
