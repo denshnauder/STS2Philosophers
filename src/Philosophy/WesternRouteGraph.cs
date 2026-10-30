@@ -65,6 +65,9 @@ internal sealed class WesternJourneyState
     /// </summary>
     public string RouteId { get; set; } = string.Empty;
 
+    /// <summary>The entry node the run started from, kept so a route can be named later.</summary>
+    public string EntryNodeId { get; set; } = string.Empty;
+
     internal void NormalizeAfterLoad()
     {
         CurrentNodeId ??= string.Empty;
@@ -74,6 +77,7 @@ internal sealed class WesternJourneyState
         CandidateWindows ??= new(StringComparer.Ordinal);
         DeclinedFixedActs ??= [];
         RouteId ??= string.Empty;
+        EntryNodeId ??= string.Empty;
     }
 }
 
@@ -126,7 +130,13 @@ internal sealed class WesternRouteGraph
         if (!_nodes.TryGetValue(entryNodeId, out WesternGraphNode? node)
             || !WesternRouteCatalog.IsEntryProblem(node.ThinkerId, node.ProblemId))
             throw new InvalidOperationException("This node is not an approved entry.");
-        return new() { CurrentNodeId = entryNodeId, LastFixedAct = 1, SeenThinkerIds = [node.ThinkerId] };
+        return new()
+        {
+            CurrentNodeId = entryNodeId,
+            EntryNodeId = entryNodeId,
+            LastFixedAct = 1,
+            SeenThinkerIds = [node.ThinkerId],
+        };
     }
 
     public WesternGraphNode GetNode(string nodeId) => _nodes[nodeId];
@@ -150,6 +160,18 @@ internal sealed class WesternRouteGraph
             // answered even when the fixed position has already moved past it.
             state.ResolvedQuestionActs.Add(state.LastFixedAct);
             state.ResolvedQuestionActs.Add(edge.Act);
+            // The first act's question is how the design says a run picks its
+            // mainline ("第一幕问号X转线后"). Name the route only when exactly one
+            // route of this entry continues through that figure.
+            if (edge.Act == 1 && string.IsNullOrEmpty(state.RouteId))
+            {
+                string target = _nodes[edge.ToNodeId].ThinkerId;
+                string[] candidates = WesternRouteTable.Instance.Routes
+                    .Where(route => route.EntryNodeId == state.EntryNodeId && route.ActTwoFigure == target)
+                    .Select(route => route.RouteId)
+                    .ToArray();
+                if (candidates.Length == 1) state.RouteId = candidates[0];
+            }
         }
         else state.LastFixedAct = Math.Min(3, state.LastFixedAct + 1);
         if (edge.Outcome is "Adopt" or "Switch") state.CurrentNodeId = edge.ToNodeId;

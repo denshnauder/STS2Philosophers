@@ -104,6 +104,15 @@ internal static class WesternRouteTableChecks
         Check(!graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_091"),
             "A run following another route does not see the edge.");
 
+        // A run that takes the first act's Locke question names its mainline.
+        var chooser = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        Check(graph.TryApply(chooser, "WESTERN_EDGE_026")
+            && chooser.RouteId == "EXPERIENCE_AND_SELF",
+            "The first act's question names the route that continues through it.");
+        Check(graph.GetEligibleEdges(chooser, "Fixed").Where(edge => edge.Act == 2)
+                .Select(edge => edge.EdgeId).Contains("WESTERN_EDGE_093"),
+            "Once named, the route's second act handover opens from Locke.");
+
         // The experience route's default line, with no question mark at all:
         // Descartes' second act hands over to Locke, and Locke's third to Hume.
         var line = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
