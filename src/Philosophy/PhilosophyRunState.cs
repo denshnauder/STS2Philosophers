@@ -65,6 +65,7 @@ internal sealed class PhilosophyRunState
     public SchellingNatureState? SchellingNature { get; set; }
     public KierkegaardFaithState? KierkegaardFaith { get; set; }
     public MarxAlienationState? MarxAlienation { get; set; }
+    public NietzscheRevaluationState? NietzscheRevaluation { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -145,6 +146,7 @@ internal sealed class PhilosophyRunState
         || SchellingNature is not null
         || KierkegaardFaith is not null
         || MarxAlienation is not null
+        || NietzscheRevaluation is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -356,6 +358,7 @@ internal sealed class PhilosophyRunState
         SchellingNature?.NormalizeAfterLoad();
         KierkegaardFaith?.NormalizeAfterLoad();
         MarxAlienation?.NormalizeAfterLoad();
+        NietzscheRevaluation?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

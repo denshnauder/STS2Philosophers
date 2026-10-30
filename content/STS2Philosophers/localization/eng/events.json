@@ -2295,5 +2295,22 @@
   "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.title": "Leave the factory",
   "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.description": "Close the record.",
   "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the factory",
-  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "NIETZSCHE_REVALUATION.title": "Nietzsche: The Genealogy",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.description": "A scholar shows you the ledger of a moral society: the same act is praised when the strong do it and called vice when the weak do. Nietzsche asks what this ledger is worth.",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.REVALUE_ALL_VALUES.title": "Revalue all values",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.REVALUE_ALL_VALUES.description": "Refuse the ledger itself and ask what the valuation serves.",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.GENEALOGY_EXPOSURE.title": "Expose the genealogy",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.GENEALOGY_EXPOSURE.description": "Show how the distinction was made, without pretending it was always there.",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_ROUSSEAU.title": "Keep Rousseau",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_ROUSSEAU.description": "Stay with Rousseau and refuse the question.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.description": "You revalue. The ledger loses its claim to be nature, and every value must now say what it serves.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.description": "You expose the genealogy. The distinction becomes a dated human act, and the scholar can no longer call it eternal.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.description": "You keep Rousseau. The question stays closed, and no fixed link is taken this act.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.options.LEAVE.title": "Leave the archive",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.options.LEAVE.description": "Close the record.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.title": "Leave the archive",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.description": "Close the record.",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the archive",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

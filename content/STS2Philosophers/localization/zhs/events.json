@@ -2295,5 +2295,22 @@
   "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.title": "离开工厂",
   "MARX_ALIENATION.pages.RESULT_PROGRESS.options.LEAVE.description": "关闭记录。",
   "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.title": "离开工厂",
-  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "MARX_ALIENATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "NIETZSCHE_REVALUATION.title": "尼采：谱系",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.description": "一位学者给你看道德社团的账本：同一件事，强者做叫美德，弱者做叫恶。尼采问：这本账本值多少？",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.REVALUE_ALL_VALUES.title": "重估一切价值",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.REVALUE_ALL_VALUES.description": "拒绝账本本身，追问这套估价为谁服务。",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.GENEALOGY_EXPOSURE.title": "揭示谱系",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.GENEALOGY_EXPOSURE.description": "说明这个区分是如何被做出来的，不假装它一直存在。",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_ROUSSEAU.title": "保留卢梭",
+  "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_ROUSSEAU.description": "停留在卢梭，拒绝这个问题。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.description": "你重估。账本失去“自然”的资格，每一种价值都必须说明它服务于什么。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.description": "你揭示谱系。那个区分成为有日期的人类行为，学者不能再称它永恒。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.description": "你保留卢梭。问题保持关闭，本幕不再取得固定承接。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.options.LEAVE.title": "离开档案室",
+  "NIETZSCHE_REVALUATION.pages.RESULT_REVALUE.options.LEAVE.description": "关闭记录。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.title": "离开档案室",
+  "NIETZSCHE_REVALUATION.pages.RESULT_GENEALOGY.options.LEAVE.description": "关闭记录。",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.title": "离开档案室",
+  "NIETZSCHE_REVALUATION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

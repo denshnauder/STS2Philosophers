@@ -497,6 +497,22 @@
       "stage_id": "CORE",
       "display_name": "萨特",
       "terminal": false
+    },
+    {
+      "node_id": "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
+      "thinker_id": "FRIEDRICH_NIETZSCHE",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "尼采",
+      "terminal": false
+    },
+    {
+      "node_id": "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE",
+      "thinker_id": "MICHEL_FOUCAULT",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "福柯",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2378,6 +2394,90 @@
         "evidence_sources": [
           "00西哲当前路线.md:28",
           "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_062",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从历史不平等转入价值谱系",
+      "source": "00西哲当前路线.md:35",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "谱系批判须保留具体历史处境，不能把权力分析写成全能的揭露。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:35"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_063",
+      "from_node_id": "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
+      "to_node_id": "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从价值谱系转入分类与权力",
+      "source": "00西哲当前路线.md:35",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "谱系批判须保留具体历史处境，不能把权力分析写成全能的揭露。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:35"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_064",
+      "from_node_id": "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE",
+      "to_node_id": "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从权力分类转入公共行动",
+      "source": "00西哲当前路线.md:35",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "谱系批判须保留具体历史处境，不能把权力分析写成全能的揭露。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:35"
         ]
       }
     }

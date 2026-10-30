@@ -55,6 +55,7 @@ SmithSympathyChecks.Run();
 SchellingNatureChecks.Run();
 KierkegaardFaithChecks.Run();
 MarxAlienationChecks.Run();
+NietzscheRevaluationChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
