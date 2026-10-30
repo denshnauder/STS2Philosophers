@@ -13,10 +13,15 @@ internal enum BerkeleyConclusion { None, RejectMaterialSubstance, SecondObserver
 /// first explanation, and the narrow conclusion. It deliberately does not own a map
 /// edge: the hosting opportunity is decided by the route, not by this state.
 /// </summary>
-internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized
+internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string HiddenObjectId = "SEALED_SECOND_CRATE";
+
+    // The second-observer branch promises one shop purchase opportunity. The mod
+    // has no purchase-slot API, so the cost is charged as the gold a single shop
+    // purchase would take; the option is hidden when the player cannot pay.
+    public const decimal SecondObserverGoldCost = 75m;
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -27,6 +32,13 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized
     public string? HiddenObject { get; set; }
     public BerkeleyConclusion Conclusion { get; set; }
     public bool Closed { get; set; }
+    public bool CostAttempted { get; set; }
+    public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+
+    public decimal Cost => Conclusion == BerkeleyConclusion.SecondObserver
+        ? SecondObserverGoldCost : 0m;
 
     public static BerkeleyPerceivedMarkState Create(string instanceId) => new() { InstanceId = instanceId };
 

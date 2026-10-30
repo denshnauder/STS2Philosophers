@@ -15,7 +15,7 @@ internal static class BerkeleyPerceivedMarkChecks
         return state;
     }
 
-    internal static void Run()
+    internal static async Task RunAsync()
     {
         var invitation = BerkeleyPerceivedMarkState.Create("BERKELEY_PERCEIVED_MARK:TEST:1");
         Check(BerkeleyPerceivedMarkFlow.Options(invitation.Stage).Count == 3,
@@ -60,6 +60,27 @@ internal static class BerkeleyPerceivedMarkChecks
         var tampered = Observe(BerkeleyMarkAction.CheckTouch);
         tampered.Conclusion = BerkeleyConclusion.PerceptionScope;
         Check(!tampered.IsUsable(), "A conclusion without its recorded action must be rejected.");
+
+        var paid = BerkeleyPerceivedMarkState.Create("BERKELEY:COST:1");
+        BerkeleyPerceivedMarkFlow.TryPrepare(paid, BerkeleyMarkAction.CheckTouch);
+        BerkeleyPerceivedMarkFlow.Apply(paid, paid.PendingAction);
+        Check(paid.Cost == 0m, "Observing a channel must not cost anything.");
+        BerkeleyPerceivedMarkFlow.TryPrepare(paid, BerkeleyMarkAction.RequestSecondObserver);
+        BerkeleyPerceivedMarkFlow.Apply(paid, paid.PendingAction);
+        Check(paid.Cost == BerkeleyPerceivedMarkState.SecondObserverGoldCost,
+            "The second observer must cost the promised shop-purchase price.");
+
+        decimal gold = 100m;
+        int charges = 0;
+        async Task<bool> Persist() => await Task.FromResult(true);
+        var outcome = await EventGoldCostProtocol.ApplyAsync(paid,
+            () => (decimal?)gold, () => { gold -= paid.Cost; charges++; return Task.CompletedTask; }, Persist);
+        Check(outcome == EventGoldCostOutcome.Settled && gold == 25m && charges == 1,
+            "The second observer must charge exactly once.");
+        var again = await EventGoldCostProtocol.ApplyAsync(paid,
+            () => (decimal?)gold, () => { gold -= paid.Cost; charges++; return Task.CompletedTask; }, Persist);
+        Check(again == EventGoldCostOutcome.Settled && gold == 25m && charges == 1,
+            "Replaying the settled charge must not take gold twice.");
 
         var wrongVersion = Observe(BerkeleyMarkAction.CheckTouch);
         wrongVersion.Version = BerkeleyPerceivedMarkState.CurrentVersion + 1;

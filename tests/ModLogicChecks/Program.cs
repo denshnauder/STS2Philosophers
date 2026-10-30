@@ -48,7 +48,7 @@ HegelSubstanceSubjectChecks.Run();
 FichteSelfPositingChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
 LockeHumeChecks.Run();
-BerkeleyPerceivedMarkChecks.Run();
+BerkeleyPerceivedMarkChecks.RunAsync().GetAwaiter().GetResult();
 MontesquieuBalanceChecks.Run();
 DiderotPracticeChecks.Run();
 SmithSympathyChecks.Run();

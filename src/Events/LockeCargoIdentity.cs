@@ -1,3 +1,5 @@
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
@@ -68,6 +70,8 @@ public sealed class LockeCargoIdentity : EventModel
                 Block("The saved LockeCargoIdentity choice remains blocked for recovery.");
                 return;
             }
+            if (state.Berkeley is { Conclusion: BerkeleyConclusion.SecondObserver } berkeley
+                && !await ApplyBerkeleyCostAsync(run, shared, berkeley)) return;
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
@@ -152,6 +156,8 @@ public sealed class LockeCargoIdentity : EventModel
             BerkeleyMarkStage berkeleyStage = berkeley.Stage;
             int berkeleyCount = berkeley.ConfirmedActions.Count;
             return BerkeleyPerceivedMarkFlow.Options(berkeleyStage)
+                .Where(action => action != BerkeleyMarkAction.RequestSecondObserver
+                    || CanAffordSecondObserver())
                 .Select(action => new EventOption(this,
                     () => ChooseBerkeley(state, berkeleyId, berkeleyStage, berkeleyCount, action),
                     $"BERKELEY_PERCEIVED_MARK.pages.{BerkeleyPerceivedMarkFlow.DescriptionKey(berkeley)}.options.{BerkeleyActionKey(action)}",
@@ -183,6 +189,11 @@ public sealed class LockeCargoIdentity : EventModel
                 || berkeley.Stage != expectedStage || berkeley.ConfirmedActions.Count != expectedActionCount
                 || !state.Inspecting) return;
             _ready = false;
+            if (action == BerkeleyMarkAction.RequestSecondObserver && !CanAffordSecondObserver())
+            {
+                Block("The second observer costs gold the player does not have.");
+                return;
+            }
             if (!LockeCargoIdentityFlow.TryApplyBerkeley(state, action))
             {
                 Block($"The Berkeley segment could not apply: {action}.");
@@ -193,6 +204,7 @@ public sealed class LockeCargoIdentity : EventModel
                 Block($"The Berkeley segment persistence is unknown: {action}.");
                 return;
             }
+            if (!await ApplyBerkeleyCostAsync(run, shared, berkeley)) return;
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
@@ -202,6 +214,31 @@ public sealed class LockeCargoIdentity : EventModel
         finally
         {
             Volatile.Write(ref _resolving, 0);
+        }
+    }
+
+    private bool CanAffordSecondObserver() =>
+        Owner is { } owner && owner.Gold >= BerkeleyPerceivedMarkState.SecondObserverGoldCost;
+
+    private async Task<bool> ApplyBerkeleyCostAsync(RunState run, PhilosophyRunState shared,
+        BerkeleyPerceivedMarkState berkeley)
+    {
+        if (berkeley.Conclusion != BerkeleyConclusion.SecondObserver) return true;
+        EventGoldCostOutcome outcome = await EventGoldCostProtocol.ApplyAsync(
+            berkeley,
+            () => Owner is null ? null : (decimal?)Owner.Gold,
+            async () => await PlayerCmd.LoseGold(berkeley.Cost, Owner!, GoldLossType.Spent),
+            () => RouteEventMapBoundary.PersistEventAsync(run, shared));
+        switch (outcome)
+        {
+            case EventGoldCostOutcome.OwnerUnavailable:
+                Block("The second observer has no owner to charge.");
+                return false;
+            case EventGoldCostOutcome.PersistenceUnknown:
+                Block("The second observer cost persistence is unknown.");
+                return false;
+            default:
+                return true;
         }
     }
 
