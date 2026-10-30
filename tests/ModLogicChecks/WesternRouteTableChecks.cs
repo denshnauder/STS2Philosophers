@@ -114,6 +114,40 @@ internal static class WesternRouteTableChecks
         Check(walkable.SequenceEqual(Walkable),
             $"The walkable default lines are exactly the migrated ones, but the graph walks: {string.Join(", ", walkable)}.");
 
+        // The walk above proves each act can be reached from the act before it.
+        // It does not prove the two handovers meet: a route can hand over into
+        // one node and then look for the next handover somewhere else, which
+        // reads as "the room never opens" only when the act is played. Check the
+        // seam directly.
+        var seams = new List<string>();
+        int seamsChecked = 0;
+        foreach (WesternRouteDefinition route in table.Routes)
+        {
+            WesternJourneyState state = graph.Start(route.EntryNodeId);
+            state.RouteId = route.RouteId;
+            state.LastFixedAct = 1;
+            string previousFigure = route.ActOneFigure;
+            var placed = new Dictionary<int, WesternGraphEdge>();
+            foreach ((int act, string figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
+            {
+                if (figure == previousFigure) continue;
+                previousFigure = figure;
+                WesternGraphEdge? edge = graph.GetEligibleEdges(state, "Fixed")
+                    .FirstOrDefault(candidate => candidate.Act == act && ThinkerOf(candidate.ToNodeId) == figure);
+                if (edge is null) break;
+                placed[act] = edge;
+                if (!graph.TryApply(state, edge.EdgeId)) break;
+            }
+            if (!placed.TryGetValue(2, out WesternGraphEdge? second)
+                || !placed.TryGetValue(3, out WesternGraphEdge? third)) continue;
+            seamsChecked++;
+            if (third.FromNodeId != second.ToNodeId)
+                seams.Add($"{route.RouteId}: act two lands on {second.ToNodeId}, act three starts from {third.FromNodeId}");
+        }
+        // A seam check that silently skips most routes proves nothing.
+        Check(seamsChecked >= 15, $"Only {seamsChecked} routes have both handovers to join.");
+        Check(seams.Count == 0, "Every handover must start where the one before it landed: " + string.Join("; ", seams) + ".");
+
         var unreachable = new List<string>();
         foreach (WesternRouteDefinition route in table.Routes)
         {
