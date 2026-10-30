@@ -37,6 +37,26 @@ internal static class LacanSignifierChecks
             && clarifyJourney.LastFixedAct == 3,
             "Clarifying must move the journey to Lacan and consume act two.");
 
+        // A route can put this room in the third act, where there is no act four
+        // to move into: refusing has to close the slot the room stands in.
+        var third = LacanSignifierState.CreateAt("LACAN_SIGNIFIER:TEST:3B", 3,
+            LacanSignifierState.CompletionEdgeId);
+        var thirdJourney = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        thirdJourney.RouteId = "UNCONSCIOUS_AND_NORM";
+        thirdJourney.LastFixedAct = 1;
+        Check(graph.TryApply(thirdJourney, LacanSignifierState.RequiredEdgeId),
+            "The third-act case needs Freud's second-act edge.");
+        Put(thirdJourney, 3);
+        Check(LacanSignifierFlow.TryPrepare(third, LacanSignifierAction.BindCourier)
+            && LacanSignifierFlow.TryCommitPending(third, thirdJourney, graph),
+            "Binding a speaker must reach the interruption in the third act.");
+        Check(LacanSignifierFlow.TryPrepare(third, LacanSignifierAction.RefuseObject)
+            && LacanSignifierFlow.TryCommitPending(third, thirdJourney, graph),
+            "Refusing the object must close the third act's slot.");
+        Check(thirdJourney.DeclinedFixedActs.Contains(3) && thirdJourney.LastFixedAct == 3
+            && thirdJourney.CurrentNodeId == LacanSignifierState.SourceNodeId,
+            "Refusing in the third act must decline that act, not a fourth one.");
+
         var claim = LacanSignifierState.Create("LACAN_SIGNIFIER:TEST:3");
         Bind(claim, LacanSignifierAction.BindArchivist);
         var claimJourney = Journey(graph);
@@ -84,6 +104,8 @@ internal static class LacanSignifierChecks
             "Freud's second-act edge must place the run on his node with act two open.");
         return journey;
     }
+
+    private static void Put(WesternJourneyState journey, int act) => journey.LastFixedAct = act;
 
     private static void Bind(LacanSignifierState state, LacanSignifierAction action)
     {

@@ -123,8 +123,8 @@ internal static class SaussureSignFlow
         bool declines = action == SaussureSignAction.KeepAristotle;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex + 1)
-            && !graph.TryDecline(journey, "Fixed", state.ActIndex + 1)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(Math.Min(3, state.ActIndex + 1))
+            && !graph.TryDecline(journey, "Fixed", Math.Min(3, state.ActIndex + 1))) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
