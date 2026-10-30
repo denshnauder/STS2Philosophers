@@ -113,7 +113,7 @@ public sealed class LacanSignifier : EventModel
         ReferenceEquals(shared.LacanSignifier, state) && shared.WesternJourney is { } journey
         && LacanSignifierFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
 
     private void ShowConfirmedState(LacanSignifierState state)
     {

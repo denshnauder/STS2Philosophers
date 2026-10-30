@@ -110,7 +110,7 @@ public sealed class ComtePositivism : EventModel
         ReferenceEquals(shared.ComtePositivism, state) && shared.WesternJourney is { } journey
         && ComtePositivismFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(ComtePositivismState state)
     {

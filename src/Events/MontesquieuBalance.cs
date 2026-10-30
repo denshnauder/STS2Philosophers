@@ -110,7 +110,7 @@ public sealed class MontesquieuBalance : EventModel
         ReferenceEquals(shared.MontesquieuBalance, state) && shared.WesternJourney is { } journey
         && MontesquieuBalanceFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(MontesquieuBalanceState state)
     {

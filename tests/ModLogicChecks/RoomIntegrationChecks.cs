@@ -36,6 +36,16 @@ internal static class RoomIntegrationChecks
                     $"{name}Patch must restore its open instance through the native dispatch chain.");
             Check(boundary.Contains($"or {name}") || boundary.Contains($"or {name} "),
                 $"{name} must be registered as a route event.");
+            string eventFile = Path.Combine(root, "src", "Events", name + ".cs");
+            if (File.Exists(eventFile))
+            {
+                Match active = Regex.Match(File.ReadAllText(eventFile), @"IsActiveEvent\(run, this, (\d+)\)");
+                Match gate = Regex.Match(File.ReadAllText(Path.Combine(root, "src", "Philosophy", name + "TriggerPolicy.cs")),
+                    @"CurrentActIndex != (\d+)");
+                if (active.Success && gate.Success)
+                    Check(active.Groups[1].Value == gate.Groups[1].Value,
+                        $"{name} checks act index {active.Groups[1].Value} while its trigger gate inserts at {gate.Groups[1].Value}.");
+            }
         }
         Check(rooms >= 45, $"The room integration scan must see the delivered rooms (saw {rooms}).");
     }

@@ -110,7 +110,7 @@ public sealed class SmithSympathy : EventModel
         ReferenceEquals(shared.SmithSympathy, state) && shared.WesternJourney is { } journey
         && SmithSympathyFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(SmithSympathyState state)
     {

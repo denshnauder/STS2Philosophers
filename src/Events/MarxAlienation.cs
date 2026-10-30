@@ -110,7 +110,7 @@ public sealed class MarxAlienation : EventModel
         ReferenceEquals(shared.MarxAlienation, state) && shared.WesternJourney is { } journey
         && MarxAlienationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(MarxAlienationState state)
     {

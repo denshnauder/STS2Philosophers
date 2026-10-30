@@ -110,7 +110,7 @@ public sealed class HabermasCommunication : EventModel
         ReferenceEquals(shared.HabermasCommunication, state) && shared.WesternJourney is { } journey
         && HabermasCommunicationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(HabermasCommunicationState state)
     {

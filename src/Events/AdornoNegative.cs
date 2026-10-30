@@ -110,7 +110,7 @@ public sealed class AdornoNegative : EventModel
         ReferenceEquals(shared.AdornoNegative, state) && shared.WesternJourney is { } journey
         && AdornoNegativeFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(AdornoNegativeState state)
     {

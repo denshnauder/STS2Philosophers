@@ -110,7 +110,7 @@ public sealed class NietzscheRevaluation : EventModel
         ReferenceEquals(shared.NietzscheRevaluation, state) && shared.WesternJourney is { } journey
         && NietzscheRevaluationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(NietzscheRevaluationState state)
     {

@@ -110,7 +110,7 @@ public sealed class HusserlEpoche : EventModel
         ReferenceEquals(shared.HusserlEpoche, state) && shared.WesternJourney is { } journey
         && HusserlEpocheFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(HusserlEpocheState state)
     {

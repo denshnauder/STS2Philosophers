@@ -110,7 +110,7 @@ public sealed class FregeSense : EventModel
         ReferenceEquals(shared.FregeSense, state) && shared.WesternJourney is { } journey
         && FregeSenseFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
 
     private void ShowConfirmedState(FregeSenseState state)
     {

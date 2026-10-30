@@ -110,7 +110,7 @@ public sealed class DeweyPublicExperiment : EventModel
         ReferenceEquals(shared.DeweyPublicExperiment, state) && shared.WesternJourney is { } journey
         && DeweyPublicExperimentFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(DeweyPublicExperimentState state)
     {

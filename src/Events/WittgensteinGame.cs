@@ -110,7 +110,7 @@ public sealed class WittgensteinGame : EventModel
         ReferenceEquals(shared.WittgensteinGame, state) && shared.WesternJourney is { } journey
         && WittgensteinGameFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(WittgensteinGameState state)
     {

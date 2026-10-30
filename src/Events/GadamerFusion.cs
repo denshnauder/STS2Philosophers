@@ -110,7 +110,7 @@ public sealed class GadamerFusion : EventModel
         ReferenceEquals(shared.GadamerFusion, state) && shared.WesternJourney is { } journey
         && GadamerFusionFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
 
     private void ShowConfirmedState(GadamerFusionState state)
     {
