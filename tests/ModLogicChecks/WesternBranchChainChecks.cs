@@ -119,6 +119,16 @@ internal static class WesternBranchChainChecks
         Check(graph.GetEligibleEdges(turned, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_154"),
             "A turned line must still have its second act's fixed step.");
 
+        // An open record keeps every later question closed, so a record that
+        // claims a later act is not a question left open: it is closed on load.
+        // Records written before the act was recorded belong to the first act.
+        var stale = new RouteTurnQuestionState { InstanceId = "question:stale", Act = 2 };
+        stale.NormalizeAfterLoad();
+        Check(stale.Closed, "A question that claims the second act is not left open.");
+        var legacy = new RouteTurnQuestionState { InstanceId = "question:legacy" };
+        legacy.NormalizeAfterLoad();
+        Check(legacy.Act == 1 && !legacy.Closed, "A record from before the act was recorded stays open in the first act.");
+
         // The first act's question offers what the run could turn onto, plus the
         // direction the shared Husserl figure asks about, plus staying.
         Check(RouteTurnQuestionOptions.For(offer, graph).Select(choice => choice.Key)
