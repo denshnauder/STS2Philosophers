@@ -23,7 +23,7 @@ internal static class LockeHumeChecks
         return new PhilosophyRunState
         {
             WesternJourney = journey,
-            HumeInduction = HumeInductionState.Create("HUME_INDUCTION:TEST:2"),
+            HumeInduction = HumeInductionState.CreateAt("HUME_INDUCTION:TEST:2", 2),
         };
     }
 
@@ -83,7 +83,7 @@ internal static class LockeHumeChecks
         Check(HumeInductionFlow.IsRouteConsistent(shared.HumeInduction!, shared.WesternJourney!), "Hume opens at Locke's node after 026.");
         shared = CommitHume(shared, graph, HumeInductionAction.TestOnce);
         shared = CommitHume(shared, graph, HumeInductionAction.RepairFirst);
-        Check(shared.WesternJourney!.CompletedEdgeIds.Contains(HumeInductionState.CompletionEdgeId)
+        Check(shared.WesternJourney!.CompletedEdgeIds.Contains(HumeInductionState.SecondActEdgeId)
             && shared.WesternJourney.CurrentNodeId == HumeInductionState.AdoptedNodeId
             && shared.WesternJourney.LastFixedAct == 2
             && shared.HumeInduction!.Basis == HumeBasis.Tested,
@@ -113,7 +113,7 @@ internal static class LockeHumeChecks
         shared = new PhilosophyRunState
         {
             WesternJourney = graph.Start(LockeCargoIdentityState.SourceNodeId),
-            HumeInduction = HumeInductionState.Create("HUME_INDUCTION:TEST:2"),
+            HumeInduction = HumeInductionState.CreateAt("HUME_INDUCTION:TEST:2", 2),
         };
         Check(!HumeInductionFlow.IsRouteConsistent(shared.HumeInduction!, shared.WesternJourney!),
             "Hume cannot open without 026.");

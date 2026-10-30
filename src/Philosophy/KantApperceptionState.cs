@@ -12,6 +12,12 @@ internal sealed class KantApperceptionState : IJsonOnDeserialized
     public const string SourceNodeId = "DAVID_HUME__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "IMMANUEL_KANT__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_027";
+    public const string SecondActArrivalEdgeId = "WESTERN_EDGE_093";
+
+    /// <summary>Hume is reached on the default line or on the act-one question branch.</summary>
+    public static bool HasHumeArrival(WesternJourneyState journey) =>
+        journey.CompletedEdgeIds.Contains(RequiredEdgeId)
+        || journey.CompletedEdgeIds.Contains(SecondActArrivalEdgeId);
     public const string CompletionEdgeId = "WESTERN_EDGE_028";
 
     public int Version { get; set; } = CurrentVersion;
@@ -123,7 +129,7 @@ internal static class KantApperceptionFlow
     public static bool IsRouteConsistent(KantApperceptionState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(KantApperceptionState.RequiredEdgeId)) return false;
+            || !KantApperceptionState.HasHumeArrival(journey)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(KantApperceptionState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct >= 2 && !adopted

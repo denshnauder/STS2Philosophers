@@ -33,7 +33,8 @@ internal static class HumeInductionPatch
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == HumeInductionState.CompletionEdgeId);
+            .Any(edge => edge.EdgeId == HumeInductionState.CompletionEdgeId
+                || edge.EdgeId == HumeInductionState.SecondActEdgeId);
         HumeInductionTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
@@ -53,7 +54,7 @@ internal static class HumeInductionPatch
             canonical is not null);
         if (!HumeInductionTriggerPolicy.ShouldInsert(context)) return null;
 
-        var candidate = saved ?? HumeInductionState.Create($"HUME_INDUCTION:{run.Rng.Seed}:2");
+        var candidate = saved ?? HumeInductionState.CreateAt($"HUME_INDUCTION:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);
         if (journey is null || !HumeInductionFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HumeInduction = candidate;
 

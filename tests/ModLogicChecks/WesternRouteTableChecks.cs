@@ -51,5 +51,27 @@ internal static class WesternRouteTableChecks
         journey.RouteId = "EXPERIENCE_AND_SELF";
         Check(!graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_023"),
             "A run following another route does not see the edge.");
+
+        // The experience route's default line, with no question mark at all:
+        // Descartes' second act hands over to Locke, and Locke's third to Hume.
+        var line = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        line.RouteId = "EXPERIENCE_AND_SELF";
+        line.LastFixedAct = 2;
+        Check(graph.GetEligibleEdges(line, "Fixed").Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_072", "WESTERN_EDGE_087", "WESTERN_EDGE_091"]),
+            "The second act offers exactly the route's own fixed handover.");
+        // Husserl and Freud are act-one arrivals that a first-act question can
+        // still reach; the route's own second-act handover is the only act-two one.
+        Check(graph.GetEligibleEdges(line, "Fixed").Where(edge => edge.Act == 2)
+                .Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_091"]),
+            "Only the route's own handover belongs to the second act.");
+        Check(graph.TryApply(line, "WESTERN_EDGE_091") && line.CurrentNodeId == "JOHN_LOCKE__SELF_AND_OTHER__CORE"
+            && line.LastFixedAct == 3,
+            "Taking it lands on Locke and spends the second act's position.");
+        Check(graph.GetEligibleEdges(line, "Fixed").Where(edge => edge.Act == 3)
+                .Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_027"]),
+            "The third act offers the route's own closing handover.");
+        Check(graph.TryApply(line, "WESTERN_EDGE_027")
+            && line.CurrentNodeId == "DAVID_HUME__SELF_AND_OTHER__CORE" && line.LastFixedAct == 3,
+            "The default line fills all three acts without a question mark.");
     }
 }

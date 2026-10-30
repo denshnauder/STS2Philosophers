@@ -1466,15 +1466,13 @@
       "edge_id": "WESTERN_EDGE_027",
       "from_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
       "to_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
-      "act": 2,
+      "act": 3,
       "slot": "Fixed",
       "outcome": "Adopt",
       "confidence": "High",
       "relation_summary": "继承与批判，高；把持续自我审查为知觉束，压缩贝克莱等中介",
       "source": "18游戏流程投影.md:339",
-      "required_edge_ids": [
-        "WESTERN_EDGE_026"
-      ],
+      "required_edge_ids": [],
       "enabled": true,
       "context": {
         "from_problem_id": "SELF_AND_OTHER",
@@ -1492,7 +1490,10 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "route_ids": [
+        "EXPERIENCE_AND_SELF"
+      ]
     },
     {
       "edge_id": "WESTERN_EDGE_028",
@@ -3295,6 +3296,68 @@
           "00西哲当前路线.md:37"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_091",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从持续同一的主体转入经验与记忆构成的自我",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "EXPERIENCE_AND_SELF"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_093",
+      "from_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "to_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；第一幕问号已接入洛克，第二幕检验归纳的限度",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "EXPERIENCE_AND_SELF"
+      ]
     }
   ],
   "samples": [
@@ -3415,7 +3478,7 @@
       "entry_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
       "edge_ids": [
         "WESTERN_EDGE_026",
-        "WESTERN_EDGE_027",
+        "WESTERN_EDGE_093",
         "WESTERN_EDGE_028"
       ],
       "terminal_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",

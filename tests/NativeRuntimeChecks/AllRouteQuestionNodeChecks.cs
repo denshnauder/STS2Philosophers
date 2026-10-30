@@ -520,7 +520,7 @@ internal static class AllRouteQuestionNodeChecks
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
             ["DESCARTES__SELF_AND_OTHER__CORE"])!;
         bool Apply(string edge) => (bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, edge])!;
-        Check(Apply("WESTERN_EDGE_026") && Apply("WESTERN_EDGE_027"),
+        Check(Apply("WESTERN_EDGE_026") && Apply("WESTERN_EDGE_093"),
             "Schopenhauer fixture reaches Hume before Kant 028.");
         object kant = Create("KantApperception", "KANT_APPERCEPTION:TEST:3");
         foreach (string action in new[] { "InspectLedger", "Constitutive", "Leave" })
@@ -560,7 +560,7 @@ internal static class AllRouteQuestionNodeChecks
         object schGraph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object schJourney = schGraph.GetType().GetMethod("Start")!.Invoke(schGraph,
             ["DESCARTES__SELF_AND_OTHER__CORE"])!;
-        foreach (string edge in new[] { "WESTERN_EDGE_026", "WESTERN_EDGE_027" })
+        foreach (string edge in new[] { "WESTERN_EDGE_026", "WESTERN_EDGE_093" })
             Check((bool)schGraph.GetType().GetMethod("TryApply")!.Invoke(schGraph, [schJourney, edge])!,
                 "Schopenhauer chain fixture applies " + edge + ".");
         object schKant = Create("KantApperception", "KANT_APPERCEPTION:CHAIN:3");

@@ -13,6 +13,12 @@ internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
     public const string SourceNodeId = "DESCARTES__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "JOHN_LOCKE__SELF_AND_OTHER__CORE";
     public const string EdgeId = "WESTERN_EDGE_026";
+    public const string SecondActEdgeId = "WESTERN_EDGE_091";
+
+    /// <summary>The act this instance was presented in; one means the act-one question.</summary>
+    public int ActIndex { get; set; } = 1;
+
+    public string CompletionEdgeId => ActIndex == 2 ? SecondActEdgeId : EdgeId;
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -27,10 +33,13 @@ internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
     public BerkeleyPerceivedMarkState? Berkeley { get; set; }
     public bool Closed { get; set; }
 
-    public static LockeCargoIdentityState Create(string instanceId) => new()
+    public static LockeCargoIdentityState Create(string instanceId) => CreateAt(instanceId, 1);
+
+    public static LockeCargoIdentityState CreateAt(string instanceId, int actIndex) => new()
     {
         InstanceId = instanceId,
         Berkeley = BerkeleyPerceivedMarkState.Create($"{instanceId}:BERKELEY"),
+        ActIndex = actIndex,
     };
 
     public void NormalizeAfterLoad()
@@ -129,8 +138,8 @@ internal static class LockeCargoIdentityFlow
         LockeCargoAction action = state.PendingAction;
         bool adopts = action is LockeCargoAction.ReturnByMemory or LockeCargoAction.SealAndWitness or LockeCargoAction.ConfirmDutyOnly;
         bool declines = action == LockeCargoAction.KeepDescartes;
-        if (adopts && !journey.CompletedEdgeIds.Contains(LockeCargoIdentityState.EdgeId)
-            && !graph.TryApply(journey, LockeCargoIdentityState.EdgeId)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.CompletionEdgeId)
+            && !graph.TryApply(journey, state.CompletionEdgeId)) return false;
         if (declines && !journey.ResolvedQuestionActs.Contains(1)
             && !graph.TryDecline(journey, "Question", 1)) return false;
         Apply(state, action);
@@ -140,7 +149,7 @@ internal static class LockeCargoIdentityFlow
     public static bool IsRouteConsistent(LockeCargoIdentityState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != 1) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(LockeCargoIdentityState.EdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return !adopted && !journey.ResolvedQuestionActs.Contains(1)
                 && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;

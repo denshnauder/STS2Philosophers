@@ -15,7 +15,7 @@ internal static class SchopenhauerWillDenialChecks
     {
         WesternJourneyState journey = graph.Start(LockeCargoIdentityState.SourceNodeId);
         Check(graph.TryApply(journey, LockeCargoIdentityState.EdgeId), "Locke 026 must be completed first.");
-        Check(graph.TryApply(journey, HumeInductionState.CompletionEdgeId), "Hume 027 must be completed first.");
+        Check(graph.TryApply(journey, HumeInductionState.SecondActEdgeId), "Hume must be reached in the second act first.");
         var kant = KantApperceptionState.Create("KANT_APPERCEPTION:TEST:3");
         var shared = new PhilosophyRunState { WesternJourney = journey, KantApperception = kant };
         foreach (var action in new[] { KantApperceptionAction.InspectLedger, KantApperceptionAction.Constitutive, KantApperceptionAction.Leave })

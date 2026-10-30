@@ -44,7 +44,7 @@ internal static class KantApperceptionPatch
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
-            journey?.CompletedEdgeIds.Contains(KantApperceptionState.RequiredEdgeId) == true,
+            journey is not null && KantApperceptionState.HasHumeArrival(journey),
             edgeEligible,
             saved is not null,
             saved?.IsUsable() == true,

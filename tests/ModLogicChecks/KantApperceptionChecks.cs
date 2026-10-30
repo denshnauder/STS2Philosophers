@@ -14,7 +14,7 @@ internal static class KantApperceptionChecks
     {
         WesternJourneyState journey = graph.Start(LockeCargoIdentityState.SourceNodeId);
         Check(graph.TryApply(journey, LockeCargoIdentityState.EdgeId), "Locke 026 must be completed first.");
-        Check(graph.TryApply(journey, HumeInductionState.CompletionEdgeId), "Hume 027 must be completed first.");
+        Check(graph.TryApply(journey, HumeInductionState.SecondActEdgeId), "Hume must be reached in the second act first.");
         return new PhilosophyRunState
         {
             WesternJourney = journey,

@@ -33,7 +33,8 @@ internal static class LockeCargoIdentityPatch
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")
-            .Any(edge => edge.EdgeId == LockeCargoIdentityState.EdgeId);
+            .Any(edge => edge.EdgeId == LockeCargoIdentityState.EdgeId
+                || edge.EdgeId == LockeCargoIdentityState.SecondActEdgeId);
         LockeCargoIdentityTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
@@ -51,7 +52,7 @@ internal static class LockeCargoIdentityPatch
             canonical is not null);
         if (!LockeCargoIdentityTriggerPolicy.ShouldInsert(context)) return null;
 
-        var candidate = saved ?? LockeCargoIdentityState.Create($"LOCKE_CARGO_IDENTITY:{run.Rng.Seed}:1");
+        var candidate = saved ?? LockeCargoIdentityState.CreateAt($"LOCKE_CARGO_IDENTITY:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);
         if (journey is null || !LockeCargoIdentityFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LockeCargoIdentity = candidate;
 

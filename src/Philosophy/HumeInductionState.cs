@@ -13,6 +13,12 @@ internal sealed class HumeInductionState : IJsonOnDeserialized, IEventGoldCostSt
     public const string AdoptedNodeId = "DAVID_HUME__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_026";
     public const string CompletionEdgeId = "WESTERN_EDGE_027";
+    public const string SecondActEdgeId = "WESTERN_EDGE_093";
+
+    /// <summary>The act this instance was presented in; the default line reaches it in the third.</summary>
+    public int ActIndex { get; set; } = 2;
+
+    public string CompletionEdgeIdFor => ActIndex == 2 ? SecondActEdgeId : CompletionEdgeId;
     public const decimal RepairFirstGoldCost = 75m;
 
     public int Version { get; set; } = CurrentVersion;
@@ -32,6 +38,9 @@ internal sealed class HumeInductionState : IJsonOnDeserialized, IEventGoldCostSt
     public decimal Cost => Stage == HumeInductionStage.ResultRepair ? RepairFirstGoldCost : 0m;
 
     public static HumeInductionState Create(string instanceId) => new() { InstanceId = instanceId };
+
+    public static HumeInductionState CreateAt(string instanceId, int actIndex) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex };
 
     public void NormalizeAfterLoad()
     {
@@ -103,8 +112,8 @@ internal static class HumeInductionFlow
         HumeInductionAction action = state.PendingAction;
         bool adopts = action is HumeInductionAction.RepairFirst or HumeInductionAction.KeepPrediction or HumeInductionAction.RetractNecessity;
         bool declines = action == HumeInductionAction.KeepLocke;
-        if (adopts && !journey.CompletedEdgeIds.Contains(HumeInductionState.CompletionEdgeId)
-            && !graph.TryApply(journey, HumeInductionState.CompletionEdgeId)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.CompletionEdgeIdFor)
+            && !graph.TryApply(journey, state.CompletionEdgeIdFor)) return false;
         if (declines && !journey.DeclinedFixedActs.Contains(2)
             && !graph.TryDecline(journey, "Fixed", 2)) return false;
         Apply(state, action);
@@ -115,7 +124,7 @@ internal static class HumeInductionFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding
             || !journey.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(HumeInductionState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeIdFor);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct is 1 or 2 && !adopted
                 && !journey.DeclinedFixedActs.Contains(2)
