@@ -222,7 +222,10 @@ ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
     private static EventModel? TrySelectRoutedRoom(
         RunState run, PhilosophyRunState shared, RelicModel? carrier, EventModel? nextEvent)
     {
-        bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
+        // Only the question branches read the fork; at the act boundary there is
+        // no carrier relic and therefore no question claim.
+        bool fork = carrier is not null
+            && MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
         WesternQuestionKind kind = carrier is WesternPracticeRelic
             ? WesternQuestionNodePolicy.Select(shared, run.CurrentActIndex, carrier.Id.Entry, fork)
             : WesternQuestionKind.None;

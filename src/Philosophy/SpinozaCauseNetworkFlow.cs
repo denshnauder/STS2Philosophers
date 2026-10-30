@@ -86,7 +86,7 @@ internal static class SpinozaCauseNetworkFlow
         if (!state.FixedSlotResolved)
         {
             return journey.CurrentNodeId == SpinozaCauseNetworkState.SourceNodeId
-                && journey.LastFixedAct == 1
+                && journey.LastFixedAct is 1 or 2
                 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId)
                 && !journey.SeenThinkerIds.Contains("BARUCH_SPINOZA");

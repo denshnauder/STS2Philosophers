@@ -111,6 +111,7 @@ await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();
 await SlyCostReceiptNativeChecks.Run();
 await AllRouteQuestionNodeChecks.Run();
+await ActBoundaryFixedEntryNativeChecks.Run();
 await CopernicusQuestionEntryNativeChecks.Run();
 await EasternQuestionEntryNativeChecks.Run();
 

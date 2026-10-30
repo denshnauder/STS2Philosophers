@@ -40,7 +40,10 @@ internal static class SpinozaCauseNetworkPatch
             HasOpenRouteQuestion: WesternQuestionNodePolicy.HasOpenQuestion(shared),
             CurrentNodeId: journey?.CurrentNodeId,
             LastFixedAct: journey?.LastFixedAct ?? 0,
-            FixedActTwoResolved: journey?.LastFixedAct >= 2
+            // The second act's fixed position is open at one (no first-act fixed
+            // event) or two (the first act's event was taken); it is spent only
+            // after a second-act fixed adoption or an explicit refusal.
+            FixedActTwoResolved: journey?.LastFixedAct > 2
                 || journey?.DeclinedFixedActs.Contains(2) == true,
             RetainedEnding: journey?.RetainedEnding == true,
             HasEligibleFixedEdge: journey is not null
