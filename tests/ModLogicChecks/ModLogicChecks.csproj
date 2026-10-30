@@ -172,6 +172,7 @@
     <Compile Include="..\..\src\Philosophy\MarxAlienationState.cs" Link="MarxAlienationState.cs" />
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />
     <Compile Include="..\..\src\Philosophy\BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
+    <Compile Include="..\..\src\Philosophy\ComtePositivismState.cs" Link="ComtePositivismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\BerkeleyPerceivedMarkState.cs" Link="BerkeleyPerceivedMarkState.cs" />

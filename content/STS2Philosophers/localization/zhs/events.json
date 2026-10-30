@@ -2329,5 +2329,22 @@
   "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.title": "离开办公室",
   "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.description": "关闭记录。",
   "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.title": "离开办公室",
-  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "COMTE_POSITIVISM.title": "孔德：阶段模型",
+  "COMTE_POSITIVISM.pages.INVITATION.description": "一位户籍官把每个社会都归入三个阶段，但有一个镇怎么都放不进去。孔德问：这个房间应当记录什么？",
+  "COMTE_POSITIVISM.pages.INVITATION.options.THREE_STAGES.title": "保留三阶段",
+  "COMTE_POSITIVISM.pages.INVITATION.options.THREE_STAGES.description": "把这个镇记成例外，留待以后修正。",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_ANOMALY.title": "保留异常",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_ANOMALY.description": "让这个镇打断模型，记录模型装不下的部分。",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_BACON.title": "保留培根",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_BACON.description": "拒绝这个问题，停留在培根的工坊。",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.description": "你保留阶段。这个镇变成一条脚注，模型保住方向，代价是眼前这个案子。",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.description": "你保留异常。模型必须说明它解释不了什么，户籍官不能再把这个镇归档。",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.description": "你保留培根。问题没有得到回答，本幕不再取得问号承接，工坊保留原有记录。",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.options.LEAVE.title": "离开户籍所",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.options.LEAVE.description": "关闭记录。",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.title": "离开户籍所",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.description": "关闭记录。",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.title": "离开户籍所",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

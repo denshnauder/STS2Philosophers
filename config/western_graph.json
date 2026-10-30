@@ -521,6 +521,14 @@
       "stage_id": "CORE",
       "display_name": "边沁",
       "terminal": false
+    },
+    {
+      "node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "AUGUSTE_COMTE",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "孔德",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2570,6 +2578,34 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:32"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_068",
+      "from_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从知识协作转入社会阶段模型及其异常",
+      "source": "00西哲当前路线.md:37",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "阶段模型须能被反例打断，不能把社会分类写成不可错的自然法则。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:37"
         ]
       }
     }

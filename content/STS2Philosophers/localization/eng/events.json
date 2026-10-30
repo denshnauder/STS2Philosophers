@@ -2329,5 +2329,22 @@
   "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.title": "Leave the office",
   "BENTHAM_UTILITY.pages.RESULT_BOUNDARY.options.LEAVE.description": "Close the record.",
   "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.title": "Leave the office",
-  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "BENTHAM_UTILITY.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "COMTE_POSITIVISM.title": "Comte: The Stage Model",
+  "COMTE_POSITIVISM.pages.INVITATION.description": "A census clerk has sorted every society into three stages, and one town refuses to fit. Comte asks what the room should record.",
+  "COMTE_POSITIVISM.pages.INVITATION.options.THREE_STAGES.title": "Keep the three stages",
+  "COMTE_POSITIVISM.pages.INVITATION.options.THREE_STAGES.description": "File the town as an exception to be corrected later.",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_ANOMALY.title": "Keep the anomaly",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_ANOMALY.description": "Let the town break the model and record what the model cannot hold.",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_BACON.title": "Keep Bacon",
+  "COMTE_POSITIVISM.pages.INVITATION.options.KEEP_BACON.description": "Refuse the question and stay with Bacon's workshop.",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.description": "You keep the stages. The town becomes a footnote, and the model keeps its direction at the cost of the case in front of you.",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.description": "You keep the anomaly. The model must now say what it cannot explain, and the clerk cannot file the town away.",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.description": "You keep Bacon. The question goes unanswered, no question link is taken this act, and the workshop keeps its record.",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.options.LEAVE.title": "Leave the census office",
+  "COMTE_POSITIVISM.pages.RESULT_STAGES.options.LEAVE.description": "Close the record.",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.title": "Leave the census office",
+  "COMTE_POSITIVISM.pages.RESULT_ANOMALY.options.LEAVE.description": "Close the record.",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.title": "Leave the census office",
+  "COMTE_POSITIVISM.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }
