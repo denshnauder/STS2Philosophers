@@ -140,8 +140,12 @@ internal static class LockeCargoIdentityFlow
         bool declines = action == LockeCargoAction.KeepDescartes;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.CompletionEdgeId)
             && !graph.TryApply(journey, state.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
-            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
+        // The first act's event is the question that names the route; the second
+        // act's event is the fixed room the route places. Refusing records the
+        // slot the event actually occupies in that act.
+        if (declines && !Refused(journey, state.ActIndex)
+            && !graph.TryDecline(journey, state.ActIndex == 1 ? "Question" : "Fixed", state.ActIndex))
+            return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -149,21 +153,30 @@ internal static class LockeCargoIdentityFlow
     public static bool IsRouteConsistent(LockeCargoIdentityState state, WesternJourneyState journey)
     {
         int act = state.ActIndex;
-        if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != act) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeId);
+        // The first act's event is a question and leaves the position alone; the
+        // second act's event is the act's fixed room and moves it on.
+        int position = adopted && act > 1 ? Math.Min(3, act + 1) : act;
+        if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != position) return false;
         // Act one's question names the route; a room the route places later has no
         // question of its own to resolve.
         bool asked = act == 1 && journey.ResolvedQuestionActs.Contains(1);
         // Act one's question names the route, so the room may only open after it
         // is answered; a room the route places later is opened by the boundary.
         bool named = act != 1 || asked;
-        bool adopted = journey.CompletedEdgeIds.Contains(state.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return !adopted && !asked && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && named
                 && journey.CurrentNodeId == LockeCargoIdentityState.AdoptedNodeId;
-        return !adopted && named && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
+        return !adopted && named && Refused(journey, act)
+            && journey.CurrentNodeId == LockeCargoIdentityState.SourceNodeId;
     }
+
+    // A refused event is recorded in the slot it occupied in that act.
+    private static bool Refused(WesternJourneyState journey, int act) => act == 1
+        ? journey.ResolvedQuestionActs.Contains(1)
+        : journey.DeclinedFixedActs.Contains(act);
 
     public static string DescriptionKey(LockeCargoIdentityState state) => state.Stage switch
     {

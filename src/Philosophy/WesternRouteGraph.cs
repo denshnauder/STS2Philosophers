@@ -52,6 +52,13 @@ internal sealed class WesternJourneyState
 {
     public string CurrentNodeId { get; set; } = string.Empty;
     public int LastFixedAct { get; set; }
+
+    /// <summary>
+    /// The act the run is actually in, one-based, set by the act boundary. Zero
+    /// means a save written before this fact existed: those runs fall back to
+    /// the act written on the edge.
+    /// </summary>
+    public int Act { get; set; }
     public HashSet<string> SeenThinkerIds { get; set; } = new(StringComparer.Ordinal);
     public HashSet<string> CompletedEdgeIds { get; set; } = new(StringComparer.Ordinal);
     public HashSet<int> ResolvedQuestionActs { get; set; } = [];
@@ -87,6 +94,7 @@ internal sealed class WesternJourneyState
         RouteId ??= string.Empty;
         EntryNodeId ??= string.Empty;
         if (EntryNodeId.Length == 0) RouteRules = false;
+        if (Act is < 1 or > 3) Act = 0;
     }
 }
 
@@ -180,18 +188,14 @@ internal sealed class WesternRouteGraph
     public bool TryApply(WesternJourneyState state, string edgeId)
     {
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;
-        // A refused or answered question ends its own act: the same question
-        // cannot be walked later as if the refusal had not happened.
-        if (edge.Slot == "Question" && state.ResolvedQuestionActs.Contains(edge.Act)) return false;
         state.CompletedEdgeIds.Add(edgeId);
         state.SeenThinkerIds.Add(_nodes[edge.ToNodeId].ThinkerId);
         if (edge.Slot == "Question")
         {
-            // A question belongs to the act it is written for, not to wherever
-            // the fixed position happens to stand. Recording the position too
-            // made the second act's question spend the third act's, which the
-            // design forbids.
-            state.ResolvedQuestionActs.Add(edge.Act);
+            // A question is recorded for the act it actually happens in. The
+            // act written on the edge is the fallback for saves that predate
+            // this fact; it is not evidence of where the event took place.
+            state.ResolvedQuestionActs.Add(ActualAct(state, edge.Act));
             // The first act's question is how the design says a run picks its
             // mainline ("第一幕问号X转线后"). Name the route only when exactly one
             // route of this entry continues through that figure.
@@ -214,11 +218,10 @@ internal sealed class WesternRouteGraph
     {
         // This act's question stays answerable after the fixed slot moved the
         // position on: the act, not the position, decides whose question it is.
-        return _nodes.ContainsKey(state.CurrentNodeId)
-            && state.LastFixedAct is var position && expectedAct <= position
-            && expectedAct is >= 1 and <= 3
-            && !state.RetainedEnding
-            && state.ResolvedQuestionActs.Add(expectedAct);
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding) return false;
+        int act = ActualAct(state, expectedAct);
+        return act is >= 1 and <= 3 && act <= state.LastFixedAct
+            && state.ResolvedQuestionActs.Add(act);
     }
 
     public bool TryCompleteReservedQuestion(WesternJourneyState state, string edgeId)
@@ -301,8 +304,11 @@ internal sealed class WesternRouteGraph
     {
         if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3 || state.RetainedEnding) return false;
         if (slot == "Question")
-            return expectedAct is >= 1 and <= 3 && expectedAct <= state.LastFixedAct
-                && state.ResolvedQuestionActs.Add(expectedAct);
+        {
+            int act = ActualAct(state, expectedAct);
+            return act is >= 1 and <= 3 && act <= state.LastFixedAct
+                && state.ResolvedQuestionActs.Add(act);
+        }
         // A refusal ends this act's event and nothing else. A room opens at the
         // act boundary before the position has moved on, so the refused act may
         // be the one the boundary is entering; the position then moves to that
@@ -403,10 +409,16 @@ internal sealed class WesternRouteGraph
         return TryApply(copy, edgeId) && CanFinish(copy);
     }
 
+    // The act an event happens in. A legacy save has no act of its own, so the
+    // act written on the edge is the only thing left to fall back to.
+    private static int ActualAct(WesternJourneyState state, int writtenAct) =>
+        state.Act is >= 1 and <= 3 ? state.Act : writtenAct;
+
     private static WesternJourneyState CopyState(WesternJourneyState state) => new()
         {
             CurrentNodeId = state.CurrentNodeId,
             LastFixedAct = state.LastFixedAct,
+            Act = state.Act,
             SeenThinkerIds = new(state.SeenThinkerIds, StringComparer.Ordinal),
             CompletedEdgeIds = new(state.CompletedEdgeIds, StringComparer.Ordinal),
             ResolvedQuestionActs = new(state.ResolvedQuestionActs),
@@ -427,11 +439,10 @@ internal sealed class WesternRouteGraph
             && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
                 && other.FromNodeId == edge.FromNodeId && other.Act == edge.Act
                 && other.RouteIds is { Length: > 0 } && RouteMatches(other, state)))
-        // A question edge is spent once its act has answered. Legacy edges are
-        // written for act one but carry a later handover, so the position is the
-        // only act they can be matched against; the act itself is recorded when
-        // the question is taken or refused.
-        && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
+        // A question edge is spent once the act it actually happens in has
+        // answered. An edge written for act one but used at act two is an act
+        // two event, and the act the run is in says so.
+        && (slot != "Question" || !state.ResolvedQuestionActs.Contains(ActualAct(state, edge.Act)))
         && (slot != "Fixed" || edge.Confidence != "Low");
 
     private void Validate()

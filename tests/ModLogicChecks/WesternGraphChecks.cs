@@ -121,6 +121,26 @@ internal static class WesternGraphChecks
         Check(rejecting.ResolvedQuestionActs.SetEquals([1])
             && graph.GetEligibleEdges(rejecting, "Question").Any(edge => edge.Act == 2),
             "A refused question is answered for its own act and leaves the next act's question open.");
+
+        // The act written on an edge is not evidence of where the event happens.
+        // An act-one edge walked in the second act is a second-act event, and it
+        // may not spend the first act's answer or the third act's slot.
+        WesternJourneyState lateQuestion = graph.Start(first.EntryNodeId);
+        lateQuestion.LastFixedAct = 2;
+        lateQuestion.Act = 2;
+        Check(graph.TryApply(lateQuestion, first.EdgeIds[0])
+            && lateQuestion.ResolvedQuestionActs.SetEquals([2]),
+            "A question walked in the second act is recorded as the second act, not as the act written on its edge.");
+        Check(!lateQuestion.ResolvedQuestionActs.Contains(3) && !lateQuestion.DeclinedFixedActs.Contains(3),
+            "Taking an early edge in the second act leaves the third act's slot open.");
+
+        WesternJourneyState lateRefusal = graph.Start(first.EntryNodeId);
+        lateRefusal.LastFixedAct = 2;
+        lateRefusal.Act = 2;
+        Check(graph.TryDecline(lateRefusal, "Question", 1)
+            && lateRefusal.ResolvedQuestionActs.SetEquals([2])
+            && !lateRefusal.ResolvedQuestionActs.Contains(3),
+            "A question refused in the second act is recorded as the second act and leaves the third act open.");
         Check(!graph.TryApply(rejecting, first.EdgeIds[0]) && !graph.TryApply(rejecting, first.EdgeIds[1]),
             "A refused question cannot be taken later, and its continuation stays locked.");
         Check(rejecting.LastFixedAct == 2, "A refused fixed event records its own act and leaves the position where it was.");

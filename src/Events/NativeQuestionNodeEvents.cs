@@ -133,7 +133,6 @@ internal static class NativeQuestionNodeEvents
             || RouteEventMapBoundary.IsRegisteredEvent(nextEvent)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             return nextEvent;
-
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
         EventModel? existing = TryResumeExisting(run);

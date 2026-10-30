@@ -341,6 +341,12 @@ internal static class RouteFixedRoomNativeChecks
         }
         var chosen = ((EventRoom)prepare[1]!).CanonicalEvent.GetType();
         if (chosen != room) failures.Add($"{routeId}: {act} opens {chosen.Name} instead of {room.Name}.");
+        // The act the run is in is a fact of the boundary, not of the edge that
+        // carries the room. A room opened in act two must record act two.
+        int expectedAct = act.StartsWith("act two", StringComparison.Ordinal) ? 2 : 3;
+        int recordedAct = (int)Get(journey, "Act");
+        if (recordedAct != expectedAct)
+            failures.Add($"{routeId}: {act} opened with the run recorded in act {recordedAct} instead of {expectedAct}.");
     }
 
     // The default line has no route name, so every route-scoped handover is

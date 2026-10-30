@@ -159,6 +159,11 @@ internal static class PhilosophyRunStateService
 
     private static void ReplaceState(RunState runState, PhilosophyRunState state)
     {
+        // The act a run is in is a fact of the run, not of any edge. Binding the
+        // state to the run is where it is written down, so every later reader
+        // records its result against the act the event actually happens in.
+        if (state.WesternJourney is { } journey && runState.CurrentActIndex is >= 0 and <= 2)
+            journey.Act = runState.CurrentActIndex + 1;
         ZenoRouteRuntimeService.Remove(runState);
         States.Remove(runState);
         States.Add(runState, state);

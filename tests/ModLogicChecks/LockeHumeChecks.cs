@@ -128,9 +128,35 @@ internal static class LockeHumeChecks
         var lateLocke = LockeCargoIdentityState.CreateAt("LOCKE_CARGO:TEST:4", 2);
         Check(LockeCargoIdentityFlow.TryPrepare(lateLocke, LockeCargoAction.KeepDescartes),
             "A second-act Locke room must offer keeping Descartes.");
+        // The second act's Locke room occupies the fixed slot its route places,
+        // not the question slot it occupies in the first act. Refusing records
+        // that slot and leaves the third act untouched.
+        secondActLocke.Act = 2;
         Check(LockeCargoIdentityFlow.TryCommitPending(lateLocke, secondActLocke, graph)
-            && secondActLocke.ResolvedQuestionActs.Contains(2),
-            "Refusing a second-act Locke room must spend the second act's question slot, not fail.");
+            && secondActLocke.DeclinedFixedActs.Contains(2)
+            && !secondActLocke.ResolvedQuestionActs.Contains(2)
+            && !secondActLocke.ResolvedQuestionActs.Contains(3)
+            && !secondActLocke.DeclinedFixedActs.Contains(3),
+            "Refusing a second-act Locke room spends the second act's fixed slot and leaves the third act open.");
+
+        // Accepting the same room records the second act as well: the event
+        // happens there even though its first-act edge is written for act one.
+        WesternJourneyState acceptedLocke = graph.Start(LockeCargoIdentityState.SourceNodeId);
+        acceptedLocke.LastFixedAct = 2;
+        acceptedLocke.Act = 2;
+        // The room is placed by the route, so the run has to be on it.
+        acceptedLocke.RouteId = "EXPERIENCE_AND_SELF";
+        acceptedLocke.RouteRules = true;
+        var acceptRoom = LockeCargoIdentityState.CreateAt("LOCKE_CARGO:TEST:5", 2);
+        Check(LockeCargoIdentityFlow.TryPrepare(acceptRoom, LockeCargoAction.CheckMemory)
+            && LockeCargoIdentityFlow.TryCommitPending(acceptRoom, acceptedLocke, graph)
+            && LockeCargoIdentityFlow.TryPrepare(acceptRoom, LockeCargoAction.ReturnByMemory),
+            "A second-act Locke room must offer returning by memory.");
+        Check(LockeCargoIdentityFlow.TryCommitPending(acceptRoom, acceptedLocke, graph)
+            && acceptedLocke.CompletedEdgeIds.Contains(LockeCargoIdentityState.SecondActEdgeId)
+            && !acceptedLocke.ResolvedQuestionActs.Contains(3)
+            && !acceptedLocke.DeclinedFixedActs.Contains(3),
+            "Accepting a second-act Locke room stays in the second act and leaves the third act open.");
 
         shared = new PhilosophyRunState
         {
