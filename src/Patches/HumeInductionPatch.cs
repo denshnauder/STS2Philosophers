@@ -40,12 +40,8 @@ internal static class HumeInductionPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            // At the act-three boundary the second act's fixed room has already
-            // been played; its record is not re-verified here.
-            run.CurrentActIndex >= 2
-                ? NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true)
-                : NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
-                    ModelDb.GetId<LockeCargoIdentity>(), "LOCKE_CARGO_IDENTITY"),
+            NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
+                ModelDb.GetId<LockeCargoIdentity>(), "LOCKE_CARGO_IDENTITY"),
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,

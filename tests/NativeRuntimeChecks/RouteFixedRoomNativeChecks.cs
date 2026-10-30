@@ -1,9 +1,11 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Runs.History;
 using STS2Philosophers;
 using static NativeRuntimeFixture;
 
@@ -71,6 +73,28 @@ internal static class RouteFixedRoomNativeChecks
                 .Invoke(null, [relic, 2])!;
             var thirdRun = (RunState)thirdTuple[1]!;
             Set(CombatManager.Instance, "_turnState", null);
+            // The second act's room was played, and a fight followed it. Those
+            // are facts of a real run that the third act's rooms may ask about,
+            // so the fixture records them instead of the rooms ignoring them.
+            ModelId? secondRoomId = rooms.TryGetValue(secondNode!, out Type? secondRoomType)
+                ? (ModelId)typeof(ModelDb).GetMethods(Methods)
+                    .Single(method => method.Name == "GetId" && method.IsGenericMethodDefinition
+                        && method.GetParameters().Length == 0)
+                    .MakeGenericMethod(secondRoomType).Invoke(null, null)!
+                : null;
+            Set(thirdRun, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            {
+                new(),
+                secondRoomId is null
+                    ? new() { new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] } }
+                    : new()
+                    {
+                        new() { MapPointType = MapPointType.Unknown,
+                            Rooms = [new() { RoomType = RoomType.Event, ModelId = secondRoomId }] },
+                        new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
+                    },
+                new() { new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] } },
+            });
             object thirdJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
             Put(thirdJourney, "RouteId", routeId);
             Put(thirdJourney, "LastFixedAct", 1);
