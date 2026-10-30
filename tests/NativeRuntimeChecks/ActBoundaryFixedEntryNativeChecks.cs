@@ -60,6 +60,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(KantUniversalization)], doctrine: true, position: 2, actIndex: 2,
             route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_114"]);
+        // The second act of the autonomy line. Locke's room sits earlier in the
+        // dispatch chain and opens on the same node, so this also proves the
+        // route gate keeps a room of another line from taking the slot.
+        CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
+            [typeof(KantApperception)], doctrine: false, position: 2, actIndex: 1,
+            route: "AUTONOMY_AND_HISTORY");
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
