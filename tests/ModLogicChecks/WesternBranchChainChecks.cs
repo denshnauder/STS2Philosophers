@@ -144,6 +144,17 @@ internal static class WesternBranchChainChecks
         legacy.NormalizeAfterLoad();
         Check(legacy.Act == 1 && !legacy.Closed, "A record from before the act was recorded stays open in the first act.");
 
+        // A room whose entry offers nothing to turn onto still has to have a way
+        // out, and no two options may share a key.
+        var noTurn = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
+        noTurn.RouteRules = true;
+        var onlyStay = RouteTurnQuestionOptions.For(noTurn, graph);
+        Check(onlyStay.Count == 1 && onlyStay[0].Key == RouteTurnQuestionOptions.StayKey,
+            "An entry with nothing to turn onto must still leave a way out.");
+        var offered = RouteTurnQuestionOptions.For(offer, graph);
+        Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
+            "No two options of the question may share a key.");
+
         // The first act's question offers what the run could turn onto, plus the
         // direction the shared Husserl figure asks about, plus staying.
         Check(RouteTurnQuestionOptions.For(offer, graph).Select(choice => choice.Key)
