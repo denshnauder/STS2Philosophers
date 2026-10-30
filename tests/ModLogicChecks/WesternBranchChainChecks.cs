@@ -102,6 +102,18 @@ internal static class WesternBranchChainChecks
         stayed.LastFixedAct = 2;
         Check(!graph.GetEligibleEdges(stayed, "Fixed").Any(edge => edge.Act == 2),
             "An unnamed run must not reach its second act's step, so staying has to name a line.");
+        // Staying names the line, then spends the question: the other order
+        // cannot name anything, because a spent question is not the entry's own.
+        var stayOrder = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        stayOrder.RouteRules = true;
+        WesternRouteGraph.NameDefaultRoute(stayOrder);
+        Check(stayOrder.RouteId == "EXPERIENCE_AND_SELF", "Staying must name the entry's default line.");
+        var spentFirst = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        spentFirst.RouteRules = true;
+        spentFirst.ResolvedQuestionActs.Add(1);
+        WesternRouteGraph.NameDefaultRoute(spentFirst);
+        Check(spentFirst.RouteId.Length == 0, "A spent question cannot name the entry's default line.");
+
         stayed.RouteId = "EXPERIENCE_AND_SELF";
         Check(graph.GetEligibleEdges(stayed, "Fixed").Any(edge => edge.Act == 2),
             "A named run must reach its second act's step.");
