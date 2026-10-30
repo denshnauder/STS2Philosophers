@@ -1,3 +1,4 @@
+using System.Globalization;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Logging;
@@ -45,6 +46,21 @@ internal static class NativeQuestionNodeEvents
     // Third-act questions may depend on a second-act event (Hegel 025 needs
     // Leibniz 024). The current-act scan cannot see that history, so the
     // predecessor is looked up in earlier acts and any fight after it counts.
+    // Wollstonecraft (040) and Machiavelli (046) compete for the same act-two
+    // Fixed2 slot on Rousseau's history node. A fixed ?? order hid whichever came
+    // second, so the pair is ordered from the persisted run seed: across runs both
+    // stay reachable, within one run only one can open the slot.
+    private static EventModel? TrySelectRousseauSecondAct(RunState run)
+    {
+        string seed = Convert.ToString(run.Rng.Seed, CultureInfo.InvariantCulture) ?? string.Empty;
+        bool wollstonecraftFirst = seed.Length > 0 && (seed[^1] - '0') % 2 == 0;
+        return wollstonecraftFirst
+            ? WollstonecraftAdmissionPatch.TrySelectNative(run)
+                ?? MachiavelliFloodPreparationPatch.TrySelectNative(run)
+            : MachiavelliFloodPreparationPatch.TrySelectNative(run)
+                ?? WollstonecraftAdmissionPatch.TrySelectNative(run);
+    }
+
     internal static bool HasCompletedCombatAfterAcrossActs(RunState run, ModelId predecessor,
         string localizationRoot, bool normalOnly = false)
     {
@@ -210,8 +226,7 @@ internal static class NativeQuestionNodeEvents
             ?? Question(WesternQuestionKind.Pyrrho)
             ?? Question(WesternQuestionKind.Anselm)
             ?? Question(WesternQuestionKind.Ockham)
-            ?? MachiavelliFloodPreparationPatch.TrySelectNative(run)
-            ?? WollstonecraftAdmissionPatch.TrySelectNative(run)
+            ?? TrySelectRousseauSecondAct(run)
             ?? Question(WesternQuestionKind.Luther)
             ?? RousseauConsentPatch.TrySelectNative(run)
             ?? BaconSampleLedgerPatch.TrySelectNative(run)

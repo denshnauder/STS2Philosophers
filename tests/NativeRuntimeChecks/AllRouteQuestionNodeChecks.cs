@@ -154,6 +154,7 @@ internal static class AllRouteQuestionNodeChecks
             CheckPlotinusInterval();
             CheckMissingPredecessor();
             CheckWollstonecraftDirect();
+            CheckRousseauSecondActCompeting();
             CheckSchopenhauerDirect();
             CheckJamesDirect();
             CheckCamusDirect();
@@ -430,6 +431,41 @@ internal static class AllRouteQuestionNodeChecks
         string before = Encode(shared);
         Check(Call("AquinasBridgeNoticePatch", "TrySelectNative", run) is null && Encode(shared) == before,
             "A matching relic/graph edge cannot replace the actual closed adopted Aristotle predecessor.");
+    }
+
+    private static void CheckRousseauSecondActCompeting()
+    {
+        ModelDb.Inject(typeof(WollstonecraftAdmission));
+        ModelDb.Inject(typeof(MachiavelliFloodPreparation));
+        var seen = new HashSet<Type>();
+        foreach (string seed in new[] { "123456789", "123456788", "11", "12", "21", "22" })
+        {
+            var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                .Invoke(null, [typeof(RousseauUncarvedStone), 1])!;
+            var fixture = (NativeRuntimeFixture)tuple[0]!; var run = (RunState)tuple[1]!;
+            Set(run, "Rng", new RunRngSet(seed));
+            object shared = BuildShared("MachiavelliFloodPreparation", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+                fixture.Relic.Id.Entry, run);
+            Call("PhilosophyRunStateService", "Restore", run, shared); shared = CurrentShared(run);
+            object rng = Get(run, "Rng")!;
+            string seedText = Convert.ToString(rng.GetType().GetProperty("Seed")!.GetValue(rng),
+                System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty;
+            Type expected = seedText.Length > 0 && (seedText[^1] - '0') % 2 == 0
+                ? typeof(WollstonecraftAdmission) : typeof(MachiavelliFloodPreparation);
+            Type other = expected == typeof(WollstonecraftAdmission)
+                ? typeof(MachiavelliFloodPreparation) : typeof(WollstonecraftAdmission);
+            EventModel? chosen = run.Act.PullNextEvent(run);
+            Check(chosen?.GetType() == expected,
+                $"Seed {seed} ({seedText}) must let PullNextEvent reach {expected.Name}, got {chosen?.GetType().Name ?? "null"}.");
+            Check(Get(CurrentShared(run), other.Name) is null,
+                $"Seed {seed} must not initialize both competing second-act rooms.");
+            object state = Get(CurrentShared(run), expected.Name);
+            Check((bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!,
+                $"Seed {seed} must leave the selected room's record usable.");
+            seen.Add(expected);
+        }
+        Check(seen.Count == 2,
+            "Across seeds the production dispatch must reach both competing second-act rooms.");
     }
 
     private static void CheckWollstonecraftDirect()
