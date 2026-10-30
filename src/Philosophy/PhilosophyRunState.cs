@@ -70,6 +70,7 @@ internal sealed class PhilosophyRunState
     public ComtePositivismState? ComtePositivism { get; set; }
     public PeirceInquiryState? PeirceInquiry { get; set; }
     public DeweyPublicExperimentState? DeweyPublicExperiment { get; set; }
+    public RouteTurnQuestionState? RouteTurnQuestion { get; set; }
     public HusserlEpocheState? HusserlEpoche { get; set; }
     public HeideggerDaseinState? HeideggerDasein { get; set; }
     public SartreExistenceState? SartreExistence { get; set; }
@@ -410,6 +411,7 @@ internal sealed class PhilosophyRunState
         PeirceInquiry?.NormalizeAfterLoad();
         DeweyPublicExperiment?.NormalizeAfterLoad();
         HusserlEpoche?.NormalizeAfterLoad();
+        RouteTurnQuestion?.NormalizeAfterLoad();
         HeideggerDasein?.NormalizeAfterLoad();
         SartreExistence?.NormalizeAfterLoad();
         MerleauPontyBody?.NormalizeAfterLoad();

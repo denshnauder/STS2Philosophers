@@ -77,6 +77,24 @@ internal static class RouteTurnQuestionNativeChecks
             Check(run.VisitedEventIds.Contains(chosen.Id),
                 $"{item.Node}: the question's identity must be visited without a second event.");
 
+            // A fork left open is still there after a load: the node it was asked
+            // on is the only place the answer can be given, so losing it loses the
+            // line. Closing the record is what makes it stop coming back.
+            object?[] live = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", live);
+            object record = Get(live[1]!, "RouteTurnQuestion")!;
+            Check(record is not null && !(bool)Get(record, "Closed"),
+                $"{item.Node}: presenting the question must leave an open record.");
+            // A checkpoint may record the question without its room: the record is
+            // then the only thing left, and it has to bring the question back.
+            ((HashSet<ModelId>)run.VisitedEventIds).Clear();
+            Check(Call("RouteTurnQuestionPatch", "TrySelectExistingNative", run) is not null,
+                $"{item.Node}: an open question must resume on its own node.");
+            Put(record, "Closed", true);
+            Check(Call("RouteTurnQuestionPatch", "TrySelectExistingNative", run) is null,
+                $"{item.Node}: an answered question must not come back.");
+            Put(record, "Closed", false);
+
             // Answering is the graph's own step: the edge names the line, and the
             // shared figure's edge is followed by the direction the answer gives.
             Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, item.Edge])!,

@@ -174,7 +174,8 @@ internal static class NativeQuestionNodeEvents
     }
 
     private static EventModel? TryResumeExisting(RunState run, bool fixedOnly = false) =>
-ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
+RouteTurnQuestionPatch.TrySelectExistingNative(run)
+            ?? ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
             ?? ParmenidesInquiryPatch.TrySelectExistingNative(run)

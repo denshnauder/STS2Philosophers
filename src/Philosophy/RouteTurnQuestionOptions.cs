@@ -8,6 +8,7 @@ namespace STS2Philosophers;
 internal static class RouteTurnQuestionOptions
 {
     internal const string LocalizationRoot = "ROUTE_TURN_QUESTION";
+    internal const string InstanceIdPrefix = "ROUTE_TURN_QUESTION";
     internal const string StayKey = "STAY";
     internal const string AppearanceKey = "TO_HUSSERL_APPEARANCE";
     internal const string EmbodiedKey = "TO_HUSSERL_EMBODIED";

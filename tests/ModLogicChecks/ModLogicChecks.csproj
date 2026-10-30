@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Philosophy\RouteTurnQuestionOptions.cs" Link="RouteTurnQuestionOptions.cs" />
+    <Compile Include="..\..\src\Philosophy\RouteTurnQuestionState.cs" Link="RouteTurnQuestionState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesTriggerPolicy.cs" Link="NewtonTwoSitesTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesFlow.cs" Link="NewtonTwoSitesFlow.cs" />

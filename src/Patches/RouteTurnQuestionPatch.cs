@@ -12,6 +12,22 @@ namespace STS2Philosophers;
 /// </summary>
 internal static class RouteTurnQuestionPatch
 {
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    /// <summary>
+    /// A fork a run left open is resumed before any new room may open: the node it
+    /// was asked on is the only place the answer can be given.
+    /// </summary>
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        RouteTurnQuestionState? saved = shared.RouteTurnQuestion;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        RouteTurnQuestion? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
@@ -21,15 +37,24 @@ internal static class RouteTurnQuestionPatch
         if (journey.RetainedEnding || journey.ResolvedQuestionActs.Contains(1)) return null;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return null;
         if (journey.CurrentNodeId != journey.EntryNodeId) return null;
+        if (shared.RouteTurnQuestion is { } open && !open.Closed) return null;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         if (!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(journey, graph))) return null;
-        RouteTurnQuestion? canonical;
-        try { canonical = ModelDb.Event<RouteTurnQuestion>(); }
+        RouteTurnQuestion? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        shared.RouteTurnQuestion = RouteTurnQuestionState.Create(
+            $"{RouteTurnQuestionOptions.InstanceIdPrefix}:{run.Rng.Seed}:{run.CurrentActIndex}");
+        Log.Info("[STS2Philosophers] Presenting RouteTurnQuestion room.");
+        return canonical;
+    }
+
+    private static RouteTurnQuestion? TryGetCanonicalEvent()
+    {
+        try { return ModelDb.Event<RouteTurnQuestion>(); }
         catch (Exception exception)
         {
             Log.Error($"[STS2Philosophers] RouteTurnQuestion is unavailable: {exception}");
             return null;
         }
-        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
     }
 }

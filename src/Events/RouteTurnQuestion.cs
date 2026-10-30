@@ -76,11 +76,12 @@ public sealed class RouteTurnQuestion : EventModel
                     Block($"RouteTurnQuestion could not name {route}.");
                     return;
                 }
-                if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
-                {
-                    Block("RouteTurnQuestion could not persist its answer.");
-                    return;
-                }
+            }
+            if (shared.RouteTurnQuestion is { } record) record.Closed = true;
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block("RouteTurnQuestion could not persist its answer.");
+                return;
             }
             SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.RESULT.description"));
         }
