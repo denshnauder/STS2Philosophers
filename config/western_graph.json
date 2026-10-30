@@ -441,7 +441,23 @@
       "stage_id": "HARMONY",
       "display_name": "莱布尼茨",
       "terminal": true
-    }
+    },
+{
+    "node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+    "thinker_id": "MONTESQUIEU",
+    "problem_id": "FREEDOM_AND_INSTITUTIONS",
+    "stage_id": "CORE",
+    "display_name": "孟德斯鸠",
+    "terminal": false
+  },
+{
+    "node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+    "thinker_id": "RAWLS",
+    "problem_id": "FREEDOM_AND_INSTITUTIONS",
+    "stage_id": "CORE",
+    "display_name": "罗尔斯",
+    "terminal": false
+  }
   ],
   "edges": [
     {
@@ -1991,7 +2007,94 @@
           "docs/design/current/west/34莱布尼茨当前设计.md"
         ]
       }
+    },
+{
+    "edge_id": "WESTERN_EDGE_051",
+    "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+    "to_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+    "act": 1,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "问题重开，高；从柏拉图式制度设计转入权力制衡与宽窄不同的制度条件",
+    "source": "00西哲当前路线.md:31",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "制度比较须保留权力滥用与宽容边界，不能写成对任一政体的无条件赞美。",
+      "interpretation_boundary": "以同一问题面重开，不伪造柏拉图到孟德斯鸠的直接师承。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:31",
+        "00西哲当前路线.md:53"
+      ]
     }
+  },
+{
+    "edge_id": "WESTERN_EDGE_052",
+    "from_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+    "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+    "act": 2,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "问题展开，高；从制衡经验转入普遍规则与制度正当性",
+    "source": "00西哲当前路线.md:31",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "普遍化检验须保留例外与强制边界，不能把制度正当性写成形式合规。",
+      "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:31",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  },
+{
+    "edge_id": "WESTERN_EDGE_053",
+    "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+    "to_node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+    "act": 3,
+    "slot": "Fixed",
+    "outcome": "Adopt",
+    "confidence": "High",
+    "relation_summary": "收束，高；以制度公正检验普遍规则对最不利者的后果",
+    "source": "00西哲当前路线.md:31",
+    "required_edge_ids": [],
+    "enabled": true,
+    "context": {
+      "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "relation_types": [
+        "ProblemShift"
+      ],
+      "compressed_mediators": "",
+      "behavior_requirement": "NoAdditionalGate",
+      "ethical_boundary": "分配检验须保留最不利者与基本自由的优先次序，不能把公正化约为效率。",
+      "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+      "evidence_status": "LocalPlanning",
+      "evidence_sources": [
+        "00西哲当前路线.md:31",
+        "00西哲当前路线.md:53"
+      ]
+    }
+  }
   ],
   "samples": [
     {
