@@ -2627,5 +2627,22 @@
   "GADAMER_FUSION.pages.RESULT_KEPT.options.HEAR_ECHO.description": "Look back on this run's interpretation and on who was speaking.",
   "GADAMER_FUSION.pages.ECHO.description": "Ricoeur closes the seminar by reading the record back to you: the interpretation you chose is now a story the run tells about itself, and the self who chose it is part of that story. Nothing new is asked; the room only notes that the account is not finished.",
   "GADAMER_FUSION.pages.ECHO.options.LEAVE.title": "Close the record",
-  "GADAMER_FUSION.pages.ECHO.options.LEAVE.description": "Leave the seminar."
+  "GADAMER_FUSION.pages.ECHO.options.LEAVE.description": "Leave the seminar.",
+  "HORKHEIMER_REASON.title": "Horkheimer: Instrumental Reason",
+  "HORKHEIMER_REASON.pages.INVITATION.description": "The factory counts output and the office counts files, and both call it reason. Horkheimer asks what the record should name.",
+  "HORKHEIMER_REASON.pages.INVITATION.options.INSTRUMENTAL_REASON.title": "Criticise instrumental reason",
+  "HORKHEIMER_REASON.pages.INVITATION.options.INSTRUMENTAL_REASON.description": "Record reason as a tool that turns everything, including its users, into means.",
+  "HORKHEIMER_REASON.pages.INVITATION.options.CULTURE_INDUSTRY.title": "Describe the culture industry",
+  "HORKHEIMER_REASON.pages.INVITATION.options.CULTURE_INDUSTRY.description": "Record the films, advertisements and newspapers as one machine.",
+  "HORKHEIMER_REASON.pages.INVITATION.options.KEEP_MARX.title": "Keep Marx",
+  "HORKHEIMER_REASON.pages.INVITATION.options.KEEP_MARX.description": "Refuse the question and stay with alienated labour.",
+  "HORKHEIMER_REASON.pages.RESULT_REASON.description": "You criticise instrumental reason. Reason is recorded as a tool that turns everything, including its users, into means, and the record notes that this was not blamed on a single class.",
+  "HORKHEIMER_REASON.pages.RESULT_CULTURE.description": "You describe the culture industry. Films, advertisements and newspapers are recorded as one machine, and the record notes that instrumental reason was not named separately.",
+  "HORKHEIMER_REASON.pages.RESULT_KEPT.description": "You keep Marx. The question goes unanswered, and no fixed link is taken this act.",
+  "HORKHEIMER_REASON.pages.RESULT_REASON.options.LEAVE.title": "Leave the institute",
+  "HORKHEIMER_REASON.pages.RESULT_REASON.options.LEAVE.description": "Close the record.",
+  "HORKHEIMER_REASON.pages.RESULT_CULTURE.options.LEAVE.title": "Leave the institute",
+  "HORKHEIMER_REASON.pages.RESULT_CULTURE.options.LEAVE.description": "Close the record.",
+  "HORKHEIMER_REASON.pages.RESULT_KEPT.options.LEAVE.title": "Leave the institute",
+  "HORKHEIMER_REASON.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

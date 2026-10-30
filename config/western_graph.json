@@ -593,6 +593,14 @@
       "stage_id": "CORE",
       "display_name": "维特根斯坦",
       "terminal": false
+    },
+    {
+      "node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "thinker_id": "MAX_HORKHEIMER",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "霍克海默",
+      "terminal": false
     }
   ],
   "edges": [
@@ -3035,6 +3043,64 @@
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:26"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_083",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从社会不平等的起源转入劳动与异化",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "社会批判须保留被批判者的具体处境，不能把工具理性写成无主体的命运。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_084",
+      "from_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "to_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从异化劳动转入工具理性批判",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_083"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "社会批判须保留被批判者的具体处境，不能把工具理性写成无主体的命运。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
         ]
       }
     }
