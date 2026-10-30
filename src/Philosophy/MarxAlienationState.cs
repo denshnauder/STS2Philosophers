@@ -29,10 +29,10 @@ internal sealed class MarxAlienationState : IJsonOnDeserialized
     public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public int ActIndex { get; set; } = 1;
+    public int ActIndex { get; set; } = 3;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
-    public static MarxAlienationState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
+    public static MarxAlienationState Create(string instanceId) => CreateAt(instanceId, 3, CompletionEdgeId);
 
     public static MarxAlienationState CreateAt(string instanceId, int actIndex, string edgeId) =>
         new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };

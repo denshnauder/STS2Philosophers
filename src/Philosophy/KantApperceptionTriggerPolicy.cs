@@ -15,14 +15,20 @@ internal sealed record KantApperceptionTriggerContext(
     bool SavedInstanceUsable,
     bool SavedInstanceClosed,
     bool SavedRouteConsistent,
-    bool ModelAvailable);
+    bool ModelAvailable,
+    int RouteAct = 0);
 
 internal static class KantApperceptionTriggerPolicy
 {
     public static bool ShouldInsert(KantApperceptionTriggerContext context)
     {
         if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
-            || context.CurrentActIndex != 2 || !context.ModelAvailable) return false;
+            || !context.ModelAvailable) return false;
+        // The question opens in the room's own act; a route may place this room in
+        // act two or three, and then only that act accepts it.
+        int act = context.RouteAct >= 2 ? context.RouteAct - 1 : 2;
+        int position = context.RouteAct >= 2 ? context.RouteAct : 3;
+        if (context.CurrentActIndex != act) return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1

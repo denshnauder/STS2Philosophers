@@ -17,8 +17,12 @@ internal sealed class KantApperceptionState : IJsonOnDeserialized
     /// <summary>Hume is reached on the default line or on the act-one question branch.</summary>
     public static bool HasHumeArrival(WesternJourneyState journey) =>
         journey.CompletedEdgeIds.Contains(RequiredEdgeId)
-        || journey.CompletedEdgeIds.Contains(SecondActArrivalEdgeId);
+        || journey.CompletedEdgeIds.Contains(SecondActArrivalEdgeId)
+        || journey.CompletedEdgeIds.Contains(RouteArrivalEdgeId);
     public const string CompletionEdgeId = "WESTERN_EDGE_028";
+
+    /// <summary>The route that places this room in act two arrives from Descartes.</summary>
+    public const string RouteArrivalEdgeId = "WESTERN_EDGE_095";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -31,11 +35,19 @@ internal sealed class KantApperceptionState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static KantApperceptionState Create(string instanceId) => new() { InstanceId = instanceId };
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public static KantApperceptionState Create(string instanceId) => CreateAt(instanceId, 3, CompletionEdgeId);
+
+    public static KantApperceptionState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
 
@@ -51,7 +63,7 @@ internal sealed class KantApperceptionState : IJsonOnDeserialized
             || PendingAction != KantApperceptionAction.None
                 && !KantApperceptionFlow.Options(Stage).Contains(PendingAction)) return false;
 
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (KantApperceptionAction action in ConfirmedActions)
         {
             if (replay.Closed || !KantApperceptionFlow.Options(replay.Stage).Contains(action)) return false;
@@ -118,29 +130,35 @@ internal static class KantApperceptionFlow
         KantApperceptionAction action = state.PendingAction;
         bool adopts = action is KantApperceptionAction.Constitutive or KantApperceptionAction.Regulative;
         bool declines = action == KantApperceptionAction.KeepHume;
-        if (adopts && !journey.CompletedEdgeIds.Contains(KantApperceptionState.CompletionEdgeId)
-            && !graph.TryApply(journey, KantApperceptionState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        int declineAct = Math.Min(3, state.ActIndex + 1);
+        if (declines && !journey.DeclinedFixedActs.Contains(declineAct)
+            && !graph.TryDecline(journey, "Fixed", declineAct)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(KantApperceptionState state, WesternJourneyState journey)
     {
+        int act = state.ActIndex;
+        bool routeArrival = act == 2 && journey.CompletedEdgeIds.Contains(KantApperceptionState.RouteArrivalEdgeId);
         if (!state.IsUsable() || journey.RetainedEnding
-            || !KantApperceptionState.HasHumeArrival(journey)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(KantApperceptionState.CompletionEdgeId);
+            || act == 3 && !KantApperceptionState.HasHumeArrival(journey)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declined = Math.Min(3, act + 1);
+        // Act three opens once act two's fixed event has been taken (position two)
+        // and stays open through its own act; act two opens in place.
+        int opens = act == 3 ? 2 : act;
+        bool atSource = journey.CurrentNodeId == KantApperceptionState.SourceNodeId || routeArrival;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct >= 2 && !adopted
-                && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == KantApperceptionState.SourceNodeId;
+            return journey.LastFixedAct >= opens && !adopted
+                && !journey.DeclinedFixedActs.Contains(declined) && atSource;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
+            return !state.FixedDeclined && adopted && journey.LastFixedAct >= opens
                 && journey.CurrentNodeId == KantApperceptionState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.CurrentNodeId == KantApperceptionState.SourceNodeId
-            && journey.DeclinedFixedActs.Contains(3);
+        return !adopted && journey.LastFixedAct >= opens && atSource
+            && journey.DeclinedFixedActs.Contains(declined);
     }
 
     public static string DescriptionKey(KantApperceptionState state) => state.Stage switch

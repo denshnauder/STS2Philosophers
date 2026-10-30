@@ -31,9 +31,20 @@ internal static class KantApperceptionPatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
 
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
-            .Any(edge => edge.EdgeId == KantApperceptionState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "IMMANUEL_KANT" ? 2
+                : route.ActThreeFigure == "IMMANUEL_KANT" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == KantApperceptionState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? KantApperceptionState.CompletionEdgeId
+            : KantApperceptionState.CompletionEdgeId;
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         KantApperceptionTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
@@ -50,10 +61,13 @@ internal static class KantApperceptionPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             saved is not null && journey is not null && KantApperceptionFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            routeAct);
         if (!KantApperceptionTriggerPolicy.ShouldInsert(context)) return null;
 
-        var candidate = saved ?? KantApperceptionState.Create($"KANT_APPERCEPTION:{run.Rng.Seed}:3");
+        var candidate = saved ?? (routeAct >= 2
+            ? KantApperceptionState.CreateAt($"KANT_APPERCEPTION:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : KantApperceptionState.Create($"KANT_APPERCEPTION:{run.Rng.Seed}:3"));
         if (journey is null || !KantApperceptionFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.KantApperception = candidate;
 
