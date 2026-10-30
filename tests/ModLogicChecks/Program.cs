@@ -61,6 +61,7 @@ ComtePositivismChecks.Run();
 PeirceInquiryChecks.Run();
 DeweyPublicExperimentChecks.Run();
 HusserlEpocheChecks.Run();
+HeideggerDaseinChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

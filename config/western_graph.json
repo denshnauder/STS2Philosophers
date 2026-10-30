@@ -569,6 +569,14 @@
       "stage_id": "CORE",
       "display_name": "梅洛庞蒂",
       "terminal": false
+    },
+    {
+      "node_id": "HANS_GEORG_GADAMER__SELF_AND_OTHER__CORE",
+      "thinker_id": "HANS_GEORG_GADAMER",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "伽达默尔",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2811,6 +2819,34 @@
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "现象学描述须保留显现的具体处境，不能把本质直观写成脱离身体的旁观。",
         "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:24"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_075",
+      "from_node_id": "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
+      "to_node_id": "HANS_GEORG_GADAMER__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从此在的处境转入理解与视域融合",
+      "source": "00西哲当前路线.md:24",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "理解须保留他者的距离与不可同化，不能把视域融合写成吞并。",
+        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:24"

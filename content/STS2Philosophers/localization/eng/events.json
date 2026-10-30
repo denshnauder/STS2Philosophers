@@ -2414,5 +2414,22 @@
   "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.title": "Leave the seminar",
   "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.description": "Close the record.",
   "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "HEIDEGGER_DASEIN.title": "Heidegger: Being in the Situation",
+  "HEIDEGGER_DASEIN.pages.INVITATION.description": "The seminar has described the appearance cleanly, yet the description leaves out the room it was written in. Heidegger asks what the record should carry.",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.BEING_IN_SITUATION.title": "Read being from its situation",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.BEING_IN_SITUATION.description": "Treat the description as an act inside a situation, with its tools, moods, and projects.",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.DESCRIBE_DASEIN.title": "Describe Dasein's structures",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.DESCRIBE_DASEIN.description": "Keep the analysis formal: being-toward, care, and thrownness, without the room.",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.KEEP_HUSSERL.title": "Keep Husserl",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.KEEP_HUSSERL.description": "Refuse the question and stay with the epochē.",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.description": "You read being from its situation. The description is now an act inside a world, and the room it was written in belongs to the record.",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.description": "You describe Dasein's structures. The analysis stays formal, and the concrete room is noted only as an example.",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.description": "You keep Husserl. The question remains suspended, and no fixed link is taken this act.",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.options.LEAVE.title": "Leave the seminar",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.options.LEAVE.description": "Close the record.",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.title": "Leave the seminar",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.description": "Close the record.",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

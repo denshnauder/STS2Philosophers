@@ -2414,5 +2414,22 @@
   "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.title": "离开研讨班",
   "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.description": "关闭记录。",
   "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "HEIDEGGER_DASEIN.title": "海德格尔：处境中的存在",
+  "HEIDEGGER_DASEIN.pages.INVITATION.description": "研讨班把显现描述得很干净，却漏掉了写下描述的那间屋子。海德格尔问：记录应当带上什么？",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.BEING_IN_SITUATION.title": "从处境理解存在",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.BEING_IN_SITUATION.description": "把描述看作处境中的行动，连同工具、情绪与筹划一起记录。",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.DESCRIBE_DASEIN.title": "描述此在的结构",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.DESCRIBE_DASEIN.description": "保留形式分析：朝向、操心与被抛，不写具体房间。",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.KEEP_HUSSERL.title": "保留胡塞尔",
+  "HEIDEGGER_DASEIN.pages.INVITATION.options.KEEP_HUSSERL.description": "拒绝这个问题，停留在悬置。",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.description": "你从处境理解存在。描述成为世界中的行动，写下它的房间也进入记录。",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.description": "你描述此在的结构。分析保持形式化，具体房间只作为例子被记下。",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.description": "你保留胡塞尔。问题仍被悬置，本幕不再取得固定承接。",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.options.LEAVE.title": "离开研讨班",
+  "HEIDEGGER_DASEIN.pages.RESULT_SITUATION.options.LEAVE.description": "关闭记录。",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.title": "离开研讨班",
+  "HEIDEGGER_DASEIN.pages.RESULT_DASEIN.options.LEAVE.description": "关闭记录。",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "HEIDEGGER_DASEIN.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }
