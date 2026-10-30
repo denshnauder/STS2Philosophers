@@ -60,6 +60,7 @@ BenthamUtilityChecks.Run();
 ComtePositivismChecks.Run();
 PeirceInquiryChecks.Run();
 DeweyPublicExperimentChecks.Run();
+HusserlEpocheChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();

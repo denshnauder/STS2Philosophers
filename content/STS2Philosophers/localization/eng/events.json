@@ -2397,5 +2397,22 @@
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.title": "Leave the school board",
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.description": "Close the record.",
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.title": "Leave the school board",
-  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "HUSSERL_EPOCHE.title": "Husserl: The Epochē",
+  "HUSSERL_EPOCHE.pages.INVITATION.description": "A student reports what she sees, then catches herself adding what she expected to see. Husserl asks how the room should record the difference.",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.DESCRIBE_APPEARANCE.title": "Describe the appearance",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.DESCRIBE_APPEARANCE.description": "Keep only what shows itself, and mark the expectation as an addition.",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.SUSPEND_THESIS.title": "Suspend the thesis",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.SUSPEND_THESIS.description": "Set aside the question of whether it exists and describe the act of seeing.",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.KEEP_DESCARTES.title": "Keep Descartes",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.KEEP_DESCARTES.description": "Refuse the question and stay with the method of doubt.",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.description": "You describe the appearance. The expectation is marked as an addition, and the thing shows itself only as far as it is given.",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.description": "You suspend the thesis. Existence drops out of the description, and what remains is the act of seeing and what it intends.",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.description": "You keep Descartes. The question remains open, and no fixed link is taken this act.",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.options.LEAVE.title": "Leave the seminar",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.options.LEAVE.description": "Close the record.",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.title": "Leave the seminar",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.description": "Close the record.",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

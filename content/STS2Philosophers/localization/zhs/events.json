@@ -2397,5 +2397,22 @@
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.title": "离开学区",
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_COMMUNITY.options.LEAVE.description": "关闭记录。",
   "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.title": "离开学区",
-  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "DEWEY_PUBLIC_EXPERIMENT.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "HUSSERL_EPOCHE.title": "胡塞尔：悬置",
+  "HUSSERL_EPOCHE.pages.INVITATION.description": "一位学生报告她看见的东西，随后发现自己把预期也加了进去。胡塞尔问：这个房间应当如何记录这个差别？",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.DESCRIBE_APPEARANCE.title": "描述显现",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.DESCRIBE_APPEARANCE.description": "只保留自身显现的部分，把预期标为添加。",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.SUSPEND_THESIS.title": "悬置存在设定",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.SUSPEND_THESIS.description": "把“它是否存在”放到一边，描述看这个行为本身。",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.KEEP_DESCARTES.title": "保留笛卡尔",
+  "HUSSERL_EPOCHE.pages.INVITATION.options.KEEP_DESCARTES.description": "拒绝这个问题，停留在怀疑的方法。",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.description": "你描述显现。预期被标为添加，事物只在被给予的范围内显现。",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.description": "你悬置存在设定。存在从描述中退出，留下的是看的行为和它所指向的东西。",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.description": "你保留笛卡尔。问题仍然敞开，本幕不再取得固定承接。",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.options.LEAVE.title": "离开研讨班",
+  "HUSSERL_EPOCHE.pages.RESULT_APPEARANCE.options.LEAVE.description": "关闭记录。",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.title": "离开研讨班",
+  "HUSSERL_EPOCHE.pages.RESULT_SUSPENSION.options.LEAVE.description": "关闭记录。",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "HUSSERL_EPOCHE.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

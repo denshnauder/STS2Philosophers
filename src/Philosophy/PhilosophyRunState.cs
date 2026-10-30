@@ -70,6 +70,7 @@ internal sealed class PhilosophyRunState
     public ComtePositivismState? ComtePositivism { get; set; }
     public PeirceInquiryState? PeirceInquiry { get; set; }
     public DeweyPublicExperimentState? DeweyPublicExperiment { get; set; }
+    public HusserlEpocheState? HusserlEpoche { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -155,6 +156,7 @@ internal sealed class PhilosophyRunState
         || ComtePositivism is not null
         || PeirceInquiry is not null
         || DeweyPublicExperiment is not null
+        || HusserlEpoche is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -371,6 +373,7 @@ internal sealed class PhilosophyRunState
         ComtePositivism?.NormalizeAfterLoad();
         PeirceInquiry?.NormalizeAfterLoad();
         DeweyPublicExperiment?.NormalizeAfterLoad();
+        HusserlEpoche?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
