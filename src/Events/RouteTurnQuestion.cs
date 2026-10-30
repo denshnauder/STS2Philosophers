@@ -80,7 +80,11 @@ public sealed class RouteTurnQuestion : EventModel
             // Staying is an answer: the act's question is spent either way, or the
             // next question node would ask the same fork again.
             if (choice.EdgeId is null) journey.ResolvedQuestionActs.Add(1);
-            if (shared.RouteTurnQuestion is { } record) record.Closed = true;
+            // The record is what keeps the fork from being asked twice; if it was
+            // lost between asking and answering, the answer still has to close it.
+            RouteTurnQuestionState record = shared.RouteTurnQuestion ??= RouteTurnQuestionState.Create(
+                $"{RouteTurnQuestionOptions.InstanceIdPrefix}:{run.Rng.Seed}:{run.CurrentActIndex}");
+            record.Closed = true;
             if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
                 Block("RouteTurnQuestion could not persist its answer.");
