@@ -67,6 +67,13 @@ internal static class WesternBranchChainChecks
             ["WESTERN_EDGE_192", "WESTERN_EDGE_193", "WESTERN_EDGE_194"],
             "JUDITH_BUTLER__SELF_AND_OTHER__CORE");
 
+        CheckTurn(graph, "EMBODIED_PERCEPTION", "DESCARTES__SELF_AND_OTHER__CORE",
+            ["WESTERN_EDGE_160", "WESTERN_EDGE_195", "WESTERN_EDGE_196"],
+            "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE", direction: true);
+        CheckTurn(graph, "SOCIAL_KNOWLEDGE", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            ["WESTERN_EDGE_197", "WESTERN_EDGE_198", "WESTERN_EDGE_199"],
+            "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE");
+
         // The default chain of a turned line still ends where the table says it
         // does: the turn's closing step is only open to a run that took the turn.
         WesternJourneyState defaultChain = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");

@@ -71,7 +71,10 @@ QUALIFIERS = {
     "主体/自律": "SELF_AND_OTHER",
 }
 
-BRANCH = re.compile(r"第一幕问号([^，]+?)转线后，第二幕固定([^、]+?)、第三幕固定([^。；]+)")
+# The row may qualify the question ("问号胡塞尔且选择具身方向后"): the extra
+# clause says which direction the turn takes, not that it is not a turn.
+BRANCH = re.compile(
+    r"第一幕问号([^，且]+?)(?:且[^，]*?)?(?:转线后)?，第二幕固定([^、]+?)、第三幕固定([^。；]+)")
 
 
 def node_for(graph, figure_cell, fallback_problem):
