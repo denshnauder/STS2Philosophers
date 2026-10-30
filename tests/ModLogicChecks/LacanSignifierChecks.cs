@@ -74,10 +74,14 @@ internal static class LacanSignifierChecks
     private static WesternJourneyState Journey(WesternRouteGraph graph)
     {
         var journey = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        // Freud's handover belongs to the unconscious line and fills act two, so
+        // the run has to be on that line before it can walk it.
+        journey.RouteId = "UNCONSCIOUS_AND_NORM";
+        journey.LastFixedAct = 1;
         Check(graph.TryApply(journey, LacanSignifierState.RequiredEdgeId),
-            "The room needs Freud's completed first-act edge.");
+            "The room needs Freud's completed second-act edge.");
         Check(journey.CurrentNodeId == LacanSignifierState.SourceNodeId && journey.LastFixedAct == 2,
-            "Freud's first-act edge must place the run on his node with act two open.");
+            "Freud's second-act edge must place the run on his node with act two open.");
         return journey;
     }
 

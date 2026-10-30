@@ -23,13 +23,13 @@ internal static class RouteFixedRoomNativeChecks
     [
         "NATURE_AND_BECOMING",         // Spinoza waits on a design decision (lens and doctrine)
         "WILL_AND_VALUE",              // Schopenhauer has no room
-        "UNCONSCIOUS_AND_NORM",        // no fixed edge carries act two to Freud
         "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
         "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
     ];
     private static readonly string[] ExpectedActThree =
     [
         "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
+        "UNCONSCIOUS_AND_NORM",        // Lacan's room is still a second-act room
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
         "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room
@@ -212,9 +212,11 @@ internal static class RouteFixedRoomNativeChecks
         if (unnamedFailures.Count > 0)
             Console.WriteLine("Route unnamed-act-two gaps (" + unnamedFailures.Count + "): "
                 + string.Join(" | ", unnamedFailures));
-        Check(unnamedFailures.Count == 18,
+        // Nineteen: Freud's handover now belongs to a route, so a run that has
+        // not named one cannot see it either.
+        Check(unnamedFailures.Count == 19,
             $"A run that does not take the first act's question reaches act two with {unnamedFailures.Count} "
-            + "routes broken, not the known eighteen.");
+            + "routes broken, not the known nineteen.");
         AssertOnly(ExpectedActTwo, failures, "act two");
         if (unnamedThirdFailures.Count > 0)
             Console.WriteLine("Route unnamed-act-three gaps (" + unnamedThirdFailures.Count + "): "

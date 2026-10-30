@@ -3216,7 +3216,7 @@
       "edge_id": "WESTERN_EDGE_087",
       "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
       "to_node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
-      "act": 1,
+      "act": 2,
       "slot": "Fixed",
       "outcome": "Adopt",
       "confidence": "High",
@@ -3238,7 +3238,10 @@
         "evidence_sources": [
           "00西哲当前路线.md:29"
         ]
-      }
+      },
+      "route_ids": [
+        "UNCONSCIOUS_AND_NORM"
+      ]
     },
     {
       "edge_id": "WESTERN_EDGE_088",

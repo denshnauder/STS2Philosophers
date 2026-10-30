@@ -61,7 +61,6 @@ internal static class WesternRouteTableChecks
     private static readonly string[] HandoverGaps =
     [
         "ORDINARY_SPEECH act three LUDWIG_WITTGENSTEIN",
-        "UNCONSCIOUS_AND_NORM act two SIGMUND_FREUD",
         "UNCONSCIOUS_AND_NORM act three JACQUES_LACAN",
     ];
 
@@ -151,7 +150,7 @@ internal static class WesternRouteTableChecks
             }
         }
         Check(gaps.SequenceEqual(HandoverGaps),
-            "Three routes name a figure no fixed edge reaches: "
+            "These routes name a figure no fixed edge reaches: "
             + string.Join(", ", gaps) + ".");
 
         Check(missing.SetEquals(MissingFigures),

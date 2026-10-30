@@ -15,24 +15,36 @@ internal static class FreudUnconsciousChecks
             "Kierkegaard must offer description, the universal, or keeping Descartes.");
         Check(FreudUnconsciousFlow.TryPrepare(state, FreudUnconsciousAction.Unconscious),
             "The description must be selectable.");
+        // The route places this room in the second act now, so the journey that
+        // meets it stands in that act's slot and on the unconscious line.
         var journey = graph.Start(FreudUnconsciousState.SourceNodeId);
+        journey.RouteId = "UNCONSCIOUS_AND_NORM";
+        journey.LastFixedAct = 2;
+        state = FreudUnconsciousState.CreateAt("FREUD_UNCONSCIOUS:TEST:1", 2,
+            FreudUnconsciousState.CompletionEdgeId);
+        FreudUnconsciousFlow.TryPrepare(state, FreudUnconsciousAction.Unconscious);
         Check(FreudUnconsciousFlow.IsRouteConsistent(state, journey),
-            "The room must sit on the first-act fixed slot.");
+            "The room must sit on the second-act fixed slot.");
         Check(FreudUnconsciousFlow.TryCommitPending(state, journey, graph),
             "The description must take the first-act fixed link.");
         Check(state.Standard == FreudUnconsciousStandard.Unconscious && state.EdgeCommitted
             && state.Stage == FreudUnconsciousStage.ResultUnconscious,
             "The description must record its standard and stage.");
         Check(journey.CompletedEdgeIds.Contains(FreudUnconsciousState.CompletionEdgeId)
-            && journey.CurrentNodeId == FreudUnconsciousState.AdoptedNodeId && journey.LastFixedAct == 2,
-            "Adopting must move the journey to Kierkegaard and consume act one.");
+            && journey.CurrentNodeId == FreudUnconsciousState.AdoptedNodeId && journey.LastFixedAct == 3,
+            "Adopting must move the journey to Freud and fill the second act's slot.");
 
         var kept = FreudUnconsciousState.Create("FREUD_UNCONSCIOUS:TEST:2");
         FreudUnconsciousFlow.TryPrepare(kept, FreudUnconsciousAction.KeepDescartes);
         var declined = graph.Start(FreudUnconsciousState.SourceNodeId);
+        declined.RouteId = "UNCONSCIOUS_AND_NORM";
+        declined.LastFixedAct = 2;
+        kept = FreudUnconsciousState.CreateAt("FREUD_UNCONSCIOUS:TEST:2", 2,
+            FreudUnconsciousState.CompletionEdgeId);
+        FreudUnconsciousFlow.TryPrepare(kept, FreudUnconsciousAction.KeepDescartes);
         Check(FreudUnconsciousFlow.TryCommitPending(kept, declined, graph),
-            "Keeping Socrates must decline the act's fixed slot.");
-        Check(declined.DeclinedFixedActs.Contains(2)
+            "Keeping Descartes must decline the act's fixed slot.");
+        Check(declined.DeclinedFixedActs.Contains(3)
             && declined.CurrentNodeId == FreudUnconsciousState.SourceNodeId,
             "Declining must leave the player on Descartes' node.");
 
