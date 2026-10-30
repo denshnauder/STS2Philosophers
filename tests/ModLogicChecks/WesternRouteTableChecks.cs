@@ -41,6 +41,19 @@ internal static class WesternRouteTableChecks
         "FALLIBLE_INQUIRY",
     ];
 
+    // Lines whose second-act figure no first-act step reaches: the branch that
+    // would carry the run there does not exist and no question edge offers it, so
+    // no run can enter them yet. The list is asserted so that adding one of these
+    // entries to the graph fails this check and forces the list to be updated.
+    // The appearance and embodied lines are named by the room that asks which of
+    // the two Husserl stands on, not by a step of the graph, so they are covered
+    // where that room is tested.
+    private static readonly string[] CannotNameAtActOne =
+    [
+        "ORDINARY_SPEECH",
+        "FALLIBLE_INQUIRY",
+    ];
+
     // A run that follows the default line never takes a question node, so its
     // route is never named by the first act's question. This list is every route
     // whose act-two figure therefore stays out of reach: the act-two handover is
@@ -186,6 +199,41 @@ internal static class WesternRouteTableChecks
         Check(unreachable.SequenceEqual(CannotReachActTwo),
             "A default line reaches its second act only after act one names the route, but the "
             + $"routes that still cannot are: {string.Join(", ", unreachable)}.");
+
+        // How a run names its line at the first act: the boundary names the
+        // entry's default line, a fixed branch names the line it walked, and a
+        // question names the line it answered. A line no first-act step can name
+        // is a line no run can enter, whatever the graph says about its edges.
+        var unnamed = new List<string>();
+        foreach (WesternRouteDefinition route in table.Routes)
+        {
+            bool Named(Func<WesternJourneyState> start, Action<WesternJourneyState> step)
+            {
+                WesternJourneyState state = start();
+                step(state);
+                return state.RouteId == route.RouteId;
+            }
+            WesternJourneyState Fresh()
+            {
+                WesternJourneyState state = graph.Start(route.EntryNodeId);
+                state.RouteRules = true;
+                return state;
+            }
+            bool named = Named(Fresh, WesternRouteGraph.NameDefaultRoute)
+                || graph.GetEligibleEdges(Fresh(), "Fixed").Any(edge => edge.Act == 1
+                    && Named(Fresh, state => graph.TryApply(state, edge.EdgeId)))
+                || graph.GetEligibleEdges(Fresh(), "Question").Any(edge => edge.Act == 1
+                    && Named(Fresh, state =>
+                    {
+                        _ = graph.TryReserveQuestion(state, 1);
+                        _ = graph.TryCompleteReservedQuestion(state, edge.EdgeId);
+                    }));
+            if (!named) unnamed.Add(route.RouteId);
+        }
+        unnamed.RemoveAll(id => id is "APPEARANCE_AND_INTERPRETATION" or "EMBODIED_PERCEPTION");
+        Check(unnamed.SequenceEqual(CannotNameAtActOne),
+            "A line no first-act step names cannot be entered at all, but these still are not: "
+            + string.Join(", ", unnamed) + ".");
 
         // A run started under the route rules never walks an edge written before
         // routes existed: the second act's legacy handovers belong to no mainline.
