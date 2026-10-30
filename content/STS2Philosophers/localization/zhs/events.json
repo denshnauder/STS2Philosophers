@@ -2567,5 +2567,22 @@
   "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.title": "离开档案馆",
   "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.description": "关闭记录。",
   "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.title": "离开档案馆",
-  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "DERRIDA_DECONSTRUCTION.title": "德里达：解构",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.description": "神话被读成结构，而结构保留着一个它无法命名的中心。德里达问：记录应当如何处理这个中心？",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.BINARY_HIERARCHY.title": "拆解二元等级",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.BINARY_HIERARCHY.description": "记录这一对概念，并指出文本让哪一项处于从属。",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.DIFFERANCE.title": "标记延异",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.DIFFERANCE.description": "把意义记为被推迟的，从不在任何一项中完全在场。",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.KEEP_LEVI_STRAUSS.title": "保留列维-斯特劳斯",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.KEEP_LEVI_STRAUSS.description": "拒绝这个问题，停留在结构阅读。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.description": "你拆解二元等级。这一对概念连同被从属的一项被记录，等级保持可见，而不被抹平。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.description": "你标记延异。意义被记为被推迟的，记录注明结构阅读并未被放弃。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.description": "你保留列维-斯特劳斯。问题没有得到回答，本幕不再取得问号承接。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.options.LEAVE.title": "离开研讨班",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.options.LEAVE.description": "关闭记录。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.title": "离开研讨班",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.description": "关闭记录。",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
 }

@@ -12,7 +12,7 @@ internal static class WesternGraphRevisionChecks
         }
         string json = File.ReadAllText("config/western_graph.json");
         WesternRouteGraph revised = WesternRouteGraph.LoadEmbedded();
-        string[] retiredIds = ["WESTERN_EDGE_002", "WESTERN_EDGE_004", "WESTERN_EDGE_031", "WESTERN_EDGE_032", "WESTERN_EDGE_036"];
+        string[] retiredIds = ["WESTERN_EDGE_002", "WESTERN_EDGE_004", "WESTERN_EDGE_031", "WESTERN_EDGE_032", "WESTERN_EDGE_035", "WESTERN_EDGE_036"];
         Check(revised.Samples.Where(s => s.Disposition == "SourceOnly").Select(s => s.SampleId)
             .SequenceEqual(["SAMPLE_01", "SAMPLE_09", "SAMPLE_10", "SAMPLE_11"]), "The four withdrawn sequences must remain identifiable source inputs.");
 

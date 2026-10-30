@@ -1670,10 +1670,8 @@
       "confidence": "High",
       "relation_summary": "对索绪尔和列维斯特劳斯的明确重读与批判，高",
       "source": "18游戏流程投影.md:353",
-      "required_edge_ids": [
-        "WESTERN_EDGE_034"
-      ],
-      "enabled": true,
+      "required_edge_ids": [],
+      "enabled": false,
       "context": {
         "from_problem_id": "LANGUAGE_AND_MEANING",
         "to_problem_id": "LANGUAGE_AND_MEANING",
@@ -1691,7 +1689,8 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "retirement_reason": "第三幕收束改用问号边 082；035 仅保留为 SAMPLE_10 的历史序列。"
     },
     {
       "edge_id": "WESTERN_EDGE_036",
@@ -3005,6 +3004,34 @@
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "结构分析须保留具体神话的差异，不能把诸文化写成同一组二元对立。",
         "interpretation_boundary": "问题展开，不宣称直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:26"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_082",
+      "from_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问题收束，高；从结构分析转入解构",
+      "source": "00西哲当前路线.md:26",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "解构须保留文本的具体差异，不能把结构写成可随意取消的假象。",
+        "interpretation_boundary": "问题收束，不伪造直接师承。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:26"

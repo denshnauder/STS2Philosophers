@@ -2567,5 +2567,22 @@
   "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.title": "Leave the archive",
   "FOUCAULT_POWER.pages.RESULT_DISCIPLINE.options.LEAVE.description": "Close the record.",
   "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.title": "Leave the archive",
-  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "FOUCAULT_POWER.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "DERRIDA_DECONSTRUCTION.title": "Derrida: Deconstruction",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.description": "The myth is read as a structure, and the structure keeps a centre it cannot name. Derrida asks what the record should do with that centre.",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.BINARY_HIERARCHY.title": "Undo the binary hierarchy",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.BINARY_HIERARCHY.description": "Record the pair and show which term the text keeps subordinate.",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.DIFFERANCE.title": "Mark differance",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.DIFFERANCE.description": "Record meaning as deferred, never fully present in either term.",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.KEEP_LEVI_STRAUSS.title": "Keep Levi-Strauss",
+  "DERRIDA_DECONSTRUCTION.pages.INVITATION.options.KEEP_LEVI_STRAUSS.description": "Refuse the question and stay with the structural reading.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.description": "You undo the binary hierarchy. The pair is recorded with the term the text subordinates, and the hierarchy is left visible rather than resolved.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.description": "You mark differance. Meaning is recorded as deferred, and the record notes that the structural reading was not abandoned.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.description": "You keep Levi-Strauss. The question goes unanswered, and no question link is taken this act.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.options.LEAVE.title": "Leave the seminar",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_BINARY.options.LEAVE.description": "Close the record.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.title": "Leave the seminar",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_DIFFERANCE.options.LEAVE.description": "Close the record.",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
+  "DERRIDA_DECONSTRUCTION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
 }

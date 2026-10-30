@@ -70,6 +70,7 @@ WittgensteinGameChecks.Run();
 SaussureSignChecks.Run();
 LeviStraussMythChecks.Run();
 FoucaultPowerChecks.Run();
+DerridaDeconstructionChecks.Run();
 WollstonecraftAdmissionChecks.Run();
 KantApperceptionChecks.Run();
 SchopenhauerWillDenialChecks.Run();
