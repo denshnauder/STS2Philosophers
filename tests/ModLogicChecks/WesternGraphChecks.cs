@@ -53,7 +53,12 @@ internal static class WesternGraphChecks
         foreach (WesternGraphEdge edge in graph.Edges.Where(edge => edge.Enabled && edge.Slot == "Fixed"
             && edge.Act is 2 or 3 && !roomless.Any(prefix => edge.ToNodeId.StartsWith(prefix, StringComparison.Ordinal))))
         {
-            var state = new WesternJourneyState { CurrentNodeId = edge.FromNodeId, LastFixedAct = edge.Act };
+            var state = new WesternJourneyState
+            {
+                CurrentNodeId = edge.FromNodeId,
+                LastFixedAct = edge.Act,
+                RouteId = edge.RouteIds?.FirstOrDefault() ?? string.Empty,
+            };
             foreach (string required in edge.RequiredEdgeIds) state.CompletedEdgeIds.Add(required);
             Check(graph.GetEligibleEdges(state, "Fixed").Any(candidate => candidate.EdgeId == edge.EdgeId),
                 $"Fixed edge {edge.EdgeId} in act {edge.Act} must be open at its own act's position.");

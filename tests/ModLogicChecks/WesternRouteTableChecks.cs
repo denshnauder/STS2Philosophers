@@ -19,6 +19,7 @@ internal static class WesternRouteTableChecks
     private static readonly string[] Walkable =
     [
         "EXPERIENCE_AND_SELF",
+        "AUTONOMY_AND_HISTORY",
         "EDUCATION_AND_SITUATION",
     ];
 

@@ -3363,6 +3363,68 @@
       "route_ids": [
         "EXPERIENCE_AND_SELF"
       ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_095",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从怀疑的自我转入先验统觉的构造",
+      "source": "00西哲当前路线.md:18",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:18"
+        ]
+      },
+      "route_ids": [
+        "AUTONOMY_AND_HISTORY"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_096",
+      "from_node_id": "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+      "to_node_id": "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从先验构造转入历史理性的自我展开",
+      "source": "00西哲当前路线.md:18",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:18"
+        ]
+      },
+      "route_ids": [
+        "AUTONOMY_AND_HISTORY"
+      ]
     }
   ],
   "samples": [

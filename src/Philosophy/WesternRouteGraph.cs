@@ -198,8 +198,27 @@ internal sealed class WesternRouteGraph
         return true;
     }
 
+    private static bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state) =>
+        string.IsNullOrEmpty(state.RouteId) || edge.RouteIds is null or { Length: 0 }
+        || edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
+
+    /// <summary>
+    /// A figure can close one route and stand in the middle of another. The route
+    /// table names the figure each route ends on, so a terminal node only ends the
+    /// run when the route has already reached its own third-act figure.
+    /// </summary>
+    private static bool RouteStillHasActs(WesternJourneyState state)
+    {
+        if (string.IsNullOrEmpty(state.RouteId)) return false;
+        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
+            .FirstOrDefault(candidate => candidate.RouteId == state.RouteId);
+        return route is not null
+            && !state.CurrentNodeId.StartsWith(route.ActThreeFigure + "__", StringComparison.Ordinal);
+    }
+
     public bool IsComplete(WesternJourneyState state) => state.LastFixedAct >= 3
-        && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node) && (node.Terminal || state.RetainedEnding);
+        && _nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)
+        && (state.RetainedEnding || node.Terminal && !RouteStillHasActs(state));
 
     public bool TryDecline(WesternJourneyState state, string slot, int expectedAct)
     {
@@ -302,8 +321,7 @@ internal sealed class WesternRouteGraph
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
         && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
-        && (string.IsNullOrEmpty(state.RouteId) || edge.RouteIds is null or { Length: 0 }
-            || edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal))
+        && RouteMatches(edge, state)
         && (slot != "Question" || !state.ResolvedQuestionActs.Contains(state.LastFixedAct))
         && (slot != "Fixed" || edge.Confidence != "Low");
 
