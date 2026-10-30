@@ -215,6 +215,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.ComtePositivism?.Closed ?? true, shared.ComtePositivism?.IsUsable() ?? false)
             || Open(shared.PeirceInquiry?.Closed ?? true, shared.PeirceInquiry?.IsUsable() ?? false)
             || Open(shared.DeweyPublicExperiment?.Closed ?? true, shared.DeweyPublicExperiment?.IsUsable() ?? false)
+            || Open(shared.RouteTurnQuestion?.Closed ?? true, shared.RouteTurnQuestion?.IsUsable() ?? false)
             || Open(shared.HusserlEpoche?.Closed ?? true, shared.HusserlEpoche?.IsUsable() ?? false)
             || Open(shared.HeideggerDasein?.Closed ?? true, shared.HeideggerDasein?.IsUsable() ?? false)
             || Open(shared.SartreExistence?.Closed ?? true, shared.SartreExistence?.IsUsable() ?? false)
