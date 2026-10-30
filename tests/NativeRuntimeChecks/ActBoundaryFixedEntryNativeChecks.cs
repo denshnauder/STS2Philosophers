@@ -29,20 +29,31 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SpinozaCauseNetwork));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 2);
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 1);
+        ModelDb.Inject(typeof(EpicurusSharedMargin));
+        CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__VIRTUE_AND_HAPPINESS__CORE", [typeof(EpicurusSharedMargin)], doctrine: false, position: 3, actIndex: 2, required: ["WESTERN_EDGE_009"]);
+        CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__VIRTUE_AND_HAPPINESS__CORE", [typeof(EpicurusSharedMargin)], doctrine: false, position: 2, actIndex: 2, required: ["WESTERN_EDGE_009"]);
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
     }
 
-    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position)
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-            .Invoke(null, [relic, 1])!;
+            .Invoke(null, [relic, actIndex])!;
         var run = (RunState)tuple[1]!;
         Set(CombatManager.Instance, "_turnState", null);
 
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
+        object journey;
+        try { journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!; }
+        catch (TargetInvocationException)
+        {
+            journey = graph.GetType().GetMethod("Start")!.Invoke(graph, ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+            Put(journey, "CurrentNodeId", node);
+        }
+        var completed = (HashSet<string>)Get(journey, "CompletedEdgeIds");
+        foreach (string edge in required ?? []) completed.Add(edge);
         Put(journey, "LastFixedAct", position);
         object? doctrineState = doctrine
             ? Activator.CreateInstance(T("CurrentDoctrine"), nonPublic: true)!
@@ -70,7 +81,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check(current is not null && (bool)current.GetType().GetMethod("IsUsable")!.Invoke(current, null)!,
             "The boundary selection persists a usable room state for save recovery.");
 
-        Put(journey, "LastFixedAct", 3);
+        Put(journey, "LastFixedAct", actIndex + 2);
         object spent = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(spent, "CurrentDoctrine", doctrineState);
         Put(spent, "WesternJourney", journey);
