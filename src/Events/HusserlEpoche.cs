@@ -21,6 +21,7 @@ public sealed class HusserlEpoche : EventModel
         {
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DESCRIBE_APPEARANCE"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.SUSPEND_THESIS"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.TURN_EMBODIED"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_DESCARTES"),
         };
 

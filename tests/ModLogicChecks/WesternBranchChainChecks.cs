@@ -106,6 +106,17 @@ internal static class WesternBranchChainChecks
         Check(graph.TryApply(rousseau, "WESTERN_EDGE_083") && rousseau.RouteId == "SOCIAL_CRITIQUE",
             "The branch to Marx must correct the default name.");
 
+        // A room may reserve the question and complete it later. That path must
+        // name the line exactly like an edge applied outright, or the two ways
+        // into the same turn disagree about which line the run is on.
+        var reserved = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        reserved.RouteRules = true;
+        WesternRouteGraph.NameDefaultRoute(reserved);
+        Check(graph.TryReserveQuestion(reserved, 1), "The first act's question must be reservable.");
+        Check(graph.TryCompleteReservedQuestion(reserved, "WESTERN_EDGE_153")
+            && reserved.RouteId == "AUTONOMY_AND_HISTORY",
+            "A reserved question that switches figures must name the line it entered.");
+
         // Two lines share Husserl, so the first act's branch cannot name one of
         // them: that is exactly the case the direction option has to answer.
         var shared = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");

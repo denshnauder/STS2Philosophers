@@ -2,9 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace STS2Philosophers;
 
-internal enum HusserlEpocheStage { Invitation, ResultAppearance, ResultSuspension, ResultKept }
-internal enum HusserlEpocheAction { None, DescribeAppearance, SuspendThesis, KeepDescartes, Leave }
-internal enum HusserlEpocheStandard { None, Appearance, Suspension, Cartesian }
+internal enum HusserlEpocheStage { Invitation, ResultAppearance, ResultSuspension, ResultKept, ResultEmbodied }
+internal enum HusserlEpocheAction { None, DescribeAppearance, SuspendThesis, TurnEmbodied, KeepDescartes, Leave }
+internal enum HusserlEpocheStandard { None, Appearance, Suspension, Cartesian, Embodied }
 
 /// <summary>
 /// Kierkegaard's first-act room on the self-and-other line. The player either
@@ -72,9 +72,10 @@ internal static class HusserlEpocheFlow
     {
         HusserlEpocheStage.Invitation =>
             [HusserlEpocheAction.DescribeAppearance, HusserlEpocheAction.SuspendThesis,
-                HusserlEpocheAction.KeepDescartes],
+                HusserlEpocheAction.TurnEmbodied, HusserlEpocheAction.KeepDescartes],
         HusserlEpocheStage.ResultAppearance or HusserlEpocheStage.ResultSuspension
-            or HusserlEpocheStage.ResultKept => [HusserlEpocheAction.Leave],
+            or HusserlEpocheStage.ResultKept or HusserlEpocheStage.ResultEmbodied
+            => [HusserlEpocheAction.Leave],
         _ => [],
     };
 
@@ -100,6 +101,11 @@ internal static class HusserlEpocheFlow
                 state.EdgeCommitted = true;
                 state.Stage = HusserlEpocheStage.ResultSuspension;
                 break;
+            case HusserlEpocheAction.TurnEmbodied:
+                state.Standard = HusserlEpocheStandard.Embodied;
+                state.EdgeCommitted = true;
+                state.Stage = HusserlEpocheStage.ResultEmbodied;
+                break;
             case HusserlEpocheAction.KeepDescartes:
                 state.Standard = HusserlEpocheStandard.Cartesian;
                 state.FixedDeclined = true;
@@ -118,10 +124,16 @@ internal static class HusserlEpocheFlow
     {
         if (!IsRouteConsistent(state, journey) || state.PendingAction == HusserlEpocheAction.None) return false;
         HusserlEpocheAction action = state.PendingAction;
-        bool adopts = action is HusserlEpocheAction.DescribeAppearance or HusserlEpocheAction.SuspendThesis;
+        bool adopts = action is HusserlEpocheAction.DescribeAppearance
+            or HusserlEpocheAction.SuspendThesis or HusserlEpocheAction.TurnEmbodied;
         bool declines = action == HusserlEpocheAction.KeepDescartes;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
+        // Husserl stands on two lines of this entry. The first act's step cannot
+        // tell them apart, so the room's answer names the one it entered: the
+        // appearance line, or the embodied line the direction option asks for.
+        if (adopts) graph.TryNameRoute(journey, action == HusserlEpocheAction.TurnEmbodied
+            ? "EMBODIED_PERCEPTION" : "APPEARANCE_AND_INTERPRETATION");
         if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
             && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);

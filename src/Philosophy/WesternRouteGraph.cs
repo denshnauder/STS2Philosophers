@@ -186,6 +186,21 @@ internal sealed class WesternRouteGraph
     }
 
     /// <summary>
+    /// A room that stands on a figure two lines share has to say which line the
+    /// run entered; the graph cannot read it off the figure. The line has to
+    /// belong to the run's own entry, so a room cannot name someone else's.
+    /// </summary>
+    public bool TryNameRoute(WesternJourneyState state, string routeId)
+    {
+        WesternRouteDefinition? route = WesternRouteTable.Instance.Routes
+            .FirstOrDefault(candidate => candidate.RouteId == routeId);
+        if (route is null || !state.RouteRules || string.IsNullOrEmpty(state.EntryNodeId)
+            || route.EntryNodeId != state.EntryNodeId) return false;
+        state.RouteId = route.RouteId;
+        return true;
+    }
+
+    /// <summary>
     /// The first act's step into a line is the same fact whether the run took a
     /// question or a fixed branch: the figure it now stands on belongs to one
     /// line of this entry. Two lines that share that figure stay unnamed, which
@@ -274,6 +289,10 @@ internal sealed class WesternRouteGraph
         if (edge.Outcome is "Adopt" or "Switch")
         {
             state.CurrentNodeId = edge.ToNodeId;
+            // A question that moves the run onto a figure names the line the
+            // same way one that is applied outright does. The two paths reach
+            // the same edge and must not disagree about which line it is.
+            NameFromFirstAct(state, edge);
         }
 
         return true;
