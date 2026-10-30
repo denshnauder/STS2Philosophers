@@ -189,6 +189,7 @@
     <Compile Include="..\..\src\Philosophy\DeleuzeDifferenceState.cs" Link="DeleuzeDifferenceState.cs" />
     <Compile Include="..\..\src\Philosophy\GadamerFusionState.cs" Link="GadamerFusionState.cs" />
     <Compile Include="..\..\src\Philosophy\HorkheimerReasonState.cs" Link="HorkheimerReasonState.cs" />
+    <Compile Include="..\..\src\Philosophy\AdornoNegativeState.cs" Link="AdornoNegativeState.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />

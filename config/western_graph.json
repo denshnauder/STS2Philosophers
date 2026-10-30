@@ -601,6 +601,14 @@
       "stage_id": "CORE",
       "display_name": "霍克海默",
       "terminal": false
+    },
+    {
+      "node_id": "THEODOR_ADORNO__HISTORY_AND_POWER__CORE",
+      "thinker_id": "THEODOR_ADORNO",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "阿多诺",
+      "terminal": true
     }
   ],
   "edges": [
@@ -3098,6 +3106,36 @@
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "社会批判须保留被批判者的具体处境，不能把工具理性写成无主体的命运。",
         "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_085",
+      "from_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "to_node_id": "THEODOR_ADORNO__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问题收束，高；从工具理性批判转入否定辩证法",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_084"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "否定辩证法须保留对象的非同一性，不能把批判本身写成新的总体系。",
+        "interpretation_boundary": "问题收束，不伪造直接师承。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "00西哲当前路线.md:34"

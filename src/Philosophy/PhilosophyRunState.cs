@@ -84,6 +84,7 @@ internal sealed class PhilosophyRunState
     public DeleuzeDifferenceState? DeleuzeDifference { get; set; }
     public GadamerFusionState? GadamerFusion { get; set; }
     public HorkheimerReasonState? HorkheimerReason { get; set; }
+    public AdornoNegativeState? AdornoNegative { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
 
@@ -183,6 +184,7 @@ internal sealed class PhilosophyRunState
         || DeleuzeDifference is not null
         || GadamerFusion is not null
         || HorkheimerReason is not null
+        || AdornoNegative is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -413,6 +415,7 @@ internal sealed class PhilosophyRunState
         DeleuzeDifference?.NormalizeAfterLoad();
         GadamerFusion?.NormalizeAfterLoad();
         HorkheimerReason?.NormalizeAfterLoad();
+        AdornoNegative?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
