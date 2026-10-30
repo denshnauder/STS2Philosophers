@@ -24,7 +24,6 @@ internal static class RouteFixedRoomNativeChecks
         "NATURE_AND_BECOMING",         // Spinoza waits on a design decision (lens and doctrine)
         "WILL_AND_VALUE",              // Schopenhauer has no room
         "UNCONSCIOUS_AND_NORM",        // no fixed edge carries act two to Freud
-        "EDUCATION_AND_SITUATION",     // 040 and 042 are not scoped to this route
         "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
         "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
     ];
@@ -32,7 +31,6 @@ internal static class RouteFixedRoomNativeChecks
     [
         "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
         "NATURE_AND_BECOMING",         // no scoped edge carries act three to Schelling
-        "EDUCATION_AND_SITUATION",     // 042 is not scoped to this route
         "CHECKS_AND_JUSTICE",          // Kant asks for a handover from another route
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
@@ -229,7 +227,7 @@ internal static class RouteFixedRoomNativeChecks
         // Sixteen, not eighteen: two rooms want an answer the second act gave,
         // and the legacy second-act edges are still visible to a run that never
         // named a route.
-        Check(unnamedThirdFailures.Count == 16,
+        Check(unnamedThirdFailures.Count == 17,
             $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
             + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");

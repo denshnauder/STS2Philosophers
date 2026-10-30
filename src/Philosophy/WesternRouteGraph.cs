@@ -235,14 +235,18 @@ internal sealed class WesternRouteGraph
     /// identity, so new route content cannot hijack a save written before routes
     /// existed. Unscoped edges stay visible to everyone.
     /// </summary>
-    private static bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state)
+    private bool RouteMatches(WesternGraphEdge edge, WesternJourneyState state)
     {
         if (edge.RouteIds is null or { Length: 0 })
         {
-            // A run under the route rules never walks the edges written before
-            // routes existed: they belong to no mainline, so any of them could
-            // open another figure's room at this act's boundary.
-            return !state.RouteRules || edge.Slot != "Fixed" || edge.Act <= 1;
+            if (!state.RouteRules || edge.Slot != "Fixed" || edge.Act <= 1) return true;
+            // A route that has its own handover for this act never walks an edge
+            // written before routes existed. A route that has none (the education
+            // line's 040 and 042) still needs them, or its boundary opens nothing.
+            if (string.IsNullOrEmpty(state.RouteId)) return false;
+            return !_edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
+                && other.Act == edge.Act && other.RouteIds is { Length: > 0 }
+                && other.RouteIds.Contains(state.RouteId, StringComparer.Ordinal));
         }
         return !string.IsNullOrEmpty(state.RouteId)
             && edge.RouteIds.Contains(state.RouteId, StringComparer.Ordinal);
