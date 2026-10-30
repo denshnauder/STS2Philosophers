@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Map;
+using MegaCrit.Sts2.Core.Runs.History;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -89,6 +91,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
+        ModelDb.Inject(typeof(HumeInduction));
+        CheckBoundary(typeof(DescartesThinkingLens), "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+            [typeof(HumeInduction)], doctrine: true, position: 2, actIndex: 2,
+            route: "EXPERIENCE_AND_SELF", required: ["WESTERN_EDGE_026"],
+            priorEvent: ModelDb.GetId<LockeCargoIdentity>());
         ModelDb.Inject(typeof(SchellingNature));
         CheckBoundary(typeof(DescartesThinkingLens), "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
@@ -119,12 +126,31 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null)
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
         var run = (RunState)tuple[1]!;
         Set(CombatManager.Instance, "_turnState", null);
+        if (priorEvent is not null)
+        {
+            // A third-act room may require a fight after an earlier act's event.
+            var history = new List<List<MapPointHistoryEntry>>();
+            for (int act = 0; act <= actIndex; act++)
+            {
+                var points = new List<MapPointHistoryEntry>();
+                if (act == actIndex - 1)
+                {
+                    points.Add(new() { MapPointType = MapPointType.Unknown,
+                        Rooms = [new() { RoomType = RoomType.Event, ModelId = priorEvent }] });
+                    points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+                }
+                else if (act == actIndex)
+                    points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+                history.Add(points);
+            }
+            Set(run, "_mapPointHistory", history);
+        }
 
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey;
