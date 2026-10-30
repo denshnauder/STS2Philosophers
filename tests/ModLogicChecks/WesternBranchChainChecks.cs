@@ -86,6 +86,18 @@ internal static class WesternBranchChainChecks
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
             "The knowledge entry must offer the scientific line.");
 
+        // A run that answered the question and stayed keeps the line it was
+        // given; without a name no edge from the second act on is walkable.
+        var stayed = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        stayed.RouteRules = true;
+        stayed.ResolvedQuestionActs.Add(1);
+        stayed.LastFixedAct = 2;
+        Check(!graph.GetEligibleEdges(stayed, "Fixed").Any(edge => edge.Act == 2),
+            "An unnamed run must not reach its second act's step, so staying has to name a line.");
+        stayed.RouteId = "EXPERIENCE_AND_SELF";
+        Check(graph.GetEligibleEdges(stayed, "Fixed").Any(edge => edge.Act == 2),
+            "A named run must reach its second act's step.");
+
         // A run that turns at the first act's question stands on the figure it
         // turned to, and that figure counts as met — otherwise the second act's
         // room would meet it a second time.
