@@ -93,6 +93,7 @@ AustinSpeechActChecks.Run();
 PopperFalsificationChecks.Run();
 EventGoldCostProtocolChecks.Run();
 CrossActCombatHistoryChecks.Run();
+RoomRouteConsistencyReloadChecks.Run();
 RoomStateSaveRoundTripChecks.Run();
 RoomStateNormalizationChecks.Run();
 RousseauConsentChecks.Run();
