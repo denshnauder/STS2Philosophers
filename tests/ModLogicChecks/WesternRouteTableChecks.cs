@@ -13,6 +13,15 @@ internal static class WesternRouteTableChecks
     private static readonly string[] MissingFigures =
         ["ALBERT_CAMUS", "ARTHUR_SCHOPENHAUER", "AUGUSTE_COMTE", "JUDITH_BUTLER"];
 
+    // Routes whose default line the graph can already walk end to end with no
+    // question mark. Moving a route onto this list is the deliverable of each
+    // migration step; the complement is the remaining gap.
+    private static readonly string[] Walkable =
+    [
+        "EXPERIENCE_AND_SELF",
+        "EDUCATION_AND_SITUATION",
+    ];
+
     public static void Run()
     {
         WesternRouteTable table = WesternRouteTable.Instance;
@@ -37,6 +46,26 @@ internal static class WesternRouteTableChecks
         foreach (WesternRouteDefinition route in table.Routes)
             foreach (string figure in new[] { route.ActTwoFigure, route.ActThreeFigure, route.ClosingFigure })
                 if (!nodes.Any(node => node.StartsWith(figure + "__", StringComparison.Ordinal))) missing.Add(figure);
+        var walkable = new List<string>();
+        foreach (WesternRouteDefinition route in table.Routes)
+        {
+            WesternJourneyState state = graph.Start(route.EntryNodeId);
+            state.RouteId = route.RouteId;
+            state.LastFixedAct = 1;
+            bool ok = true;
+            foreach ((int act, string figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
+            {
+                string? edgeId = graph.GetEligibleEdges(state, "Fixed")
+                    .Where(edge => edge.Act == act && edge.ToNodeId.StartsWith(figure + "__", StringComparison.Ordinal))
+                    .Select(edge => edge.EdgeId)
+                    .FirstOrDefault();
+                if (edgeId is null || !graph.TryApply(state, edgeId)) { ok = false; break; }
+            }
+            if (ok) walkable.Add(route.RouteId);
+        }
+        Check(walkable.SequenceEqual(Walkable),
+            $"The walkable default lines are exactly the migrated ones, but the graph walks: {string.Join(", ", walkable)}.");
+
         Check(missing.SetEquals(MissingFigures),
             "The gap list is exactly the set of named figures that have no node.");
 
