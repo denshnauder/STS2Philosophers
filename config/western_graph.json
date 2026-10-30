@@ -577,6 +577,22 @@
       "stage_id": "CORE",
       "display_name": "伽达默尔",
       "terminal": false
+    },
+    {
+      "node_id": "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "BERTRAND_RUSSELL",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "罗素",
+      "terminal": false
+    },
+    {
+      "node_id": "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "LUDWIG_WITTGENSTEIN",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "维特根斯坦",
+      "terminal": false
     }
   ],
   "edges": [
@@ -2854,30 +2870,86 @@
       }
     },
     {
-      "edge_id": "WESTERN_EDGE_076",
-      "from_node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
-      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
-      "act": 3,
-      "slot": "Question",
-      "outcome": "Switch",
+      "edge_id": "WESTERN_EDGE_077",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
       "confidence": "High",
-      "relation_summary": "收束，高；从身体知觉转入性别化的处境与他者",
-      "source": "00西哲当前路线.md:25",
+      "relation_summary": "问题重开，高；从语词分类转入涵义与指称",
+      "source": "00西哲当前路线.md:26",
       "required_edge_ids": [],
       "enabled": true,
       "context": {
-        "from_problem_id": "SELF_AND_OTHER",
-        "to_problem_id": "SELF_AND_OTHER",
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
         "relation_types": [
           "ProblemShift"
         ],
         "compressed_mediators": "",
         "behavior_requirement": "NoAdditionalGate",
-        "ethical_boundary": "身体处境须保留性别化的不对称，不能写成中立主体的自由选择。",
-        "interpretation_boundary": "作为第三幕唯一收束，不新增第四幕。",
+        "ethical_boundary": "形式化须保留自然语言的用法差异，不能把意义化约为句法。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
-          "00西哲当前路线.md:25"
+          "00西哲当前路线.md:26"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_078",
+      "from_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从涵义结构转入摹状词与逻辑分析",
+      "source": "00西哲当前路线.md:26",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "形式化须保留自然语言的用法差异，不能把意义化约为句法。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:26"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_079",
+      "from_node_id": "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "收束，高；从逻辑分析转入语言游戏与用法",
+      "source": "00西哲当前路线.md:26",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "形式化须保留自然语言的用法差异，不能把意义化约为句法。",
+        "interpretation_boundary": "问题重开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:26"
         ]
       }
     }

@@ -7,9 +7,9 @@ internal enum MerleauPontyBodyAction { None, BodyAsSubject, ObjectiveBody, KeepH
 internal enum MerleauPontyBodyStandard { None, Body, Objective, Husserlian }
 
 /// <summary>
-/// Merleau-Ponty's second-act room on the embodied-perception line. The player
-/// either treats the body as the subject of perception, keeps an objective
-/// body, or keeps Husserl and gives up the act's fixed slot.
+/// Heidegger's second-act room on the phenomenology-and-interpretation line.
+/// The player either reads being from its situation, describes Dasein's
+/// structures, or keeps Husserl and gives up the act's fixed slot.
 /// </summary>
 internal sealed class MerleauPontyBodyState : IJsonOnDeserialized
 {

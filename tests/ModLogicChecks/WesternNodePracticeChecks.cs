@@ -173,6 +173,8 @@ internal static class WesternNodePracticeChecks
                      "EDMUND_HUSSERL__SELF_AND_OTHER__CORE", "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
                      "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
                      "HANS_GEORG_GADAMER__SELF_AND_OTHER__CORE",
+                     "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+                     "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
                  })
         {
             Check(WesternNodePracticePolicy.Evaluate(phenomenology, Plays("SASP", "abcd"), previous, 3) == default,
@@ -183,7 +185,7 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(rawls, Plays("SASP", "abcd"), previous, 3) == default,
             "Rawls's closing choice resolves its own distribution test; the node must not add a generic reward.");
         covered.Add(rawls);
-        Check(covered.Count == 72 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 74 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
