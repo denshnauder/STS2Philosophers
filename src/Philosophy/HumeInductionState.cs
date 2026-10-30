@@ -6,13 +6,14 @@ internal enum HumeInductionStage { Invitation, Test, ResultRepair, ResultKeep, R
 internal enum HumeInductionAction { None, TestOnce, BuyPass, RepairFirst, KeepPrediction, RetractNecessity, KeepLocke, Leave }
 internal enum HumeBasis { None, Tested, Habit }
 
-internal sealed class HumeInductionState : IJsonOnDeserialized
+internal sealed class HumeInductionState : IJsonOnDeserialized, IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "JOHN_LOCKE__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "DAVID_HUME__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_026";
     public const string CompletionEdgeId = "WESTERN_EDGE_027";
+    public const decimal RepairFirstGoldCost = 75m;
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -23,6 +24,12 @@ internal sealed class HumeInductionState : IJsonOnDeserialized
     public bool EdgeCommitted { get; set; }
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
+    public bool CostAttempted { get; set; }
+    public bool CostPaid { get; set; }
+    public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+    public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
+
+    public decimal Cost => Stage == HumeInductionStage.ResultRepair ? RepairFirstGoldCost : 0m;
 
     public static HumeInductionState Create(string instanceId) => new() { InstanceId = instanceId };
 

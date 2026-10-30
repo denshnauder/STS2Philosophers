@@ -1,3 +1,5 @@
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
@@ -67,6 +69,7 @@ public sealed class HumeInduction : EventModel
                 Block("The saved HumeInduction choice remains blocked for recovery.");
                 return;
             }
+            if (!await ApplyRepairCostAsync(run, shared, state)) return;
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
@@ -93,6 +96,7 @@ public sealed class HumeInduction : EventModel
                 Block("HumeInduction run state is unavailable.");
                 return;
             }
+            if (action == HumeInductionAction.RepairFirst && !CanAffordRepair()) return;
             if (shared.HumeInduction is not { } state || !ReferenceEquals(state, expectedState)
                 || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
                 || state.ConfirmedActions.Count != expectedActionCount
@@ -115,6 +119,7 @@ public sealed class HumeInduction : EventModel
                 Block($"HumeInduction committed choice persistence is unknown: {action}.");
                 return;
             }
+            if (!await ApplyRepairCostAsync(run, shared, state)) return;
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
         catch (Exception exception)
@@ -149,11 +154,37 @@ public sealed class HumeInduction : EventModel
         HumeInductionStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
         return HumeInductionFlow.Options(stage)
+            .Where(action => action != HumeInductionAction.RepairFirst || CanAffordRepair())
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{HumeInductionFlow.StageKey(stage)}.options.{HumeInductionFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
+    }
+
+    private bool CanAffordRepair() =>
+        Owner is { } owner && owner.Gold >= HumeInductionState.RepairFirstGoldCost;
+
+    private async Task<bool> ApplyRepairCostAsync(RunState run, PhilosophyRunState shared,
+        HumeInductionState state)
+    {
+        if (state.Stage != HumeInductionStage.ResultRepair) return true;
+        EventGoldCostOutcome outcome = await EventGoldCostProtocol.ApplyAsync(
+            state,
+            () => Owner is null ? null : (decimal?)Owner.Gold,
+            async () => await PlayerCmd.LoseGold(state.Cost, Owner!, GoldLossType.Spent),
+            () => RouteEventMapBoundary.PersistEventAsync(run, shared));
+        switch (outcome)
+        {
+            case EventGoldCostOutcome.OwnerUnavailable:
+                Block("The Hume repair has no owner to charge.");
+                return false;
+            case EventGoldCostOutcome.PersistenceUnknown:
+                Block("The Hume repair cost persistence is unknown.");
+                return false;
+            default:
+                return true;
+        }
     }
 
     private HumeInductionState? TryRestoreState()

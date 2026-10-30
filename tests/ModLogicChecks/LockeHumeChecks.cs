@@ -88,8 +88,18 @@ internal static class LockeHumeChecks
             && shared.WesternJourney.LastFixedAct == 2
             && shared.HumeInduction!.Basis == HumeBasis.Tested,
             "Repairing first completes 027 and enters Hume.");
+        Check(shared.HumeInduction!.Cost == HumeInductionState.RepairFirstGoldCost
+            && HumeInductionState.RepairFirstGoldCost == 75m,
+            "Repairing first costs the promised 75 gold.");
+        Check(HumeInductionState.Create("HUME_INDUCTION:TEST:3").Cost == 0m,
+            "No other Hume outcome charges gold.");
         shared = CommitHume(shared, graph, HumeInductionAction.Leave);
         Check(shared.HumeInduction!.Closed, "Hume closes after Leave.");
+        var keepPrediction = HumeFixture(graph);
+        keepPrediction = CommitHume(keepPrediction, graph, HumeInductionAction.TestOnce);
+        keepPrediction = CommitHume(keepPrediction, graph, HumeInductionAction.KeepPrediction);
+        Check(keepPrediction.HumeInduction!.Cost == 0m,
+            "Keeping the prediction charges nothing.");
 
         shared = HumeFixture(graph);
         shared = CommitHume(shared, graph, HumeInductionAction.KeepLocke);
