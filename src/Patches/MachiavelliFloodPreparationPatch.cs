@@ -25,6 +25,34 @@ internal static class MachiavelliFloodPreparationPatch
         return run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
     }
 
+    // The act's fixed room belongs to the map boundary right after the act's
+    // ancient event; this selector keeps that entry separate from the extra
+    // question-mark path so neither borrows the other's budget.
+    internal static EventModel? TrySelectFixedEntry(RunState run)
+    {
+        if (run.CurrentActIndex != 1 || run.Players.Count != 1) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        var journey = shared.WesternJourney;
+        if (journey is null || journey.CurrentNodeId != MachiavelliFloodPreparationState.SourceNodeId) return null;
+        var saved = shared.MachiavelliFloodPreparation;
+        MachiavelliFloodPreparation? canonical;
+        try { canonical = ModelDb.Event<MachiavelliFloodPreparation>(); }
+        catch (Exception e) { Log.Error($"[STS2Philosophers] Machiavelli event unavailable at the act boundary: {e}"); return null; }
+        if (run.VisitedEventIds.Contains(canonical.Id)) return null;
+        bool edgeEligible = WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
+            .Any(edge => edge.EdgeId == MachiavelliFloodPreparationState.CompletionEdgeId);
+        if (!edgeEligible) return null;
+        var player = run.Players[0];
+        if (player.GetRelicById(ModelDb.GetId<RousseauUncarvedStone>()) is not RousseauUncarvedStone { CanOfferMachiavelli: true }
+            || !LaterActRelicEligibilityRuntime.IsEligible(player, LaterActCandidateIds.Machiavelli, run.CurrentActIndex)) return null;
+        var candidate = saved ?? MachiavelliFloodPreparationState.Create(
+            $"MACHIAVELLI_FLOOD_PREPARATION:{run.Rng.Seed}:2");
+        if (!candidate.IsUsable() || candidate.Closed
+            || !MachiavelliFloodPreparationFlow.IsRouteConsistent(candidate, journey)) return null;
+        shared.MachiavelliFloodPreparation = candidate;
+        return canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;

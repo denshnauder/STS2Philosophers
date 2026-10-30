@@ -196,6 +196,7 @@
     <Compile Include="..\..\src\Philosophy\LacanSignifierTriggerPolicy.cs" Link="LacanSignifierTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KuhnParadigmState.cs" Link="KuhnParadigmState.cs" />
     <Compile Include="..\..\src\Philosophy\KuhnParadigmTriggerPolicy.cs" Link="KuhnParadigmTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\ActFixedEntryPolicy.cs" Link="ActFixedEntryPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
     <Compile Include="..\..\src\Philosophy\VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
     <Compile Include="..\..\src\Philosophy\DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />

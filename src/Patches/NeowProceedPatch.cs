@@ -42,6 +42,7 @@ internal static class NeowProceedPatch
             CurrentEventKind currentEvent = eventRoom?.LocalMutableEvent switch
             {
                 Neow => CurrentEventKind.Neow,
+                AncientEventModel => CurrentEventKind.Ancient,
                 PhilosophersGaze => CurrentEventKind.PhilosophersGaze,
                 null => CurrentEventKind.None,
                 _ => CurrentEventKind.Other,
@@ -51,6 +52,22 @@ internal static class NeowProceedPatch
             bool historyContainsEvent = canonicalEvent is not null
                 && (runState?.CurrentMapPointHistoryEntry?.Rooms.Any(
                     room => room.ModelId == canonicalEvent.Id) ?? false);
+
+            if (runState is not null && eventRoom is not null
+                && currentEvent == CurrentEventKind.Ancient
+                && eventRoom.LocalMutableEvent is { IsFinished: true }
+                && ActFixedEntryHost.TryPrepare(runState, out EventRoom? fixedRoom) && fixedRoom is not null)
+            {
+                Task fixedEntryTask = EnterActFixedRoom(runManager, runState, eventRoom, fixedRoom);
+                _activeEntryTask = fixedEntryTask;
+                _ = fixedEntryTask.ContinueWith(
+                    completedTask => ClearActiveEntryTask(completedTask),
+                    CancellationToken.None,
+                    TaskContinuationOptions.ExecuteSynchronously,
+                    TaskScheduler.Default);
+                __result = fixedEntryTask;
+                return false;
+            }
 
             PhilosophersGazeInterceptionContext context = new(
                 runInProgress,
@@ -101,6 +118,25 @@ internal static class NeowProceedPatch
 
         await runManager.EnterRoomWithoutExitingCurrentRoom(
             room,
+            fadeToBlack: true);
+    }
+
+    private static async Task EnterActFixedRoom(
+        RunManager runManager,
+        RunState runState,
+        EventRoom ancientRoom,
+        EventRoom fixedRoom)
+    {
+        ancientRoom.MarkPreFinished();
+        if (runManager.ShouldSave && (!PhilosophyRunStateService.TryGet(runState, out var shared) || shared is null
+            || !await RouteEventMapBoundary.PersistEventAsync(runState, shared, fixedRoom)))
+        {
+            RouteEventMapBoundary.Freeze(runState, "The act's fixed event checkpoint could not be confirmed.");
+            return;
+        }
+
+        await runManager.EnterRoomWithoutExitingCurrentRoom(
+            fixedRoom,
             fadeToBlack: true);
     }
 
