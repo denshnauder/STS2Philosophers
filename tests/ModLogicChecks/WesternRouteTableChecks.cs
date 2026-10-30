@@ -39,6 +39,22 @@ internal static class WesternRouteTableChecks
         "FALLIBLE_INQUIRY",
     ];
 
+    // A run that follows the default line never takes a question node, so its
+    // route is never named by the first act's question. This list is every route
+    // whose act-two figure therefore stays out of reach: the act-two handover is
+    // route-scoped, and a run without route identity cannot see it. The list is
+    // asserted so the day act one names the route this check has to be updated.
+    private static readonly string[] CannotReachActTwo =
+    [
+        "EXPERIENCE_AND_SELF", "AUTONOMY_AND_HISTORY", "NATURE_AND_BECOMING",
+        "WILL_AND_VALUE", "INDIVIDUAL_COMMITMENT", "APPEARANCE_AND_INTERPRETATION",
+        "EMBODIED_PERCEPTION", "FORMAL_LANGUAGE", "ORDINARY_SPEECH",
+        "STRUCTURE_AND_EXCLUSION", "UNCONSCIOUS_AND_NORM", "CHECKS_AND_JUSTICE",
+        "CONSEQUENCE_AND_FREEDOM", "SYMPATHY_AND_PUBLIC_ACTION", "SOCIAL_CRITIQUE",
+        "GENEALOGY_AND_POWER", "SCIENTIFIC_MODEL", "SOCIAL_KNOWLEDGE",
+        "FALLIBLE_INQUIRY",
+    ];
+
     public static void Run()
     {
         WesternRouteTable table = WesternRouteTable.Instance;
@@ -88,6 +104,19 @@ internal static class WesternRouteTableChecks
         }
         Check(walkable.SequenceEqual(Walkable),
             $"The walkable default lines are exactly the migrated ones, but the graph walks: {string.Join(", ", walkable)}.");
+
+        var unreachable = new List<string>();
+        foreach (WesternRouteDefinition route in table.Routes)
+        {
+            WesternJourneyState plain = graph.Start(route.EntryNodeId);
+            plain.LastFixedAct = 2;
+            bool any = graph.GetEligibleEdges(plain, "Fixed")
+                .Any(edge => edge.Act == 2 && ThinkerOf(edge.ToNodeId) == route.ActTwoFigure);
+            if (!any) unreachable.Add(route.RouteId);
+        }
+        Check(unreachable.SequenceEqual(CannotReachActTwo),
+            "A default line reaches its second act only after act one names the route, but the "
+            + $"routes that still cannot are: {string.Join(", ", unreachable)}.");
 
         Check(missing.SetEquals(MissingFigures),
             "The gap list is exactly the set of named figures that have no node.");
