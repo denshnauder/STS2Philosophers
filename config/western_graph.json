@@ -1898,7 +1898,10 @@
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "route_ids": [
+        "EDUCATION_AND_SITUATION"
+      ]
     },
     {
       "edge_id": "WESTERN_EDGE_041",
@@ -1941,9 +1944,7 @@
       "confidence": "Medium",
       "relation_summary": "后世同题转向，中；转入主体与他者，不是直接单线继承",
       "source": "18游戏流程投影.md:367",
-      "required_edge_ids": [
-        "WESTERN_EDGE_041"
-      ],
+      "required_edge_ids": [],
       "enabled": true,
       "context": {
         "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -1954,14 +1955,18 @@
         "compressed_mediators": "已完成密尔问号及女性权利的后世重开；这是同题转向，不作直接单线继承。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "制度与自由的实践须保留排除检查与机会成本，不能把制度选择写成无条件服从或普遍解放。",
-        "interpretation_boundary": "不把女性主义诸人物画成无争议的单线升级树。",
+        "interpretation_boundary": "第三幕固定波伏娃不依赖第二幕问号密尔：问号是另一条分支，不是前置。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "18游戏流程投影.md:367",
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "route_ids": [
+        "EDUCATION_AND_SITUATION"
+      ],
+      "interpretation_boundary": "不把女性主义诸人物画成无争议的单线升级树。"
     },
     {
       "edge_id": "WESTERN_EDGE_043",

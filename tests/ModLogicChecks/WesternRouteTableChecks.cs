@@ -73,5 +73,24 @@ internal static class WesternRouteTableChecks
         Check(graph.TryApply(line, "WESTERN_EDGE_027")
             && line.CurrentNodeId == "DAVID_HUME__SELF_AND_OTHER__CORE" && line.LastFixedAct == 3,
             "The default line fills all three acts without a question mark.");
+
+        // The education route is the other line the audit already called correct:
+        // Rousseau hands the second act to Wollstonecraft and the third to Beauvoir.
+        var education = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        education.RouteId = "EDUCATION_AND_SITUATION";
+        education.LastFixedAct = 2;
+        // Machiavelli is the shared second-act alternative for the Rousseau entry;
+        // the route's own handover has to be among the offers.
+        Check(graph.GetEligibleEdges(education, "Fixed").Where(edge => edge.Act == 2)
+                .Select(edge => edge.EdgeId).Contains("WESTERN_EDGE_040"),
+            "The education route's second act offers Wollstonecraft.");
+        Check(graph.TryApply(education, "WESTERN_EDGE_040")
+            && education.CurrentNodeId == "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+            "Taking it lands on Wollstonecraft.");
+        Check(graph.GetEligibleEdges(education, "Fixed").Where(edge => edge.Act == 3)
+                .Select(edge => edge.EdgeId).Contains("WESTERN_EDGE_042")
+            && graph.TryApply(education, "WESTERN_EDGE_042")
+            && education.CurrentNodeId == "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+            "The third act offers Beauvoir and lands there.");
     }
 }
