@@ -30,9 +30,8 @@ internal static class RouteFixedRoomNativeChecks
     ];
     private static readonly string[] ExpectedActThree =
     [
-        "AUTONOMY_AND_HISTORY",        // closing-figure placement, waiting on the design call
-        "EDUCATION_AND_SITUATION",     // closing-figure placement
-        "CHECKS_AND_JUSTICE",          // closing-figure placement
+        "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
+        "CHECKS_AND_JUSTICE",          // Kant asks for a handover from another route
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
         "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room
@@ -150,7 +149,21 @@ internal static class RouteFixedRoomNativeChecks
                 if ((int)Get(edge, "Act") == 1 && (to == secondNode || to == secondFrom))
                     thirdCompleted.Add((string)Get(edge, "EdgeId"));
             }
-            thirdCompleted.Add(secondEdge);
+            // The handover into the second act's figure may start at a node the
+            // third act's journey has already left, so it is recorded by target.
+            foreach (object edge in ((System.Collections.IEnumerable)Get(graph, "Edges")).Cast<object>())
+            {
+                int edgeAct = (int)Get(edge, "Act");
+                string from = (string)Get(edge, "FromNodeId");
+                string to = (string)Get(edge, "ToNodeId");
+                // The second act's room was played and its question answered; the
+                // third act's rooms ask for that answer, not for the handover.
+                if (edgeAct == 2 && to == secondNode)
+                    thirdCompleted.Add((string)Get(edge, "EdgeId"));
+                if (edgeAct == 2 && from == secondNode && (string)Get(edge, "Slot") == "Question")
+                    thirdCompleted.Add((string)Get(edge, "EdgeId"));
+            }
+            if (secondEdge.Length > 0) thirdCompleted.Add(secondEdge);
             ((HashSet<string>)Get(thirdJourney, "SeenThinkerIds")).Add(second);
             ((HashSet<int>)Get(thirdJourney, "ResolvedQuestionActs")).Add(2);
             Put(thirdJourney, "CurrentNodeId", secondNode);
@@ -210,7 +223,10 @@ internal static class RouteFixedRoomNativeChecks
         // Eighteen of twenty routes open no third act at all without a route name:
         // the third act's rooms are all route-scoped, so an unnamed run sees none
         // of them. Asserted so the day act one names the route it has to fall.
-        Check(unnamedThirdFailures.Count == 18,
+        // Seventeen, not eighteen: Beauvoir's requirement is the answer the
+        // Wollstonecraft room gave, and the legacy second-act edges are still
+        // visible to a run that never named a route.
+        Check(unnamedThirdFailures.Count == 17,
             $"A run that does not take the first act's question reaches act three with {unnamedThirdFailures.Count} "
             + "routes broken, not the known eighteen.");
         AssertOnly(ExpectedActThree, thirdFailures, "act three");
