@@ -51,9 +51,9 @@ internal static class HeideggerDaseinPatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && HeideggerDaseinFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!HeideggerDaseinTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? HeideggerDaseinState.Create($"HEIDEGGER_DASEIN:{run.Rng.Seed}:2");
+        var candidate = saved ?? HeideggerDaseinState.CreateAt($"HEIDEGGER_DASEIN:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;

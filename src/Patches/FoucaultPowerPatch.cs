@@ -51,9 +51,9 @@ internal static class FoucaultPowerPatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && FoucaultPowerFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!FoucaultPowerTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? FoucaultPowerState.Create($"FOUCAULT_POWER:{run.Rng.Seed}:2");
+        var candidate = saved ?? FoucaultPowerState.CreateAt($"FOUCAULT_POWER:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;

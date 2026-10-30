@@ -139,7 +139,7 @@ internal static class SartreExistenceFlow
         if (!state.IsUsable() || journey.RetainedEnding) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(SartreExistenceState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && (journey.CurrentNodeId == SartreExistenceState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3

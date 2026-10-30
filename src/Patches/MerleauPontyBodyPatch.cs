@@ -51,9 +51,9 @@ internal static class MerleauPontyBodyPatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && MerleauPontyBodyFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!MerleauPontyBodyTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? MerleauPontyBodyState.Create($"MERLEAU_PONTY_BODY:{run.Rng.Seed}:2");
+        var candidate = saved ?? MerleauPontyBodyState.CreateAt($"MERLEAU_PONTY_BODY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;

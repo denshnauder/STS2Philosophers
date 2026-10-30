@@ -51,9 +51,9 @@ internal static class LeviStraussMythPatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && LeviStraussMythFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!LeviStraussMythTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? LeviStraussMythState.Create($"LEVI_STRAUSS_MYTH:{run.Rng.Seed}:2");
+        var candidate = saved ?? LeviStraussMythState.CreateAt($"LEVI_STRAUSS_MYTH:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;

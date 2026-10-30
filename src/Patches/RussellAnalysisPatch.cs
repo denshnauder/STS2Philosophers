@@ -51,9 +51,9 @@ internal static class RussellAnalysisPatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && RussellAnalysisFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!RussellAnalysisTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? RussellAnalysisState.Create($"RUSSELL_ANALYSIS:{run.Rng.Seed}:2");
+        var candidate = saved ?? RussellAnalysisState.CreateAt($"RUSSELL_ANALYSIS:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;

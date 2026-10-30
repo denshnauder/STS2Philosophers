@@ -51,9 +51,9 @@ internal static class SartreExistencePatch
                 && (routeAct >= 2 || WesternFirstActBranch.IsChosen(run, journey, graph, edgeId)),
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && SartreExistenceFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null, routeAct);
         if (!SartreExistenceTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? SartreExistenceState.Create($"SARTRE_EXISTENCE:{run.Rng.Seed}:2");
+        var candidate = saved ?? SartreExistenceState.CreateAt($"SARTRE_EXISTENCE:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;
