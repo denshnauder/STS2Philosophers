@@ -121,9 +121,9 @@ internal static class HumeInductionFlow
                 && !journey.DeclinedFixedActs.Contains(2)
                 && journey.CurrentNodeId == HumeInductionState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.FixedDeclined && adopted && journey.LastFixedAct is 2 or 3
                 && journey.CurrentNodeId == HumeInductionState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2
+        return !adopted && journey.LastFixedAct is 2 or 3
             && journey.CurrentNodeId == HumeInductionState.SourceNodeId
             && journey.DeclinedFixedActs.Contains(2);
     }

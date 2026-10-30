@@ -133,7 +133,7 @@ internal static class AugustinePromiseFlow
             return journey.LastFixedAct is 1 or 2 && journey.CurrentNodeId == AugustinePromiseState.SourceNodeId
                 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.CompletedEdgeIds.Contains(AugustinePromiseState.CompletionEdgeId);
-        return journey.LastFixedAct == 2 && (state.EdgeCommitted
+        return journey.LastFixedAct is 2 or 3 && (state.EdgeCommitted
             ? journey.CurrentNodeId == AugustinePromiseState.AdoptedNodeId
                 && journey.CompletedEdgeIds.Contains(AugustinePromiseState.CompletionEdgeId)
             : journey.CurrentNodeId == AugustinePromiseState.SourceNodeId

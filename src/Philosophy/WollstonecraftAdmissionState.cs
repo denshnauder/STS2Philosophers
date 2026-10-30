@@ -142,9 +142,9 @@ internal static class WollstonecraftAdmissionFlow
                 && !journey.DeclinedFixedActs.Contains(2)
                 && journey.CurrentNodeId == WollstonecraftAdmissionState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 2
+            return !state.FixedDeclined && adopted && journey.LastFixedAct is 2 or 3
                 && journey.CurrentNodeId == WollstonecraftAdmissionState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 2
+        return !adopted && journey.LastFixedAct is 2 or 3
             && journey.CurrentNodeId == WollstonecraftAdmissionState.SourceNodeId
             && journey.DeclinedFixedActs.Contains(2);
     }

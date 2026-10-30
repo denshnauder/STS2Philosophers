@@ -147,7 +147,7 @@ internal static class DemocritusArrangementChecks
             {
                 journey => journey.CurrentNodeId = "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
                 journey => journey.CompletedEdgeIds.Remove(DemocritusArrangementState.PrerequisiteEdgeId),
-                journey => journey.LastFixedAct = 3,
+                journey => journey.LastFixedAct = 4,
                 journey => journey.RetainedEnding = true,
                 journey => journey.DeclinedFixedActs.Add(2),
                 journey => journey.CompletedEdgeIds.Add(DemocritusArrangementState.EdgeId),
@@ -176,7 +176,7 @@ internal static class DemocritusArrangementChecks
             foreach (var mutate in new Action<WesternJourneyState>[]
             {
                 journey => journey.RetainedEnding = true,
-                journey => journey.LastFixedAct = 3,
+                journey => journey.LastFixedAct = 4,
                 journey => journey.CompletedEdgeIds.Remove(DemocritusArrangementState.PrerequisiteEdgeId),
                 journey => { journey.CompletedEdgeIds.Add(DemocritusArrangementState.EdgeId); journey.DeclinedFixedActs.Add(2); },
             })

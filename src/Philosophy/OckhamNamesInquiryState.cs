@@ -106,7 +106,7 @@ internal static class OckhamNamesInquiryFlow
         && !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_029")
         && !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_030")
         && (state.SecondFixedDeclined
-            ? journey.LastFixedAct == 2 && journey.DeclinedFixedActs.Contains(2)
+            ? journey.LastFixedAct is 2 or 3 && journey.DeclinedFixedActs.Contains(2)
                 && journey.ResolvedQuestionActs.Contains(2)
             : journey.LastFixedAct is 1 or 2 && !journey.DeclinedFixedActs.Contains(2)
                 && !journey.ResolvedQuestionActs.Contains(2));

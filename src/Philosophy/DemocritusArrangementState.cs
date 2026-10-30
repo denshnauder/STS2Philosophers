@@ -124,7 +124,7 @@ internal static class DemocritusArrangementFlow
         or DemocritusArrangementAction.StopInquiry or DemocritusArrangementAction.DeclineInvitation;
 
     private static bool ResolvedMatches(WesternJourneyState journey, bool adopted) =>
-        !journey.RetainedEnding && journey.LastFixedAct == 2
+        !journey.RetainedEnding && journey.LastFixedAct is 2 or 3
         && journey.CompletedEdgeIds.Contains(DemocritusArrangementState.PrerequisiteEdgeId)
         && (adopted
             ? journey.CurrentNodeId == DemocritusArrangementState.AdoptedNodeId
