@@ -2618,5 +2618,14 @@
   "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.title": "离开研讨班",
   "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.description": "关闭记录。",
   "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.title": "离开研讨班",
-  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。"
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "关闭记录。",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.HEAR_ECHO.title": "听利科的回响",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.HEAR_ECHO.description": "回看本局的解释，以及究竟是谁在说话。",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.HEAR_ECHO.title": "听利科的回响",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.HEAR_ECHO.description": "回看本局的解释，以及究竟是谁在说话。",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.HEAR_ECHO.title": "听利科的回响",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.HEAR_ECHO.description": "回看本局的解释，以及究竟是谁在说话。",
+  "GADAMER_FUSION.pages.ECHO.description": "利科在结尾把记录读回给你：你选定的解释如今成了这一局讲述自身的故事，而作出选择的自我也在这故事之中。这里不再提出新问题；房间只记下这份叙述尚未完成。",
+  "GADAMER_FUSION.pages.ECHO.options.LEAVE.title": "关闭记录",
+  "GADAMER_FUSION.pages.ECHO.options.LEAVE.description": "离开研讨班。"
 }

@@ -2,8 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace STS2Philosophers;
 
-internal enum GadamerFusionStage { Invitation, ResultFusion, ResultHistory, ResultKept }
-internal enum GadamerFusionAction { None, HorizonFusion, EffectiveHistory, KeepHeidegger, Leave }
+internal enum GadamerFusionStage { Invitation, ResultFusion, ResultHistory, ResultKept, Echo }
+internal enum GadamerFusionAction { None, HorizonFusion, EffectiveHistory, KeepHeidegger, HearEcho, Leave }
 internal enum GadamerFusionStandard { None, Fusion, History, Heideggerian }
 
 /// <summary>
@@ -67,7 +67,8 @@ internal static class GadamerFusionFlow
             [GadamerFusionAction.HorizonFusion, GadamerFusionAction.EffectiveHistory,
                 GadamerFusionAction.KeepHeidegger],
         GadamerFusionStage.ResultFusion or GadamerFusionStage.ResultHistory
-            or GadamerFusionStage.ResultKept => [GadamerFusionAction.Leave],
+            or GadamerFusionStage.ResultKept => [GadamerFusionAction.HearEcho, GadamerFusionAction.Leave],
+        GadamerFusionStage.Echo => [GadamerFusionAction.Leave],
         _ => [],
     };
 
@@ -97,6 +98,9 @@ internal static class GadamerFusionFlow
                 state.Standard = GadamerFusionStandard.Heideggerian;
                 state.QuestionDeclined = true;
                 state.Stage = GadamerFusionStage.ResultKept;
+                break;
+            case GadamerFusionAction.HearEcho:
+                state.Stage = GadamerFusionStage.Echo;
                 break;
             case GadamerFusionAction.Leave:
                 state.Closed = true;

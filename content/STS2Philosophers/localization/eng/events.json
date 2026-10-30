@@ -2618,5 +2618,14 @@
   "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.title": "Leave the seminar",
   "GADAMER_FUSION.pages.RESULT_HISTORY.options.LEAVE.description": "Close the record.",
   "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.title": "Leave the seminar",
-  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record."
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.LEAVE.description": "Close the record.",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.HEAR_ECHO.title": "Hear Ricoeur's echo",
+  "GADAMER_FUSION.pages.RESULT_FUSION.options.HEAR_ECHO.description": "Look back on this run's interpretation and on who was speaking.",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.HEAR_ECHO.title": "Hear Ricoeur's echo",
+  "GADAMER_FUSION.pages.RESULT_HISTORY.options.HEAR_ECHO.description": "Look back on this run's interpretation and on who was speaking.",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.HEAR_ECHO.title": "Hear Ricoeur's echo",
+  "GADAMER_FUSION.pages.RESULT_KEPT.options.HEAR_ECHO.description": "Look back on this run's interpretation and on who was speaking.",
+  "GADAMER_FUSION.pages.ECHO.description": "Ricoeur closes the seminar by reading the record back to you: the interpretation you chose is now a story the run tells about itself, and the self who chose it is part of that story. Nothing new is asked; the room only notes that the account is not finished.",
+  "GADAMER_FUSION.pages.ECHO.options.LEAVE.title": "Close the record",
+  "GADAMER_FUSION.pages.ECHO.options.LEAVE.description": "Leave the seminar."
 }
