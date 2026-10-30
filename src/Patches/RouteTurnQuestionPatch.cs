@@ -22,7 +22,7 @@ internal static class RouteTurnQuestionPatch
     {
         // The question belongs to the first act. A record left open there cannot
         // bring the fork back later: the run has left the node it was asked on.
-        if (run.CurrentActIndex != 0) return null;
+        if (run.CurrentActIndex != 0 || run.Players.Count != 1) return null;
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         RouteTurnQuestionState? saved = shared.RouteTurnQuestion;
