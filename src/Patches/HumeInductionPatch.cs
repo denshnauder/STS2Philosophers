@@ -45,13 +45,16 @@ internal static class HumeInductionPatch
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
-            journey?.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId) == true,
+            journey is not null
+                && (journey.CompletedEdgeIds.Contains(HumeInductionState.RequiredEdgeId)
+                    || journey.CompletedEdgeIds.Contains(HumeInductionState.SecondActEdgeId)),
             edgeEligible,
             saved is not null,
             saved?.IsUsable() == true,
             saved?.Closed == true,
             saved is not null && journey is not null && HumeInductionFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            journey?.RouteId == "EXPERIENCE_AND_SELF");
         if (!HumeInductionTriggerPolicy.ShouldInsert(context)) return null;
 
         var candidate = saved ?? HumeInductionState.CreateAt($"HUME_INDUCTION:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);

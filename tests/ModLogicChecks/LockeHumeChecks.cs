@@ -121,14 +121,22 @@ internal static class LockeHumeChecks
         LockeCargoIdentityTriggerContext locke = new(true, true, true, 0, true, 1,
             LockeCargoIdentityState.SourceNodeId, 1, true, false, false, false, false, true);
         Check(LockeCargoIdentityTriggerPolicy.ShouldInsert(locke), "Locke is offered after a real act-one combat.");
-        Check(!LockeCargoIdentityTriggerPolicy.ShouldInsert(locke with { CurrentActIndex = 1 }),
-            "Locke is not an act-two event.");
+        Check(LockeCargoIdentityTriggerPolicy.ShouldInsert(locke with { CurrentActIndex = 1, LastFixedAct = 2, OnDefaultRoute = true }),
+            "Locke is also the default line's act-two event.");
+        Check(!LockeCargoIdentityTriggerPolicy.ShouldInsert(locke with { CurrentActIndex = 1, LastFixedAct = 2 }),
+            "Another route does not get Locke's act-two handover.");
+        Check(!LockeCargoIdentityTriggerPolicy.ShouldInsert(locke with { CurrentActIndex = 2 }),
+            "Locke is never an act-three event.");
         Check(!LockeCargoIdentityTriggerPolicy.ShouldInsert(locke with { EdgeEligible = false }),
             "Locke requires an eligible 026.");
 
         HumeInductionTriggerContext hume = new(true, true, true, 1, true, 1,
-            HumeInductionState.SourceNodeId, 1, true, true, false, false, false, false, true);
+            HumeInductionState.SourceNodeId, 2, true, true, false, false, false, false, true);
         Check(HumeInductionTriggerPolicy.ShouldInsert(hume), "Hume is offered after a real act-two combat.");
+        Check(HumeInductionTriggerPolicy.ShouldInsert(hume with { CurrentActIndex = 2, LastFixedAct = 3, OnDefaultRoute = true }),
+            "Hume is also the default line's act-three event.");
+        Check(!HumeInductionTriggerPolicy.ShouldInsert(hume with { CurrentActIndex = 2, LastFixedAct = 3 }),
+            "Another route does not get Hume's act-three handover.");
         Check(!HumeInductionTriggerPolicy.ShouldInsert(hume with { RequiredEdgeCompleted = false }),
             "Hume requires 026.");
         Check(!HumeInductionTriggerPolicy.ShouldInsert(hume with { CompletionEdgeEligible = false }),

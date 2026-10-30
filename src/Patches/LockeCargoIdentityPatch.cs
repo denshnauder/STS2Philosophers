@@ -49,7 +49,8 @@ internal static class LockeCargoIdentityPatch
             saved?.IsUsable() == true,
             saved?.Closed == true,
             saved is not null && journey is not null && LockeCargoIdentityFlow.IsRouteConsistent(saved, journey),
-            canonical is not null);
+            canonical is not null,
+            journey?.RouteId == "EXPERIENCE_AND_SELF");
         if (!LockeCargoIdentityTriggerPolicy.ShouldInsert(context)) return null;
 
         var candidate = saved ?? LockeCargoIdentityState.CreateAt($"LOCKE_CARGO_IDENTITY:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);

@@ -14,18 +14,23 @@ internal sealed record LockeCargoIdentityTriggerContext(
     bool SavedInstanceUsable,
     bool SavedInstanceClosed,
     bool SavedRouteConsistent,
-    bool ModelAvailable);
+    bool ModelAvailable,
+    bool OnDefaultRoute = false);
 
 internal static class LockeCargoIdentityTriggerPolicy
 {
     public static bool ShouldInsert(LockeCargoIdentityTriggerContext context)
     {
         if (!context.RunInProgress || !context.AtSafeMapBoundary || !context.IsSingleplayer
-            || context.CurrentActIndex != 0 || !context.ModelAvailable) return false;
+            || context.CurrentActIndex is not (0 or 1) || !context.ModelAvailable) return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
-        return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == LockeCargoIdentityState.SourceNodeId
-            && context.LastFixedAct == 1 && context.EdgeEligible;
+        if (!context.SourceIsCompletedNonBossCombat || context.CompletedCombatCount < 1
+            || context.CurrentNodeId != LockeCargoIdentityState.SourceNodeId
+            || !context.EdgeEligible) return false;
+        // The act-one question opens Locke for any run; the act-two handover only
+        // belongs to the route that names it, so a legacy run keeps its own rooms.
+        return context.CurrentActIndex == 0 && context.LastFixedAct == 1
+            || context.CurrentActIndex == 1 && context.LastFixedAct == 2 && context.OnDefaultRoute;
     }
 }

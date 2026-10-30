@@ -72,7 +72,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
         Check(selected, string.Join("/", expectedRooms.Select(room => room.Name)) + ": the second act's fixed room must be selectable at the ancient boundary without a question point.");
         var room = (EventRoom)prepare[1]!;
-        Type expected = expectedRooms.Single(candidate => candidate == room.CanonicalEvent.GetType());
+        Type? expected = expectedRooms.FirstOrDefault(candidate => candidate == room.CanonicalEvent.GetType());
         Check(expected is not null,
             "The boundary selects a room that owns this act's fixed edge, got " + room.CanonicalEvent.GetType().Name + ".");
         object?[] query = [run, null];
