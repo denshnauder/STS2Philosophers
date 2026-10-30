@@ -45,6 +45,19 @@ internal static class WesternGraphChecks
         Check(graph.GetEligibleEdges(chain, "Fixed").Count == 0,
             "A completed three-slot line leaves no fixed position behind.");
         }
+        // No fixed edge may be blocked by the slot arithmetic itself. Each act's
+        // position must be open whether or not the previous act took its own.
+        // Rawls and Arendt still have no room; their edges stay out of this
+        // arithmetic check until the rooms exist.
+        string[] roomless = ["RAWLS__", "HANNAH_ARENDT__"];
+        foreach (WesternGraphEdge edge in graph.Edges.Where(edge => edge.Enabled && edge.Slot == "Fixed"
+            && edge.Act is 2 or 3 && !roomless.Any(prefix => edge.ToNodeId.StartsWith(prefix, StringComparison.Ordinal))))
+        {
+            var state = new WesternJourneyState { CurrentNodeId = edge.FromNodeId, LastFixedAct = edge.Act };
+            foreach (string required in edge.RequiredEdgeIds) state.CompletedEdgeIds.Add(required);
+            Check(graph.GetEligibleEdges(state, "Fixed").Any(candidate => candidate.EdgeId == edge.EdgeId),
+                $"Fixed edge {edge.EdgeId} in act {edge.Act} must be open at its own act's position.");
+        }
         WesternJourneyState plato = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(plato, "WESTERN_EDGE_008") && graph.TryApply(plato, "WESTERN_EDGE_009"),
             "Plotinus requires the completed Socrates-to-Plato sequence.");

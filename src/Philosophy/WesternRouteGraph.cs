@@ -81,6 +81,7 @@ internal sealed class WesternRouteGraph
     public IReadOnlyList<WesternGraphSample> Samples { get; }
     public IEnumerable<WesternGraphSample> ExecutableSamples => Samples.Where(sample => sample.Disposition == "Executable");
     public IEnumerable<WesternGraphNode> Nodes => _nodes.Values;
+    public IEnumerable<WesternGraphEdge> Edges => _edges.Values;
 
     private WesternRouteGraph(Payload data)
     {
