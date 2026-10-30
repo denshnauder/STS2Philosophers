@@ -66,6 +66,26 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
             [typeof(KantApperception)], doctrine: false, position: 2, actIndex: 1,
             route: "AUTONOMY_AND_HISTORY");
+        // The rest of the second acts, one room each: the boundary has to hand
+        // the slot to the figure the line names, not to whatever opens first.
+        ModelDb.Inject(typeof(SaussureSign));
+        CheckBoundary(typeof(AristotleCategoryTablet), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(SaussureSign)], doctrine: false, position: 2, route: "STRUCTURE_AND_EXCLUSION");
+        ModelDb.Inject(typeof(KierkegaardFaith));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(KierkegaardFaith)], doctrine: false, position: 2, route: "INDIVIDUAL_COMMITMENT");
+        ModelDb.Inject(typeof(BenthamUtility));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM");
+        ModelDb.Inject(typeof(PeirceInquiry));
+        CheckBoundary(typeof(SocratesQuestionCup), "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(PeirceInquiry)], doctrine: false, position: 2, route: "FALLIBLE_INQUIRY");
+        ModelDb.Inject(typeof(NietzscheRevaluation));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER");
+        ModelDb.Inject(typeof(MarxAlienation));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE");
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
