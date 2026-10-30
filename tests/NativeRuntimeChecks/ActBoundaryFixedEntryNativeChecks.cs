@@ -112,6 +112,30 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(SocratesBalanceWeight), "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
             [typeof(SartreExistence)], doctrine: false, position: 2, actIndex: 2,
             route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_112"]);
+        ModelDb.Inject(typeof(HeideggerDasein));
+        CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+            [typeof(HeideggerDasein)], doctrine: true, position: 2, actIndex: 2,
+            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_100"]);
+        ModelDb.Inject(typeof(MerleauPontyBody));
+        CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+            [typeof(MerleauPontyBody)], doctrine: true, position: 2, actIndex: 2,
+            route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_102"]);
+        ModelDb.Inject(typeof(DeweyPublicExperiment));
+        CheckBoundary(typeof(SocratesQuestionCup), "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(DeweyPublicExperiment)], doctrine: false, position: 2, actIndex: 2,
+            route: "FALLIBLE_INQUIRY", required: ["WESTERN_EDGE_108"]);
+        ModelDb.Inject(typeof(FoucaultPower));
+        CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
+            [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,
+            route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_120"]);
+        ModelDb.Inject(typeof(HorkheimerReason));
+        CheckBoundary(typeof(RousseauUncarvedStone), "KARL_MARX__HISTORY_AND_POWER__EARLY",
+            [typeof(HorkheimerReason)], doctrine: false, position: 2, actIndex: 2,
+            route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_118"]);
+        ModelDb.Inject(typeof(NietzscheRevaluation));
+        CheckBoundary(typeof(SocratesBalanceWeight), "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 2, actIndex: 2,
+            route: "WILL_AND_VALUE", required: ["WESTERN_EDGE_150"]);
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
         return Task.CompletedTask;
