@@ -36,12 +36,15 @@ internal static class WesternGraphChecks
         var chain = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
         Check(graph.TryApply(chain, "WESTERN_EDGE_065") && chain.LastFixedAct == 2,
             "The first act's fixed event opens the second act's position.");
-        Check(graph.TryApply(chain, "WESTERN_EDGE_066") && chain.LastFixedAct == 3,
+        // Taking the first act's branch names the line, so the run continues on
+        // that line's own handovers rather than the edges written before routes.
+        Check(chain.RouteId == "CONSEQUENCE_AND_FREEDOM", "The first act's branch must name the line it entered.");
+        Check(graph.TryApply(chain, "WESTERN_EDGE_169") && chain.LastFixedAct == 3,
             "The second act's fixed event opens the third act's position.");
-        Check(graph.TryApply(chain, "WESTERN_EDGE_056") && chain.LastFixedAct == 3,
+        Check(graph.TryApply(chain, "WESTERN_EDGE_170") && chain.LastFixedAct == 3,
             "The third act's fixed event must still be adoptable after the second was taken.");
-        Check(chain.CompletedEdgeIds.Contains("WESTERN_EDGE_056")
-            && chain.CurrentNodeId == "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
+        Check(chain.CompletedEdgeIds.Contains("WESTERN_EDGE_170")
+            && chain.CurrentNodeId == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
             "The third fixed adoption must enter its own node.");
         Check(graph.GetEligibleEdges(chain, "Fixed").Count == 0,
             "A completed three-slot line leaves no fixed position behind.");

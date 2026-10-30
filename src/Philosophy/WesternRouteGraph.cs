@@ -185,6 +185,24 @@ internal sealed class WesternRouteGraph
         if (route is not null) state.RouteId = route.RouteId;
     }
 
+    /// <summary>
+    /// The first act's step into a line is the same fact whether the run took a
+    /// question or a fixed branch: the figure it now stands on belongs to one
+    /// line of this entry. Two lines that share that figure stay unnamed, which
+    /// is what asks the event to choose a direction.
+    /// </summary>
+    private void NameFromFirstAct(WesternJourneyState state, WesternGraphEdge edge)
+    {
+        if (edge.Act != 1 || !string.IsNullOrEmpty(state.RouteId)
+            || string.IsNullOrEmpty(state.EntryNodeId)) return;
+        string target = _nodes[edge.ToNodeId].ThinkerId;
+        string[] candidates = WesternRouteTable.Instance.Routes
+            .Where(route => route.EntryNodeId == state.EntryNodeId && route.ActTwoFigure == target)
+            .Select(route => route.RouteId)
+            .ToArray();
+        if (candidates.Length == 1) state.RouteId = candidates[0];
+    }
+
     public bool TryApply(WesternJourneyState state, string edgeId)
     {
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge) || !IsEligible(state, edge, edge.Slot)) return false;
@@ -199,17 +217,16 @@ internal sealed class WesternRouteGraph
             // The first act's question is how the design says a run picks its
             // mainline ("第一幕问号X转线后"). Name the route only when exactly one
             // route of this entry continues through that figure.
-            if (edge.Act == 1 && string.IsNullOrEmpty(state.RouteId))
-            {
-                string target = _nodes[edge.ToNodeId].ThinkerId;
-                string[] candidates = WesternRouteTable.Instance.Routes
-                    .Where(route => route.EntryNodeId == state.EntryNodeId && route.ActTwoFigure == target)
-                    .Select(route => route.RouteId)
-                    .ToArray();
-                if (candidates.Length == 1) state.RouteId = candidates[0];
-            }
+            NameFromFirstAct(state, edge);
         }
-        else state.LastFixedAct = Math.Min(3, state.LastFixedAct + 1);
+        else
+        {
+            state.LastFixedAct = Math.Min(3, state.LastFixedAct + 1);
+            // A run that walked the first act's branch stands on the figure the
+            // line continues through, exactly like a run that answered the
+            // question: both are how the design says a mainline is entered.
+            NameFromFirstAct(state, edge);
+        }
         if (edge.Outcome is "Adopt" or "Switch") state.CurrentNodeId = edge.ToNodeId;
         return true;
     }

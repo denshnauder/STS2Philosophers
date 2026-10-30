@@ -74,6 +74,23 @@ internal static class WesternBranchChainChecks
             ["WESTERN_EDGE_197", "WESTERN_EDGE_198", "WESTERN_EDGE_199"],
             "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE");
 
+        // The first act's fixed branch is the older way into a line. It names
+        // the same line the question would, so the run can continue on that
+        // line's own handovers instead of the edges written before routes.
+        var branch = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
+        Check(graph.TryApply(branch, "WESTERN_EDGE_077"), "The first act's branch to Frege must apply.");
+        Check(branch.RouteId == "FORMAL_LANGUAGE", "The first act's branch must name the line it entered.");
+        Check(graph.TryApply(branch, "WESTERN_EDGE_184") && branch.CurrentNodeId == "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+            "A named line must continue on its own second-act handover.");
+        Check(graph.TryApply(branch, "WESTERN_EDGE_185") && graph.IsComplete(branch),
+            "A named line must reach its own third-act conclusion.");
+
+        // Two lines share Husserl, so the first act's branch cannot name one of
+        // them: that is exactly the case the direction option has to answer.
+        var shared = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        Check(graph.TryApply(shared, "WESTERN_EDGE_072"), "The shared first-act branch must apply.");
+        Check(shared.RouteId.Length == 0, "A shared first-act figure must not pick a line by itself.");
+
         // The default chain of a turned line still ends where the table says it
         // does: the turn's closing step is only open to a run that took the turn.
         WesternJourneyState defaultChain = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");

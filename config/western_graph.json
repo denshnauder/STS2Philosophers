@@ -4436,9 +4436,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受康德后第二幕固定承接黑格尔〔历史〕",
    "source": "00西哲当前路线.md:20",
-   "required_edge_ids": [
-    "WESTERN_EDGE_153"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "SELF_AND_OTHER",
@@ -4688,9 +4686,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受斯宾诺莎后第二幕固定承接谢林",
    "source": "00西哲当前路线.md:21",
-   "required_edge_ids": [
-    "WESTERN_EDGE_156"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "BEING_AND_CHANGE",
@@ -4721,9 +4717,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受克尔凯郭尔后第二幕固定承接萨特",
    "source": "00西哲当前路线.md:23",
-   "required_edge_ids": [
-    "WESTERN_EDGE_158"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "SELF_AND_OTHER",
@@ -4754,9 +4748,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受胡塞尔后第二幕固定承接海德格尔",
    "source": "00西哲当前路线.md:24",
-   "required_edge_ids": [
-    "WESTERN_EDGE_160"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "SELF_AND_OTHER",
@@ -4816,9 +4808,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受培根后第二幕固定承接牛顿",
    "source": "00西哲当前路线.md:36",
-   "required_edge_ids": [
-    "WESTERN_EDGE_165"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "KNOWLEDGE_AND_DOUBT",
@@ -4911,9 +4901,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受边沁后第二幕固定承接密尔",
    "source": "00西哲当前路线.md:32",
-   "required_edge_ids": [
-    "WESTERN_EDGE_168"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -5006,9 +4994,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受孟德斯鸠后第二幕固定承接康德〔制度〕",
    "source": "00西哲当前路线.md:31",
-   "required_edge_ids": [
-    "WESTERN_EDGE_171"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -5101,9 +5087,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受亚当斯密后第二幕固定承接密尔",
    "source": "00西哲当前路线.md:33",
-   "required_edge_ids": [
-    "WESTERN_EDGE_174"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -5196,9 +5180,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受马克思后第二幕固定承接霍克海默",
    "source": "00西哲当前路线.md:34",
-   "required_edge_ids": [
-    "WESTERN_EDGE_177"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "HISTORY_AND_POWER",
@@ -5291,9 +5273,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受尼采后第二幕固定承接福柯",
    "source": "00西哲当前路线.md:35",
-   "required_edge_ids": [
-    "WESTERN_EDGE_180"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "HISTORY_AND_POWER",
@@ -5386,9 +5366,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受弗雷格后第二幕固定承接罗素",
    "source": "00西哲当前路线.md:26",
-   "required_edge_ids": [
-    "WESTERN_EDGE_183"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "LANGUAGE_AND_MEANING",
@@ -5481,9 +5459,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受索绪尔后第二幕固定承接列维斯特劳斯",
    "source": "00西哲当前路线.md:28",
-   "required_edge_ids": [
-    "WESTERN_EDGE_186"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "LANGUAGE_AND_MEANING",
@@ -5576,9 +5552,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受弗洛伊德后第二幕固定承接拉康",
    "source": "00西哲当前路线.md:29",
-   "required_edge_ids": [
-    "WESTERN_EDGE_189"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "SELF_AND_OTHER",
@@ -5671,9 +5645,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受沃斯通克拉夫特后第二幕固定承接波伏瓦",
    "source": "00西哲当前路线.md:30",
-   "required_edge_ids": [
-    "WESTERN_EDGE_192"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -5737,9 +5709,7 @@
    "confidence": "High",
    "relation_summary": "问号转线（具身方向），高；接受胡塞尔后第二幕固定承接梅洛庞蒂",
    "source": "00西哲当前路线.md:25",
-   "required_edge_ids": [
-    "WESTERN_EDGE_160"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "SELF_AND_OTHER",
@@ -5832,9 +5802,7 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受培根后第二幕固定承接孔德",
    "source": "00西哲当前路线.md:37",
-   "required_edge_ids": [
-    "WESTERN_EDGE_197"
-   ],
+   "required_edge_ids": [],
    "enabled": true,
    "context": {
     "from_problem_id": "KNOWLEDGE_AND_DOUBT",
