@@ -31,10 +31,20 @@ internal static class HumeInductionPatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
 
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Fixed")
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        // A route may name Hume as its third act; the handover into him is then
+        // that route's own act-three edge, not the default second-act one.
+        string routeEdgeId = journey is null ? string.Empty
+            : WesternRouteTable.Instance.Routes
+                .Where(route => route.RouteId == journey.RouteId && route.ActThreeFigure == "DAVID_HUME")
+                .Select(_ => graph.GetEligibleEdges(journey, "Fixed")
+                    .Where(edge => edge.Act == 3 && edge.ToNodeId == HumeInductionState.AdoptedNodeId)
+                    .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty)
+                .DefaultIfEmpty(string.Empty).First();
+        bool edgeEligible = journey is not null && graph.GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == HumeInductionState.CompletionEdgeId
-                || edge.EdgeId == HumeInductionState.SecondActEdgeId);
+                || edge.EdgeId == HumeInductionState.SecondActEdgeId
+                || routeEdgeId.Length > 0 && edge.EdgeId == routeEdgeId);
         HumeInductionTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
@@ -58,7 +68,8 @@ internal static class HumeInductionPatch
             journey?.RouteId == "EXPERIENCE_AND_SELF");
         if (!HumeInductionTriggerPolicy.ShouldInsert(context)) return null;
 
-        var candidate = saved ?? HumeInductionState.CreateAt($"HUME_INDUCTION:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);
+        var candidate = saved ?? HumeInductionState.CreateAt(
+            $"HUME_INDUCTION:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);
         if (journey is null || !HumeInductionFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HumeInduction = candidate;
 

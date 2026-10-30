@@ -97,25 +97,25 @@ internal static class RouteFixedRoomNativeChecks
             });
             object thirdJourney = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
             Put(thirdJourney, "RouteId", routeId);
-            Put(thirdJourney, "LastFixedAct", 1);
             // The act-one handover into the figure that opens act two is part of
-            // the room chain act three inherits, so replay it as well.
+            // the room chain act three inherits, so it is recorded as completed.
             string secondFrom = "";
-            foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
-                .Invoke(graph, [thirdJourney, "Fixed"])!).Cast<object>())
+            foreach (object edge in ((System.Collections.IEnumerable)Get(graph, "Edges")).Cast<object>())
                 if ((string)Get(edge, "EdgeId") == secondEdge) secondFrom = (string)Get(edge, "FromNodeId");
-            if (secondFrom.Length > 0)
-                foreach (object edge in ((System.Collections.IEnumerable)graph.GetType().GetMethod("GetEligibleEdges")!
-                    .Invoke(graph, [thirdJourney, "Fixed"])!).Cast<object>())
-                {
-                    if ((int)Get(edge, "Act") != 1 || (string)Get(edge, "ToNodeId") != secondFrom) continue;
-                    graph.GetType().GetMethod("TryApply")!.Invoke(graph, [thirdJourney, (string)Get(edge, "EdgeId")]);
-                    break;
-                }
-            graph.GetType().GetMethod("TryApply")!.Invoke(graph, [thirdJourney, secondEdge]);
+            var thirdCompleted = (HashSet<string>)Get(thirdJourney, "CompletedEdgeIds");
+            foreach (object edge in ((System.Collections.IEnumerable)Get(graph, "Edges")).Cast<object>())
+            {
+                string to = (string)Get(edge, "ToNodeId");
+                if ((int)Get(edge, "Act") == 1 && (to == secondNode || to == secondFrom))
+                    thirdCompleted.Add((string)Get(edge, "EdgeId"));
+            }
+            thirdCompleted.Add(secondEdge);
             ((HashSet<string>)Get(thirdJourney, "SeenThinkerIds")).Add(second);
             ((HashSet<int>)Get(thirdJourney, "ResolvedQuestionActs")).Add(2);
-            Put(thirdJourney, "LastFixedAct", 3);
+            Put(thirdJourney, "CurrentNodeId", secondNode);
+            // At the boundary the previous act's slot is still the last one
+            // recorded; the room itself advances it when it commits.
+            Put(thirdJourney, "LastFixedAct", 2);
             string? thirdEdge = FindEdge(graph, thirdJourney, 3, third, out string? thirdNode);
             if (thirdEdge is null)
             {
