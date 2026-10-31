@@ -158,6 +158,17 @@ internal static class WesternBranchChainChecks
         Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
             "No two options of the question may share a key.");
 
+        // The turn puts the run on the route's act-two figure during act one, so the
+        // act it then meets is the route's *next* figure, not the same one again.
+        var autonomy = WesternRouteTable.Instance.Routes.Single(route => route.RouteId == "AUTONOMY_AND_HISTORY");
+        Check(autonomy.ActTwoFigure == "IMMANUEL_KANT" && autonomy.ActThreeFigure == "GEORG_WILHELM_FRIEDRICH_HEGEL"
+            && autonomy.ClosingFigure == "KARL_MARX",
+            "The autonomy line runs Kant, then Hegel, then Marx.");
+        var unconscious = WesternRouteTable.Instance.Routes.Single(route => route.RouteId == "UNCONSCIOUS_AND_NORM");
+        Check(unconscious.ActTwoFigure == "SIGMUND_FREUD" && unconscious.ActThreeFigure == "JACQUES_LACAN"
+            && unconscious.ClosingFigure == "JUDITH_BUTLER",
+            "The unconscious line runs Freud, then Lacan, then Butler.");
+
         // A run the first act's question turned onto Freud meets Lacan while it is
         // still in the second act; a run that walked the ordinary handover meets him
         // in the third.  Both are the same room, read one act apart.
