@@ -114,21 +114,6 @@ internal static class RouteFixedRoomNativeChecks
                 else
                     CheckRoom(routeId, "act two after a turn", turnNode, rooms, turnedRun, turned, failures, relic);
             }
-            if (routeId == "UNCONSCIOUS_AND_NORM")
-            {
-                var turnedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-                    .Invoke(null, [relic, 1])!;
-                var turnedRun = (RunState)turnedTuple[1]!;
-                Set(CombatManager.Instance, "_turnState", null);
-                object turned = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
-                Put(turned, "RouteRules", true);
-                Put(turned, "LastFixedAct", 1);
-                if (!(bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [turned, "WESTERN_EDGE_189"])!)
-                    failures.Add($"{routeId}: the first act's question cannot turn onto it.");
-                else
-                    CheckRoom(routeId, "act two after a turn", "JACQUES_LACAN__SELF_AND_OTHER__CORE",
-                        rooms, turnedRun, turned, failures, relic);
-            }
             // A run that follows the default line never takes the first act's
             // question, so it reaches this boundary with no route named. The
             // handover has to be visible and the room has to name the route

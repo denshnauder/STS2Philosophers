@@ -37,9 +37,7 @@ internal static class LacanSignifierPatch
             .DefaultIfEmpty(0).First();
         // A run the first act's question turned onto Freud already met the figure the
         // route places in this act, so the edge into Lacan is the one an act earlier.
-        bool turned = journey is not null
-            && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
-            && journey.ResolvedQuestionActs.Contains(1);
+        bool turned = journey is not null && journey.TurnedAct == 1;
         int actForEdge = turned && routeAct >= 2 ? routeAct - 1 : routeAct;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
