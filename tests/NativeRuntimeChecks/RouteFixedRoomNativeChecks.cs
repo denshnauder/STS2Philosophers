@@ -95,6 +95,26 @@ internal static class RouteFixedRoomNativeChecks
             // the last one recorded; the host advances it before asking.
             Put(journey, "LastFixedAct", 1);
             CheckRoom(routeId, "act two", secondNode!, rooms, run, journey, failures, relic);
+            if (routeId is "AUTONOMY_AND_HISTORY" or "UNCONSCIOUS_AND_NORM")
+            {
+                string turnEdge = routeId == "AUTONOMY_AND_HISTORY" ? "WESTERN_EDGE_153" : "WESTERN_EDGE_189";
+                string turnNode = routeId == "AUTONOMY_AND_HISTORY"
+                    ? "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE"
+                    : "JACQUES_LACAN__SELF_AND_OTHER__CORE";
+                if (routeId == "AUTONOMY_AND_HISTORY" && !rooms.ContainsKey(turnNode))
+                    rooms[turnNode] = rooms.Values.First(room => room.Name == "HegelSubstanceSubject");
+                var turnedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+                    .Invoke(null, [relic, 1])!;
+                var turnedRun = (RunState)turnedTuple[1]!;
+                Set(CombatManager.Instance, "_turnState", null);
+                object turned = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
+                Put(turned, "RouteRules", true);
+                Put(turned, "LastFixedAct", 1);
+                if (!(bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [turned, turnEdge])!)
+                    failures.Add($"{routeId}: the first act's question cannot turn onto it.");
+                else
+                    CheckRoom(routeId, "act two after a turn", turnNode, rooms, turnedRun, turned, failures, relic);
+            }
             if (routeId == "UNCONSCIOUS_AND_NORM")
             {
                 var turnedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!

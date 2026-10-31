@@ -15,18 +15,22 @@ internal sealed record HegelSubstanceSubjectTriggerContext(
     bool SavedInstanceUsable,
     bool SavedInstanceClosed,
     bool SavedRouteConsistent,
-    bool ModelAvailable);
+    bool ModelAvailable,
+    bool TurnedInFirstAct = false);
 
 internal static class HegelSubstanceSubjectTriggerPolicy
 {
     public static bool ShouldInsert(HegelSubstanceSubjectTriggerContext context)
     {
         if (!context.RunInProgress || !context.AtNativeQuestionEntry || !context.IsSingleplayer
-            || context.CurrentActIndex != 2 || !context.ModelAvailable) return false;
+            || context.CurrentActIndex != (context.TurnedInFirstAct ? 1 : 2)
+            || !context.ModelAvailable) return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == HegelSubstanceSubjectState.SourceNodeId
+            && context.CurrentNodeId == (context.TurnedInFirstAct
+                ? HegelSubstanceSubjectState.TurnedSourceNodeId
+                : HegelSubstanceSubjectState.SourceNodeId)
             && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible;
     }

@@ -11,10 +11,24 @@ internal sealed class HegelSubstanceSubjectState : IJsonOnDeserialized
     public const string SourceNodeId = "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_024";
     public const string CompletionEdgeId = "WESTERN_EDGE_025";
+
+    // A run the first act's question turned onto Kant stands on him in the act the
+    // route calls its second, so Hegel is reached by that turn and not by Spinoza.
+    public const string TurnedSourceNodeId = "IMMANUEL_KANT__SELF_AND_OTHER__CORE";
+    public const string TurnedRequiredEdgeId = "WESTERN_EDGE_153";
+    public const string TurnedAdoptEdgeId = "WESTERN_EDGE_154";
+    public const string TurnedAdoptedNodeId = "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE";
     public const string AdoptedNodeId = "GEORG_WILHELM_FRIEDRICH_HEGEL__BEING_AND_CHANGE__CORE";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    // The act and the edges this question belongs to.  They stay at the line's own
+    // values unless the first act's question turned the run onto Hegel early.
+    public int ActIndex { get; set; } = 3;
+    public string RequiredEdge { get; set; } = RequiredEdgeId;
+    public string AdoptEdge { get; set; } = CompletionEdgeId;
+    public string AdoptedNode { get; set; } = AdoptedNodeId;
+    public string SourceNode { get; set; } = SourceNodeId;
     public HegelSubstanceSubjectStage Stage { get; set; }
     public HegelSubstanceSubjectAction PendingAction { get; set; }
     public List<HegelSubstanceSubjectAction> ConfirmedActions { get; set; } = [];
@@ -106,11 +120,11 @@ internal static class HegelSubstanceSubjectFlow
         if (!IsRouteConsistent(state, journey) || state.PendingAction == HegelSubstanceSubjectAction.None) return false;
         HegelSubstanceSubjectAction action = state.PendingAction;
         if (action == HegelSubstanceSubjectAction.AdoptSubject
-            && !journey.CompletedEdgeIds.Contains(HegelSubstanceSubjectState.CompletionEdgeId)
-            && !graph.TryApply(journey, HegelSubstanceSubjectState.CompletionEdgeId)) return false;
+            && !journey.CompletedEdgeIds.Contains(state.AdoptEdge)
+            && !graph.TryApply(journey, state.AdoptEdge)) return false;
         if (action == HegelSubstanceSubjectAction.KeepSpinoza
-            && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+            && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -118,17 +132,17 @@ internal static class HegelSubstanceSubjectFlow
     public static bool IsRouteConsistent(HegelSubstanceSubjectState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(HegelSubstanceSubjectState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(HegelSubstanceSubjectState.CompletionEdgeId);
-        bool declined = journey.DeclinedFixedActs.Contains(3);
+            || !journey.CompletedEdgeIds.Contains(state.RequiredEdge)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.AdoptEdge);
+        bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
-                && journey.CurrentNodeId == HegelSubstanceSubjectState.AdoptedNodeId;
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == state.ActIndex
+                && journey.CurrentNodeId == state.AdoptedNode;
         if (state.FixedDeclined)
-            return !adopted && declined && journey.LastFixedAct == 3
-                && journey.CurrentNodeId == HegelSubstanceSubjectState.SourceNodeId;
+            return !adopted && declined && journey.LastFixedAct == state.ActIndex
+                && journey.CurrentNodeId == state.SourceNode;
         return journey.LastFixedAct >= 2 && !adopted && !declined
-            && journey.CurrentNodeId == HegelSubstanceSubjectState.SourceNodeId;
+            && journey.CurrentNodeId == state.SourceNode;
     }
 
     public static string DescriptionKey(HegelSubstanceSubjectState state) => state.Stage switch
