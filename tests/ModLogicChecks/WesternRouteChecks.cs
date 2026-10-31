@@ -9,6 +9,17 @@ internal static class WesternRouteChecks
             if (!passed) throw new InvalidOperationException(message);
         }
 
+        // Only the first act's question turns a run, and only once.  A save that
+        // carries anything else cannot be read as a turn, and reading it as one
+        // would move a room to an act the run is not in.
+        foreach ((int written, int expected) in new[] { (0, 0), (1, 1), (-1, 0), (2, 0), (99, 0) })
+        {
+            WesternJourneyState save = new() { TurnedAct = written };
+            save.NormalizeAfterLoad();
+            Check(save.TurnedAct == expected,
+                $"A saved turn of {written} must read back as {expected}, not {save.TurnedAct}.");
+        }
+
         string[] expectedProblems = ["BEING_AND_CHANGE", "KNOWLEDGE_AND_DOUBT", "VIRTUE_AND_HAPPINESS", "FREEDOM_AND_INSTITUTIONS", "SELF_AND_OTHER", "LANGUAGE_AND_MEANING", "HISTORY_AND_POWER"];
         string[] expectedEntries = ["HERACLITUS", "SOCRATES", "SOCRATES", "PLATO", "DESCARTES", "ARISTOTLE", "ROUSSEAU"];
         Check(WesternRouteCatalog.Problems.Select(problem => problem.ProblemId).SequenceEqual(expectedProblems)
