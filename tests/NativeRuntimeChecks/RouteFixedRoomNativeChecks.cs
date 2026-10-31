@@ -21,7 +21,6 @@ internal static class RouteFixedRoomNativeChecks
     // through as a printed number.
     private static readonly string[] ExpectedActTwo =
     [
-        "NATURE_AND_BECOMING",         // Spinoza waits on a design decision (lens and doctrine)
         "WILL_AND_VALUE",              // Schopenhauer has no room
         "SCIENTIFIC_MODEL",            // Bacon waits on Ockham's content
         "SOCIAL_KNOWLEDGE",            // Bacon waits on Ockham's content
@@ -389,7 +388,6 @@ internal static class RouteFixedRoomNativeChecks
     // out so a swap cannot hide behind an unchanged count.
     private static readonly string[] UnnamedActTwoBroken =
     [
-        "NATURE_AND_BECOMING",
         "SCIENTIFIC_MODEL",
         "WILL_AND_VALUE",
     ];
