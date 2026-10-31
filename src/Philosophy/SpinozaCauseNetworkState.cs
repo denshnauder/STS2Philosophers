@@ -38,6 +38,12 @@ internal sealed class SpinozaCauseNetworkState : IJsonOnDeserialized
     public const string AdoptedNodeId = "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE";
     public const string CompletionEdgeId = "WESTERN_EDGE_023";
 
+    // The line that reaches Spinoza decides which node it stands on and which edge
+    // carries it to him: the nature line enters at Heraclitus, not at Descartes.
+    public string SourceNode { get; set; } = SourceNodeId;
+    public string AdoptEdge { get; set; } = CompletionEdgeId;
+    public string SourceThinker { get; set; } = "DESCARTES";
+
     private bool? _closed;
 
     public int Version { get; set; }
