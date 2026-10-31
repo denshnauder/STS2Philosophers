@@ -131,8 +131,11 @@ internal static class HegelSubstanceSubjectFlow
 
     public static bool IsRouteConsistent(HegelSubstanceSubjectState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(state.RequiredEdge)) return false;
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        // The edge that handed Hegel over is what proves the turn; a run that walked
+        // the line itself proves it by standing on the figure that hands him over.
+        if (state.ActIndex == 2 && !journey.CompletedEdgeIds.Contains(state.RequiredEdge))
+            return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.AdoptEdge);
         bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
         if (state.EdgeCommitted)

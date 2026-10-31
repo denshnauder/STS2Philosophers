@@ -27,6 +27,20 @@ internal static class HegelSubstanceSubjectPatch
         string requiredEdge = turned
             ? HegelSubstanceSubjectState.TurnedRequiredEdgeId
             : HegelSubstanceSubjectState.RequiredEdgeId;
+        // The act the room belongs to: the one right after the turn, or the line's own
+        // third act.  A turned run still reaches that third act.
+        int actIndex = turned && run.CurrentActIndex == 1 ? 2 : 3;
+        // A line that hands Hegel over from Kant in its third act uses Kant's handover,
+        // not the one the nature line hands him over from Spinoza with.
+        string sourceNode = turned
+            ? HegelSubstanceSubjectState.TurnedSourceNodeId
+            : HegelSubstanceSubjectState.SourceNodeId;
+        if (!turned && journey?.CurrentNodeId == HegelSubstanceSubjectState.TurnedSourceNodeId)
+        {
+            requiredEdge = HegelSubstanceSubjectState.TurnedRequiredEdgeId;
+            adoptEdge = HegelSubstanceSubjectState.TurnedAdoptEdgeId;
+            sourceNode = HegelSubstanceSubjectState.TurnedSourceNodeId;
+        }
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == adoptEdge);
@@ -35,7 +49,8 @@ internal static class HegelSubstanceSubjectPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            turned || NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
+            turned || journey?.CurrentNodeId == HegelSubstanceSubjectState.TurnedSourceNodeId
+            || NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
                 ModelDb.GetId<LeibnizMonadComparison>(), "LEIBNIZ_MONAD_COMPARISON"),
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
@@ -48,21 +63,20 @@ internal static class HegelSubstanceSubjectPatch
             saved is not null && journey is not null
                 && HegelSubstanceSubjectFlow.IsRouteConsistent(saved, journey),
             canonical is not null,
-            turned);
+            turned,
+            actIndex,
+            sourceNode);
         if (!HegelSubstanceSubjectTriggerPolicy.ShouldInsert(context)) return null;
 
         var candidate = saved;
         if (candidate is null)
         {
             candidate = HegelSubstanceSubjectState.Create($"HEGEL_SUBSTANCE_SUBJECT:{run.Rng.Seed}:3");
-            if (turned)
-            {
-                candidate.ActIndex = 2;
-                candidate.RequiredEdge = requiredEdge;
-                candidate.AdoptEdge = adoptEdge;
-                candidate.AdoptedNode = HegelSubstanceSubjectState.TurnedAdoptedNodeId;
-                candidate.SourceNode = HegelSubstanceSubjectState.TurnedSourceNodeId;
-            }
+            candidate.ActIndex = actIndex;
+            candidate.RequiredEdge = requiredEdge;
+            candidate.AdoptEdge = adoptEdge;
+            candidate.AdoptedNode = HegelSubstanceSubjectState.TurnedAdoptedNodeId;
+            candidate.SourceNode = HegelSubstanceSubjectState.TurnedSourceNodeId;
         }
         if (journey is null || !HegelSubstanceSubjectFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HegelSubstanceSubject = candidate;

@@ -27,7 +27,6 @@ internal static class RouteFixedRoomNativeChecks
     ];
     private static readonly string[] ExpectedActThree =
     [
-        "AUTONOMY_AND_HISTORY",        // the room at Hegel's node wants the edge into Hegel
         "SCIENTIFIC_MODEL",            // closing-figure placement
         "CONSEQUENCE_AND_FREEDOM",     // Mill has no room
         "SYMPATHY_AND_PUBLIC_ACTION",  // Mill has no room
