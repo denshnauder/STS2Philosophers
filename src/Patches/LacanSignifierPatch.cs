@@ -35,9 +35,15 @@ internal static class LacanSignifierPatch
             .Select(route => route.ActTwoFigure == "JACQUES_LACAN" ? 2
                 : route.ActThreeFigure == "JACQUES_LACAN" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // A run the first act's question turned onto Freud already met the figure the
+        // route places in this act, so the edge into Lacan is the one an act earlier.
+        bool turned = journey is not null
+            && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
+            && journey.ResolvedQuestionActs.Contains(1);
+        int actForEdge = turned && routeAct >= 2 ? routeAct - 1 : routeAct;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
-                .Where(edge => edge.Act == routeAct && edge.ToNodeId == LacanSignifierState.AdoptedNodeId)
+                .Where(edge => edge.Act == actForEdge && edge.ToNodeId == LacanSignifierState.AdoptedNodeId)
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? LacanSignifierState.CompletionEdgeId
             : LacanSignifierState.CompletionEdgeId;
@@ -53,13 +59,23 @@ internal static class LacanSignifierPatch
             routeAct,
             // The first act's question can put the run on Freud before the act two
             // handover is walked; the line then runs one act ahead.
-            journey is not null
-                && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
-                && journey.ResolvedQuestionActs.Contains(1));
+            turned);
         if (!LacanSignifierTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? (routeAct >= 2
-            ? LacanSignifierState.CreateAt($"LACAN_SIGNIFIER:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
-            : LacanSignifierState.Create($"LACAN_SIGNIFIER:{run.Rng.Seed}:2"));
+        LacanSignifierState? candidate = saved;
+        if (candidate is null)
+        {
+            if (turned)
+            {
+                // The turn is the arrival, and the act it happens in is the one the
+                // route calls its second.
+                candidate = LacanSignifierState.CreateAt($"LACAN_SIGNIFIER:{run.Rng.Seed}:2", 2, edgeId);
+                candidate.RequiredEdge = "WESTERN_EDGE_189";
+            }
+            else if (routeAct >= 2)
+                candidate = LacanSignifierState.CreateAt($"LACAN_SIGNIFIER:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
+            else
+                candidate = LacanSignifierState.Create($"LACAN_SIGNIFIER:{run.Rng.Seed}:2");
+        }
         if (journey is null || !LacanSignifierFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LacanSignifier = candidate;
         Log.Info("[STS2Philosophers] Presenting Lacan's signifier question.");

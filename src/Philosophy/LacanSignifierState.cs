@@ -39,6 +39,9 @@ internal sealed class LacanSignifierState : IJsonOnDeserialized
 
     public int ActIndex { get; set; } = 2;
     public string EdgeId { get; set; } = CompletionEdgeId;
+    // The edge that has to be behind the run before the question opens.  A run the
+    // first act's question turned onto Freud arrived by that question instead.
+    public string RequiredEdge { get; set; } = RequiredEdgeId;
 
     public static LacanSignifierState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
@@ -166,7 +169,9 @@ internal static class LacanSignifierFlow
             return journey.LastFixedAct == state.ActIndex && !adopted
                 && !journey.DeclinedFixedActs.Contains(declined)
                 && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
-                && journey.CompletedEdgeIds.Contains(LacanSignifierState.RequiredEdgeId);
+                && journey.CompletedEdgeIds.Contains(string.IsNullOrWhiteSpace(state.RequiredEdge)
+                    ? LacanSignifierState.RequiredEdgeId
+                    : state.RequiredEdge);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
                 && journey.CurrentNodeId == LacanSignifierState.AdoptedNodeId;
