@@ -158,6 +158,23 @@ internal static class WesternBranchChainChecks
         Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
             "No two options of the question may share a key.");
 
+        // A run the first act's question turned onto Freud meets Lacan while it is
+        // still in the second act; a run that walked the ordinary handover meets him
+        // in the third.  Both are the same room, read one act apart.
+        LacanSignifierTriggerContext Lacan(bool turned, int actIndex, int lastFixedAct) => new(
+            RunInProgress: true, AtSafeMapBoundary: true, IsSingleplayer: true, CurrentActIndex: actIndex,
+            SourceIsCompletedNonBossCombat: true, CompletedCombatCount: 1,
+            CurrentNodeId: LacanSignifierState.SourceNodeId, LastFixedAct: lastFixedAct,
+            CompletionEdgeEligible: true, HasSavedInstance: false, SavedInstanceUsable: false,
+            SavedInstanceClosed: false, SavedRouteConsistent: false, ModelAvailable: true,
+            RouteAct: 3, TurnedInFirstAct: turned);
+        Check(LacanSignifierTriggerPolicy.ShouldInsert(Lacan(true, 1, 2)),
+            "A turned run must meet Lacan in the act the turn puts him in.");
+        Check(!LacanSignifierTriggerPolicy.ShouldInsert(Lacan(false, 1, 2)),
+            "A run that walked the handover must not meet Lacan one act early.");
+        Check(LacanSignifierTriggerPolicy.ShouldInsert(Lacan(false, 2, 3)),
+            "A run that walked the handover must still meet Lacan in his own act.");
+
         // The first act's question offers what the run could turn onto, plus the
         // direction the shared Husserl figure asks about, plus staying.
         Check(RouteTurnQuestionOptions.For(offer, graph).Select(choice => choice.Key)
