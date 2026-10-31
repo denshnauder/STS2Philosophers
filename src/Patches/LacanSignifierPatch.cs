@@ -50,7 +50,12 @@ internal static class LacanSignifierPatch
             edgeEligible, saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && LacanSignifierFlow.IsRouteConsistent(saved, journey),
             canonical is not null,
-            routeAct);
+            routeAct,
+            // The first act's question can put the run on Freud before the act two
+            // handover is walked; the line then runs one act ahead.
+            journey is not null
+                && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
+                && journey.ResolvedQuestionActs.Contains(1));
         if (!LacanSignifierTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? (routeAct >= 2
             ? LacanSignifierState.CreateAt($"LACAN_SIGNIFIER:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)

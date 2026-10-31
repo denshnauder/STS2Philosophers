@@ -4,7 +4,8 @@ internal sealed record LacanSignifierTriggerContext(
     bool RunInProgress, bool AtSafeMapBoundary, bool IsSingleplayer, int CurrentActIndex,
     bool SourceIsCompletedNonBossCombat, int CompletedCombatCount, string? CurrentNodeId,
     int LastFixedAct, bool CompletionEdgeEligible, bool HasSavedInstance, bool SavedInstanceUsable,
-    bool SavedInstanceClosed, bool SavedRouteConsistent, bool ModelAvailable, int RouteAct = 0);
+    bool SavedInstanceClosed, bool SavedRouteConsistent, bool ModelAvailable, int RouteAct = 0,
+    bool TurnedInFirstAct = false);
 
 internal static class LacanSignifierTriggerPolicy
 {
@@ -14,13 +15,19 @@ internal static class LacanSignifierTriggerPolicy
             || !context.ModelAvailable) return false;
         // The question opens in act two; a route may place it in act three, and
         // then only that act accepts it.
-        int act = context.RouteAct >= 2 ? context.RouteAct - 1 : 1;
-        int position = context.RouteAct >= 2 ? context.RouteAct : 2;
+        // A run the first act's question turned already met the figure the route
+        // places in this act, so everything the route says happens one act later
+        // happens here one act earlier.
+        int routeAct = context.TurnedInFirstAct && context.RouteAct >= 2
+            ? context.RouteAct - 1
+            : context.RouteAct;
+        int act = routeAct >= 2 ? routeAct - 1 : 1;
+        int position = routeAct >= 2 ? routeAct : 2;
         if (context.CurrentActIndex != act) return false;
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && (context.RouteAct >= 2 || context.CurrentNodeId == LacanSignifierState.SourceNodeId)
+            && (routeAct >= 2 || context.CurrentNodeId == LacanSignifierState.SourceNodeId)
             && context.LastFixedAct == position && context.CompletionEdgeEligible;
     }
 }
