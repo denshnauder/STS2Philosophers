@@ -102,6 +102,10 @@ internal sealed class WesternJourneyState
         RouteId ??= string.Empty;
         EntryNodeId ??= string.Empty;
         if (EntryNodeId.Length == 0) RouteRules = false;
+        // Only the first act's question turns a run, and only once. A save that
+        // carries anything else is unreadable as a turn, and reading it as one would
+        // move a room to an act the run is not in.
+        if (TurnedAct is < 0 or > 1) TurnedAct = 0;
         if (Act is < 1 or > 3) Act = 0;
         // A save written before the fixed position was recorded cannot say which
         // slot it has already passed. The run's own act does: the first act's slot
