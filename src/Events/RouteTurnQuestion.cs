@@ -84,6 +84,7 @@ public sealed class RouteTurnQuestion : EventModel
                     Block($"RouteTurnQuestion could not take {edgeId}.");
                     return;
                 }
+                journey.TurnedAct = 1;
                 if (choice.RouteId is { } route && !graph.TryNameRoute(journey, route))
                 {
                     Block($"RouteTurnQuestion could not name {route}.");

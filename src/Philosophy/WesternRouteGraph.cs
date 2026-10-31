@@ -54,6 +54,14 @@ internal sealed class WesternJourneyState
     public int LastFixedAct { get; set; }
 
     /// <summary>
+    /// The act in which the first act's question moved the run onto another line, or
+    /// zero when it did not.  Standing on the figure a line reaches by itself looks
+    /// exactly like having been turned onto him, so the turn is recorded, not read
+    /// back off the node.
+    /// </summary>
+    public int TurnedAct { get; set; }
+
+    /// <summary>
     /// The act the run is actually in, one-based, set by the act boundary. Zero
     /// means a save written before this fact existed: those runs fall back to
     /// the act written on the edge.

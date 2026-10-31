@@ -20,9 +20,7 @@ internal static class HegelSubstanceSubjectPatch
         // A run the first act's question turned onto Kant meets Hegel a whole act
         // before the line would otherwise place him, and by that turn rather than by
         // the comparison the line normally puts in front of him.
-        bool turned = journey is not null
-            && journey.CurrentNodeId == HegelSubstanceSubjectState.TurnedSourceNodeId
-            && journey.ResolvedQuestionActs.Contains(1);
+        bool turned = journey is not null && journey.TurnedAct == 1;
         string adoptEdge = turned
             ? HegelSubstanceSubjectState.TurnedAdoptEdgeId
             : HegelSubstanceSubjectState.CompletionEdgeId;

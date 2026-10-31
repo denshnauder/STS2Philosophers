@@ -109,6 +109,7 @@ internal static class RouteFixedRoomNativeChecks
                 object turned = graph.GetType().GetMethod("Start")!.Invoke(graph, [entry])!;
                 Put(turned, "RouteRules", true);
                 Put(turned, "LastFixedAct", 1);
+                Put(turned, "TurnedAct", 1);
                 if (!(bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [turned, turnEdge])!)
                     failures.Add($"{routeId}: the first act's question cannot turn onto it.");
                 else
