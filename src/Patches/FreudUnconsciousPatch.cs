@@ -41,11 +41,8 @@ internal static class FreudUnconsciousPatch
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? FreudUnconsciousState.CompletionEdgeId
             : FreudUnconsciousState.CompletionEdgeId;
-        // The first act's question can put the run on this figure before the act
-        // two handover is walked; standing on it is what that handover means.
         bool edgeEligible = journey is not null
-            && (journey.CurrentNodeId == FreudUnconsciousState.AdoptedNodeId
-                || graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId));
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         FreudUnconsciousTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),

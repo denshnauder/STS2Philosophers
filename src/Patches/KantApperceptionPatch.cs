@@ -43,11 +43,8 @@ internal static class KantApperceptionPatch
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? KantApperceptionState.CompletionEdgeId
             : KantApperceptionState.CompletionEdgeId;
-        // The first act's question can put the run on this figure before the act
-        // two handover is walked; standing on it is what that handover means.
         bool edgeEligible = journey is not null
-            && (journey.CurrentNodeId == KantApperceptionState.AdoptedNodeId
-                || graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId));
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         KantApperceptionTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
