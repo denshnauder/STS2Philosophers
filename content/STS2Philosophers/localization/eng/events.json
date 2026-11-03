@@ -2292,6 +2292,7 @@
  "BACON_SAMPLE_LEDGER.pages.RESULT_DECLINED.options.ASK_DIDEROT.title": "Ask Diderot to place the sample",
  "BACON_SAMPLE_LEDGER.pages.RESULT_DECLINED.options.ASK_DIDEROT.description": "Let the encyclopedist say how this sample enters the system.",
  "DIDEROT_PRACTICE.title": "Diderot: The Sample and the System",
+  "DIDEROT_PUBLIC_PRACTICE.title": "Diderot: The Sample and the System",
  "DIDEROT_PRACTICE.pages.INVITATION.description": "Diderot looks at the ledger. A single warm-rich sample now has to enter the Encyclopedia -- or stay outside it. He asks what the entry should do.",
  "DIDEROT_PRACTICE.pages.INVITATION.options.COLLECT_INTO_SYSTEM.title": "Collect it into the system",
  "DIDEROT_PRACTICE.pages.INVITATION.options.COLLECT_INTO_SYSTEM.description": "Publish the sample under a heading, with its exceptions noted in the same article.",

@@ -2292,6 +2292,7 @@
  "BACON_SAMPLE_LEDGER.pages.RESULT_DECLINED.options.ASK_DIDEROT.title": "请狄德罗安置样本",
  "BACON_SAMPLE_LEDGER.pages.RESULT_DECLINED.options.ASK_DIDEROT.description": "让这位百科全书派说明：这个样本怎样进入系统。",
  "DIDEROT_PRACTICE.title": "狄德罗：样本与系统",
+  "DIDEROT_PUBLIC_PRACTICE.title": "狄德罗：样本与体系",
  "DIDEROT_PRACTICE.pages.INVITATION.description": "狄德罗翻看账本。一个「暖而富」的样本现在必须进入百科全书，或者留在外面。他问你：这条条目应当做什么？",
  "DIDEROT_PRACTICE.pages.INVITATION.options.COLLECT_INTO_SYSTEM.title": "收入系统",
  "DIDEROT_PRACTICE.pages.INVITATION.options.COLLECT_INTO_SYSTEM.description": "把样本写进一个条目，并在同一篇里注明它的例外。",
