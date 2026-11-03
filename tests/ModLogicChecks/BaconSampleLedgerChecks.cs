@@ -137,5 +137,15 @@ internal static class BaconSampleLedgerChecks
             foreach (string mode in new[] { "limited", "control", "unavailable" })
                 Check(relics.RootElement.TryGetProperty($"ARISTOTLE_CATEGORY_TABLET.bacon.{mode}.description", out _), "The replacement and interrupted comparison have bilingual tips.");
         }
+        // ENC-125: the design names Bacon as the act-two figure of both science
+        // lines, and the graph already carries 122 and 140 for that act. The policy
+        // still refuses anything but act three, so a real act-two boundary opens no
+        // room. This pins today's behaviour so the migration has to change it here.
+        BaconSampleLedgerTriggerContext actTwo = new(true, true, true, 1, true, 1,
+            BaconSampleLedgerState.SourceNodeId, 2, true, true, true, false, false, false, false, true);
+        Check(!BaconSampleLedgerTriggerPolicy.ShouldInsert(actTwo),
+            "Known gap (ENC-125): Bacon's room is still refused at the act-two boundary.");
+        Check(BaconSampleLedgerTriggerPolicy.ShouldInsert(actTwo with { CurrentActIndex = 2 }),
+            "Bacon's room opens in act three, which is what the migration must not break.");
     }
 }
