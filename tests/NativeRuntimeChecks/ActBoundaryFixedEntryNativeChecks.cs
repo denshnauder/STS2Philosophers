@@ -202,6 +202,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(WollstonecraftAdmission)], doctrine: false, position: 1, actIndex: 1,
             route: "EDUCATION_AND_SITUATION");
+        // The old rule ordered the pair by seed parity. A seed that puts Machiavelli
+        // first must still end with her room, because the line names her.
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(WollstonecraftAdmission)], doctrine: false, position: 1, actIndex: 1,
+            route: "EDUCATION_AND_SITUATION", seed: "101");
         return Task.CompletedTask;
     }
 

@@ -86,5 +86,22 @@ internal static class WollstonecraftAdmissionChecks
             "Wollstonecraft is suppressed by the rival 046 route.");
         Check(!WollstonecraftAdmissionTriggerPolicy.ShouldInsert(context with { CompletionEdgeEligible = false }),
             "Wollstonecraft requires an eligible 040.");
+        // The early turn (192) already grants her in act one. The act-two fixed slot
+        // must then stand down instead of granting the same figure a second time,
+        // and the line must still be able to move on.
+        WesternRouteGraph earlyGraph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState early = earlyGraph.Start(WollstonecraftAdmissionState.SourceNodeId);
+        early.RouteId = "EDUCATION_AND_SITUATION"; early.RouteRules = true;
+        Check(earlyGraph.TryApply(early, "WESTERN_EDGE_192")
+            && early.SeenThinkerIds.Contains("MARY_WOLLSTONECRAFT"),
+            "The early turn hands Wollstonecraft out in act one.");
+        Check(!earlyGraph.GetEligibleEdges(early, "Fixed").Any(edge => edge.EdgeId == WollstonecraftAdmissionState.CompletionEdgeId),
+            "After the early turn the fixed slot must not grant Wollstonecraft again.");
+        // Declining the fixed room is a different outcome from the rival 046 line
+        // taking the slot; it must not be read as "046 was completed".
+        var declined = WollstonecraftAdmissionState.Create("WOLLSTONECRAFT_ADMISSION:TEST:2");
+        declined.FixedDeclined = true;
+        Check(!WollstonecraftAdmissionFlow.IsRouteConsistent(declined, earlyGraph.Start(WollstonecraftAdmissionState.SourceNodeId)),
+            "A declined record cannot claim a route that never reached her node.");
     }
 }
