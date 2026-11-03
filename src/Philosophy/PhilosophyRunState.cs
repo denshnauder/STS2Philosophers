@@ -95,6 +95,7 @@ internal sealed class PhilosophyRunState
     public ButlerAddressState? ButlerAddress { get; set; }
     public RawlsPositionState? RawlsPosition { get; set; }
     public ArendtBeginningState? ArendtBeginning { get; set; }
+    public VoltaireToleranceState? VoltairePublicCritique { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -202,6 +203,7 @@ internal sealed class PhilosophyRunState
         || ButlerAddress is not null
         || RawlsPosition is not null
         || ArendtBeginning is not null
+        || VoltairePublicCritique is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -441,6 +443,7 @@ internal sealed class PhilosophyRunState
         ButlerAddress?.NormalizeAfterLoad();
         RawlsPosition?.NormalizeAfterLoad();
         ArendtBeginning?.NormalizeAfterLoad();
+        VoltairePublicCritique?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

@@ -2266,6 +2266,7 @@
  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.ASK_VOLTAIRE.title": "Ask Voltaire to review the case",
  "MONTESQUIEU_BALANCE.pages.RESULT_PRIVILEGE.options.ASK_VOLTAIRE.description": "Let the visitor test whether tolerance has a limit here.",
  "VOLTAIRE_TOLERANCE.title": "Voltaire: The Cost of Tolerance",
+  "VOLTAIRE_PUBLIC_CRITIQUE.title": "Voltaire: The Pamphlet at the Waypoint",
  "VOLTAIRE_TOLERANCE.pages.INVITATION.description": "A merchant's pamphlet mocks the guild's procession. The guild demands it be burned; the merchant asks only that the argument be answered. Voltaire asks what you will protect.",
  "VOLTAIRE_TOLERANCE.pages.INVITATION.options.PROTECT_SPEECH.title": "Protect the pamphlet",
  "VOLTAIRE_TOLERANCE.pages.INVITATION.options.PROTECT_SPEECH.description": "Let the argument stand, even where it wounds the powerful.",

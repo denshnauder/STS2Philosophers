@@ -237,6 +237,7 @@
     <Compile Include="..\..\src\Philosophy\ButlerAddressState.cs" Link="ButlerAddressState.cs" />
     <Compile Include="..\..\src\Philosophy\RawlsPositionState.cs" Link="RawlsPositionState.cs" />
     <Compile Include="..\..\src\Philosophy\ArendtBeginningState.cs" Link="ArendtBeginningState.cs" />
+    <Compile Include="..\..\src\Philosophy\VoltairePublicCritiquePolicy.cs" Link="VoltairePublicCritiquePolicy.cs" />
     <Compile Include="..\..\src\Philosophy\BeauvoirOtherTriggerPolicy.cs" Link="BeauvoirOtherTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ThinkerProposal.cs" Link="ThinkerProposal.cs" />
   </ItemGroup>

@@ -224,6 +224,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.ButlerAddress?.Closed ?? true, shared.ButlerAddress?.IsUsable() ?? false)
             || Open(shared.RawlsPosition?.Closed ?? true, shared.RawlsPosition?.IsUsable() ?? false)
             || Open(shared.ArendtBeginning?.Closed ?? true, shared.ArendtBeginning?.IsUsable() ?? false)
+            || Open(shared.VoltairePublicCritique?.Closed ?? true, shared.VoltairePublicCritique?.IsUsable() ?? false)
             || Open(shared.FichteSelfPositing?.Closed ?? true, shared.FichteSelfPositing?.IsUsable() ?? false)
             || Open(shared.FoucaultPower?.Closed ?? true, shared.FoucaultPower?.IsUsable() ?? false)
             || Open(shared.DeleuzeDifference?.Closed ?? true, shared.DeleuzeDifference?.IsUsable() ?? false)

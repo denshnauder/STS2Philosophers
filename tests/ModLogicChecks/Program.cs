@@ -105,6 +105,7 @@ try { BeauvoirOtherChecks.Run(); } catch (Exception e) { failures.Add("BeauvoirO
 try { ButlerAddressChecks.Run(); } catch (Exception e) { failures.Add("ButlerAddressChecks: " + e.Message); }
 try { RawlsPositionChecks.Run(); } catch (Exception e) { failures.Add("RawlsPositionChecks: " + e.Message); }
 try { ArendtBeginningChecks.Run(); } catch (Exception e) { failures.Add("ArendtBeginningChecks: " + e.Message); }
+try { VoltairePublicCritiqueChecks.Run(); } catch (Exception e) { failures.Add("VoltairePublicCritiqueChecks: " + e.Message); }
 try { NewtonCalibrationChecks.Run(); } catch (Exception e) { failures.Add("NewtonCalibrationChecks: " + e.Message); }
 try { BaconSampleLedgerChecks.Run(); } catch (Exception e) { failures.Add("BaconSampleLedgerChecks: " + e.Message); }
 try { MachiavelliFloodPreparationChecks.Run(); } catch (Exception e) { failures.Add("MachiavelliFloodPreparationChecks: " + e.Message); }
