@@ -161,6 +161,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
             priorEvent: ModelDb.GetId<BeauvoirOther>());
         // Rawls closes two lines, so both boundaries must hand her the slot: after
         // Kant's institutions (172 -> 173) and after Mill's freedom (169 -> 170).
+        // Montesquieu owns the act-two fixed slot of the checks line. The run has
+        // just finished act one's fixed room, so the journey records act one and
+        // the room itself moves it to act two when it commits.
+        ModelDb.Inject(typeof(MontesquieuBalance));
+        CheckBoundary(typeof(PlatoCivicSeal), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MontesquieuBalance)], doctrine: false, position: 1, actIndex: 1,
+            routeRules: true);
         ModelDb.Inject(typeof(RawlsPosition));
         CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
@@ -224,7 +231,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null)
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null,
+        bool routeRules = false)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
@@ -262,6 +270,9 @@ internal static class ActBoundaryFixedEntryNativeChecks
             Put(journey, "CurrentNodeId", node);
         }
         if (route is not null) Put(journey, "RouteId", route);
+        // A default-line run carries the rules but no route name yet: the boundary
+        // itself has to name the line its entry starts on.
+        if (routeRules) Put(journey, "RouteRules", true);
         var completed = (HashSet<string>)Get(journey, "CompletedEdgeIds");
         foreach (string edge in required ?? []) completed.Add(edge);
         Put(journey, "LastFixedAct", position);
@@ -288,6 +299,9 @@ internal static class ActBoundaryFixedEntryNativeChecks
         string open = string.Join(",", edges.Cast<object>().Select(edge => Get(edge, "EdgeId") + "@" + Get(edge, "Act")));
         Check(selected, string.Join("/", expectedRooms.Select(room => room.Name))
             + ": the second act's fixed room must be selectable at the ancient boundary without a question point. Open: " + open);
+        if (routeRules)
+            Check(((System.Collections.IEnumerable)Get(journey, "ResolvedQuestionActs")).Cast<object>().Count() == 0,
+                node + ": the default fixed boundary must not consume a question.");
         var room = (EventRoom)prepare[1]!;
         Type? expected = expectedRooms.FirstOrDefault(candidate => candidate == room.CanonicalEvent.GetType());
         Check(expected is not null,

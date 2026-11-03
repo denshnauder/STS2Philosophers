@@ -54,6 +54,19 @@ internal static class MontesquieuBalanceChecks
             && declinedJourney.CurrentNodeId == MontesquieuBalanceState.SourceNodeId,
             "Declining must leave the player on Plato's institutions node.");
 
+        // An early turn already put the run on Montesquieu in act one. The act-two
+        // fixed edge must not hand the same figure out a second time.
+        var turned = WesternRouteGraph.LoadEmbedded().Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        turned.RouteRules = true;
+        Check(WesternRouteGraph.LoadEmbedded().TryApply(turned, "WESTERN_EDGE_171"),
+            "The act-one question must be able to turn the run early.");
+        Check(turned.CurrentNodeId == MontesquieuBalanceState.AdoptedNodeId
+            && turned.SeenThinkerIds.Contains("MONTESQUIEU"),
+            "The early turn stands on Montesquieu and has seen him.");
+        Check(!WesternRouteGraph.LoadEmbedded().GetEligibleEdges(turned, "Fixed")
+                .Any(edge => edge.EdgeId == "WESTERN_EDGE_114"),
+            "The act-two fixed edge must not re-adopt a figure the run already met.");
+
         var voltairian = MontesquieuBalanceState.Create("MONTESQUIEU_BALANCE:TEST:4");
         VoltaireToleranceState segment = voltairian.Voltaire!;
         Check(segment is { Closed: false } && segment.IsUsable(),
