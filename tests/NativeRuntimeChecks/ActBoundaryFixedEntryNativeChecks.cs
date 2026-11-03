@@ -195,6 +195,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
             route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_181"],
             priorEvent: ModelDb.GetId<FoucaultPower>());
+        // The education line's act-two slot belongs to Wollstonecraft after the
+        // act's ancient, not to Rousseau's unrestricted edge to Machiavelli (046).
+        // Kept last: an open record would otherwise resume inside later fixtures.
+        ModelDb.Inject(typeof(WollstonecraftAdmission));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(WollstonecraftAdmission)], doctrine: false, position: 1, actIndex: 1,
+            route: "EDUCATION_AND_SITUATION");
         return Task.CompletedTask;
     }
 

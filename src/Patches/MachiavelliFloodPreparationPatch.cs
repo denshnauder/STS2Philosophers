@@ -31,6 +31,18 @@ internal static class MachiavelliFloodPreparationPatch
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         var journey = shared.WesternJourney;
+        // At an act boundary the slot belongs to the figure the line names for that
+        // act. Rousseau's unrestricted act-two edge to Machiavelli otherwise takes
+        // the education line's slot from Wollstonecraft.
+        if (FixedEntryScope.Active && journey is not null)
+        {
+            string? namedFigure = WesternRouteTable.Instance.Routes
+                .Where(route => route.RouteId == journey.RouteId)
+                .Select(route => run.CurrentActIndex == 1 ? route.ActTwoFigure
+                    : run.CurrentActIndex == 2 ? route.ActThreeFigure : null)
+                .DefaultIfEmpty(null).First();
+            if (!string.IsNullOrEmpty(namedFigure) && namedFigure != "NICCOLO_MACHIAVELLI") return null;
+        }
         var saved = shared.MachiavelliFloodPreparation;
         MachiavelliFloodPreparation? canonical;
         try { canonical = ModelDb.Event<MachiavelliFloodPreparation>(); }
