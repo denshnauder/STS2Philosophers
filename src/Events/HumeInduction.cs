@@ -136,7 +136,14 @@ public sealed class HumeInduction : EventModel
         ReferenceEquals(shared.HumeInduction, state) && shared.WesternJourney is { } journey
         && HumeInductionFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    // The record says which act it belongs to: the authored act two room and the
+    // act three room the boundary opens share this event body.
+    private static int ActiveActIndex(RunState run) =>
+        PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared?.HumeInduction is { } state
+            ? Math.Clamp(state.ActIndex, 1, 3) - 1 : 1;
+
+    private bool IsActiveRoom(RunState run) =>
+        RouteEventMapBoundary.IsActiveEvent(run, this, ActiveActIndex(run));
 
     private void ShowConfirmedState(HumeInductionState state)
     {
@@ -193,7 +200,7 @@ public sealed class HumeInduction : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.HumeInduction is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && HumeInductionFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

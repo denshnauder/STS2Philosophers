@@ -136,7 +136,14 @@ public sealed class LockeCargoIdentity : EventModel
         ReferenceEquals(shared.LockeCargoIdentity, state) && shared.WesternJourney is { } journey
         && LockeCargoIdentityFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    // The record says which act it belongs to: act one keeps its question slot,
+    // the act two room created by the fixed boundary is active in act two.
+    private static int ActiveActIndex(RunState run) =>
+        PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared?.LockeCargoIdentity is { } state
+            ? Math.Clamp(state.ActIndex, 1, 3) - 1 : 0;
+
+    private bool IsActiveRoom(RunState run) =>
+        RouteEventMapBoundary.IsActiveEvent(run, this, ActiveActIndex(run));
 
     private void ShowConfirmedState(LockeCargoIdentityState state)
     {
@@ -251,7 +258,7 @@ public sealed class LockeCargoIdentity : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.LockeCargoIdentity is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && LockeCargoIdentityFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

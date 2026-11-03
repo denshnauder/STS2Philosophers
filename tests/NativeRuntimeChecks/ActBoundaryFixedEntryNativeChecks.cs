@@ -268,6 +268,18 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object current = Get(query[1]!, expected.Name);
         Check(current is not null && (bool)current.GetType().GetMethod("IsUsable")!.Invoke(current, null)!,
             "The boundary selection persists a usable room state for save recovery.");
+        // The event body restores itself by matching its record's act, so a record
+        // that names the wrong act is a room that opens locked. This is the fact
+        // the body reads; assert it here where the boundary wrote it.
+        Type openedType = room.CanonicalEvent.GetType();
+        if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction))
+        {
+            int recordedAct = (int)Get(current!, "ActIndex");
+            string instanceId = (string)Get(current!, "InstanceId");
+            Check(recordedAct == run.CurrentActIndex + 1 && instanceId.EndsWith(":" + recordedAct, StringComparison.Ordinal),
+                openedType.Name + ": the saved record must name the act it was opened in (act " + (run.CurrentActIndex + 1)
+                + "), got act " + recordedAct + " id " + instanceId + ".");
+        }
 
         Put(journey, "LastFixedAct", actIndex + 2);
         object spent = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
