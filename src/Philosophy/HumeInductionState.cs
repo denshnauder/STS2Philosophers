@@ -8,7 +8,7 @@ internal enum HumeBasis { None, Tested, Habit }
 
 internal sealed class HumeInductionState : IJsonOnDeserialized, IEventGoldCostState
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const string SourceNodeId = "JOHN_LOCKE__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "DAVID_HUME__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_026";
@@ -44,6 +44,24 @@ internal sealed class HumeInductionState : IJsonOnDeserialized, IEventGoldCostSt
 
     public void NormalizeAfterLoad()
     {
+        // Version 1 predates this outcome's price. Such a record already holds the
+        // result the player was given, so it settles as paid instead of charging a
+        // choice that was never shown as priced. New records keep the payment
+        // window and are charged exactly once by the shared protocol.
+        if (Version < CurrentVersion)
+        {
+            // Only a record that already holds the priced result settles. An old
+            // invitation that is upgraded to the repair afterwards is a new choice
+            // and keeps its payment window.
+            if (Stage == HumeInductionStage.ResultRepair)
+            {
+                CostAttempted = true;
+                CostPaid = true;
+            }
+            CostGoldBefore = EventGoldCostProtocol.NoGoldSnapshot;
+            CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+            Version = CurrentVersion;
+        }
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
     }

@@ -91,6 +91,44 @@ internal static class LockeHumeChecks
         Check(shared.HumeInduction!.Cost == HumeInductionState.RepairFirstGoldCost
             && HumeInductionState.RepairFirstGoldCost == 75m,
             "Repairing first costs the promised 75 gold.");
+        // Same for Hume: a record written before the price already holds the
+        // repaired result, so a restore must not charge for it a second time.
+        // An old invitation upgraded into the repair is a new decision: it pays.
+        var upgradedShared = HumeFixture(graph);
+        upgradedShared.HumeInduction!.Version = 1;
+        upgradedShared.HumeInduction.CostGoldBefore = upgradedShared.HumeInduction.CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+        upgradedShared.HumeInduction.NormalizeAfterLoad();
+        Check(!upgradedShared.HumeInduction.CostPaid, "An old Hume invitation must not be settled as already paid.");
+        upgradedShared = CommitHume(upgradedShared, graph, HumeInductionAction.TestOnce);
+        upgradedShared = CommitHume(upgradedShared, graph, HumeInductionAction.RepairFirst);
+        decimal upgradedGold = 100m;
+        int upgradedCharges = 0;
+        var upgradedOutcome = EventGoldCostProtocol.ApplyAsync(upgradedShared.HumeInduction!, () => (decimal?)upgradedGold,
+            () => { upgradedGold -= upgradedShared.HumeInduction!.Cost; upgradedCharges++; return Task.CompletedTask; },
+            () => Task.FromResult(true)).GetAwaiter().GetResult();
+        var upgradedAgain = EventGoldCostProtocol.ApplyAsync(upgradedShared.HumeInduction!, () => (decimal?)upgradedGold,
+            () => { upgradedGold -= upgradedShared.HumeInduction!.Cost; upgradedCharges++; return Task.CompletedTask; },
+            () => Task.FromResult(true)).GetAwaiter().GetResult();
+        Check(upgradedOutcome == EventGoldCostOutcome.Settled && upgradedAgain == EventGoldCostOutcome.Settled
+            && upgradedGold == 25m && upgradedCharges == 1,
+            "An upgraded old Hume invitation must pay the repair exactly once.");
+
+        var legacyShared = CommitHume(HumeFixture(graph), graph, HumeInductionAction.TestOnce);
+        legacyShared = CommitHume(legacyShared, graph, HumeInductionAction.RepairFirst);
+        var legacyHume = legacyShared.HumeInduction!;
+        legacyHume.Version = 1;
+        legacyHume.CostAttempted = false;
+        legacyHume.CostPaid = false;
+        legacyHume.CostGoldBefore = legacyHume.CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+        legacyHume.NormalizeAfterLoad();
+        decimal humeGold = 100m;
+        int humeCharges = 0;
+        var humeOutcome = EventGoldCostProtocol.ApplyAsync(legacyHume, () => (decimal?)humeGold,
+            () => { humeGold -= legacyHume.Cost; humeCharges++; return Task.CompletedTask; },
+            () => Task.FromResult(true)).GetAwaiter().GetResult();
+        Check(humeOutcome == EventGoldCostOutcome.Settled && humeGold == 100m && humeCharges == 0
+            && legacyHume.Version == HumeInductionState.CurrentVersion,
+            "A Hume record written before the price must settle without charging again.");
         Check(HumeInductionState.Create("HUME_INDUCTION:TEST:3").Cost == 0m,
             "No other Hume outcome charges gold.");
         shared = CommitHume(shared, graph, HumeInductionAction.Leave);

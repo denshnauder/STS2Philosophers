@@ -15,7 +15,7 @@ internal enum BerkeleyConclusion { None, RejectMaterialSubstance, SecondObserver
 /// </summary>
 internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGoldCostState
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const string HiddenObjectId = "SEALED_SECOND_CRATE";
 
     // The second-observer branch promises one shop purchase opportunity. The mod
@@ -44,6 +44,24 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGo
 
     public void NormalizeAfterLoad()
     {
+        // Version 1 predates this outcome's price. Such a record already holds the
+        // result the player was given, so it settles as paid instead of charging a
+        // choice that was never shown as priced. New records keep the payment
+        // window and are charged exactly once by the shared protocol.
+        if (Version < CurrentVersion)
+        {
+            // Only a record that already holds the priced result settles. An old
+            // invitation that is upgraded to the second observer afterwards is a
+            // new choice and keeps its payment window.
+            if (Conclusion == BerkeleyConclusion.SecondObserver)
+            {
+                CostAttempted = true;
+                CostPaid = true;
+            }
+            CostGoldBefore = EventGoldCostProtocol.NoGoldSnapshot;
+            CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+            Version = CurrentVersion;
+        }
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
         HiddenObject ??= null;

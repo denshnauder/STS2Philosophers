@@ -82,6 +82,47 @@ internal static class BerkeleyPerceivedMarkChecks
         Check(again == EventGoldCostOutcome.Settled && gold == 25m && charges == 1,
             "Replaying the settled charge must not take gold twice.");
 
+        // A record written before this outcome had a price already holds the
+        // result it gave. Restoring it must settle, not take 75 gold afterwards.
+        var legacy = BerkeleyPerceivedMarkState.Create("BERKELEY:LEGACY:1");
+        BerkeleyPerceivedMarkFlow.TryPrepare(legacy, BerkeleyMarkAction.CheckTouch);
+        BerkeleyPerceivedMarkFlow.Apply(legacy, legacy.PendingAction);
+        BerkeleyPerceivedMarkFlow.TryPrepare(legacy, BerkeleyMarkAction.RequestSecondObserver);
+        BerkeleyPerceivedMarkFlow.Apply(legacy, legacy.PendingAction);
+        legacy.Version = 1;
+        legacy.CostAttempted = false;
+        legacy.CostPaid = false;
+        legacy.CostGoldBefore = legacy.CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+        legacy.NormalizeAfterLoad();
+        decimal legacyGold = 100m;
+        int legacyCharges = 0;
+        var legacyOutcome = await EventGoldCostProtocol.ApplyAsync(legacy,
+            () => (decimal?)legacyGold, () => { legacyGold -= legacy.Cost; legacyCharges++; return Task.CompletedTask; }, Persist);
+        Check(legacyOutcome == EventGoldCostOutcome.Settled && legacyGold == 100m && legacyCharges == 0
+            && legacy.Version == BerkeleyPerceivedMarkState.CurrentVersion && legacy.IsUsable(),
+            "A record written before the price must settle without charging the result it already gave.");
+
+        // An old invitation upgraded into the priced choice is a new decision: it
+        // keeps the payment window and is charged exactly once.
+        var upgraded = BerkeleyPerceivedMarkState.Create("BERKELEY:UPGRADE:1");
+        upgraded.Version = 1;
+        upgraded.CostGoldBefore = upgraded.CostGoldAfter = EventGoldCostProtocol.NoGoldSnapshot;
+        upgraded.NormalizeAfterLoad();
+        Check(!upgraded.CostPaid, "An old invitation must not be settled as already paid.");
+        BerkeleyPerceivedMarkFlow.TryPrepare(upgraded, BerkeleyMarkAction.CheckTouch);
+        BerkeleyPerceivedMarkFlow.Apply(upgraded, upgraded.PendingAction);
+        BerkeleyPerceivedMarkFlow.TryPrepare(upgraded, BerkeleyMarkAction.RequestSecondObserver);
+        BerkeleyPerceivedMarkFlow.Apply(upgraded, upgraded.PendingAction);
+        decimal upgradedGold = 100m;
+        int upgradedCharges = 0;
+        var upgradedOutcome = await EventGoldCostProtocol.ApplyAsync(upgraded,
+            () => (decimal?)upgradedGold, () => { upgradedGold -= upgraded.Cost; upgradedCharges++; return Task.CompletedTask; }, Persist);
+        var upgradedAgain = await EventGoldCostProtocol.ApplyAsync(upgraded,
+            () => (decimal?)upgradedGold, () => { upgradedGold -= upgraded.Cost; upgradedCharges++; return Task.CompletedTask; }, Persist);
+        Check(upgradedOutcome == EventGoldCostOutcome.Settled && upgradedAgain == EventGoldCostOutcome.Settled
+            && upgradedGold == 25m && upgradedCharges == 1,
+            "An upgraded old invitation must pay the second observer exactly once.");
+
         var wrongVersion = Observe(BerkeleyMarkAction.CheckTouch);
         wrongVersion.Version = BerkeleyPerceivedMarkState.CurrentVersion + 1;
         Check(!wrongVersion.IsUsable(), "An unknown state version must be rejected.");
