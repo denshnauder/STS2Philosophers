@@ -195,6 +195,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
             route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_181"],
             priorEvent: ModelDb.GetId<FoucaultPower>());
+        // Kant's apperception room owns the autonomy line's act-two fixed slot,
+        // which the design names explicitly (act two Kant, act three Hegel).
+        ModelDb.Inject(typeof(KantApperception));
+        CheckBoundary(typeof(DescartesThinkingLens), "DAVID_HUME__SELF_AND_OTHER__CORE",
+            [typeof(KantApperception)], doctrine: false, position: 1, actIndex: 1,
+            route: "AUTONOMY_AND_HISTORY");
         // The education line's act-two slot belongs to Wollstonecraft after the
         // act's ancient, not to Rousseau's unrestricted edge to Machiavelli (046).
         // Kept last: an open record would otherwise resume inside later fixtures.
