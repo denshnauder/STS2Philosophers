@@ -170,6 +170,17 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
             route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_169"],
             priorEvent: ModelDb.GetId<MillHarm>());
+        // Arendt also closes two lines: after Mill's sympathy (175 -> 176) and
+        // after Foucault's genealogy (181 -> 182).
+        ModelDb.Inject(typeof(ArendtBeginning));
+        CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
+            route: "SYMPATHY_AND_PUBLIC_ACTION", required: ["WESTERN_EDGE_175"],
+            priorEvent: ModelDb.GetId<MillHarm>());
+        CheckBoundary(typeof(RousseauUncarvedStone), "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE",
+            [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
+            route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_181"],
+            priorEvent: ModelDb.GetId<FoucaultPower>());
         return Task.CompletedTask;
     }
 
