@@ -159,6 +159,17 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(ButlerAddress)], doctrine: false, position: 2, actIndex: 2,
             route: "EDUCATION_AND_SITUATION", required: ["WESTERN_EDGE_193"],
             priorEvent: ModelDb.GetId<BeauvoirOther>());
+        // Rawls closes two lines, so both boundaries must hand her the slot: after
+        // Kant's institutions (172 -> 173) and after Mill's freedom (169 -> 170).
+        ModelDb.Inject(typeof(RawlsPosition));
+        CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
+            route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_172"],
+            priorEvent: ModelDb.GetId<KantUniversalization>());
+        CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
+            route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_169"],
+            priorEvent: ModelDb.GetId<MillHarm>());
         return Task.CompletedTask;
     }
 
