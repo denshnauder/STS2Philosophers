@@ -75,7 +75,7 @@ internal static class NativeQuestionNodeEvents
     private static EventModel? TrySelectRousseauSecondAct(RunState run)
     {
         string seed = Convert.ToString(run.Rng.Seed, CultureInfo.InvariantCulture) ?? string.Empty;
-        bool wollstonecraftFirst = seed.Length > 0 && (seed[^1] - '0') % 2 == 0;
+        bool wollstonecraftFirst = RousseauSecondActOrder.WollstonecraftFirst(seed);
         return wollstonecraftFirst
             ? WollstonecraftAdmissionPatch.TrySelectNative(run)
                 ?? MachiavelliFloodPreparationPatch.TrySelectNative(run)

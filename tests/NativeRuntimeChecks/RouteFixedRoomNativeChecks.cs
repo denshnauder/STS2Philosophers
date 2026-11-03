@@ -359,7 +359,13 @@ internal static class RouteFixedRoomNativeChecks
             return;
         }
         var chosen = ((EventRoom)prepare[1]!).CanonicalEvent.GetType();
-        if (chosen != room) failures.Add($"{routeId}: {act} opens {chosen.Name} instead of {room.Name}.");
+        // Rousseau's second act is one slot with two rooms, handed out by the
+        // seed's parity; this sweep does not control the seed, so either winner
+        // is the slot being filled. The boundary check pins which seed gets which.
+        bool sharedSlot = (chosen == typeof(MachiavelliFloodPreparation) && room == typeof(WollstonecraftAdmission))
+            || (chosen == typeof(WollstonecraftAdmission) && room == typeof(MachiavelliFloodPreparation));
+        if (chosen != room && !sharedSlot)
+            failures.Add($"{routeId}: {act} opens {chosen.Name} instead of {room.Name}.");
         // The act the run is in is a fact of the boundary, not of the edge that
         // carries the room. A room opened in act two must record act two.
         int expectedAct = act.StartsWith("act two", StringComparison.Ordinal) ? 2 : 3;

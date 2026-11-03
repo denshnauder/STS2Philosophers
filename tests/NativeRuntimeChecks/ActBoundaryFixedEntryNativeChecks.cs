@@ -139,8 +139,19 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // A saved question page must not take the fixed slot: the boundary only
         // resumes rooms that own this act's fixed edge, and Camus owns none.
         CheckQuestionPageWaitsForItsNode();
+        // Rousseau's slot is shared, and the seed's parity decides who takes it.
+        // Asserting "either one" let Machiavelli's zero-combat path regress while
+        // the pair still passed, so each parity names its own winner.
         ModelDb.Inject(typeof(MachiavelliFloodPreparation));
-        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE", [typeof(MachiavelliFloodPreparation), typeof(WollstonecraftAdmission)], doctrine: false, position: 2);
+        ModelDb.Inject(typeof(WollstonecraftAdmission));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 2, seed: "123456789");
+        // An even seed asks Wollstonecraft first; the pair is accepted here because
+        // her own room may still decline a slot Machiavelli can take. What the odd
+        // seed above pins is the half that used to regress: 046 itself.
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(WollstonecraftAdmission), typeof(MachiavelliFloodPreparation)],
+            doctrine: false, position: 2, seed: "123456788");
         return Task.CompletedTask;
     }
 
@@ -184,12 +195,15 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null)
+    private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
         var run = (RunState)tuple[1]!;
         Set(CombatManager.Instance, "_turnState", null);
+        // The shared Rousseau slot is handed out by the seed's parity, so the
+        // caller names the seed whose winner it is asserting.
+        if (seed is not null) Set(run, "Rng", new RunRngSet(seed));
         if (priorEvent is not null)
         {
             // A third-act room may require a fight after an earlier act's event.

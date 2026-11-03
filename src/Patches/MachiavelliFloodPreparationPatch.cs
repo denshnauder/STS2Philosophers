@@ -40,7 +40,7 @@ internal static class MachiavelliFloodPreparationPatch
         var context = new MachiavelliFloodPreparationTriggerContext(
             manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1, run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombat(run),
-            shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)),
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             journey is not null && WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
                 .Any(edge => edge.EdgeId == MachiavelliFloodPreparationState.CompletionEdgeId),

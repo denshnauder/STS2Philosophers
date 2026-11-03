@@ -28,7 +28,7 @@ internal static class LutherSignedCarePatch
         var context = new LutherSignedCareTriggerContext(
             manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1, run.CurrentActIndex,
             NativeQuestionNodeEvents.IsEntry(run),
-            shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)),
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0, journey?.ResolvedQuestionActs.Contains(2) == true,
             player?.GetRelicById(ModelDb.GetId<PlatoCivicSeal>()) is PlatoCivicSeal { CanOfferLuther: true },
             predecessor is { EdgeCommitted: true, Closed: true },

@@ -9,6 +9,15 @@ internal static class WesternRouteChecks
             if (!passed) throw new InvalidOperationException(message);
         }
 
+        // Rousseau's act-two slot is shared by two rooms and the seed's parity
+        // decides who is asked first.  Both halves matter: the odd seed is the one
+        // that puts Machiavelli in the slot without a fight.
+        Check(RousseauSecondActOrder.WollstonecraftFirst("123456788")
+            && !RousseauSecondActOrder.WollstonecraftFirst("123456789")
+            && !RousseauSecondActOrder.WollstonecraftFirst("")
+            && !RousseauSecondActOrder.WollstonecraftFirst(null),
+            "The seed's parity must decide which of Rousseau's two act-two rooms is asked first.");
+
         // Only the first act's question turns a run, and only once.  A save that
         // carries anything else cannot be read as a turn, and reading it as one
         // would move a room to an act the run is not in.
