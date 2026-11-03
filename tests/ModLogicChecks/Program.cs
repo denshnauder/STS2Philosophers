@@ -102,6 +102,7 @@ try { RousseauConsentChecks.Run(); } catch (Exception e) { failures.Add("Roussea
 try { KantUniversalizationChecks.Run(); } catch (Exception e) { failures.Add("KantUniversalizationChecks: " + e.Message); }
 try { MillHarmChecks.Run(); } catch (Exception e) { failures.Add("MillHarmChecks: " + e.Message); }
 try { BeauvoirOtherChecks.Run(); } catch (Exception e) { failures.Add("BeauvoirOtherChecks: " + e.Message); }
+try { ButlerAddressChecks.Run(); } catch (Exception e) { failures.Add("ButlerAddressChecks: " + e.Message); }
 try { NewtonCalibrationChecks.Run(); } catch (Exception e) { failures.Add("NewtonCalibrationChecks: " + e.Message); }
 try { BaconSampleLedgerChecks.Run(); } catch (Exception e) { failures.Add("BaconSampleLedgerChecks: " + e.Message); }
 try { MachiavelliFloodPreparationChecks.Run(); } catch (Exception e) { failures.Add("MachiavelliFloodPreparationChecks: " + e.Message); }

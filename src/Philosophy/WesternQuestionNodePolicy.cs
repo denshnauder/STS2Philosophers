@@ -221,6 +221,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.SartreExistence?.Closed ?? true, shared.SartreExistence?.IsUsable() ?? false)
             || Open(shared.MerleauPontyBody?.Closed ?? true, shared.MerleauPontyBody?.IsUsable() ?? false)
             || Open(shared.BeauvoirOther?.Closed ?? true, shared.BeauvoirOther?.IsUsable() ?? false)
+            || Open(shared.ButlerAddress?.Closed ?? true, shared.ButlerAddress?.IsUsable() ?? false)
             || Open(shared.FichteSelfPositing?.Closed ?? true, shared.FichteSelfPositing?.IsUsable() ?? false)
             || Open(shared.FoucaultPower?.Closed ?? true, shared.FoucaultPower?.IsUsable() ?? false)
             || Open(shared.DeleuzeDifference?.Closed ?? true, shared.DeleuzeDifference?.IsUsable() ?? false)

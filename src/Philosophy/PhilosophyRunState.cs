@@ -92,6 +92,7 @@ internal sealed class PhilosophyRunState
     public KuhnParadigmState? KuhnParadigm { get; set; }
     public FichteSelfPositingState? FichteSelfPositing { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
+    public ButlerAddressState? ButlerAddress { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -196,6 +197,7 @@ internal sealed class PhilosophyRunState
         || KuhnParadigm is not null
         || FichteSelfPositing is not null
         || BeauvoirOther is not null
+        || ButlerAddress is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -432,6 +434,7 @@ internal sealed class PhilosophyRunState
         KuhnParadigm?.NormalizeAfterLoad();
         FichteSelfPositing?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
+        ButlerAddress?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

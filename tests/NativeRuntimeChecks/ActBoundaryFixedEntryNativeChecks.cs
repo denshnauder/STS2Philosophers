@@ -152,6 +152,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(WollstonecraftAdmission), typeof(MachiavelliFloodPreparation)],
             doctrine: false, position: 2, seed: "123456788");
+        // Butler closes the education line's turned branch: after 193 the act
+        // three fixed slot belongs to her, not to Beauvoir's default 042.
+        ModelDb.Inject(typeof(ButlerAddress));
+        CheckBoundary(typeof(RousseauUncarvedStone), "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+            [typeof(ButlerAddress)], doctrine: false, position: 2, actIndex: 2,
+            route: "EDUCATION_AND_SITUATION", required: ["WESTERN_EDGE_193"],
+            priorEvent: ModelDb.GetId<BeauvoirOther>());
         return Task.CompletedTask;
     }
 
