@@ -27,7 +27,9 @@ internal static class RousseauConsentTriggerPolicy
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
             && context.CurrentNodeId == RousseauConsentState.SourceNodeId
-            && context.LastFixedAct == 2 && context.RequiredEdgeCompleted
+            // The act's fixed room takes the slot and moves the journey to 3; the
+            // run is still in act two, so a question here is not an act-three event.
+            && context.LastFixedAct is 2 or 3 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible;
     }
 }

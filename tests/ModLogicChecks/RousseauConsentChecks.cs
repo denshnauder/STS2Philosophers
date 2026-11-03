@@ -99,5 +99,21 @@ internal static class RousseauConsentChecks
             "Rousseau requires 020.");
         Check(!RousseauConsentTriggerPolicy.ShouldInsert(context with { CompletionEdgeEligible = false }),
             "Rousseau requires an eligible 021.");
+        // Sol's repro: the new host opens act two at position 2, applying Augustine's
+        // fixed 020 moves the journey to 3, and the act-two question node then comes
+        // with position 3. That is "this act's fixed room is done", not act three.
+        WesternRouteGraph real = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState actTwo = real.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        Check(real.TryApply(actTwo, "WESTERN_EDGE_019"), "Act one must be able to walk to Augustine.");
+        actTwo.LastFixedAct = 2;
+        Check(real.TryApply(actTwo, "WESTERN_EDGE_020") && actTwo.LastFixedAct == 3,
+            "Augustine's fixed room must move the journey to position 3 while still in act two.");
+        Check(actTwo.CurrentNodeId == RousseauConsentState.SourceNodeId,
+            "Augustine's room stands on the figure Rousseau's question starts from.");
+        Check(RousseauConsentTriggerPolicy.ShouldInsert(context with { LastFixedAct = 3 }),
+            "Rousseau must be offered at the act-two question after 020, not only at position 2.");
+        var afterFixed = RousseauConsentState.Create("ROUSSEAU_CONSENT:TEST:2");
+        Check(RousseauConsentFlow.IsRouteConsistent(afterFixed, actTwo),
+            "Rousseau's record must accept the position the fixed room left behind.");
     }
 }
