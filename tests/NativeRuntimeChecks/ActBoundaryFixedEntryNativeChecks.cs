@@ -168,6 +168,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(PlatoCivicSeal), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(MontesquieuBalance)], doctrine: false, position: 1, actIndex: 1,
             routeRules: true);
+        // Smith owns the act-two fixed slot of the sympathy line once the line is
+        // named (the act-one question names it), and the boundary must hand it to
+        // him without a second question.
+        ModelDb.Inject(typeof(SmithSympathy));
+        CheckBoundary(typeof(PlatoCivicSeal), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(SmithSympathy)], doctrine: false, position: 1, actIndex: 1,
+            route: "SYMPATHY_AND_PUBLIC_ACTION");
         ModelDb.Inject(typeof(RawlsPosition));
         CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,

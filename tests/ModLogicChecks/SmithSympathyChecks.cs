@@ -46,5 +46,14 @@ internal static class SmithSympathyChecks
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
         tampered.Version = SmithSympathyState.CurrentVersion + 1;
         Check(!tampered.IsUsable(), "An unknown version must be rejected.");
+        // The act-one question already grants Smith on that branch; the act-two
+        // fixed slot must not hand him out a second time.
+        WesternRouteGraph earlyGraph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState early = earlyGraph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        early.RouteId = "SYMPATHY_AND_PUBLIC_ACTION"; early.RouteRules = true;
+        Check(earlyGraph.TryApply(early, "WESTERN_EDGE_174") && early.SeenThinkerIds.Contains("ADAM_SMITH"),
+            "The act-one question hands Smith out on the sympathy branch.");
+        Check(!earlyGraph.GetEligibleEdges(early, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_116"),
+            "Smith is not granted twice after the early question.");
     }
 }
