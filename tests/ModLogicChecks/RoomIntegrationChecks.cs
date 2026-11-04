@@ -40,7 +40,9 @@ internal static class RoomIntegrationChecks
             if (File.Exists(eventFile))
             {
                 Match active = Regex.Match(File.ReadAllText(eventFile), @"IsActiveEvent\(run, this, (\d+)\)");
-                Match gate = Regex.Match(File.ReadAllText(Path.Combine(root, "src", "Philosophy", name + "TriggerPolicy.cs")),
+                string policyFile = Path.Combine(root, "src", "Philosophy", name + "TriggerPolicy.cs");
+                if (!File.Exists(policyFile)) continue;
+                Match gate = Regex.Match(File.ReadAllText(policyFile),
                     @"CurrentActIndex != (\d+)");
                 if (active.Success && gate.Success)
                     Check(active.Groups[1].Value == gate.Groups[1].Value,

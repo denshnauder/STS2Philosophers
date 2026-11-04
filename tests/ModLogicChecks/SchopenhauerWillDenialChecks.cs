@@ -153,5 +153,27 @@ internal static class SchopenhauerWillDenialChecks
                 Check(document.RootElement.TryGetProperty(key, out _),
                     $"Schopenhauer localization is missing {language}/{key}.");
         }
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = SchopenhauerWillDenialState.FixedSourceNodeId,
+            RouteId = "WILL_AND_VALUE",
+            LastFixedAct = 2,
+        };
+        var fixedState = SchopenhauerWillDenialState.CreateAt(
+            "SCHOPENHAUER_WILL_DENIAL:TEST:F", string.Empty, 2, fixedMode: true);
+        Check(SchopenhauerWillDenialFlow.IsRouteConsistent(fixedState, fixedJourney, null),
+            "Schopenhauer's default fixed room opens after Socrates without Kant.");
+        Check(SchopenhauerWillDenialFlow.TryPrepare(fixedState, SchopenhauerWillDenialAction.BuyExtra)
+            && SchopenhauerWillDenialFlow.TryCommitPending(fixedState, fixedJourney, null!, graph)
+            && SchopenhauerWillDenialFlow.TryPrepare(fixedState, SchopenhauerWillDenialAction.RefuseProfit)
+            && SchopenhauerWillDenialFlow.TryCommitPending(fixedState, fixedJourney, null!, graph)
+            && SchopenhauerWillDenialFlow.TryPrepare(fixedState, SchopenhauerWillDenialAction.Leave)
+            && SchopenhauerWillDenialFlow.TryCommitPending(fixedState, fixedJourney, null!, graph),
+            "Schopenhauer's fixed room adopts 150 on leave.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE"
+            && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "Schopenhauer's fixed room consumes act two without a question.");
+
     }
 }

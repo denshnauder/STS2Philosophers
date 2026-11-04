@@ -23,9 +23,13 @@ internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized, IEventG
     public const int QuestionAct = 3;
     public const string RequiredNodeId = "IMMANUEL_KANT__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_028";
+    public const string FixedSourceNodeId = "SOCRATES__VIRTUE_AND_HAPPINESS__CORE";
+    public const string FixedCompletionEdgeId = "WESTERN_EDGE_150";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
+    public bool FixedMode { get; set; }
     public string KantInstanceId { get; set; } = string.Empty;
     public SchopenhauerWillDenialStage Stage { get; set; }
     public SchopenhauerWillDenialAction PendingAction { get; set; }
@@ -39,16 +43,23 @@ internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized, IEventG
     public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
-    public static SchopenhauerWillDenialState Create(string instanceId, string kantInstanceId) => new()
+    public static SchopenhauerWillDenialState Create(string instanceId, string kantInstanceId) =>
+        CreateAt(instanceId, kantInstanceId, 3, fixedMode: false);
+
+    public static SchopenhauerWillDenialState CreateAt(string instanceId, string kantInstanceId,
+        int actIndex, bool fixedMode) => new()
     {
         InstanceId = instanceId,
         KantInstanceId = kantInstanceId,
+        ActIndex = actIndex,
+        FixedMode = fixedMode,
     };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         KantInstanceId ??= string.Empty;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -57,7 +68,7 @@ internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized, IEventG
     public bool IsUsable()
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
-            || string.IsNullOrWhiteSpace(KantInstanceId)
+            || (!FixedMode && string.IsNullOrWhiteSpace(KantInstanceId))
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Outcome)
             || ConfirmedActions is null || ConfirmedActions.Count > 3
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
@@ -67,7 +78,7 @@ internal sealed class SchopenhauerWillDenialState : IJsonOnDeserialized, IEventG
             || CostPaid && (!CostAttempted || Outcome == SchopenhauerWillDenialOutcome.None)
             || CostAttempted && Outcome == SchopenhauerWillDenialOutcome.None) return false;
 
-        var replay = Create(InstanceId, KantInstanceId);
+        var replay = CreateAt(InstanceId, KantInstanceId, ActIndex, FixedMode);
         foreach (SchopenhauerWillDenialAction action in ConfirmedActions)
         {
             if (replay.Closed || !SchopenhauerWillDenialFlow.Options(replay.Stage).Contains(action)) return false;
@@ -149,24 +160,44 @@ internal static class SchopenhauerWillDenialFlow
         if (!IsRouteConsistent(state, journey, kant) || state.Closed
             || state.PendingAction == SchopenhauerWillDenialAction.None) return false;
         SchopenhauerWillDenialAction action = state.PendingAction;
-        if (!state.QuestionReserved && !graph.TryReserveQuestion(journey, SchopenhauerWillDenialState.QuestionAct)) return false;
-        state.QuestionReserved = true;
+        if (state.FixedMode)
+        {
+            if (action == SchopenhauerWillDenialAction.Leave
+                && !journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.FixedCompletionEdgeId)
+                && !graph.TryApply(journey, SchopenhauerWillDenialState.FixedCompletionEdgeId)) return false;
+        }
+        else
+        {
+            if (!state.QuestionReserved && !graph.TryReserveQuestion(journey, SchopenhauerWillDenialState.QuestionAct)) return false;
+            state.QuestionReserved = true;
+        }
         Apply(state, action);
         return IsRouteConsistent(state, journey, kant);
     }
 
     public static bool IsRouteConsistent(SchopenhauerWillDenialState state, WesternJourneyState journey,
-        KantApperceptionState kant) =>
-        state.IsUsable() && kant.IsUsable() && kant.Closed && kant.EdgeCommitted
-        && state.KantInstanceId == kant.InstanceId
-        && KantApperceptionFlow.IsRouteConsistent(kant, journey)
-        && journey.CurrentNodeId == SchopenhauerWillDenialState.RequiredNodeId
-        && journey.SeenThinkerIds.Contains("IMMANUEL_KANT")
-        && journey.LastFixedAct == SchopenhauerWillDenialState.QuestionAct
-        && !journey.RetainedEnding
-        && journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.RequiredEdgeId)
-        && journey.ResolvedQuestionActs.Contains(SchopenhauerWillDenialState.QuestionAct) == state.QuestionReserved
-        && (state.QuestionReserved || state.Outcome == SchopenhauerWillDenialOutcome.None);
+        KantApperceptionState? kant)
+    {
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        if (state.FixedMode)
+        {
+            bool adopted = journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.FixedCompletionEdgeId);
+            if (!state.Closed)
+                return !adopted && journey.CurrentNodeId == SchopenhauerWillDenialState.FixedSourceNodeId
+                    && journey.LastFixedAct == state.ActIndex;
+            return adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
+                && journey.CurrentNodeId == "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE";
+        }
+        return kant is not null && kant.IsUsable() && kant.Closed && kant.EdgeCommitted
+            && state.KantInstanceId == kant.InstanceId
+            && KantApperceptionFlow.IsRouteConsistent(kant, journey)
+            && journey.CurrentNodeId == SchopenhauerWillDenialState.RequiredNodeId
+            && journey.SeenThinkerIds.Contains("IMMANUEL_KANT")
+            && journey.LastFixedAct == SchopenhauerWillDenialState.QuestionAct
+            && journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.RequiredEdgeId)
+            && journey.ResolvedQuestionActs.Contains(SchopenhauerWillDenialState.QuestionAct) == state.QuestionReserved
+            && (state.QuestionReserved || state.Outcome == SchopenhauerWillDenialOutcome.None);
+    }
 
     public static string StageKey(SchopenhauerWillDenialStage stage) => UpperSnake(stage.ToString());
 

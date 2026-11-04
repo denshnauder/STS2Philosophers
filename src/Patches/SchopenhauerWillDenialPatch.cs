@@ -10,23 +10,44 @@ internal static class SchopenhauerWillDenialPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         SchopenhauerWillDenialState? saved = shared.SchopenhauerWillDenial;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
-        if (shared.WesternJourney is not { } journey || shared.KantApperception is not { } kant
-            || !SchopenhauerWillDenialFlow.IsRouteConsistent(saved, journey, kant)) return null;
+        if (shared.WesternJourney is not { } journey
+            || !SchopenhauerWillDenialFlow.IsRouteConsistent(saved, journey, shared.KantApperception)) return null;
         SchopenhauerWillDenial? canonical = TryGetCanonicalEvent();
         return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
     }
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1
-            || run.CurrentActIndex != 2) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1
+            || run.CurrentActIndex is not (1 or 2)) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
+        if (fixedEntry)
+        {
+            SchopenhauerWillDenial? fixedCanonical = TryGetCanonicalEvent();
+            if (fixedCanonical is null || run.VisitedEventIds.Contains(fixedCanonical.Id)
+                || journey is null || run.CurrentActIndex != 1
+                || journey.CurrentNodeId != SchopenhauerWillDenialState.FixedSourceNodeId
+                || journey.LastFixedAct != 2
+                || !WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
+                    .Any(edge => edge.EdgeId == SchopenhauerWillDenialState.FixedCompletionEdgeId)) return null;
+            SchopenhauerWillDenialState? fixedSaved = shared.SchopenhauerWillDenial;
+            if (fixedSaved is { Closed: true } || fixedSaved is not null && !fixedSaved.IsUsable()) return null;
+            var fixedCandidate = fixedSaved is { FixedMode: true } ? fixedSaved
+                : SchopenhauerWillDenialState.CreateAt(
+                    $"SCHOPENHAUER_WILL_DENIAL:{run.Rng.Seed}:2", string.Empty, 2, fixedMode: true);
+            if (!SchopenhauerWillDenialFlow.IsRouteConsistent(fixedCandidate, journey, null)) return null;
+            shared.SchopenhauerWillDenial = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Schopenhauer's will-denial room on the fixed line.");
+            return fixedCanonical;
+        }
         KantApperceptionState? kant = shared.KantApperception;
         SchopenhauerWillDenialState? saved = shared.SchopenhauerWillDenial;
         SchopenhauerWillDenial? canonical = TryGetCanonicalEvent();

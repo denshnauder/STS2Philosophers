@@ -108,6 +108,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
+        ModelDb.Inject(typeof(SchopenhauerWillDenial));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(SchopenhauerWillDenial)], doctrine: false, position: 1, actIndex: 1,
+            route: "WILL_AND_VALUE", checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);

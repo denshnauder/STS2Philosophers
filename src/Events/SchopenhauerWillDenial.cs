@@ -158,7 +158,12 @@ public sealed class SchopenhauerWillDenial : EventModel
         && shared.WesternJourney is { } journey && shared.KantApperception is { } kant
         && SchopenhauerWillDenialFlow.TryCommitPending(state, journey, kant, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.SchopenhauerWillDenial is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(SchopenhauerWillDenialState state)
     {
@@ -188,9 +193,9 @@ public sealed class SchopenhauerWillDenial : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.SchopenhauerWillDenial is { } state
-            && shared.WesternJourney is { } journey && shared.KantApperception is { } kant
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
-            && SchopenhauerWillDenialFlow.IsRouteConsistent(state, journey, kant)) return state;
+            && shared.WesternJourney is { } journey
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+            && SchopenhauerWillDenialFlow.IsRouteConsistent(state, journey, shared.KantApperception)) return state;
         return null;
     }
 
