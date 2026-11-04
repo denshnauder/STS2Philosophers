@@ -108,6 +108,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
+        ModelDb.Inject(typeof(HabermasCommunication));
+        CheckBoundary(typeof(DescartesThinkingLens), "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+            [typeof(HabermasCommunication)], doctrine: false, position: 2, actIndex: 2,
+            route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_084"], checkRoom: true);
         ModelDb.Inject(typeof(WittgensteinGame));
         CheckBoundary(typeof(AristotleCategoryTablet), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             [typeof(WittgensteinGame)], doctrine: false, position: 1, actIndex: 1,

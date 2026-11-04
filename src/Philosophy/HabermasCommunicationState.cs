@@ -18,9 +18,13 @@ internal sealed class HabermasCommunicationState : IJsonOnDeserialized
     public const string AdoptedNodeId = "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_084";
     public const string CompletionEdgeId = "WESTERN_EDGE_086";
+    public const string FixedCompletionEdgeId = "WESTERN_EDGE_200";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
+    public bool FixedDeclined { get; set; }
     public HabermasCommunicationStage Stage { get; set; }
     public HabermasCommunicationAction PendingAction { get; set; }
     public List<HabermasCommunicationAction> ConfirmedActions { get; set; } = [];
@@ -29,11 +33,16 @@ internal sealed class HabermasCommunicationState : IJsonOnDeserialized
     public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static HabermasCommunicationState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static HabermasCommunicationState Create(string instanceId) =>
+        CreateAt(instanceId, CompletionEdgeId, fixedMode: false);
+
+    public static HabermasCommunicationState CreateAt(string instanceId, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, EdgeId = edgeId, FixedMode = fixedMode };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
         ConfirmedActions ??= [];
     }
 
@@ -48,14 +57,15 @@ internal sealed class HabermasCommunicationState : IJsonOnDeserialized
             || Closed && PendingAction != HabermasCommunicationAction.None
             || PendingAction != HabermasCommunicationAction.None
                 && !HabermasCommunicationFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, EdgeId, FixedMode);
         foreach (HabermasCommunicationAction action in ConfirmedActions)
         {
             if (replay.Closed || !HabermasCommunicationFlow.Options(replay.Stage).Contains(action)) return false;
             HabermasCommunicationFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && FixedDeclined == replay.FixedDeclined
+            && Closed == replay.Closed;
     }
 }
 
@@ -95,7 +105,8 @@ internal static class HabermasCommunicationFlow
                 break;
             case HabermasCommunicationAction.KeepHorkheimer:
                 state.Standard = HabermasCommunicationStandard.Horkheimerian;
-                state.QuestionDeclined = true;
+                if (state.FixedMode) state.FixedDeclined = true;
+                else state.QuestionDeclined = true;
                 state.Stage = HabermasCommunicationStage.ResultKept;
                 break;
             case HabermasCommunicationAction.Leave:
@@ -113,9 +124,11 @@ internal static class HabermasCommunicationFlow
         HabermasCommunicationAction action = state.PendingAction;
         bool adopts = action is HabermasCommunicationAction.CommunicativeAction or HabermasCommunicationAction.DiscourseEthics;
         bool declines = action == HabermasCommunicationAction.KeepHorkheimer;
-        if (adopts && !journey.CompletedEdgeIds.Contains(HabermasCommunicationState.CompletionEdgeId)
-            && !graph.TryApply(journey, HabermasCommunicationState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && state.FixedMode && !journey.DeclinedFixedActs.Contains(3)
+            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (declines && !state.FixedMode && !journey.ResolvedQuestionActs.Contains(3)
             && !graph.TryDecline(journey, "Question", 3)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
@@ -125,7 +138,18 @@ internal static class HabermasCommunicationFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding
             || !journey.CompletedEdgeIds.Contains(HabermasCommunicationState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(HabermasCommunicationState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        if (state.FixedMode)
+        {
+            if (!state.EdgeCommitted && !state.FixedDeclined)
+                return journey.LastFixedAct == 3 && !adopted && !journey.DeclinedFixedActs.Contains(3)
+                    && journey.CurrentNodeId == HabermasCommunicationState.SourceNodeId;
+            if (state.EdgeCommitted)
+                return adopted && !state.FixedDeclined && journey.LastFixedAct == 3
+                    && journey.CurrentNodeId == HabermasCommunicationState.AdoptedNodeId;
+            return !adopted && journey.DeclinedFixedActs.Contains(3) && journey.LastFixedAct == 3
+                && journey.CurrentNodeId == HabermasCommunicationState.SourceNodeId;
+        }
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == HabermasCommunicationState.SourceNodeId;

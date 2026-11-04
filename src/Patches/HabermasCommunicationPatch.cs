@@ -10,7 +10,8 @@ internal static class HabermasCommunicationPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         HabermasCommunicationState? saved = shared.HabermasCommunication;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,12 +23,30 @@ internal static class HabermasCommunicationPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         HabermasCommunicationState? saved = shared.HabermasCommunication;
         HabermasCommunication? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 2 || journey.LastFixedAct != 3
+                || journey.CurrentNodeId != HabermasCommunicationState.SourceNodeId) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            if (!fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == HabermasCommunicationState.FixedCompletionEdgeId)) return null;
+            if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
+            var fixedCandidate = saved is { FixedMode: true } ? saved
+                : HabermasCommunicationState.CreateAt(
+                    $"HABERMAS_COMMUNICATION:{run.Rng.Seed}:3",
+                    HabermasCommunicationState.FixedCompletionEdgeId, fixedMode: true);
+            if (!HabermasCommunicationFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.HabermasCommunication = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Habermas's communication room on the fixed line.");
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")
@@ -44,7 +63,7 @@ internal static class HabermasCommunicationPatch
         var candidate = saved ?? HabermasCommunicationState.Create($"HABERMAS_COMMUNICATION:{run.Rng.Seed}:3");
         if (journey is null || !HabermasCommunicationFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HabermasCommunication = candidate;
-        Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");
+        Log.Info("[STS2Philosophers] Presenting Habermas's communication question.");
         return canonical;
     }
 

@@ -44,6 +44,25 @@ internal static class HabermasCommunicationChecks
             && declined.CurrentNodeId == HabermasCommunicationState.SourceNodeId,
             "Declining must leave the player on Heidegger's node.");
 
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = HabermasCommunicationState.SourceNodeId,
+            RouteId = "SOCIAL_CRITIQUE",
+            LastFixedAct = 3,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { HabermasCommunicationState.RequiredEdgeId },
+        };
+        var fixedState = HabermasCommunicationState.CreateAt(
+            "HABERMAS_COMMUNICATION:TEST:F", HabermasCommunicationState.FixedCompletionEdgeId, fixedMode: true);
+        Check(HabermasCommunicationFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "Habermas's fixed room opens after early Marx's Horkheimer without a question.");
+        Check(HabermasCommunicationFlow.TryPrepare(fixedState, HabermasCommunicationAction.CommunicativeAction)
+            && HabermasCommunicationFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "Habermas's fixed room adopts 200.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(HabermasCommunicationState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == HabermasCommunicationState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "Habermas's fixed room takes the third fixed slot without a question.");
+
         var tampered = HabermasCommunicationState.Create("HABERMAS_COMMUNICATION:TEST:3");
         tampered.Standard = HabermasCommunicationStandard.Ethics;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
