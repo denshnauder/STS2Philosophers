@@ -76,7 +76,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(SaussureSign)], doctrine: false, position: 2, route: "STRUCTURE_AND_EXCLUSION");
         ModelDb.Inject(typeof(BenthamUtility));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
-            [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM");
+            [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
         ModelDb.Inject(typeof(PeirceInquiry));
         CheckBoundary(typeof(SocratesQuestionCup), "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(PeirceInquiry)], doctrine: false, position: 2, route: "FALLIBLE_INQUIRY");

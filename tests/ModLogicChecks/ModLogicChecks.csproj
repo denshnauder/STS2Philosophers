@@ -180,6 +180,7 @@
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationTriggerPolicy.cs" Link="NietzscheRevaluationTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
+    <Compile Include="..\..\src\Philosophy\BenthamUtilityTriggerPolicy.cs" Link="BenthamUtilityTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ComtePositivismState.cs" Link="ComtePositivismState.cs" />
     <Compile Include="..\..\src\Philosophy\PeirceInquiryState.cs" Link="PeirceInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\DeweyPublicExperimentState.cs" Link="DeweyPublicExperimentState.cs" />

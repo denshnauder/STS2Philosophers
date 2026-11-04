@@ -110,7 +110,14 @@ public sealed class BenthamUtility : EventModel
         ReferenceEquals(shared.BenthamUtility, state) && shared.WesternJourney is { } journey
         && BenthamUtilityFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 0;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.BenthamUtility is { } state)
+            actIndex = state.EdgeId == "WESTERN_EDGE_130" ? 1 : 0;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(BenthamUtilityState state)
     {
@@ -140,7 +147,10 @@ public sealed class BenthamUtility : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.BenthamUtility is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.EdgeId == BenthamUtilityState.CompletionEdgeId
+                    && state.ActIndex == 2
+                    && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1")
             && BenthamUtilityFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
