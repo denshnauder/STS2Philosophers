@@ -221,6 +221,8 @@
     <Compile Include="..\..\src\Philosophy\EventGoldCostProtocol.cs" Link="EventGoldCostProtocol.cs" />
     <Compile Include="..\..\src\Philosophy\CrossActCombatHistory.cs" Link="CrossActCombatHistory.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionTriggerPolicy.cs" Link="KantApperceptionTriggerPolicy.cs" />
+    <Compile Include="..\..\src\Philosophy\HegelRecognitionState.cs" Link="HegelRecognitionState.cs" />
+    <Compile Include="..\..\src\Philosophy\HegelRecognitionTriggerPolicy.cs" Link="HegelRecognitionTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectState.cs" Link="HegelSubstanceSubjectState.cs" />
     <Compile Include="..\..\src\Philosophy\HegelCombatPracticeState.cs" Link="HegelCombatPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\HegelSubstanceSubjectTriggerPolicy.cs" Link="HegelSubstanceSubjectTriggerPolicy.cs" />

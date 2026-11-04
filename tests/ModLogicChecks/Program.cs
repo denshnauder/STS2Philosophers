@@ -49,6 +49,7 @@ try { SpinozaCauseNetworkChecks.Run(); } catch (Exception e) { failures.Add("Spi
 try { LeibnizIndependentClocksChecks.Run(); } catch (Exception e) { failures.Add("LeibnizIndependentClocksChecks: " + e.Message); }
 try { LeibnizMonadComparisonChecks.Run(); } catch (Exception e) { failures.Add("LeibnizMonadComparisonChecks: " + e.Message); }
 try { HegelSubstanceSubjectChecks.Run(); } catch (Exception e) { failures.Add("HegelSubstanceSubjectChecks: " + e.Message); }
+try { HegelRecognitionChecks.Run(); } catch (Exception e) { failures.Add("HegelRecognitionChecks: " + e.Message); }
 try { FichteSelfPositingChecks.Run(); } catch (Exception e) { failures.Add("FichteSelfPositingChecks: " + e.Message); }
 try { HobbesAuthorizedSovereigntyChecks.Run(); } catch (Exception e) { failures.Add("HobbesAuthorizedSovereigntyChecks: " + e.Message); }
 try { LockeHumeChecks.Run(); } catch (Exception e) { failures.Add("LockeHumeChecks: " + e.Message); }

@@ -267,10 +267,10 @@ internal static class NativeQuestionNodeChecks
                 "Both a natural single room and a legacy nested question retain exact active-event identity.");
             Check(local.GetType().GetMethod("TryRestoreState", Methods)!.Invoke(local, null) is not null,
                 "Actual event restoration reads the initialized/reloaded person state without another factory.");
-            if (local is SchellingNature)
+            if (local is SchellingNature || local is HegelRecognition)
                 Check((bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
-                    "Schelling's room body accepts the act its record names.");
+                    "The room body accepts the act its record names.");
             Check(Encoded(CurrentShared(run)) == before && JsonSerializer.Serialize(run.Rng.ToSerializable()) == rng,
                 "Native room and shared-state restoration consume neither a second budget nor an event roll.");
         }

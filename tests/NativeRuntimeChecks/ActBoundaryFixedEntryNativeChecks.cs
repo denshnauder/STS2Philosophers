@@ -101,6 +101,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"], checkRoom: true);
+        ModelDb.Inject(typeof(HegelRecognition));
+        CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
+            [typeof(HegelRecognition)], doctrine: true, position: 2, actIndex: 2,
+            route: "AUTONOMY_AND_HISTORY", checkRoom: true);
         ModelDb.Inject(typeof(RussellAnalysis));
         CheckBoundary(typeof(AristotleCategoryTablet), "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
             [typeof(RussellAnalysis)], doctrine: false, position: 2, actIndex: 2,
@@ -342,7 +346,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // the body reads; assert it here where the boundary wrote it.
         Type openedType = room.CanonicalEvent.GetType();
         if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
-            || openedType == typeof(SchellingNature))
+            || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");
