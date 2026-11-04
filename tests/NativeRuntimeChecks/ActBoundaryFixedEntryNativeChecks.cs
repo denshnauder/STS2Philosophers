@@ -145,6 +145,15 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(SocratesQuestionCup), "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(DeweyPublicExperiment)], doctrine: false, position: 3, actIndex: 2,
             route: "FALLIBLE_INQUIRY", required: ["WESTERN_EDGE_108"], checkRoom: true);
+        // Kuhn closes the two turned knowledge lines. Newton's route must have
+        // 166 before its third-act fixed handover, and Comte's route 198.
+        ModelDb.Inject(typeof(KuhnParadigm));
+        CheckBoundary(typeof(SocratesQuestionCup), "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(KuhnParadigm)], doctrine: false, position: 3, actIndex: 2,
+            route: "SCIENTIFIC_MODEL", required: ["WESTERN_EDGE_166"], checkRoom: true);
+        CheckBoundary(typeof(RousseauUncarvedStone), "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(KuhnParadigm)], doctrine: false, position: 3, actIndex: 2,
+            route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_198"], checkRoom: true);
         ModelDb.Inject(typeof(FoucaultPower));
         CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,

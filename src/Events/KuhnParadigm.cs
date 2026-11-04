@@ -178,7 +178,8 @@ public sealed class KuhnParadigm : EventModel
         KuhnParadigmStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
         return KuhnParadigmFlow.Options(stage)
-            .Where(action => action != KuhnParadigmAction.TrainTeam || CanAffordTraining())
+            .Where(action => action != KuhnParadigmAction.TrainTeam
+                || KuhnParadigmFlow.CanAdopt(state) && CanAffordTraining())
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{KuhnParadigmFlow.StageKey(stage)}.options.{KuhnParadigmFlow.ActionKey(action)}",
@@ -191,7 +192,8 @@ public sealed class KuhnParadigm : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.KuhnParadigm is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3")
             && KuhnParadigmFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
