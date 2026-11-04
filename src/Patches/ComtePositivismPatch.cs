@@ -10,7 +10,8 @@ internal static class ComtePositivismPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         ComtePositivismState? saved = shared.ComtePositivism;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,7 +23,8 @@ internal static class ComtePositivismPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         ComtePositivismState? saved = shared.ComtePositivism;
@@ -35,6 +37,9 @@ internal static class ComtePositivismPatch
             .Select(route => route.ActTwoFigure == "AUGUSTE_COMTE" ? 2
                 : route.ActThreeFigure == "AUGUSTE_COMTE" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // The early first-act Bacon turn places Comte in the second act.
+        if (journey is not null && run.CurrentActIndex == 1
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_197")) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == ComtePositivismState.AdoptedNodeId)
@@ -45,7 +50,7 @@ internal static class ComtePositivismPatch
             ? graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId)
             : graph.GetEligibleEdges(journey, "Question").Any(edge => edge.EdgeId == ComtePositivismState.CompletionEdgeId));
         ComtePositivismTriggerContext context = new(
-            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             routeAct >= 2 || journey?.CompletedEdgeIds.Contains(ComtePositivismState.RequiredEdgeId) == true, edgeEligible,
@@ -66,7 +71,7 @@ internal static class ComtePositivismPatch
         }
         if (journey is null || !ComtePositivismFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.ComtePositivism = candidate;
-        Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");
+        Log.Info("[STS2Philosophers] Presenting Comte's positivism room.");
         return canonical;
     }
 

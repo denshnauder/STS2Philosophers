@@ -182,6 +182,7 @@
     <Compile Include="..\..\src\Philosophy\BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
     <Compile Include="..\..\src\Philosophy\BenthamUtilityTriggerPolicy.cs" Link="BenthamUtilityTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\ComtePositivismState.cs" Link="ComtePositivismState.cs" />
+    <Compile Include="..\..\src\Philosophy\ComtePositivismTriggerPolicy.cs" Link="ComtePositivismTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\PeirceInquiryState.cs" Link="PeirceInquiryState.cs" />
     <Compile Include="..\..\src\Philosophy\DeweyPublicExperimentState.cs" Link="DeweyPublicExperimentState.cs" />
     <Compile Include="..\..\src\Philosophy\HusserlEpocheState.cs" Link="HusserlEpocheState.cs" />

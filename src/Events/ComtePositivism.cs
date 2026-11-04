@@ -110,7 +110,14 @@ public sealed class ComtePositivism : EventModel
         ReferenceEquals(shared.ComtePositivism, state) && shared.WesternJourney is { } journey
         && ComtePositivismFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 2;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.ComtePositivism is { } state)
+            actIndex = state.EdgeId == "WESTERN_EDGE_198" ? 1 : 2;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(ComtePositivismState state)
     {
@@ -140,7 +147,10 @@ public sealed class ComtePositivism : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.ComtePositivism is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.EdgeId == ComtePositivismState.CompletionEdgeId
+                    && state.ActIndex == 3
+                    && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3")
             && ComtePositivismFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

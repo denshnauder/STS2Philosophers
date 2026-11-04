@@ -25,6 +25,9 @@ internal sealed class ComtePositivismState : IJsonOnDeserialized
     /// <summary>The act this room occupies; a route may move it to another one.</summary>
     public int ActIndex { get; set; } = 3;
 
+    /// <summary>True for the new default/early fixed modes; false for the old question mode.</summary>
+    public bool FixedMode { get; set; }
+
     /// <summary>The edge this room's adoption commits.</summary>
     public string EdgeId { get; set; } = ComtePositivismState.CompletionEdgeId;
     /// <summary>True when a route, not the default line, placed this room in its act.</summary>
@@ -44,7 +47,7 @@ internal sealed class ComtePositivismState : IJsonOnDeserialized
     public static ComtePositivismState Create(string instanceId) => new() { InstanceId = instanceId };
 
     public static ComtePositivismState CreateAt(string instanceId, int actIndex, string edgeId) =>
-        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = true };
 
     public void NormalizeAfterLoad()
     {
@@ -128,10 +131,18 @@ internal static class ComtePositivismFlow
         ComtePositivismAction action = state.PendingAction;
         bool adopts = action is ComtePositivismAction.ThreeStages or ComtePositivismAction.KeepAnomaly;
         bool declines = action == ComtePositivismAction.KeepBacon;
-        if (adopts && !journey.CompletedEdgeIds.Contains(ComtePositivismState.CompletionEdgeId)
-            && !graph.TryApply(journey, ComtePositivismState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
-            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines)
+        {
+            if (state.FixedMode)
+            {
+                if (!journey.DeclinedFixedActs.Contains(state.ActIndex)
+                    && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+            }
+            else if (!journey.ResolvedQuestionActs.Contains(state.ActIndex)
+                && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
+        }
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -140,17 +151,28 @@ internal static class ComtePositivismFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding
             || !state.RoutePlaced && !journey.CompletedEdgeIds.Contains(ComtePositivismState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(ComtePositivismState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool atSource = journey.CurrentNodeId == ComtePositivismState.SourceNodeId
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.ResolvedQuestionActs.Contains(3)
-                && ((journey.CurrentNodeId == ComtePositivismState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId));
+        {
+            bool slotAvailable = state.FixedMode
+                ? !journey.DeclinedFixedActs.Contains(state.ActIndex)
+                : !journey.ResolvedQuestionActs.Contains(state.ActIndex);
+            return journey.LastFixedAct == state.ActIndex && !adopted && slotAvailable && atSource;
+        }
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == state.ActIndex
-                && journey.ResolvedQuestionActs.Contains(3)
+        {
+            bool slotConsumed = state.FixedMode
+                ? journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
+                : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+            return !state.QuestionDeclined && adopted && slotConsumed
                 && journey.CurrentNodeId == ComtePositivismState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == state.ActIndex
-            && journey.ResolvedQuestionActs.Contains(3)
-            && ((journey.CurrentNodeId == ComtePositivismState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId));
+        }
+        bool declined = state.FixedMode
+            ? journey.DeclinedFixedActs.Contains(state.ActIndex)
+            : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+        return !adopted && journey.LastFixedAct == state.ActIndex && declined && atSource;
     }
 
     public static string DescriptionKey(ComtePositivismState state) => state.Stage switch
