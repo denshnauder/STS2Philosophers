@@ -16,6 +16,8 @@ internal static class GadamerFusionChecks
 
     internal static void Run()
     {
+        Check((int)GadamerFusionAction.Leave == 4 && (int)GadamerFusionAction.HearEcho == 5,
+            "Legacy Leave action must keep numeric value 4; echo is appended as 5.");
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         var state = GadamerFusionState.Create("GADAMER_FUSION:TEST:1");
         Check(GadamerFusionFlow.Options(state.Stage).Count == 3,

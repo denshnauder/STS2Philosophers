@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace STS2Philosophers;
 
 internal enum GadamerFusionStage { Invitation, ResultFusion, ResultHistory, ResultKept, Echo }
-internal enum GadamerFusionAction { None, HorizonFusion, EffectiveHistory, KeepHeidegger, HearEcho, Leave }
+internal enum GadamerFusionAction { None, HorizonFusion, EffectiveHistory, KeepHeidegger, Leave, HearEcho }
 internal enum GadamerFusionStandard { None, Fusion, History, Heideggerian }
 
 /// <summary>
