@@ -137,8 +137,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_102"]);
         ModelDb.Inject(typeof(DeweyPublicExperiment));
         CheckBoundary(typeof(SocratesQuestionCup), "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
-            [typeof(DeweyPublicExperiment)], doctrine: false, position: 2, actIndex: 2,
-            route: "FALLIBLE_INQUIRY", required: ["WESTERN_EDGE_108"]);
+            [typeof(DeweyPublicExperiment)], doctrine: false, position: 3, actIndex: 2,
+            route: "FALLIBLE_INQUIRY", required: ["WESTERN_EDGE_108"], checkRoom: true);
         ModelDb.Inject(typeof(FoucaultPower));
         CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,

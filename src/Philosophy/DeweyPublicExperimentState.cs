@@ -26,6 +26,8 @@ internal sealed class DeweyPublicExperimentState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 3;
 
     /// <summary>The edge this room's adoption commits.</summary>
+    public bool FixedMode { get; set; }
+
     public string EdgeId { get; set; } = DeweyPublicExperimentState.CompletionEdgeId;
     /// <summary>True when a route, not the default line, placed this room in its act.</summary>
     public bool RoutePlaced { get; set; }
@@ -44,7 +46,7 @@ internal sealed class DeweyPublicExperimentState : IJsonOnDeserialized
     public static DeweyPublicExperimentState Create(string instanceId) => new() { InstanceId = instanceId };
 
     public static DeweyPublicExperimentState CreateAt(string instanceId, int actIndex, string edgeId) =>
-        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = true };
 
     public void NormalizeAfterLoad()
     {
@@ -128,10 +130,18 @@ internal static class DeweyPublicExperimentFlow
         DeweyPublicExperimentAction action = state.PendingAction;
         bool adopts = action is DeweyPublicExperimentAction.PublicExperiment or DeweyPublicExperimentAction.KeepInquiryCommunity;
         bool declines = action == DeweyPublicExperimentAction.KeepPeirce;
-        if (adopts && !journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.CompletionEdgeId)
-            && !graph.TryApply(journey, DeweyPublicExperimentState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
-            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines)
+        {
+            if (state.FixedMode)
+            {
+                if (!journey.DeclinedFixedActs.Contains(state.ActIndex)
+                    && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+            }
+            else if (!journey.ResolvedQuestionActs.Contains(state.ActIndex)
+                && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
+        }
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -140,17 +150,28 @@ internal static class DeweyPublicExperimentFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding
             || !state.RoutePlaced && !journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool atSource = journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId
+            || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.ResolvedQuestionActs.Contains(3)
-                && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
+        {
+            bool slotAvailable = state.FixedMode
+                ? !journey.DeclinedFixedActs.Contains(state.ActIndex)
+                : !journey.ResolvedQuestionActs.Contains(state.ActIndex);
+            return journey.LastFixedAct == state.ActIndex && !adopted && slotAvailable && atSource;
+        }
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == state.ActIndex
-                && journey.ResolvedQuestionActs.Contains(3)
+        {
+            bool slotConsumed = state.FixedMode
+                ? journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
+                : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+            return !state.QuestionDeclined && adopted && slotConsumed
                 && journey.CurrentNodeId == DeweyPublicExperimentState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == state.ActIndex
-            && journey.ResolvedQuestionActs.Contains(3)
-            && (journey.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
+        }
+        bool declined = state.FixedMode
+            ? journey.DeclinedFixedActs.Contains(state.ActIndex)
+            : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+        return !adopted && journey.LastFixedAct == state.ActIndex && declined && atSource;
     }
 
     public static string DescriptionKey(DeweyPublicExperimentState state) => state.Stage switch

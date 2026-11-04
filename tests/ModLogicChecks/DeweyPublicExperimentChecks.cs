@@ -44,7 +44,27 @@ internal static class DeweyPublicExperimentChecks
             && declined.CurrentNodeId == DeweyPublicExperimentState.SourceNodeId,
             "Declining must leave the player on Peirce's node.");
 
-        var tampered = DeweyPublicExperimentState.Create("DEWEY_PUBLIC_EXPERIMENT:TEST:3");
+
+        var fixedState = DeweyPublicExperimentState.CreateAt("DEWEY_PUBLIC_EXPERIMENT:TEST:4", 3, "WESTERN_EDGE_109");
+        fixedState.RoutePlaced = true;
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = DeweyPublicExperimentState.SourceNodeId,
+            RouteId = "FALLIBLE_INQUIRY",
+            LastFixedAct = 3,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { "WESTERN_EDGE_108" },
+        };
+        Check(DeweyPublicExperimentFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The default Dewey room must sit on the third-act fixed slot.");
+        DeweyPublicExperimentFlow.TryPrepare(fixedState, DeweyPublicExperimentAction.PublicExperiment);
+        Check(DeweyPublicExperimentFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The default Dewey choice must take the third-act fixed link.");
+        Check(fixedJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_109")
+            && fixedJourney.CurrentNodeId == DeweyPublicExperimentState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3,
+            "Adopting on the default line must move to Dewey.");
+
+        var tampered = DeweyPublicExperimentState.Create("DEWEY_PUBLIC_EXPERIMENT:TEST:5");
         tampered.Standard = DeweyPublicExperimentStandard.Community;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
     }
