@@ -74,9 +74,6 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SaussureSign));
         CheckBoundary(typeof(AristotleCategoryTablet), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             [typeof(SaussureSign)], doctrine: false, position: 2, route: "STRUCTURE_AND_EXCLUSION");
-        ModelDb.Inject(typeof(KierkegaardFaith));
-        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
-            [typeof(KierkegaardFaith)], doctrine: false, position: 2, route: "INDIVIDUAL_COMMITMENT");
         ModelDb.Inject(typeof(BenthamUtility));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM");
@@ -101,6 +98,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"], checkRoom: true);
+        ModelDb.Inject(typeof(KierkegaardFaith));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(KierkegaardFaith)], doctrine: false, position: 2, actIndex: 1,
+            route: "INDIVIDUAL_COMMITMENT", checkRoom: true);
         ModelDb.Inject(typeof(HegelRecognition));
         CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__SELF_AND_OTHER__CORE",
             [typeof(HegelRecognition)], doctrine: true, position: 2, actIndex: 2,

@@ -110,7 +110,14 @@ public sealed class KierkegaardFaith : EventModel
         ReferenceEquals(shared.KierkegaardFaith, state) && shared.WesternJourney is { } journey
         && KierkegaardFaithFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 0;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.KierkegaardFaith is { } state)
+            actIndex = state.ActIndex == 3 || state.ActIndex == 2 && run.CurrentActIndex == 1 ? 1 : 0;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(KierkegaardFaithState state)
     {
@@ -140,7 +147,8 @@ public sealed class KierkegaardFaith : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.KierkegaardFaith is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1")
             && KierkegaardFaithFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

@@ -175,6 +175,7 @@
     <Compile Include="..\..\src\Philosophy\SchellingNatureState.cs" Link="SchellingNatureState.cs" />
     <Compile Include="..\..\src\Philosophy\SchellingNatureTriggerPolicy.cs" Link="SchellingNatureTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\KierkegaardFaithState.cs" Link="KierkegaardFaithState.cs" />
+    <Compile Include="..\..\src\Philosophy\KierkegaardFaithTriggerPolicy.cs" Link="KierkegaardFaithTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MarxAlienationState.cs" Link="MarxAlienationState.cs" />
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />
     <Compile Include="..\..\src\Philosophy\BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
