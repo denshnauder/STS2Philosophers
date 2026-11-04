@@ -14,6 +14,18 @@ internal static class AustinSpeechActChecks
             return j;
         }
 
+        var lateJourney = new WesternJourneyState
+        {
+            CurrentNodeId = AustinSpeechActState.LateSourceNodeId,
+            LastFixedAct = 3,
+        };
+        var lateState = AustinSpeechActState.CreateAt("AUSTIN_SPEECH_ACT:TEST:3", 3);
+        Check(AustinSpeechActFlow.IsRouteConsistent(lateState, lateJourney),
+            "Austin's late practice opens after Wittgenstein on the third act.");
+        Check(!AustinSpeechActFlow.IsRouteConsistent(
+                AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2"), lateJourney),
+            "The legacy act-two station must not open on Wittgenstein's late node.");
+
         var journey = NewJourney();
         var state = AustinSpeechActState.Create("AUSTIN_SPEECH_ACT:TEST:2");
         Check(AustinSpeechActFlow.IsRouteConsistent(state, journey),

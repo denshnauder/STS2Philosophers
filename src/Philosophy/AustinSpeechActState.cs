@@ -33,9 +33,11 @@ internal sealed class AustinSpeechActState : IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE";
+    public const string LateSourceNodeId = "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 2;
     public AustinSpeechActStage Stage { get; set; }
     public AustinSpeechActAction PendingAction { get; set; }
     public List<AustinSpeechActAction> ConfirmedActions { get; set; } = [];
@@ -53,15 +55,19 @@ internal sealed class AustinSpeechActState : IEventGoldCostState
     public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
-    public static AustinSpeechActState Create(string instanceId) => new()
+    public static AustinSpeechActState Create(string instanceId) => CreateAt(instanceId, 2);
+
+    public static AustinSpeechActState CreateAt(string instanceId, int actIndex) => new()
     {
         InstanceId = instanceId,
+        ActIndex = actIndex,
         Stage = AustinSpeechActStage.Station,
     };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        if (ActIndex is < 2 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
     }
 
@@ -186,8 +192,13 @@ internal static class AustinSpeechActFlow
 
     public static bool IsRouteConsistent(AustinSpeechActState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || journey.CurrentNodeId != AustinSpeechActState.SourceNodeId
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        if (state.ActIndex == 3)
+        {
+            if (journey.CurrentNodeId != AustinSpeechActState.LateSourceNodeId
+                || journey.LastFixedAct != 3) return false;
+        }
+        else if (journey.CurrentNodeId != AustinSpeechActState.SourceNodeId
             || journey.LastFixedAct != 2
             || !journey.ResolvedQuestionActs.Contains(2)
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_029")

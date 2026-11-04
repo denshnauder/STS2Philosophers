@@ -780,6 +780,22 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("AustinSpeechActPatch", "TrySelectExistingNative", run) is null,
             "Austin's existing-state restore honors the native visited identity.");
+
+        var lateTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var lateFixture = (NativeRuntimeFixture)lateTuple[0]!; var lateRun = (RunState)lateTuple[1]!;
+        object lateJourney = Activator.CreateInstance(T("WesternJourneyState"), true)!;
+        Put(lateJourney, "CurrentNodeId", "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE");
+        Put(lateJourney, "LastFixedAct", 3);
+        object lateShared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(lateShared, "WesternJourney", lateJourney);
+        Call("PhilosophyRunStateService", "Restore", lateRun, lateShared);
+        EventModel? lateSelected = (EventModel?)Call("AustinSpeechActPatch", "TrySelectNative", lateRun);
+        Check(lateSelected is AustinSpeechAct,
+            "Austin's late practice opens after Wittgenstein on the third act.");
+        object lateState = Get(CurrentShared(lateRun), "AustinSpeechAct");
+        Check((int)Get(lateState, "ActIndex") == 3,
+            "Austin's late practice records the third act, not the legacy handover act.");
     }
 
     private static void CheckPopperDirect()

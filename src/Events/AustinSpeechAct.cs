@@ -158,7 +158,12 @@ public sealed class AustinSpeechAct : EventModel
         && shared.WesternJourney is { } journey
         && AustinSpeechActFlow.TryCommitPending(state, journey);
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.AustinSpeechAct is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(AustinSpeechActState state)
     {
@@ -190,7 +195,7 @@ public sealed class AustinSpeechAct : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.AustinSpeechAct is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && AustinSpeechActFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
