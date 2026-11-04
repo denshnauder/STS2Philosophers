@@ -47,6 +47,9 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(FregeSense));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             [typeof(FregeSense)], doctrine: false, position: 2, route: "FORMAL_LANGUAGE");
+        CheckBoundary(typeof(SocratesBalanceWeight), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(FregeSense)], doctrine: false, position: 1, actIndex: 1,
+            route: "FORMAL_LANGUAGE", checkRoom: true);
         ModelDb.Inject(typeof(LockeCargoIdentity));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
             [typeof(LockeCargoIdentity)], doctrine: true, position: 2, route: "EXPERIENCE_AND_SELF");

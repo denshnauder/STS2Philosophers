@@ -10,7 +10,8 @@ internal static class FregeSensePatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         FregeSenseState? saved = shared.FregeSense;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,12 +23,35 @@ internal static class FregeSensePatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         FregeSenseState? saved = shared.FregeSense;
         FregeSense? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 1
+                || journey.LastFixedAct != 2
+                || journey.CurrentNodeId != FregeSenseState.SourceNodeId) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            string fixedEdge = fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Where(edge => edge.Act == 2 && edge.ToNodeId == FregeSenseState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty;
+            if (fixedEdge.Length == 0) return null;
+            var fixedCandidate = saved ?? FregeSenseState.CreateAt(
+                $"FREGE_SENSE:{run.Rng.Seed}:2", 2, fixedEdge);
+            if (saved is not null && !saved.EdgeCommitted && !saved.FixedDeclined && !saved.Closed)
+            {
+                fixedCandidate.ActIndex = 2;
+                fixedCandidate.EdgeId = fixedEdge;
+            }
+            if (!FregeSenseFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.FregeSense = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Frege's sense room.");
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes

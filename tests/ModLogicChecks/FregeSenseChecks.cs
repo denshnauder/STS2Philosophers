@@ -38,6 +38,21 @@ internal static class FregeSenseChecks
             && declined.CurrentNodeId == FregeSenseState.SourceNodeId,
             "Declining must leave the player on Descartes' node.");
 
+        var fixedState = FregeSenseState.CreateAt(
+            "FREGE_SENSE:TEST:F", 2, "WESTERN_EDGE_104");
+        var fixedJourney = graph.Start(FregeSenseState.SourceNodeId);
+        fixedJourney.RouteId = "FORMAL_LANGUAGE";
+        fixedJourney.LastFixedAct = 2;
+        Check(FregeSenseFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The default room must sit on act two's fixed slot after Aristotle.");
+        Check(FregeSenseFlow.TryPrepare(fixedState, FregeSenseAction.SenseAndReference)
+            && FregeSenseFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The default room must adopt Frege through edge 104.");
+        Check(fixedJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_104")
+            && fixedJourney.CurrentNodeId == FregeSenseState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3,
+            "The default fixed room must consume act two, not a question slot.");
+
         var tampered = FregeSenseState.Create("FREGE_SENSE:TEST:3");
         tampered.Standard = FregeSenseStandard.Script;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
