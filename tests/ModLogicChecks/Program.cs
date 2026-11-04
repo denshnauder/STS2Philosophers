@@ -87,6 +87,7 @@ try { KuhnParadigmChecks.Run(); } catch (Exception e) { failures.Add("KuhnParadi
 try { RoomIntegrationChecks.Run(); } catch (Exception e) { failures.Add("RoomIntegrationChecks: " + e.Message); }
 try { EventPageLocalizationChecks.Run(); } catch (Exception e) { failures.Add("EventPageLocalizationChecks: " + e.Message); }
 try { WollstonecraftAdmissionChecks.Run(); } catch (Exception e) { failures.Add("WollstonecraftAdmissionChecks: " + e.Message); }
+try { KantKnowledgeSynthesisChecks.Run(); } catch (Exception e) { failures.Add("KantKnowledgeSynthesisChecks: " + e.Message); }
 try { KantApperceptionChecks.Run(); } catch (Exception e) { failures.Add("KantApperceptionChecks: " + e.Message); }
 try { SchopenhauerWillDenialChecks.Run(); } catch (Exception e) { failures.Add("SchopenhauerWillDenialChecks: " + e.Message); }
 try { JamesForcedBridgeChecks.Run(); } catch (Exception e) { failures.Add("JamesForcedBridgeChecks: " + e.Message); }

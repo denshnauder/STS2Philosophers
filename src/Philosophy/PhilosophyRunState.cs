@@ -52,6 +52,7 @@ internal sealed class PhilosophyRunState
     public HumeInductionState? HumeInduction { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public KantApperceptionState? KantApperception { get; set; }
+    public KantKnowledgeSynthesisState? KantKnowledgeSynthesis { get; set; }
     public SchopenhauerWillDenialState? SchopenhauerWillDenial { get; set; }
     public JamesForcedBridgeState? JamesForcedBridge { get; set; }
     public CamusRevoltLimitState? CamusRevoltLimit { get; set; }
@@ -163,6 +164,7 @@ internal sealed class PhilosophyRunState
         || HumeInduction is not null
         || WollstonecraftAdmission is not null
         || KantApperception is not null
+        || KantKnowledgeSynthesis is not null
         || SchopenhauerWillDenial is not null
         || JamesForcedBridge is not null
         || CamusRevoltLimit is not null
@@ -404,6 +406,7 @@ internal sealed class PhilosophyRunState
         HumeInduction?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();
+        KantKnowledgeSynthesis?.NormalizeAfterLoad();
         SchopenhauerWillDenial?.NormalizeAfterLoad();
         JamesForcedBridge?.NormalizeAfterLoad();
         CamusRevoltLimit?.NormalizeAfterLoad();
