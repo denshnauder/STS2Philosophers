@@ -44,6 +44,25 @@ internal static class DeleuzeDifferenceChecks
             && declined.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId,
             "Declining must leave the player on Peirce's node.");
 
+        var fixedState = DeleuzeDifferenceState.CreateAt(
+            "DELEUZE_DIFFERENCE:TEST:F", 3, DeleuzeDifferenceState.FixedCompletionEdgeId, fixedMode: true);
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = DeleuzeDifferenceState.SourceNodeId,
+            RouteId = "NATURE_AND_BECOMING",
+            LastFixedAct = 2,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { DeleuzeDifferenceState.FixedRequiredEdgeId },
+        };
+        Check(DeleuzeDifferenceFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The fixed room must sit on act three after Schelling's fixed edge.");
+        Check(DeleuzeDifferenceFlow.TryPrepare(fixedState, DeleuzeDifferenceAction.DifferenceRepetition)
+            && DeleuzeDifferenceFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The fixed room must commit difference through edge 157.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(DeleuzeDifferenceState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == DeleuzeDifferenceState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "The fixed room must not consume a question slot.");
+
         var tampered = DeleuzeDifferenceState.Create("DELEUZE_DIFFERENCE:TEST:3");
         tampered.Standard = DeleuzeDifferenceStandard.Rhizome;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

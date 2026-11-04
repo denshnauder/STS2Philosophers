@@ -18,22 +18,33 @@ internal sealed class DeleuzeDifferenceState : IJsonOnDeserialized
     public const string AdoptedNodeId = "GILLES_DELEUZE__BEING_AND_CHANGE__CORE";
     public const string RequiredEdgeId = "";
     public const string CompletionEdgeId = "WESTERN_EDGE_058";
+    public const string FixedRequiredEdgeId = "WESTERN_EDGE_162";
+    public const string FixedCompletionEdgeId = "WESTERN_EDGE_157";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
     public DeleuzeDifferenceStage Stage { get; set; }
     public DeleuzeDifferenceAction PendingAction { get; set; }
     public List<DeleuzeDifferenceAction> ConfirmedActions { get; set; } = [];
     public DeleuzeDifferenceStandard Standard { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool QuestionDeclined { get; set; }
+    public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
     public static DeleuzeDifferenceState Create(string instanceId) => new() { InstanceId = instanceId };
 
+    public static DeleuzeDifferenceState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
+
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -48,14 +59,15 @@ internal sealed class DeleuzeDifferenceState : IJsonOnDeserialized
             || Closed && PendingAction != DeleuzeDifferenceAction.None
             || PendingAction != DeleuzeDifferenceAction.None
                 && !DeleuzeDifferenceFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (DeleuzeDifferenceAction action in ConfirmedActions)
         {
             if (replay.Closed || !DeleuzeDifferenceFlow.Options(replay.Stage).Contains(action)) return false;
             DeleuzeDifferenceFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && FixedDeclined == replay.FixedDeclined
+            && Closed == replay.Closed;
     }
 }
 
@@ -95,7 +107,8 @@ internal static class DeleuzeDifferenceFlow
                 break;
             case DeleuzeDifferenceAction.KeepSchelling:
                 state.Standard = DeleuzeDifferenceStandard.Schellingian;
-                state.QuestionDeclined = true;
+                if (state.FixedMode) state.FixedDeclined = true;
+                else state.QuestionDeclined = true;
                 state.Stage = DeleuzeDifferenceStage.ResultKept;
                 break;
             case DeleuzeDifferenceAction.Leave:
@@ -113,29 +126,37 @@ internal static class DeleuzeDifferenceFlow
         DeleuzeDifferenceAction action = state.PendingAction;
         bool adopts = action is DeleuzeDifferenceAction.DifferenceRepetition or DeleuzeDifferenceAction.Rhizome;
         bool declines = action == DeleuzeDifferenceAction.KeepSchelling;
-        if (adopts && !journey.CompletedEdgeIds.Contains(DeleuzeDifferenceState.CompletionEdgeId)
-            && !graph.TryApply(journey, DeleuzeDifferenceState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && state.FixedMode && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        if (declines && !state.FixedMode && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(DeleuzeDifferenceState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || DeleuzeDifferenceState.RequiredEdgeId.Length > 0
-                && !journey.CompletedEdgeIds.Contains(DeleuzeDifferenceState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(DeleuzeDifferenceState.CompletionEdgeId);
-        if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        string required = state.FixedMode ? DeleuzeDifferenceState.FixedRequiredEdgeId : DeleuzeDifferenceState.RequiredEdgeId;
+        if (required.Length > 0 && !journey.CompletedEdgeIds.Contains(required)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool declined = state.FixedMode
+            ? journey.DeclinedFixedActs.Contains(state.ActIndex)
+            : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+        if (!state.EdgeCommitted && !declined)
+        {
+            if (state.FixedMode)
+                return journey.LastFixedAct is 2 or 3 && !adopted
+                    && journey.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId;
+            return journey.LastFixedAct == 3 && !adopted
                 && journey.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId;
+        }
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
-                && journey.ResolvedQuestionActs.Contains(3)
+            return adopted && journey.LastFixedAct == 3 && (state.FixedMode || declined)
                 && journey.CurrentNodeId == DeleuzeDifferenceState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.ResolvedQuestionActs.Contains(3)
+        return !adopted && journey.LastFixedAct == 3 && declined
             && journey.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId;
     }
 
