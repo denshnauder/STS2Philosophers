@@ -10,7 +10,8 @@ internal static class LacanSignifierPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         LacanSignifierState? saved = shared.LacanSignifier;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,7 +23,8 @@ internal static class LacanSignifierPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         LacanSignifierState? saved = shared.LacanSignifier;
@@ -48,7 +50,7 @@ internal static class LacanSignifierPatch
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         LacanSignifierTriggerContext context = new(
-            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible, saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
@@ -76,7 +78,7 @@ internal static class LacanSignifierPatch
         }
         if (journey is null || !LacanSignifierFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LacanSignifier = candidate;
-        Log.Info("[STS2Philosophers] Presenting Lacan's signifier question.");
+        Log.Info("[STS2Philosophers] Presenting Lacan's signifier room.");
         return canonical;
     }
 

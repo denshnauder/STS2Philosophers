@@ -113,7 +113,14 @@ public sealed class LacanSignifier : EventModel
         ReferenceEquals(shared.LacanSignifier, state) && shared.WesternJourney is { } journey
         && LacanSignifierFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 1;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.LacanSignifier is { } state)
+            actIndex = state.EdgeId == "WESTERN_EDGE_088" ? 2 : 1;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(LacanSignifierState state)
     {
@@ -143,7 +150,10 @@ public sealed class LacanSignifier : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.LacanSignifier is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.EdgeId == LacanSignifierState.CompletionEdgeId
+                    && state.ActIndex == 2
+                    && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2")
             && LacanSignifierFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

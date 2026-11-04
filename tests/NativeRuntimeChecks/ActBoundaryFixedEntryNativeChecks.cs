@@ -57,8 +57,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(FreudUnconscious)], doctrine: true, position: 2, route: "UNCONSCIOUS_AND_NORM");
         ModelDb.Inject(typeof(LacanSignifier));
         CheckBoundary(typeof(DescartesThinkingLens), "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
-            [typeof(LacanSignifier)], doctrine: true, position: 2, actIndex: 2,
-            route: "UNCONSCIOUS_AND_NORM", required: ["WESTERN_EDGE_087"]);
+            [typeof(LacanSignifier)], doctrine: true, position: 3, actIndex: 2,
+            route: "UNCONSCIOUS_AND_NORM", required: ["WESTERN_EDGE_087"], checkRoom: true);
         ModelDb.Inject(typeof(KantUniversalization));
         CheckBoundary(typeof(DescartesThinkingLens), "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(KantUniversalization)], doctrine: true, position: 2, actIndex: 2,
