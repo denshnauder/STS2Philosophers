@@ -18,22 +18,33 @@ internal sealed class GadamerFusionState : IJsonOnDeserialized
     public const string AdoptedNodeId = "HANS_GEORG_GADAMER__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "";
     public const string CompletionEdgeId = "WESTERN_EDGE_075";
+    public const string FixedRequiredEdgeId = "WESTERN_EDGE_164";
+    public const string FixedCompletionEdgeId = "WESTERN_EDGE_161";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
     public GadamerFusionStage Stage { get; set; }
     public GadamerFusionAction PendingAction { get; set; }
     public List<GadamerFusionAction> ConfirmedActions { get; set; } = [];
     public GadamerFusionStandard Standard { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool QuestionDeclined { get; set; }
+    public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
     public static GadamerFusionState Create(string instanceId) => new() { InstanceId = instanceId };
 
+    public static GadamerFusionState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
+
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -48,14 +59,15 @@ internal sealed class GadamerFusionState : IJsonOnDeserialized
             || Closed && PendingAction != GadamerFusionAction.None
             || PendingAction != GadamerFusionAction.None
                 && !GadamerFusionFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (GadamerFusionAction action in ConfirmedActions)
         {
             if (replay.Closed || !GadamerFusionFlow.Options(replay.Stage).Contains(action)) return false;
             GadamerFusionFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && FixedDeclined == replay.FixedDeclined
+            && Closed == replay.Closed;
     }
 }
 
@@ -96,7 +108,8 @@ internal static class GadamerFusionFlow
                 break;
             case GadamerFusionAction.KeepHeidegger:
                 state.Standard = GadamerFusionStandard.Heideggerian;
-                state.QuestionDeclined = true;
+                if (state.FixedMode) state.FixedDeclined = true;
+                else state.QuestionDeclined = true;
                 state.Stage = GadamerFusionStage.ResultKept;
                 break;
             case GadamerFusionAction.HearEcho:
@@ -117,29 +130,37 @@ internal static class GadamerFusionFlow
         GadamerFusionAction action = state.PendingAction;
         bool adopts = action is GadamerFusionAction.HorizonFusion or GadamerFusionAction.EffectiveHistory;
         bool declines = action == GadamerFusionAction.KeepHeidegger;
-        if (adopts && !journey.CompletedEdgeIds.Contains(GadamerFusionState.CompletionEdgeId)
-            && !graph.TryApply(journey, GadamerFusionState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && state.FixedMode && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        if (declines && !state.FixedMode && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(GadamerFusionState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || GadamerFusionState.RequiredEdgeId.Length > 0
-                && !journey.CompletedEdgeIds.Contains(GadamerFusionState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(GadamerFusionState.CompletionEdgeId);
-        if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        string required = state.FixedMode ? GadamerFusionState.FixedRequiredEdgeId : GadamerFusionState.RequiredEdgeId;
+        if (required.Length > 0 && !journey.CompletedEdgeIds.Contains(required)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool declined = state.FixedMode
+            ? journey.DeclinedFixedActs.Contains(state.ActIndex)
+            : journey.ResolvedQuestionActs.Contains(state.ActIndex);
+        if (!state.EdgeCommitted && !declined)
+        {
+            if (state.FixedMode)
+                return journey.LastFixedAct is 2 or 3 && !adopted
+                    && journey.CurrentNodeId == GadamerFusionState.SourceNodeId;
+            return journey.LastFixedAct == 3 && !adopted
                 && journey.CurrentNodeId == GadamerFusionState.SourceNodeId;
+        }
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
-                && journey.ResolvedQuestionActs.Contains(3)
+            return adopted && journey.LastFixedAct == 3 && (state.FixedMode || declined)
                 && journey.CurrentNodeId == GadamerFusionState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.ResolvedQuestionActs.Contains(3)
+        return !adopted && journey.LastFixedAct == 3 && declined
             && journey.CurrentNodeId == GadamerFusionState.SourceNodeId;
     }
 

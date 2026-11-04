@@ -10,7 +10,8 @@ internal static class GadamerFusionPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         GadamerFusionState? saved = shared.GadamerFusion;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,12 +23,36 @@ internal static class GadamerFusionPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         GadamerFusionState? saved = shared.GadamerFusion;
         GadamerFusion? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 2
+                || !journey.CompletedEdgeIds.Contains(GadamerFusionState.FixedRequiredEdgeId)
+                || journey.LastFixedAct != 3) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            if (!fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == GadamerFusionState.FixedCompletionEdgeId)) return null;
+            var fixedCandidate = saved ?? GadamerFusionState.CreateAt(
+                $"GADAMER_FUSION:{run.Rng.Seed}:3", 3,
+                GadamerFusionState.FixedCompletionEdgeId, fixedMode: true);
+            if (saved is not null && !saved.EdgeCommitted && !saved.QuestionDeclined
+                && !saved.FixedDeclined && !saved.Closed)
+            {
+                fixedCandidate.FixedMode = true;
+                fixedCandidate.ActIndex = 3;
+                fixedCandidate.EdgeId = GadamerFusionState.FixedCompletionEdgeId;
+            }
+            if (!GadamerFusionFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.GadamerFusion = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Gadamer's fusion room.");
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")

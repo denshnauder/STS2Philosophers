@@ -80,6 +80,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(PeirceInquiry));
         CheckBoundary(typeof(SocratesQuestionCup), "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(PeirceInquiry)], doctrine: false, position: 2, route: "FALLIBLE_INQUIRY", checkRoom: true);
+        ModelDb.Inject(typeof(GadamerFusion));
+        CheckBoundary(typeof(DescartesThinkingLens), "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
+            [typeof(GadamerFusion)], doctrine: false, position: 2, actIndex: 2,
+            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_164"], checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);

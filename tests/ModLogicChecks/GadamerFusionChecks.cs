@@ -60,6 +60,25 @@ internal static class GadamerFusionChecks
             && GadamerFusionFlow.TryCommitPending(echo, echoJourney, graph) && echo.Closed,
             "The echo page must close the room.");
 
+        var fixedState = GadamerFusionState.CreateAt(
+            "GADAMER_FUSION:TEST:F", 3, GadamerFusionState.FixedCompletionEdgeId, fixedMode: true);
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = GadamerFusionState.SourceNodeId,
+            RouteId = "APPEARANCE_AND_INTERPRETATION",
+            LastFixedAct = 2,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { GadamerFusionState.FixedRequiredEdgeId },
+        };
+        Check(GadamerFusionFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The fixed room must sit on act three after Heidegger's fixed edge.");
+        Check(GadamerFusionFlow.TryPrepare(fixedState, GadamerFusionAction.HorizonFusion)
+            && GadamerFusionFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The fixed room must commit horizon fusion through edge 161.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(GadamerFusionState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == GadamerFusionState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "The fixed room must not consume a question slot.");
+
         var tampered = GadamerFusionState.Create("GADAMER_FUSION:TEST:3");
         tampered.Standard = GadamerFusionStandard.History;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
