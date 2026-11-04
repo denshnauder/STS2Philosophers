@@ -109,7 +109,12 @@ public sealed class MillHarm : EventModel
         ReferenceEquals(shared.MillHarm, state) && shared.WesternJourney is { } journey
         && MillHarmFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.MillHarm is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(MillHarmState state)
     {
@@ -139,7 +144,7 @@ public sealed class MillHarm : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.MillHarm is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && MillHarmFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

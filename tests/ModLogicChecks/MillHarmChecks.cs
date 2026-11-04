@@ -61,6 +61,26 @@ internal static class MillHarmChecks
         Check(!MillHarmFlow.IsRouteConsistent(shared.MillHarm!, shared.WesternJourney!),
             "Mill cannot open without 040.");
 
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = MillHarmState.BenthamSourceNodeId,
+            RouteId = "CONSEQUENCE_AND_FREEDOM",
+            LastFixedAct = 3,
+        };
+        var fixedState = MillHarmState.CreateAt(
+            "MILL_HARM:TEST:F", 3, "WESTERN_EDGE_131", fixedMode: true);
+        Check(MillHarmFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "Mill's fixed room opens on Bentham's third act without a question.");
+        Check(MillHarmFlow.TryPrepare(fixedState, MillHarmAction.ApplyHarmTest)
+            && MillHarmFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "Mill's fixed room accepts the harm test.");
+        Check(MillHarmFlow.TryPrepare(fixedState, MillHarmAction.ProtectConduct)
+            && MillHarmFlow.TryCommitPending(fixedState, fixedJourney, graph)
+            && fixedJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_131")
+            && fixedJourney.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
+            && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "Mill's fixed room adopts 131 without spending a question slot.");
+
         MillHarmTriggerContext context = new(true, true, true, 1, true, 1,
             MillHarmState.SourceNodeId, 2, true, true, false, false, false, false, true);
         Check(MillHarmTriggerPolicy.ShouldInsert(context), "Mill is offered after a real act-two combat.");

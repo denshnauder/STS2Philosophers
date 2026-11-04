@@ -91,6 +91,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
             [typeof(DeleuzeDifference)], doctrine: false, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_162"], checkRoom: true);
+        ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(DescartesThinkingLens), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
+        CheckBoundary(typeof(DescartesThinkingLens), "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "SYMPATHY_AND_PUBLIC_ACTION", checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);

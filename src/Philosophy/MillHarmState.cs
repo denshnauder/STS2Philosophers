@@ -10,24 +10,35 @@ internal sealed class MillHarmState : IJsonOnDeserialized
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE";
+    public const string BenthamSourceNodeId = "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE";
+    public const string SmithSourceNodeId = "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_040";
     public const string CompletionEdgeId = "WESTERN_EDGE_041";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 2;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
     public MillHarmStage Stage { get; set; }
     public MillHarmAction PendingAction { get; set; }
     public List<MillHarmAction> ConfirmedActions { get; set; } = [];
     public MillHarmStandard Standard { get; set; }
     public bool EdgeCommitted { get; set; }
     public bool QuestionDeclined { get; set; }
+    public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static MillHarmState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static MillHarmState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId, fixedMode: false);
+
+    public static MillHarmState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 2 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
     }
 
@@ -42,14 +53,15 @@ internal sealed class MillHarmState : IJsonOnDeserialized
             || Closed && PendingAction != MillHarmAction.None
             || PendingAction != MillHarmAction.None
                 && !MillHarmFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (MillHarmAction action in ConfirmedActions)
         {
             if (replay.Closed || !MillHarmFlow.Options(replay.Stage).Contains(action)) return false;
             MillHarmFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && FixedDeclined == replay.FixedDeclined
+            && Closed == replay.Closed;
     }
 }
 
@@ -83,7 +95,9 @@ internal static class MillHarmFlow
                 state.Standard = MillHarmStandard.Offense; state.EdgeCommitted = true;
                 state.Stage = MillHarmStage.ResultOffense; break;
             case MillHarmAction.KeepWollstonecraft:
-                state.QuestionDeclined = true; state.Stage = MillHarmStage.ResultKept; break;
+                if (state.FixedMode) state.FixedDeclined = true;
+                else state.QuestionDeclined = true;
+                state.Stage = MillHarmStage.ResultKept; break;
             case MillHarmAction.Leave: state.Closed = true; break;
         }
         state.ConfirmedActions.Add(action);
@@ -96,19 +110,33 @@ internal static class MillHarmFlow
         MillHarmAction action = state.PendingAction;
         bool adopts = action is MillHarmAction.ProtectConduct or MillHarmAction.CountOffense;
         bool declines = action == MillHarmAction.KeepWollstonecraft;
-        if (adopts && !journey.CompletedEdgeIds.Contains(MillHarmState.CompletionEdgeId)
-            && !graph.TryApply(journey, MillHarmState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(2)
-            && !graph.TryDecline(journey, "Question", 2)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && state.FixedMode && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        if (declines && !state.FixedMode && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(MillHarmState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(MillHarmState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(MillHarmState.CompletionEdgeId);
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        if (state.FixedMode)
+        {
+            bool source = journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
+                or MillHarmState.SmithSourceNodeId;
+            bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
+            if (!state.EdgeCommitted && !declined)
+                return journey.LastFixedAct == state.ActIndex && !adopted && source;
+            if (state.EdgeCommitted)
+                return adopted && journey.LastFixedAct == state.ActIndex
+                    && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+            return !adopted && declined && journey.LastFixedAct == state.ActIndex && source;
+        }
+        if (!journey.CompletedEdgeIds.Contains(MillHarmState.RequiredEdgeId)) return false;
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == 2 && !adopted && !journey.ResolvedQuestionActs.Contains(2)
                 && journey.CurrentNodeId == MillHarmState.SourceNodeId;
