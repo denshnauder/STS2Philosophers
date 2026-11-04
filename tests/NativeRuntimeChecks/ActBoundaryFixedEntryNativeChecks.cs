@@ -140,7 +140,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(MerleauPontyBody));
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
             [typeof(MerleauPontyBody)], doctrine: true, position: 2, actIndex: 2,
-            route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_102"]);
+            route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_102"], checkRoom: true);
         ModelDb.Inject(typeof(DeweyPublicExperiment));
         CheckBoundary(typeof(SocratesQuestionCup), "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(DeweyPublicExperiment)], doctrine: false, position: 3, actIndex: 2,

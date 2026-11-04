@@ -110,7 +110,14 @@ public sealed class MerleauPontyBody : EventModel
         ReferenceEquals(shared.MerleauPontyBody, state) && shared.WesternJourney is { } journey
         && MerleauPontyBodyFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 1;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.MerleauPontyBody is { } state)
+            actIndex = Math.Max(0, state.ActIndex - 1);
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(MerleauPontyBodyState state)
     {
@@ -140,7 +147,8 @@ public sealed class MerleauPontyBody : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.MerleauPontyBody is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2" && state.ActIndex == 1)
             && MerleauPontyBodyFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
