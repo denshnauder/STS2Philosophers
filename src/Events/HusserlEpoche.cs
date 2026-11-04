@@ -111,7 +111,14 @@ public sealed class HusserlEpoche : EventModel
         ReferenceEquals(shared.HusserlEpoche, state) && shared.WesternJourney is { } journey
         && HusserlEpocheFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 0;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.HusserlEpoche is { } state)
+            actIndex = Math.Max(0, state.ActIndex - 1);
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(HusserlEpocheState state)
     {
@@ -141,7 +148,8 @@ public sealed class HusserlEpoche : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.HusserlEpoche is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1" && state.ActIndex == 1)
             && HusserlEpocheFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

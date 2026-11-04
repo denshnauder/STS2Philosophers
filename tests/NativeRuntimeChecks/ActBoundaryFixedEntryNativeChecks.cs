@@ -43,7 +43,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(SmithSympathy)], doctrine: false, position: 2, route: "SYMPATHY_AND_PUBLIC_ACTION");
         ModelDb.Inject(typeof(HusserlEpoche));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
-            [typeof(HusserlEpoche)], doctrine: true, position: 2, route: "APPEARANCE_AND_INTERPRETATION");
+            [typeof(HusserlEpoche)], doctrine: true, position: 2, route: "APPEARANCE_AND_INTERPRETATION", checkRoom: true);
         ModelDb.Inject(typeof(FregeSense));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             [typeof(FregeSense)], doctrine: false, position: 2, route: "FORMAL_LANGUAGE");
