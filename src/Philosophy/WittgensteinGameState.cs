@@ -18,9 +18,17 @@ internal sealed class WittgensteinGameState : IJsonOnDeserialized
     public const string AdoptedNodeId = "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_078";
     public const string CompletionEdgeId = "WESTERN_EDGE_079";
+    public const string EarlySourceNodeId = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE";
+    public const string EarlyCompletionEdgeId = "WESTERN_EDGE_152";
+    public const string LateFormalCompletionEdgeId = "WESTERN_EDGE_185";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
+    public string FixedSourceNodeId { get; set; } = string.Empty;
+    public bool FixedDeclined { get; set; }
     public WittgensteinGameStage Stage { get; set; }
     public WittgensteinGameAction PendingAction { get; set; }
     public List<WittgensteinGameAction> ConfirmedActions { get; set; } = [];
@@ -29,11 +37,18 @@ internal sealed class WittgensteinGameState : IJsonOnDeserialized
     public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static WittgensteinGameState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static WittgensteinGameState Create(string instanceId) =>
+        CreateAt(instanceId, 3, CompletionEdgeId, fixedMode: false);
+
+    public static WittgensteinGameState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        FixedSourceNodeId ??= string.Empty;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -48,14 +63,15 @@ internal sealed class WittgensteinGameState : IJsonOnDeserialized
             || Closed && PendingAction != WittgensteinGameAction.None
             || PendingAction != WittgensteinGameAction.None
                 && !WittgensteinGameFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (WittgensteinGameAction action in ConfirmedActions)
         {
             if (replay.Closed || !WittgensteinGameFlow.Options(replay.Stage).Contains(action)) return false;
             WittgensteinGameFlow.Apply(replay, action);
         }
         return Stage == replay.Stage && Standard == replay.Standard && EdgeCommitted == replay.EdgeCommitted
-            && QuestionDeclined == replay.QuestionDeclined && Closed == replay.Closed;
+            && QuestionDeclined == replay.QuestionDeclined && FixedDeclined == replay.FixedDeclined
+            && Closed == replay.Closed;
     }
 }
 
@@ -95,7 +111,8 @@ internal static class WittgensteinGameFlow
                 break;
             case WittgensteinGameAction.KeepRussell:
                 state.Standard = WittgensteinGameStandard.Russellian;
-                state.QuestionDeclined = true;
+                if (state.FixedMode) state.FixedDeclined = true;
+                else state.QuestionDeclined = true;
                 state.Stage = WittgensteinGameStage.ResultKept;
                 break;
             case WittgensteinGameAction.Leave:
@@ -113,9 +130,11 @@ internal static class WittgensteinGameFlow
         WittgensteinGameAction action = state.PendingAction;
         bool adopts = action is WittgensteinGameAction.LanguageGame or WittgensteinGameAction.PictureTheory;
         bool declines = action == WittgensteinGameAction.KeepRussell;
-        if (adopts && !journey.CompletedEdgeIds.Contains(WittgensteinGameState.CompletionEdgeId)
-            && !graph.TryApply(journey, WittgensteinGameState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
+        if (adopts && state.EdgeId.Length > 0 && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && state.FixedMode && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        if (declines && !state.FixedMode && !journey.ResolvedQuestionActs.Contains(3)
             && !graph.TryDecline(journey, "Question", 3)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
@@ -123,17 +142,37 @@ internal static class WittgensteinGameFlow
 
     public static bool IsRouteConsistent(WittgensteinGameState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(WittgensteinGameState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(WittgensteinGameState.CompletionEdgeId);
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        if (state.FixedMode)
+        {
+            string source = state.FixedSourceNodeId.Length > 0
+                ? state.FixedSourceNodeId
+                : state.ActIndex == 2
+                    ? WittgensteinGameState.EarlySourceNodeId
+                    : WittgensteinGameState.AdoptedNodeId;
+            bool hasEdge = state.EdgeId.Length > 0;
+            bool adopted = hasEdge && journey.CompletedEdgeIds.Contains(state.EdgeId);
+            bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
+            if (!state.EdgeCommitted && !state.FixedDeclined)
+                return journey.LastFixedAct == state.ActIndex && !declined
+                    && (!hasEdge || !adopted) && journey.CurrentNodeId == source;
+            if (state.EdgeCommitted)
+                return (!hasEdge || adopted) && !state.FixedDeclined
+                    && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
+                    && journey.CurrentNodeId == WittgensteinGameState.AdoptedNodeId;
+            return (!hasEdge || !adopted) && declined && journey.LastFixedAct == state.ActIndex
+                && journey.CurrentNodeId == source;
+        }
+        if (!journey.CompletedEdgeIds.Contains(WittgensteinGameState.RequiredEdgeId)) return false;
+        bool legacyAdopted = journey.CompletedEdgeIds.Contains(WittgensteinGameState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
+            return journey.LastFixedAct == 3 && !legacyAdopted && !journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == WittgensteinGameState.SourceNodeId;
         if (state.EdgeCommitted)
-            return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
+            return !state.QuestionDeclined && legacyAdopted && journey.LastFixedAct == 3
                 && journey.ResolvedQuestionActs.Contains(3)
                 && journey.CurrentNodeId == WittgensteinGameState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
+        return !legacyAdopted && journey.LastFixedAct == 3
             && journey.ResolvedQuestionActs.Contains(3)
             && journey.CurrentNodeId == WittgensteinGameState.SourceNodeId;
     }

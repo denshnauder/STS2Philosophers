@@ -110,7 +110,12 @@ public sealed class WittgensteinGame : EventModel
         ReferenceEquals(shared.WittgensteinGame, state) && shared.WesternJourney is { } journey
         && WittgensteinGameFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.WittgensteinGame is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(WittgensteinGameState state)
     {
@@ -140,7 +145,7 @@ public sealed class WittgensteinGame : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.WittgensteinGame is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && WittgensteinGameFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

@@ -108,6 +108,16 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
+        ModelDb.Inject(typeof(WittgensteinGame));
+        CheckBoundary(typeof(AristotleCategoryTablet), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            [typeof(WittgensteinGame)], doctrine: false, position: 1, actIndex: 1,
+            route: "ORDINARY_SPEECH", checkRoom: true);
+        CheckBoundary(typeof(AristotleCategoryTablet), "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+            [typeof(WittgensteinGame)], doctrine: false, position: 2, actIndex: 2,
+            route: "ORDINARY_SPEECH", required: ["WESTERN_EDGE_152"], checkRoom: true);
+        CheckBoundary(typeof(AristotleCategoryTablet), "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+            [typeof(WittgensteinGame)], doctrine: false, position: 2, actIndex: 2,
+            route: "FORMAL_LANGUAGE", required: ["WESTERN_EDGE_184"], checkRoom: true);
         ModelDb.Inject(typeof(SchopenhauerWillDenial));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(SchopenhauerWillDenial)], doctrine: false, position: 1, actIndex: 1,

@@ -44,6 +44,61 @@ internal static class WittgensteinGameChecks
             && declined.CurrentNodeId == WittgensteinGameState.SourceNodeId,
             "Declining must leave the player on Peirce's node.");
 
+        var earlyJourney = new WesternJourneyState
+        {
+            CurrentNodeId = WittgensteinGameState.EarlySourceNodeId,
+            RouteId = "ORDINARY_SPEECH",
+            LastFixedAct = 2,
+        };
+        var early = WittgensteinGameState.CreateAt(
+            "WITTGENSTEIN_GAME:TEST:E", 2, WittgensteinGameState.EarlyCompletionEdgeId, fixedMode: true);
+        early.FixedSourceNodeId = WittgensteinGameState.EarlySourceNodeId;
+        Check(WittgensteinGameFlow.IsRouteConsistent(early, earlyJourney),
+            "Early Wittgenstein opens on the second fixed slot after Aristotle.");
+        Check(WittgensteinGameFlow.TryPrepare(early, WittgensteinGameAction.LanguageGame),
+            "Early Wittgenstein prepares 152.");
+        Check(WittgensteinGameFlow.TryCommitPending(early, earlyJourney, graph),
+            "Early Wittgenstein commits 152.");
+        Check(earlyJourney.CompletedEdgeIds.Contains(WittgensteinGameState.EarlyCompletionEdgeId)
+            && earlyJourney.CurrentNodeId == WittgensteinGameState.AdoptedNodeId
+            && earlyJourney.LastFixedAct == 3 && earlyJourney.ResolvedQuestionActs.Count == 0,
+            "Early Wittgenstein takes the second fixed slot without a question.");
+
+        var lateJourney = new WesternJourneyState
+        {
+            CurrentNodeId = WittgensteinGameState.AdoptedNodeId,
+            RouteId = "ORDINARY_SPEECH",
+            LastFixedAct = 3,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { WittgensteinGameState.EarlyCompletionEdgeId },
+        };
+        var late = WittgensteinGameState.CreateAt("WITTGENSTEIN_GAME:TEST:L", 3, string.Empty, fixedMode: true);
+        late.FixedSourceNodeId = WittgensteinGameState.AdoptedNodeId;
+        Check(WittgensteinGameFlow.IsRouteConsistent(late, lateJourney),
+            "Late Wittgenstein opens on the third fixed slot after early Wittgenstein.");
+        Check(WittgensteinGameFlow.TryPrepare(late, WittgensteinGameAction.LanguageGame)
+            && WittgensteinGameFlow.TryCommitPending(late, lateJourney, graph),
+            "Late Wittgenstein adopts the same-node phase.");
+        Check(lateJourney.CurrentNodeId == WittgensteinGameState.AdoptedNodeId
+            && lateJourney.LastFixedAct == 3 && lateJourney.ResolvedQuestionActs.Count == 0,
+            "Late Wittgenstein takes the third fixed slot without a question.");
+
+        var formalJourney = new WesternJourneyState
+        {
+            CurrentNodeId = WittgensteinGameState.SourceNodeId,
+            RouteId = "FORMAL_LANGUAGE",
+            LastFixedAct = 3,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { "WESTERN_EDGE_184" },
+        };
+        var formal = WittgensteinGameState.CreateAt(
+            "WITTGENSTEIN_GAME:TEST:F", 3, WittgensteinGameState.LateFormalCompletionEdgeId, fixedMode: true);
+        formal.FixedSourceNodeId = WittgensteinGameState.SourceNodeId;
+        Check(WittgensteinGameFlow.TryPrepare(formal, WittgensteinGameAction.LanguageGame)
+            && WittgensteinGameFlow.TryCommitPending(formal, formalJourney, graph),
+            "Formal-language Wittgenstein adopts 185 after Russell.");
+        Check(formalJourney.CompletedEdgeIds.Contains(WittgensteinGameState.LateFormalCompletionEdgeId)
+            && formalJourney.CurrentNodeId == WittgensteinGameState.AdoptedNodeId,
+            "Formal-language Wittgenstein takes the third fixed edge.");
+
         var tampered = WittgensteinGameState.Create("WITTGENSTEIN_GAME:TEST:3");
         tampered.Standard = WittgensteinGameStandard.Picture;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
