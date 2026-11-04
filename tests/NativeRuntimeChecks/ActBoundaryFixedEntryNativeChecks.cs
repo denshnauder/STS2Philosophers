@@ -32,6 +32,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SpinozaCauseNetwork));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 2);
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 1);
+        CheckBoundary(typeof(HeraclitusLyre), "HERACLITUS__BEING_AND_CHANGE__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 2,
+            route: "NATURE_AND_BECOMING", checkRoom: true, thinker: "HERACLITUS", doctrineId: "HERACLITUS_LYRE");
         ModelDb.Inject(typeof(EpicurusSharedMargin));
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__VIRTUE_AND_HAPPINESS__CORE", [typeof(EpicurusSharedMargin)], doctrine: false, position: 3, actIndex: 2, required: ["WESTERN_EDGE_009"]);
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__VIRTUE_AND_HAPPINESS__CORE", [typeof(EpicurusSharedMargin)], doctrine: false, position: 2, actIndex: 2, required: ["WESTERN_EDGE_009"]);
@@ -336,7 +338,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
     }
 
     private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null,
-        bool routeRules = false, bool checkRoom = false)
+        bool routeRules = false, bool checkRoom = false, string thinker = "DESCARTES",
+        string doctrineId = "DESCARTES_THINKING_LENS")
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
@@ -385,8 +388,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             : null;
         if (doctrineState is not null)
         {
-            Put(doctrineState, "ThinkerId", "DESCARTES");
-            Put(doctrineState, "DoctrineId", "DESCARTES_THINKING_LENS");
+            Put(doctrineState, "ThinkerId", thinker);
+            Put(doctrineState, "DoctrineId", doctrineId);
         }
         object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(shared, "CurrentDoctrine", doctrineState);

@@ -81,6 +81,9 @@ internal sealed class SpinozaCauseNetworkState : IJsonOnDeserialized
     public void NormalizeAfterLoad()
     {
         InstanceId ??= "";
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? SourceNodeId : SourceNode;
+        AdoptEdge = string.IsNullOrWhiteSpace(AdoptEdge) ? CompletionEdgeId : AdoptEdge;
+        SourceThinker = string.IsNullOrWhiteSpace(SourceThinker) ? "DESCARTES" : SourceThinker;
         if (ConfirmedActions is null || _closed is null)
         {
             Version = 0;

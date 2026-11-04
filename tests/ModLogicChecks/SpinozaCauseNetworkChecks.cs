@@ -220,6 +220,22 @@ internal static class SpinozaCauseNetworkChecks
             mismatched.WesternJourney!),
             "A state bound to another route node is inconsistent.");
 
+        // The nature line reaches Spinoza from Heraclitus, not from Descartes.
+        WesternRouteGraph natureGraph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState natureJourney = natureGraph.Start("HERACLITUS__BEING_AND_CHANGE__CORE");
+        natureJourney.RouteId = "NATURE_AND_BECOMING";
+        natureJourney.LastFixedAct = 1;
+        natureJourney.SeenThinkerIds.Add("HERACLITUS");
+        var natureState = SpinozaCauseNetworkState.Create("SPINOZA:TEST:NATURE");
+        natureState.SourceNode = "HERACLITUS__BEING_AND_CHANGE__CORE";
+        natureState.SourceThinker = "HERACLITUS";
+        natureState.AdoptEdge = "WESTERN_EDGE_110";
+        Check(SpinozaCauseNetworkFlow.IsRouteConsistent(natureState, natureJourney),
+            "The nature line's Heraclitus-to-Spinoza fixed room is consistent without Descartes.");
+        natureJourney.CurrentNodeId = SpinozaCauseNetworkState.SourceNodeId;
+        Check(!SpinozaCauseNetworkFlow.IsRouteConsistent(natureState, natureJourney),
+            "The nature line's room rejects a Descartes node mismatch.");
+
         Console.WriteLine("Spinoza cause network event checks passed: 7 paths, adoption and save integrity.");
     }
 

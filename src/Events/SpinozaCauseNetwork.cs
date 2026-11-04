@@ -59,9 +59,9 @@ public sealed class SpinozaCauseNetwork : EventModel
                 Block("SpinozaCauseNetwork entry persistence is unknown.");
                 return;
             }
-            if (!HasValidCarrier(run))
+            if (!HasValidCarrier(run, state))
             {
-                Block("SpinozaCauseNetwork requires an owned DescartesThinkingLens carrier.");
+                Block("SpinozaCauseNetwork requires the line's own practice carrier.");
                 return;
             }
             if (state.PendingAction != SpinozaCauseNetworkAction.None
@@ -91,16 +91,16 @@ public sealed class SpinozaCauseNetwork : EventModel
                 Block("SpinozaCauseNetwork run state is unavailable.");
                 return;
             }
-            if (!HasValidCarrier(run))
-            {
-                Block("SpinozaCauseNetwork requires an owned DescartesThinkingLens carrier.");
-                return;
-            }
             if (shared.SpinozaCauseNetwork is not { } state || !ReferenceEquals(state, expectedState)
                 || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
                 || state.ConfirmedActions.Count != expectedActionCount
                 || state.PendingAction != SpinozaCauseNetworkAction.None || state.Closed
                 || !SpinozaCauseNetworkFlow.TryPrepare(state, action)) return;
+            if (!HasValidCarrier(run, state))
+            {
+                Block("SpinozaCauseNetwork requires the line's own practice carrier.");
+                return;
+            }
             _ready = false;
             SetEventState(PageDescription(state), LockedOptions());
             if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
@@ -130,15 +130,15 @@ public sealed class SpinozaCauseNetwork : EventModel
         && SpinozaCauseNetworkFlow.TryCommitPending(state, journey,
             WesternRouteGraph.LoadEmbedded());
 
-    private bool HasValidCarrier(RunState run) =>
+    private bool HasValidCarrier(RunState run, SpinozaCauseNetworkState state) =>
         run.Players.Count == 1
         && ReferenceEquals(run.Players[0], Owner)
         && Owner is { } owner
-        && owner.Relics.OfType<DescartesThinkingLens>().FirstOrDefault() is { } cup
-        && cup.CanOfferNativeQuestion
+        && owner.Relics.OfType<WesternPracticeRelic>().Any(relic => relic.CanOfferNativeQuestion)
         && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
         && shared is not null
-        && shared.CurrentDoctrine is { ThinkerId: "DESCARTES", DoctrineId: "DESCARTES_THINKING_LENS" };
+        && shared.CurrentDoctrine is { ThinkerId: var thinkerId }
+        && thinkerId == state.SourceThinker;
 
     private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
 
@@ -172,7 +172,7 @@ public sealed class SpinozaCauseNetwork : EventModel
             && shared?.SpinozaCauseNetwork is { } state
             && shared.WesternJourney is { } journey
             && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
-            && HasValidCarrier(run)
+            && HasValidCarrier(run, state)
             && SpinozaCauseNetworkFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
