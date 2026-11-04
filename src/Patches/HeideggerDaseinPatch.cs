@@ -10,7 +10,8 @@ internal static class HeideggerDaseinPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         HeideggerDaseinState? saved = shared.HeideggerDasein;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,7 +23,8 @@ internal static class HeideggerDaseinPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         HeideggerDaseinState? saved = shared.HeideggerDasein;
@@ -35,6 +37,9 @@ internal static class HeideggerDaseinPatch
             .Select(route => route.ActTwoFigure == "MARTIN_HEIDEGGER" ? 2
                 : route.ActThreeFigure == "MARTIN_HEIDEGGER" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // The early first-act Husserl question places Heidegger in the second act.
+        if (journey is not null && run.CurrentActIndex == 1
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_160")) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == HeideggerDaseinState.AdoptedNodeId)
@@ -44,7 +49,7 @@ internal static class HeideggerDaseinPatch
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         HeideggerDaseinTriggerContext context = new(
-            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
@@ -64,7 +69,7 @@ internal static class HeideggerDaseinPatch
         }
         if (journey is null || !HeideggerDaseinFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HeideggerDasein = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Heidegger's Dasein room.");
         return canonical;
     }
 

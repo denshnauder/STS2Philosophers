@@ -129,8 +129,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_112"]);
         ModelDb.Inject(typeof(HeideggerDasein));
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
-            [typeof(HeideggerDasein)], doctrine: true, position: 2, actIndex: 2,
-            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_100"]);
+            [typeof(HeideggerDasein)], doctrine: true, position: 3, actIndex: 2,
+            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_100"], checkRoom: true);
+        CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+            [typeof(HeideggerDasein)], doctrine: true, position: 2, actIndex: 1,
+            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_160"], checkRoom: true);
         ModelDb.Inject(typeof(MerleauPontyBody));
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
             [typeof(MerleauPontyBody)], doctrine: true, position: 2, actIndex: 2,
