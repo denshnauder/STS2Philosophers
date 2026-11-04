@@ -178,6 +178,7 @@
     <Compile Include="..\..\src\Philosophy\KierkegaardFaithTriggerPolicy.cs" Link="KierkegaardFaithTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MarxAlienationState.cs" Link="MarxAlienationState.cs" />
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />
+    <Compile Include="..\..\src\Philosophy\NietzscheRevaluationTriggerPolicy.cs" Link="NietzscheRevaluationTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
     <Compile Include="..\..\src\Philosophy\ComtePositivismState.cs" Link="ComtePositivismState.cs" />
     <Compile Include="..\..\src\Philosophy\PeirceInquiryState.cs" Link="PeirceInquiryState.cs" />

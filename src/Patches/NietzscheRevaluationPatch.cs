@@ -10,7 +10,8 @@ internal static class NietzscheRevaluationPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         NietzscheRevaluationState? saved = shared.NietzscheRevaluation;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,7 +23,8 @@ internal static class NietzscheRevaluationPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         NietzscheRevaluationState? saved = shared.NietzscheRevaluation;
@@ -44,7 +46,7 @@ internal static class NietzscheRevaluationPatch
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         NietzscheRevaluationTriggerContext context = new(
-            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
@@ -67,7 +69,7 @@ internal static class NietzscheRevaluationPatch
         }
         if (journey is null || !NietzscheRevaluationFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.NietzscheRevaluation = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Nietzsche's revaluation room.");
         return canonical;
     }
 

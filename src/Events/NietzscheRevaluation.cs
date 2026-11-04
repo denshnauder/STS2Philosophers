@@ -110,7 +110,19 @@ public sealed class NietzscheRevaluation : EventModel
         ReferenceEquals(shared.NietzscheRevaluation, state) && shared.WesternJourney is { } journey
         && NietzscheRevaluationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 0;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.NietzscheRevaluation is { } state)
+            actIndex = state.EdgeId switch
+            {
+                "WESTERN_EDGE_120" => 1,
+                "WESTERN_EDGE_151" => 2,
+                _ => 0,
+            };
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(NietzscheRevaluationState state)
     {
@@ -140,7 +152,10 @@ public sealed class NietzscheRevaluation : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.NietzscheRevaluation is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.EdgeId == NietzscheRevaluationState.CompletionEdgeId
+                    && state.ActIndex == 2
+                    && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1")
             && NietzscheRevaluationFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

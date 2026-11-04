@@ -82,7 +82,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(PeirceInquiry)], doctrine: false, position: 2, route: "FALLIBLE_INQUIRY");
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
-            [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER");
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE");
@@ -140,8 +140,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_118"]);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
-            [typeof(NietzscheRevaluation)], doctrine: false, position: 2, actIndex: 2,
-            route: "WILL_AND_VALUE", required: ["WESTERN_EDGE_150"]);
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 3, actIndex: 2,
+            route: "WILL_AND_VALUE", required: ["WESTERN_EDGE_150"], checkRoom: true);
         // A saved question page must not take the fixed slot: the boundary only
         // resumes rooms that own this act's fixed edge, and Camus owns none.
         CheckQuestionPageWaitsForItsNode();
