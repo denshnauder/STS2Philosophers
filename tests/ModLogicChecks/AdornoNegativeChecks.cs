@@ -44,6 +44,25 @@ internal static class AdornoNegativeChecks
             && declined.CurrentNodeId == AdornoNegativeState.SourceNodeId,
             "Declining must leave the player on Heidegger's node.");
 
+        var fixedState = AdornoNegativeState.CreateAt(
+            "ADORNO_NEGATIVE:TEST:F", 3, AdornoNegativeState.FixedCompletionEdgeId, fixedMode: true);
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = AdornoNegativeState.SourceNodeId,
+            RouteId = "SOCIAL_CRITIQUE",
+            LastFixedAct = 2,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { AdornoNegativeState.FixedRequiredEdgeId },
+        };
+        Check(AdornoNegativeFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The fixed room must sit on act three after Horkheimer's fixed edge.");
+        Check(AdornoNegativeFlow.TryPrepare(fixedState, AdornoNegativeAction.NegativeDialectics)
+            && AdornoNegativeFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The fixed room must commit negative dialectics through edge 179.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(AdornoNegativeState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == AdornoNegativeState.AdoptedNodeId
+            && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "The fixed room must not consume a question slot.");
+
         var tampered = AdornoNegativeState.Create("ADORNO_NEGATIVE:TEST:3");
         tampered.Standard = AdornoNegativeStandard.Critique;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

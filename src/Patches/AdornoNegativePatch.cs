@@ -10,7 +10,8 @@ internal static class AdornoNegativePatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         AdornoNegativeState? saved = shared.AdornoNegative;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,12 +23,36 @@ internal static class AdornoNegativePatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         AdornoNegativeState? saved = shared.AdornoNegative;
         AdornoNegative? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 2
+                || !journey.CompletedEdgeIds.Contains(AdornoNegativeState.FixedRequiredEdgeId)
+                || journey.LastFixedAct != 3) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            if (!fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == AdornoNegativeState.FixedCompletionEdgeId)) return null;
+            var fixedCandidate = saved ?? AdornoNegativeState.CreateAt(
+                $"ADORNO_NEGATIVE:{run.Rng.Seed}:3", 3,
+                AdornoNegativeState.FixedCompletionEdgeId, fixedMode: true);
+            if (saved is not null && !saved.EdgeCommitted && !saved.QuestionDeclined
+                && !saved.FixedDeclined && !saved.Closed)
+            {
+                fixedCandidate.FixedMode = true;
+                fixedCandidate.ActIndex = 3;
+                fixedCandidate.EdgeId = AdornoNegativeState.FixedCompletionEdgeId;
+            }
+            if (!AdornoNegativeFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.AdornoNegative = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Adorno's negative dialectics room.");
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Question")
