@@ -25,6 +25,25 @@ internal static class FichteSelfPositingChecks
         };
     }
 
+    private static PhilosophyRunState ActTwoFixture()
+    {
+        var journey = new WesternJourneyState
+        {
+            CurrentNodeId = FichteSelfPositingState.ActTwoSourceNodeId,
+            LastFixedAct = 3,
+        };
+        journey.CompletedEdgeIds.Add("WESTERN_EDGE_095");
+        var kant = KantApperceptionState.CreateAt("KANT_APPERCEPTION:TEST:2", 2, "WESTERN_EDGE_095");
+        kant.EdgeCommitted = true;
+        return new PhilosophyRunState
+        {
+            WesternJourney = journey,
+            KantApperception = kant,
+            FichteSelfPositing = FichteSelfPositingState.CreateAt(
+                "FICHTE_SELF_POSITING:TEST:2", 2, "WESTERN_EDGE_095"),
+        };
+    }
+
     private static PhilosophyRunState Commit(PhilosophyRunState shared, WesternRouteGraph graph,
         FichteSelfPositingAction action)
     {
@@ -92,12 +111,54 @@ internal static class FichteSelfPositingChecks
         Check(!FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
             shared.WesternJourney!), "Fichte cannot open without 022.");
 
+        shared = ActTwoFixture();
+        Check(FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
+            shared.WesternJourney!), "Fichte opens in act two after Kant's subject room.");
+        Check(graph.GetEligibleEdges(shared.WesternJourney!, "Question")
+            .All(edge => edge.EdgeId != FichteSelfPositingState.CompletionEdgeId),
+            "037 is not eligible from Kant's subject node; the act-two batch spends the question without an edge.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.ReviseAsSelfPosited);
+        Check(shared.WesternJourney!.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId
+            && shared.WesternJourney.LastFixedAct == 3
+            && shared.WesternJourney.ResolvedQuestionActs.Contains(1)
+            && shared.FichteSelfPositing!.EdgeCommitted
+            && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
+            "Act-two revision spends the second act's question, keeps Kant, and does not apply 037.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
+        Check(shared.FichteSelfPositing!.Closed, "Act-two Fichte closes after Leave.");
+
+        shared = ActTwoFixture();
+        shared = Commit(shared, graph, FichteSelfPositingAction.KeepKant);
+        Check(shared.FichteSelfPositing!.QuestionDeclined
+            && shared.WesternJourney!.ResolvedQuestionActs.Contains(1)
+            && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
+            "Declining act-two Fichte spends only this act's question.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
+
+        shared = ActTwoFixture();
+        shared.WesternJourney!.CompletedEdgeIds.Remove("WESTERN_EDGE_095");
+        Check(!FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
+            shared.WesternJourney!), "Act-two Fichte cannot open without Kant's fixed edge.");
+
+        FichteSelfPositingTriggerContext actTwo = new(true, true, true, 1, true, 1,
+            FichteSelfPositingState.ActTwoSourceNodeId, 3, true, true, false, false, false, false, true);
+        Check(FichteSelfPositingTriggerPolicy.ShouldInsert(actTwo),
+            "Fichte is offered after Kant's act-two room and a real combat.");
+        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(actTwo with { CurrentActIndex = 2 }),
+            "The act-two record is not offered in act three.");
+        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(actTwo with { RequiredEdgeCompleted = false }),
+            "Act-two Fichte requires Kant's fixed edge.");
+        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(actTwo with { CompletionEdgeEligible = false }),
+            "Act-two Fichte requires an open act-two question.");
+        Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(actTwo with { CurrentNodeId = FichteSelfPositingState.SourceNodeId }),
+            "Act-two Fichte stands on Kant's subject node, not the freedom node.");
+
         FichteSelfPositingTriggerContext context = new(true, true, true, 2, true, 1,
             FichteSelfPositingState.SourceNodeId, 3, true, true, false, false, false, false, true);
         Check(FichteSelfPositingTriggerPolicy.ShouldInsert(context),
             "Fichte is offered after a real act-three combat.");
         Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { CurrentActIndex = 1 }),
-            "Fichte is not an act-two event.");
+            "The legacy act-three context does not open the act-two path.");
         Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { RequiredEdgeCompleted = false }),
             "Fichte requires 022.");
         Check(!FichteSelfPositingTriggerPolicy.ShouldInsert(context with { CompletionEdgeEligible = false }),

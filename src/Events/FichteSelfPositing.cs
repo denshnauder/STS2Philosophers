@@ -55,6 +55,11 @@ public sealed class FichteSelfPositing : EventModel
                 Block("FichteSelfPositing saved event state is unavailable.");
                 return;
             }
+            if (state.ActIndex - 1 != run.CurrentActIndex)
+            {
+                Block("FichteSelfPositing saved event belongs to another act.");
+                return;
+            }
             if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
                 Block("FichteSelfPositing entry persistence is unknown.");
@@ -91,6 +96,7 @@ public sealed class FichteSelfPositing : EventModel
                 || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
                 || state.ConfirmedActions.Count != expectedActionCount
                 || state.PendingAction != FichteSelfPositingAction.None || state.Closed
+                || state.ActIndex - 1 != run.CurrentActIndex
                 || !FichteSelfPositingFlow.TryPrepare(state, action)) return;
             _ready = false;
             SetEventState(PageDescription(state), LockedOptions());
@@ -119,7 +125,8 @@ public sealed class FichteSelfPositing : EventModel
         ReferenceEquals(shared.FichteSelfPositing, state) && shared.WesternJourney is { } journey
         && FichteSelfPositingFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run) =>
+        run.CurrentActIndex is 1 or 2 && RouteEventMapBoundary.IsActiveEvent(run, this, run.CurrentActIndex);
 
     private void ShowConfirmedState(FichteSelfPositingState state)
     {
@@ -149,7 +156,7 @@ public sealed class FichteSelfPositing : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.FichteSelfPositing is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && FichteSelfPositingFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

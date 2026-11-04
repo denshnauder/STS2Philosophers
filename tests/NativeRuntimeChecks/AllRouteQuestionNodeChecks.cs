@@ -45,7 +45,7 @@ internal static class AllRouteQuestionNodeChecks
         ("GalileoMeasuredPractice", 2, typeof(HeraclitusLyre), "HERACLITUS__BEING_AND_CHANGE__CORE"),
         ("MillHarm", 1, typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
         ("BeauvoirOther", 2, typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
-        ("FichteSelfPositing", 2, typeof(SocratesQuestionCup), "ROUSSEAU__HISTORY_AND_POWER__CORE"),
+        ("FichteSelfPositing", 1, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("LockeCargoIdentity", 0, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("HumeInduction", 1, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
         ("KantApperception", 2, typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE"),
@@ -245,10 +245,17 @@ internal static class AllRouteQuestionNodeChecks
         }
         if (person == "FichteSelfPositing")
         {
+            // Default autonomy line: Kant's subject/autonomy room took act two's
+            // fixed slot, and this act's question is still open.
             Put(journey!, "LastFixedAct", 3);
-            ((HashSet<string>)Get(journey!, "CompletedEdgeIds")).Add("WESTERN_EDGE_022");
-            Put(journey!, "CurrentNodeId", "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE");
-            ModelDb.Inject(typeof(KantUniversalization));
+            ((HashSet<string>)Get(journey!, "CompletedEdgeIds")).Add("WESTERN_EDGE_095");
+            Put(journey!, "CurrentNodeId", "IMMANUEL_KANT__SELF_AND_OTHER__CORE");
+            object kant = Call("KantApperceptionState", "CreateAt",
+                "KANT_APPERCEPTION:TEST:2", 2, "WESTERN_EDGE_095")!;
+            Put(kant, "EdgeCommitted", true);
+            Put(kant, "Closed", true);
+            Store("KantApperception", kant);
+            ModelDb.Inject(typeof(KantApperception));
         }
         if (person == "MillHarm") Edge("WESTERN_EDGE_040");
         if (person == "BeauvoirOther")
@@ -301,13 +308,17 @@ internal static class AllRouteQuestionNodeChecks
                 { new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] } }
                 : new List<MapPointHistoryEntry>()).ToList());
         if (person == "FichteSelfPositing")
-            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>> { new(), new(),
+            Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
+            {
+                new(),
                 new()
                 {
+                    new() { MapPointType = MapPointType.Monster,
+                        Rooms = [new() { RoomType = RoomType.Monster }] },
                     new() { MapPointType = MapPointType.Unknown,
-                        Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<KantUniversalization>() }] },
-                    new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] },
-                } });
+                        Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<KantApperception>() }] },
+                }
+            });
         if (person == "HumeInduction")
             Set(run, "_mapPointHistory", new List<List<MapPointHistoryEntry>>
             {

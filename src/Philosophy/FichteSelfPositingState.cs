@@ -9,11 +9,17 @@ internal sealed class FichteSelfPositingState : IJsonOnDeserialized
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE";
+    /// <summary>The act-two mainline reaches Kant's subject/autonomy face here.</summary>
+    public const string ActTwoSourceNodeId = "IMMANUEL_KANT__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_022";
     public const string CompletionEdgeId = "WESTERN_EDGE_037";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>1-based act the event was opened in; old saves normalize to three.</summary>
+    public int ActIndex { get; set; } = 3;
+    /// <summary>The fixed edge that placed Kant in this act (022 legacy, 095 on the act-two line).</summary>
+    public string FixedEdgeId { get; set; } = RequiredEdgeId;
     public FichteSelfPositingStage Stage { get; set; }
     public FichteSelfPositingAction PendingAction { get; set; }
     public List<FichteSelfPositingAction> ConfirmedActions { get; set; } = [];
@@ -23,11 +29,17 @@ internal sealed class FichteSelfPositingState : IJsonOnDeserialized
     public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static FichteSelfPositingState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static FichteSelfPositingState Create(string instanceId) =>
+        CreateAt(instanceId, 3, RequiredEdgeId);
+
+    public static FichteSelfPositingState CreateAt(string instanceId, int actIndex, string fixedEdgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, FixedEdgeId = fixedEdgeId };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        FixedEdgeId ??= RequiredEdgeId;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -36,6 +48,7 @@ internal sealed class FichteSelfPositingState : IJsonOnDeserialized
     public bool IsUsable()
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
+            || ActIndex is < 2 or > 3 || string.IsNullOrWhiteSpace(FixedEdgeId)
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction)
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
@@ -106,6 +119,15 @@ internal static class FichteSelfPositingFlow
         if (!IsRouteConsistent(state, journey) || state.PendingAction == FichteSelfPositingAction.None)
             return false;
         FichteSelfPositingAction action = state.PendingAction;
+        if (state.ActIndex == 2)
+        {
+            // The act-two line treats this as an inner batch: it spends this
+            // act's question and keeps the run on Kant, without a graph edge.
+            if (!journey.ResolvedQuestionActs.Contains(1)
+                && !graph.TryReserveQuestion(journey, 1)) return false;
+            Apply(state, action);
+            return IsRouteConsistent(state, journey);
+        }
         bool revises = action is FichteSelfPositingAction.ReviseAsSelfPosited
             or FichteSelfPositingAction.RequireCheck;
         bool declines = action == FichteSelfPositingAction.KeepKant;
@@ -119,8 +141,21 @@ internal static class FichteSelfPositingFlow
 
     public static bool IsRouteConsistent(FichteSelfPositingState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId)) return false;
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        if (state.ActIndex == 2)
+        {
+            if (!journey.CompletedEdgeIds.Contains(state.FixedEdgeId)) return false;
+            bool answered = journey.ResolvedQuestionActs.Contains(1);
+            if (!state.EdgeCommitted && !state.QuestionDeclined)
+                return journey.LastFixedAct >= 2 && !answered
+                    && journey.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId;
+            if (state.EdgeCommitted)
+                return !state.QuestionDeclined && answered && journey.LastFixedAct >= 2
+                    && journey.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId;
+            return !state.EdgeCommitted && answered && journey.LastFixedAct >= 2
+                && journey.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId;
+        }
+        if (!journey.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId)) return false;
         bool revised = journey.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             // 037 is act two's question. It may be answered while the run stands
