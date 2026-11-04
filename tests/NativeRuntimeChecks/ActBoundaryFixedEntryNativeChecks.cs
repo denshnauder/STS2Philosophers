@@ -157,7 +157,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(FoucaultPower));
         CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,
-            route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_120"]);
+            route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_120"], checkRoom: true);
         ModelDb.Inject(typeof(HorkheimerReason));
         CheckBoundary(typeof(RousseauUncarvedStone), "KARL_MARX__HISTORY_AND_POWER__EARLY",
             [typeof(HorkheimerReason)], doctrine: false, position: 3, actIndex: 2,

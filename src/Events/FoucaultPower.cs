@@ -110,7 +110,14 @@ public sealed class FoucaultPower : EventModel
         ReferenceEquals(shared.FoucaultPower, state) && shared.WesternJourney is { } journey
         && FoucaultPowerFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 1;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.FoucaultPower is { } state)
+            actIndex = Math.Max(0, state.ActIndex - 1);
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(FoucaultPowerState state)
     {
@@ -140,7 +147,8 @@ public sealed class FoucaultPower : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.FoucaultPower is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2" && state.ActIndex == 1)
             && FoucaultPowerFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
