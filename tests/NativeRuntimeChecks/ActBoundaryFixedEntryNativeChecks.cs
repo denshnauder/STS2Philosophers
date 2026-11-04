@@ -151,8 +151,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "GENEALOGY_AND_POWER", required: ["WESTERN_EDGE_120"]);
         ModelDb.Inject(typeof(HorkheimerReason));
         CheckBoundary(typeof(RousseauUncarvedStone), "KARL_MARX__HISTORY_AND_POWER__EARLY",
-            [typeof(HorkheimerReason)], doctrine: false, position: 2, actIndex: 2,
-            route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_118"]);
+            [typeof(HorkheimerReason)], doctrine: false, position: 3, actIndex: 2,
+            route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_118"], checkRoom: true);
+        CheckBoundary(typeof(RousseauUncarvedStone), "KARL_MARX__HISTORY_AND_POWER__EARLY",
+            [typeof(HorkheimerReason)], doctrine: false, position: 2, actIndex: 1,
+            route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_083"], checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 3, actIndex: 2,

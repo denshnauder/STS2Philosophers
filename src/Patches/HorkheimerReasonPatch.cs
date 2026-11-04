@@ -10,7 +10,8 @@ internal static class HorkheimerReasonPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         HorkheimerReasonState? saved = shared.HorkheimerReason;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,7 +23,8 @@ internal static class HorkheimerReasonPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         HorkheimerReasonState? saved = shared.HorkheimerReason;
@@ -35,6 +37,8 @@ internal static class HorkheimerReasonPatch
             .Select(route => route.ActTwoFigure == "MAX_HORKHEIMER" ? 2
                 : route.ActThreeFigure == "MAX_HORKHEIMER" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        if (journey is not null && run.CurrentActIndex == 1
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_083")) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == HorkheimerReasonState.AdoptedNodeId)
@@ -44,7 +48,7 @@ internal static class HorkheimerReasonPatch
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         HorkheimerReasonTriggerContext context = new(
-            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             edgeEligible && journey is not null
@@ -64,7 +68,7 @@ internal static class HorkheimerReasonPatch
         }
         if (journey is null || !HorkheimerReasonFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.HorkheimerReason = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Horkheimer's reason room.");
         return canonical;
     }
 
