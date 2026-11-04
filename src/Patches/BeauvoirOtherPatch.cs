@@ -10,7 +10,8 @@ internal static class BeauvoirOtherPatch
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run)
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         BeauvoirOtherState? saved = shared.BeauvoirOther;
         if (saved is null || saved.Closed || !saved.IsUsable()) return null;
@@ -22,12 +23,37 @@ internal static class BeauvoirOtherPatch
 
     internal static EventModel? TrySelectNative(RunState run)
     {
-        if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         BeauvoirOtherState? saved = shared.BeauvoirOther;
         BeauvoirOther? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 2 || journey.LastFixedAct != 3
+                || journey.CurrentNodeId is not (BeauvoirOtherState.SourceNodeId
+                    or BeauvoirOtherState.SartreSourceNodeId
+                    or BeauvoirOtherState.MerleauSourceNodeId)) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            string fixedEdge = fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Where(edge => edge.Act == 3 && edge.ToNodeId == BeauvoirOtherState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty;
+            if (fixedEdge.Length == 0) return null;
+            var fixedCandidate = saved is { FixedMode: true } ? saved : BeauvoirOtherState.CreateAt(
+                $"BEAUVOIR_OTHER:{run.Rng.Seed}:3", 3, fixedEdge, fixedMode: true);
+            if (!fixedCandidate.EdgeCommitted && !fixedCandidate.FixedDeclined && !fixedCandidate.Closed)
+            {
+                fixedCandidate.ActIndex = 3;
+                fixedCandidate.EdgeId = fixedEdge;
+                fixedCandidate.FixedMode = true;
+            }
+            if (!BeauvoirOtherFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.BeauvoirOther = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Beauvoir's other room on the fixed line.");
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
             .GetEligibleEdges(journey, "Fixed")

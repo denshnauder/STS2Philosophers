@@ -10,12 +10,17 @@ internal sealed class BeauvoirOtherState : IJsonOnDeserialized
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE";
+    public const string SartreSourceNodeId = "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE";
+    public const string MerleauSourceNodeId = "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_041";
     public const string CompletionEdgeId = "WESTERN_EDGE_042";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
+    public bool FixedMode { get; set; }
     public BeauvoirOtherStage Stage { get; set; }
     public BeauvoirOtherAction PendingAction { get; set; }
     public List<BeauvoirOtherAction> ConfirmedActions { get; set; } = [];
@@ -24,9 +29,18 @@ internal sealed class BeauvoirOtherState : IJsonOnDeserialized
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
 
-    public static BeauvoirOtherState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static BeauvoirOtherState Create(string instanceId) => CreateAt(instanceId, 3, CompletionEdgeId, fixedMode: false);
 
-    public void NormalizeAfterLoad() { InstanceId ??= string.Empty; ConfirmedActions ??= []; }
+    public static BeauvoirOtherState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
+
+    public void NormalizeAfterLoad()
+    {
+        InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
+        ConfirmedActions ??= [];
+    }
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
 
     public bool IsUsable()
@@ -38,7 +52,7 @@ internal sealed class BeauvoirOtherState : IJsonOnDeserialized
             || Closed && PendingAction != BeauvoirOtherAction.None
             || PendingAction != BeauvoirOtherAction.None
                 && !BeauvoirOtherFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (BeauvoirOtherAction action in ConfirmedActions)
         {
             if (replay.Closed || !BeauvoirOtherFlow.Options(replay.Stage).Contains(action)) return false;
@@ -93,8 +107,8 @@ internal static class BeauvoirOtherFlow
         BeauvoirOtherAction action = state.PendingAction;
         bool adopts = action is BeauvoirOtherAction.RecognizeSubject or BeauvoirOtherAction.RecordAmbiguity;
         bool declines = action == BeauvoirOtherAction.KeepWollstonecraft;
-        if (adopts && !journey.CompletedEdgeIds.Contains(BeauvoirOtherState.CompletionEdgeId)
-            && !graph.TryApply(journey, BeauvoirOtherState.CompletionEdgeId)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
         if (declines && !journey.DeclinedFixedActs.Contains(3)
             && !graph.TryDecline(journey, "Fixed", 3)) return false;
         Apply(state, action);
@@ -103,9 +117,21 @@ internal static class BeauvoirOtherFlow
 
     public static bool IsRouteConsistent(BeauvoirOtherState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(BeauvoirOtherState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(BeauvoirOtherState.CompletionEdgeId);
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        if (state.FixedMode)
+        {
+            bool source = journey.CurrentNodeId is BeauvoirOtherState.SourceNodeId
+                or BeauvoirOtherState.SartreSourceNodeId or BeauvoirOtherState.MerleauSourceNodeId;
+            bool declined = journey.DeclinedFixedActs.Contains(3);
+            if (!state.EdgeCommitted && !declined)
+                return journey.LastFixedAct is 2 or 3 && !adopted && source;
+            if (state.EdgeCommitted)
+                return adopted && journey.LastFixedAct == 3
+                    && journey.CurrentNodeId == BeauvoirOtherState.AdoptedNodeId;
+            return !adopted && declined && journey.LastFixedAct == 3 && source;
+        }
+        if (!journey.CompletedEdgeIds.Contains(BeauvoirOtherState.RequiredEdgeId)) return false;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct >= 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && journey.CurrentNodeId == BeauvoirOtherState.SourceNodeId;

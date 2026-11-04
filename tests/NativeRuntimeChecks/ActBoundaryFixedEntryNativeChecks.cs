@@ -98,6 +98,16 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
             route: "SYMPATHY_AND_PUBLIC_ACTION", checkRoom: true);
+        ModelDb.Inject(typeof(BeauvoirOther));
+        CheckBoundary(typeof(DescartesThinkingLens), "MARY_WOLLSTONECRAFT__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
+            route: "EDUCATION_AND_SITUATION", checkRoom: true);
+        CheckBoundary(typeof(DescartesThinkingLens), "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+            [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_163"], checkRoom: true);
+        CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+            [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
+            route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);

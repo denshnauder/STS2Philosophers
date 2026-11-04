@@ -67,6 +67,26 @@ internal static class BeauvoirOtherChecks
         Check(!BeauvoirOtherFlow.IsRouteConsistent(shared.BeauvoirOther!, shared.WesternJourney!),
             "Beauvoir cannot open without 041.");
 
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = BeauvoirOtherState.SourceNodeId,
+            RouteId = "EDUCATION_AND_SITUATION",
+            LastFixedAct = 2,
+        };
+        var fixedState = BeauvoirOtherState.CreateAt(
+            "BEAUVOIR_OTHER:TEST:F", 3, BeauvoirOtherState.CompletionEdgeId, fixedMode: true);
+        Check(BeauvoirOtherFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "Beauvoir's default fixed room opens after Wollstonecraft without 041.");
+        Check(BeauvoirOtherFlow.TryPrepare(fixedState, BeauvoirOtherAction.HearTestimony)
+            && BeauvoirOtherFlow.TryCommitPending(fixedState, fixedJourney, graph)
+            && BeauvoirOtherFlow.TryPrepare(fixedState, BeauvoirOtherAction.RecognizeSubject)
+            && BeauvoirOtherFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "Beauvoir's fixed room adopts 042.");
+        Check(fixedJourney.CompletedEdgeIds.Contains(BeauvoirOtherState.CompletionEdgeId)
+            && fixedJourney.CurrentNodeId == BeauvoirOtherState.AdoptedNodeId
+            && fixedJourney.ResolvedQuestionActs.Count == 0,
+            "Beauvoir's default fixed room does not spend a question slot.");
+
         BeauvoirOtherTriggerContext context = new(true, true, true, 2, true, 1,
             BeauvoirOtherState.SourceNodeId, 2, true, true, false, false, false, false, true);
         Check(BeauvoirOtherTriggerPolicy.ShouldInsert(context),
