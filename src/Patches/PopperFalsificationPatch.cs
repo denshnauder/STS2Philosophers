@@ -23,28 +23,27 @@ internal static class PopperFalsificationPatch
     internal static EventModel? TrySelectNative(RunState run)
     {
         if (!NativeQuestionNodeEvents.IsEntry(run)
-            || run.Players.Count != 1 || run.CurrentActIndex != 2
+            || run.Players.Count != 1 || run.CurrentActIndex is not (1 or 2)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
         PopperFalsification? canonical = TryGetCanonicalEvent();
         if (journey is null || canonical is null || run.VisitedEventIds.Contains(canonical.Id)
-            || journey.RetainedEnding
-            || journey.CurrentNodeId != PopperFalsificationState.SourceNodeId
-            || journey.LastFixedAct != 3
-            || !journey.CompletedEdgeIds.Contains(PopperFalsificationState.RequiredEdgeId)
-            || journey.ResolvedQuestionActs.Contains(3)) return null;
+            || journey.RetainedEnding) return null;
 
+        int actIndex = run.CurrentActIndex == 1 ? 2 : 3;
         PopperFalsificationState? saved = shared.PopperFalsification;
         if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
-        var candidate = saved ?? PopperFalsificationState.Create(
-            $"POPPER_FALSIFICATION:{run.Rng.Seed}:3");
-        if (!candidate.IsUsable()
-            || !PopperFalsificationFlow.IsRouteConsistent(candidate, journey)) return null;
+        var candidate = saved is not null && saved.ActIndex == actIndex
+            ? saved
+            : PopperFalsificationState.CreateAt($"POPPER_FALSIFICATION:{run.Rng.Seed}:{actIndex}", actIndex);
+        if (!PopperFalsificationFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.PopperFalsification = candidate;
 
-        Log.Info("[STS2Philosophers] Presenting Popper's dangerous prediction at Bacon's terminal node.");
+        Log.Info(actIndex == 2
+            ? "[STS2Philosophers] Presenting Popper's dangerous prediction after Newton."
+            : "[STS2Philosophers] Presenting Popper's dangerous prediction at Bacon's terminal node.");
         return canonical;
     }
 

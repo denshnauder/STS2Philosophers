@@ -34,10 +34,13 @@ internal sealed class PopperFalsificationState : IEventGoldCostState
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE";
+    public const string NewtonSourceNodeId = "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_048";
+    public const string NewtonRequiredEdgeId = "WESTERN_EDGE_166";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 3;
     public PopperFalsificationStage Stage { get; set; }
     public PopperFalsificationAction PendingAction { get; set; }
     public List<PopperFalsificationAction> ConfirmedActions { get; set; } = [];
@@ -53,15 +56,19 @@ internal sealed class PopperFalsificationState : IEventGoldCostState
     public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public bool Closed { get; set; }
 
-    public static PopperFalsificationState Create(string instanceId) => new()
+    public static PopperFalsificationState Create(string instanceId) => CreateAt(instanceId, 3);
+
+    public static PopperFalsificationState CreateAt(string instanceId, int actIndex) => new()
     {
         InstanceId = instanceId,
+        ActIndex = actIndex,
         Stage = PopperFalsificationStage.Reports,
     };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
         ConfirmedActions ??= [];
     }
 
@@ -172,8 +179,15 @@ internal static class PopperFalsificationFlow
 
     public static bool IsRouteConsistent(PopperFalsificationState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || journey.CurrentNodeId != PopperFalsificationState.SourceNodeId
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        if (state.ActIndex == 2)
+        {
+            if (journey.CurrentNodeId != PopperFalsificationState.NewtonSourceNodeId
+                || journey.LastFixedAct != 2
+                || !journey.CompletedEdgeIds.Contains(PopperFalsificationState.NewtonRequiredEdgeId)
+                || journey.ResolvedQuestionActs.Contains(2)) return false;
+        }
+        else if (journey.CurrentNodeId != PopperFalsificationState.SourceNodeId
             || journey.LastFixedAct != 3
             || !journey.CompletedEdgeIds.Contains(PopperFalsificationState.RequiredEdgeId)
             || journey.ResolvedQuestionActs.Contains(3)) return false;

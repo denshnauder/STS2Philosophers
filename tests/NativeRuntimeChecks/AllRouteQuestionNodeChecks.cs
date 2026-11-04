@@ -851,6 +851,23 @@ internal static class AllRouteQuestionNodeChecks
         ((HashSet<ModelId>)run.VisitedEventIds).Add(selected!.Id);
         Check(Call("PopperFalsificationPatch", "TrySelectExistingNative", run) is null,
             "Popper's existing-state restore honors the native visited identity.");
+
+        var newtonTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var newtonFixture = (NativeRuntimeFixture)newtonTuple[0]!; var newtonRun = (RunState)newtonTuple[1]!;
+        object newtonJourney = Activator.CreateInstance(T("WesternJourneyState"), true)!;
+        Put(newtonJourney, "CurrentNodeId", "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE");
+        Put(newtonJourney, "LastFixedAct", 2);
+        ((HashSet<string>)Get(newtonJourney, "CompletedEdgeIds")).Add("WESTERN_EDGE_166");
+        object newtonShared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Put(newtonShared, "WesternJourney", newtonJourney);
+        Call("PhilosophyRunStateService", "Restore", newtonRun, newtonShared);
+        EventModel? newtonSelected = (EventModel?)Call("PopperFalsificationPatch", "TrySelectNative", newtonRun);
+        Check(newtonSelected is PopperFalsification,
+            "Popper's second-act probe opens after Newton on 166.");
+        object newtonState = Get(CurrentShared(newtonRun), "PopperFalsification");
+        Check((int)Get(newtonState, "ActIndex") == 2,
+            "Popper's second-act probe records the Newton act, not Bacon's terminal act.");
     }
 
     private static void CheckNewEventChain()

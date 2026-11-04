@@ -95,6 +95,19 @@ internal static class PopperFalsificationChecks
         Check(!corruptOutcome.IsUsable(),
             "Popper rejects a calibrated outcome recorded on the reports page.");
 
+        var newton = new WesternJourneyState
+        {
+            CurrentNodeId = PopperFalsificationState.NewtonSourceNodeId,
+            LastFixedAct = 2,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { PopperFalsificationState.NewtonRequiredEdgeId },
+        };
+        var newtonState = PopperFalsificationState.CreateAt("POPPER_FALSIFICATION:TEST:2", 2);
+        Check(PopperFalsificationFlow.IsRouteConsistent(newtonState, newton),
+            "Popper's second-act probe opens after Newton on 166.");
+        Check(!PopperFalsificationFlow.IsRouteConsistent(
+                PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3"), newton),
+            "The legacy Bacon terminal probe must not open at Newton's second act.");
+
         var before = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         var early = PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3");
         Check(!PopperFalsificationFlow.IsRouteConsistent(early, before),
