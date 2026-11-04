@@ -267,6 +267,18 @@ internal static class NativeQuestionNodeChecks
                 "Both a natural single room and a legacy nested question retain exact active-event identity.");
             Check(local.GetType().GetMethod("TryRestoreState", Methods)!.Invoke(local, null) is not null,
                 "Actual event restoration reads the initialized/reloaded person state without another factory.");
+            if (local is FoucaultPower)
+            {
+                object fstate = Get(CurrentShared(run), "FoucaultPower");
+                object fjourney = Get(CurrentShared(run), "WesternJourney");
+                Check((int)Get(fstate, "ActIndex") == 3
+                    && (bool)local.GetType().GetMethod("IsActiveRoom",
+                        BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
+                    "FoucaultPower's selected third-act record must name act three and own its room; act="
+                    + Get(fstate, "ActIndex") + " id=" + Get(fstate, "InstanceId")
+                    + " last=" + Get(fjourney, "LastFixedAct") + " node=" + Get(fjourney, "CurrentNodeId")
+                    + " active=" + Call("RouteEventMapBoundary", "IsActiveEvent", run, local, 2));
+            }
             if (local is SchellingNature || local is HegelRecognition)
                 Check((bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
