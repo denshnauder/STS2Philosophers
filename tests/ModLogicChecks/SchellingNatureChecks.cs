@@ -42,6 +42,68 @@ internal static class SchellingNatureChecks
             && declined.CurrentNodeId == SchellingNatureState.SourceNodeId,
             "Declining must leave the player on Spinoza's node.");
 
+        // The default nature-and-becoming line takes Schelling as its third-act
+        // fixed room, after Spinoza's second-act fixed slot. The graph caps
+        // LastFixedAct at three, so adoption must not expect a fourth slot.
+        var third = SchellingNatureState.CreateAt("SCHELLING_NATURE:TEST:3", 3,
+            SchellingNatureState.CompletionEdgeId);
+        third.RoutePlaced = true;
+        third.RouteSourceNodeId = SchellingNatureState.SourceNodeId;
+        var thirdJourney = new WesternJourneyState
+        {
+            CurrentNodeId = SchellingNatureState.SourceNodeId,
+            LastFixedAct = 3,
+        };
+        Check(SchellingNatureFlow.IsRouteConsistent(third, thirdJourney),
+            "The default third-act fixed slot opens on Spinoza's node.");
+        Check(SchellingNatureFlow.TryPrepare(third, SchellingNatureAction.NatureAsSpirit)
+            && SchellingNatureFlow.TryCommitPending(third, thirdJourney, graph),
+            "The third-act fixed choice commits at the capped slot.");
+        Check(third.EdgeCommitted
+            && thirdJourney.CompletedEdgeIds.Contains(SchellingNatureState.CompletionEdgeId)
+            && thirdJourney.CurrentNodeId == SchellingNatureState.AdoptedNodeId
+            && thirdJourney.LastFixedAct == 3,
+            "The third-act adoption moves to Schelling and keeps LastFixedAct at three.");
+
+        var thirdKept = SchellingNatureState.CreateAt("SCHELLING_NATURE:TEST:4", 3,
+            SchellingNatureState.CompletionEdgeId);
+        thirdKept.RoutePlaced = true;
+        thirdKept.RouteSourceNodeId = SchellingNatureState.SourceNodeId;
+        Check(SchellingNatureFlow.TryPrepare(thirdKept, SchellingNatureAction.KeepSpinoza),
+            "Keeping Spinoza is available in the third-act fixed slot.");
+        var thirdDeclined = new WesternJourneyState
+        {
+            CurrentNodeId = SchellingNatureState.SourceNodeId,
+            LastFixedAct = 3,
+        };
+        Check(SchellingNatureFlow.TryCommitPending(thirdKept, thirdDeclined, graph)
+            && thirdDeclined.DeclinedFixedActs.Contains(3)
+            && thirdDeclined.CurrentNodeId == SchellingNatureState.SourceNodeId
+            && thirdDeclined.LastFixedAct == 3,
+            "Declining the third-act fixed slot leaves Spinoza and records the refusal.");
+
+        Check(SchellingNatureTriggerPolicy.ShouldInsert(new(true, true, true, 2, true, 1,
+            SchellingNatureState.SourceNodeId, 3, true, false, false, false, false, true, 3)),
+            "The default line offers Schelling at the third-act boundary.");
+        Check(!SchellingNatureTriggerPolicy.ShouldInsert(new(true, true, true, 1, true, 1,
+            SchellingNatureState.SourceNodeId, 3, true, false, false, false, false, true, 3)),
+            "The third-act record is not offered in the second act.");
+        Check(!SchellingNatureTriggerPolicy.ShouldInsert(new(true, true, true, 2, true, 1,
+            SchellingNatureState.SourceNodeId, 2, true, false, false, false, false, true, 3)),
+            "The third-act record needs the act-three fixed slot.");
+        Check(!SchellingNatureTriggerPolicy.ShouldInsert(new(true, true, true, 2, true, 1,
+            SchellingNatureState.SourceNodeId, 3, false, false, false, false, false, true, 3)),
+            "The third-act record needs 057 to be eligible.");
+        Check(SchellingNatureTriggerPolicy.ShouldInsert(new(true, true, true, 1, true, 1,
+            SchellingNatureState.SourceNodeId, 2, true, false, false, false, false, true, 0)),
+            "The old second-act question path remains legal.");
+
+        Check(SchellingNatureState.Create("SCHELLING_NATURE:TEST:5").ActIndex == 2,
+            "Old records without an act still default to the second act.");
+        var badAct = SchellingNatureState.CreateAt("SCHELLING_NATURE:TEST:6", 1,
+            SchellingNatureState.CompletionEdgeId);
+        Check(!badAct.IsUsable(), "An act outside two or three is rejected.");
+
         var tampered = SchellingNatureState.Create("SCHELLING_NATURE:TEST:3");
         tampered.Standard = SchellingNatureStandard.Mechanism;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

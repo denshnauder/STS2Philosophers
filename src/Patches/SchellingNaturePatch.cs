@@ -13,7 +13,9 @@ internal static class SchellingNaturePatch
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         SchellingNatureState? saved = shared.SchellingNature;
-        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        if (saved is null || saved.Closed || !saved.IsUsable()
+            || saved.ActIndex - 1 != run.CurrentActIndex
+            || saved.RoutePlaced && !FixedEntryScope.Active) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         if (journey is null || !SchellingNatureFlow.IsRouteConsistent(saved, journey)) return null;
         SchellingNature? canonical = TryGetCanonicalEvent();
@@ -35,6 +37,11 @@ internal static class SchellingNaturePatch
             .Select(route => route.ActTwoFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 2
                 : route.ActThreeFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        if (saved is not null && saved.ActIndex != routeAct) return null;
+        // A route-placed Schelling room owns a fixed slot; only the act
+        // boundary may open it. The legacy unplaced act-two room remains a
+        // question for old saves.
+        if (routeAct >= 2 && !FixedEntryScope.Active) return null;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == SchellingNatureState.AdoptedNodeId)
@@ -67,7 +74,7 @@ internal static class SchellingNaturePatch
         }
         if (journey is null || !SchellingNatureFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.SchellingNature = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Schelling's nature room.");
         return canonical;
     }
 

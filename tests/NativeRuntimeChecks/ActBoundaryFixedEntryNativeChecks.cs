@@ -20,6 +20,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
     private static object? Call(string type, string method, params object?[] args) => T(type).GetMethods(Methods)
         .Single(candidate => candidate.Name == method && candidate.GetParameters().Length == args.Length).Invoke(null, args);
     private static object Get(object value, string name) => value.GetType().GetProperty(name, Methods)!.GetValue(value)!;
+    private static object GetField(object value, string name) => value.GetType().GetField(name, Methods)!.GetValue(value)!;
     private static void Put(object value, string name, object? item) => value.GetType().GetProperty(name, Methods)!.SetValue(value, item);
     private static void Check(bool value, string message)
     {
@@ -99,7 +100,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SchellingNature));
         CheckBoundary(typeof(DescartesThinkingLens), "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
-            route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"]);
+            route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"], checkRoom: true);
         ModelDb.Inject(typeof(RussellAnalysis));
         CheckBoundary(typeof(AristotleCategoryTablet), "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
             [typeof(RussellAnalysis)], doctrine: false, position: 2, actIndex: 2,
@@ -257,7 +258,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
     }
 
     private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null,
-        bool routeRules = false)
+        bool routeRules = false, bool checkRoom = false)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
@@ -340,13 +341,24 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // that names the wrong act is a room that opens locked. This is the fact
         // the body reads; assert it here where the boundary wrote it.
         Type openedType = room.CanonicalEvent.GetType();
-        if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction))
+        if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
+            || openedType == typeof(SchellingNature))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");
             Check(recordedAct == run.CurrentActIndex + 1 && instanceId.EndsWith(":" + recordedAct, StringComparison.Ordinal),
                 openedType.Name + ": the saved record must name the act it was opened in (act " + (run.CurrentActIndex + 1)
                 + "), got act " + recordedAct + " id " + instanceId + ".");
+        }
+        if (checkRoom)
+        {
+            object priorRooms = GetField(run, "_currentRooms");
+            typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+                [run, run.Players[0], room.CanonicalEvent, query[1]!, run.CurrentActIndex]);
+            Set(run, "_currentRooms", priorRooms);
+            object?[] after = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", after);
+            journey = Get(after[1]!, "WesternJourney");
         }
 
         Put(journey, "LastFixedAct", actIndex + 2);

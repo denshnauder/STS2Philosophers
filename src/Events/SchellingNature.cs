@@ -53,6 +53,10 @@ public sealed class SchellingNature : EventModel
             {
                 Block("SchellingNature saved event state is unavailable."); return;
             }
+            if (state.ActIndex - 1 != run.CurrentActIndex)
+            {
+                Block("SchellingNature saved event belongs to another act."); return;
+            }
             if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
                 Block("SchellingNature entry persistence is unknown."); return;
@@ -85,6 +89,7 @@ public sealed class SchellingNature : EventModel
                 || state.InstanceId != expectedInstanceId || state.Stage != expectedStage
                 || state.ConfirmedActions.Count != expectedActionCount
                 || state.PendingAction != SchellingNatureAction.None || state.Closed
+                || state.ActIndex - 1 != run.CurrentActIndex
                 || !SchellingNatureFlow.TryPrepare(state, action)) return;
             _ready = false;
             SetEventState(PageDescription(state), LockedOptions());
@@ -110,7 +115,8 @@ public sealed class SchellingNature : EventModel
         ReferenceEquals(shared.SchellingNature, state) && shared.WesternJourney is { } journey
         && SchellingNatureFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run) =>
+        run.CurrentActIndex is 1 or 2 && RouteEventMapBoundary.IsActiveEvent(run, this, run.CurrentActIndex);
 
     private void ShowConfirmedState(SchellingNatureState state)
     {
@@ -140,7 +146,7 @@ public sealed class SchellingNature : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.SchellingNature is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && SchellingNatureFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

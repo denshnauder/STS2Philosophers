@@ -49,6 +49,7 @@ internal sealed class SchellingNatureState : IJsonOnDeserialized
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
+        if (ActIndex is < 2 or > 3) ActIndex = 2;
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -56,6 +57,7 @@ internal sealed class SchellingNatureState : IJsonOnDeserialized
     public bool IsUsable()
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
+            || ActIndex is < 2 or > 3
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Standard)
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
@@ -145,7 +147,10 @@ internal static class SchellingNatureFlow
                 && !journey.DeclinedFixedActs.Contains(act)
                 && (journey.CurrentNodeId == SchellingNatureState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == act + 1
+            // The third act's fixed slot is already the last one, so the graph
+            // cannot move LastFixedAct from three to four. Both placements end
+            // on the same capped slot after adoption.
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, act + 1)
                 && journey.CurrentNodeId == SchellingNatureState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == act
             && journey.DeclinedFixedActs.Contains(act)
