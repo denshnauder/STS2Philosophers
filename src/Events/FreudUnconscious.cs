@@ -110,7 +110,14 @@ public sealed class FreudUnconscious : EventModel
         ReferenceEquals(shared.FreudUnconscious, state) && shared.WesternJourney is { } journey
         && FreudUnconsciousFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 0;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.FreudUnconscious is { } state)
+            actIndex = Math.Max(0, state.ActIndex - 1);
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(FreudUnconsciousState state)
     {
@@ -140,7 +147,8 @@ public sealed class FreudUnconscious : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.FreudUnconscious is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1" && state.ActIndex == 2)
             && FreudUnconsciousFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

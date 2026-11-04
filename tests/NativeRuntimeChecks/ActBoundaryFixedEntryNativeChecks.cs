@@ -54,7 +54,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // over the act they were placed in, not the act they were written for.
         ModelDb.Inject(typeof(FreudUnconscious));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
-            [typeof(FreudUnconscious)], doctrine: true, position: 2, route: "UNCONSCIOUS_AND_NORM");
+            [typeof(FreudUnconscious)], doctrine: true, position: 2, route: "UNCONSCIOUS_AND_NORM", checkRoom: true);
         ModelDb.Inject(typeof(LacanSignifier));
         CheckBoundary(typeof(DescartesThinkingLens), "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
             [typeof(LacanSignifier)], doctrine: true, position: 3, actIndex: 2,
