@@ -38,7 +38,7 @@ internal static class PeirceInquiryChecks
         var declined = Journey();
         Check(PeirceInquiryFlow.TryCommitPending(kept, declined, graph),
             "Keeping Hume must decline the act's fixed slot.");
-        Check(declined.DeclinedFixedActs.Contains(3)
+        Check(declined.DeclinedFixedActs.Contains(2)
             && declined.CurrentNodeId == PeirceInquiryState.SourceNodeId,
             "Declining must leave the player on Hume's node.");
 

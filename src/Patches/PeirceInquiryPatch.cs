@@ -60,7 +60,13 @@ internal static class PeirceInquiryPatch
             canonical is not null,
             routeSource);
         if (!PeirceInquiryTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? PeirceInquiryState.Create($"PEIRCE_INQUIRY:{run.Rng.Seed}:2");
+        var candidate = saved ?? PeirceInquiryState.CreateAt(
+            $"PEIRCE_INQUIRY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId);
+        if (saved is not null && !saved.EdgeCommitted && !saved.FixedDeclined && !saved.Closed)
+        {
+            candidate.ActIndex = routeAct;
+            candidate.EdgeId = edgeId;
+        }
         candidate.RouteSourceNodeId = routeSource;
         if (journey is null || !PeirceInquiryFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.PeirceInquiry = candidate;

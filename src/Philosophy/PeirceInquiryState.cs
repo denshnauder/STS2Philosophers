@@ -20,6 +20,8 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    public int ActIndex { get; set; } = 2;
+    public string EdgeId { get; set; } = CompletionEdgeId;
 
     /// <summary>The node a route arrives from when it places this room outside its own act.</summary>
     public string RouteSourceNodeId { get; set; } = string.Empty;
@@ -35,9 +37,14 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
 
     public static PeirceInquiryState Create(string instanceId) => new() { InstanceId = instanceId };
 
+    public static PeirceInquiryState CreateAt(string instanceId, int actIndex, string edgeId) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
+
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        EdgeId ??= CompletionEdgeId;
+        if (ActIndex is < 1 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
     }
 
@@ -124,10 +131,10 @@ internal static class PeirceInquiryFlow
         PeirceInquiryAction action = state.PendingAction;
         bool adopts = action is PeirceInquiryAction.TestByConsequences or PeirceInquiryAction.FallibleCommunity;
         bool declines = action == PeirceInquiryAction.KeepHume;
-        if (adopts && !journey.CompletedEdgeIds.Contains(PeirceInquiryState.CompletionEdgeId)
-            && !graph.TryApply(journey, PeirceInquiryState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -139,15 +146,15 @@ internal static class PeirceInquiryFlow
         // uses is recorded when the room is created for that act.
         bool atSource = journey.CurrentNodeId == PeirceInquiryState.SourceNodeId
             || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId;
-        bool adopted = journey.CompletedEdgeIds.Contains(PeirceInquiryState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && atSource;
+            return journey.LastFixedAct == state.ActIndex && !adopted
+                && !journey.DeclinedFixedActs.Contains(state.ActIndex) && atSource;
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
                 && journey.CurrentNodeId == PeirceInquiryState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
-            && atSource;
+        return !adopted && journey.LastFixedAct == state.ActIndex
+            && journey.DeclinedFixedActs.Contains(state.ActIndex) && atSource;
     }
 
     public static string DescriptionKey(PeirceInquiryState state) => state.Stage switch
