@@ -110,7 +110,14 @@ public sealed class RussellAnalysis : EventModel
         ReferenceEquals(shared.RussellAnalysis, state) && shared.WesternJourney is { } journey
         && RussellAnalysisFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 1;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.RussellAnalysis is { } state)
+            actIndex = Math.Max(0, state.ActIndex - 1);
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(RussellAnalysisState state)
     {
@@ -140,7 +147,8 @@ public sealed class RussellAnalysis : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.RussellAnalysis is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2" && state.ActIndex == 1)
             && RussellAnalysisFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

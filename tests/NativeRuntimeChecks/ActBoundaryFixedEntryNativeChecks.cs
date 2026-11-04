@@ -118,7 +118,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(RussellAnalysis));
         CheckBoundary(typeof(AristotleCategoryTablet), "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
             [typeof(RussellAnalysis)], doctrine: false, position: 2, actIndex: 2,
-            route: "FORMAL_LANGUAGE", required: ["WESTERN_EDGE_104"]);
+            route: "FORMAL_LANGUAGE", required: ["WESTERN_EDGE_104"], checkRoom: true);
         ModelDb.Inject(typeof(LeviStraussMyth));
         CheckBoundary(typeof(AristotleCategoryTablet), "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
             [typeof(LeviStraussMyth)], doctrine: false, position: 2, actIndex: 2,
