@@ -125,8 +125,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "STRUCTURE_AND_EXCLUSION", required: ["WESTERN_EDGE_106"]);
         ModelDb.Inject(typeof(SartreExistence));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
-            [typeof(SartreExistence)], doctrine: false, position: 2, actIndex: 2,
-            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_112"]);
+            [typeof(SartreExistence)], doctrine: false, position: 3, actIndex: 2,
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_112"], checkRoom: true);
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+            [typeof(SartreExistence)], doctrine: false, position: 2, actIndex: 1,
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_158"], checkRoom: true);
         ModelDb.Inject(typeof(HeideggerDasein));
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
             [typeof(HeideggerDasein)], doctrine: true, position: 3, actIndex: 2,

@@ -110,7 +110,14 @@ public sealed class SartreExistence : EventModel
         ReferenceEquals(shared.SartreExistence, state) && shared.WesternJourney is { } journey
         && SartreExistenceFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        int actIndex = 1;
+        if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.SartreExistence is { } state)
+            actIndex = state.EdgeId == "WESTERN_EDGE_113" ? 2 : 1;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
+    }
 
     private void ShowConfirmedState(SartreExistenceState state)
     {
@@ -140,7 +147,10 @@ public sealed class SartreExistence : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.SartreExistence is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
+                || state.EdgeId == SartreExistenceState.CompletionEdgeId
+                    && state.ActIndex == 1
+                    && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2")
             && SartreExistenceFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
