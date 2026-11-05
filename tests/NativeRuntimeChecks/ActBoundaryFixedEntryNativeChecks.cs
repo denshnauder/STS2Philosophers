@@ -127,7 +127,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SchopenhauerWillDenial));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(SchopenhauerWillDenial)], doctrine: false, position: 1, actIndex: 1,
-            route: "WILL_AND_VALUE", checkRoom: true);
+            route: "WILL_AND_VALUE", checkRoom: true, afterSelect: CheckSchopenhauerFixedCommit);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);
@@ -341,9 +341,23 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
+    private static void CheckSchopenhauerFixedCommit(RunState run, object shared, EventModel selected)
+    {
+        object state = Get(shared, "SchopenhauerWillDenial");
+        object action = Enum.Parse(T("SchopenhauerWillDenialAction"), "BuyExtra");
+        Check((bool)Call("SchopenhauerWillDenialFlow", "TryPrepare", state, action)!,
+            "Schopenhauer's fixed room can prepare its visible option without Kant.");
+        Check((bool)selected.GetType().GetMethod("CommitPending", Methods)!
+                .Invoke(null, [shared, state])!,
+            "Schopenhauer's event body commits a fixed-room option without a Kant record.");
+        Check(Enum.GetName(T("SchopenhauerWillDenialAction"), Get(state, "PendingAction")) == "None",
+            "Schopenhauer's fixed-room commit clears its pending choice.");
+    }
+
     private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null,
         bool routeRules = false, bool checkRoom = false, string thinker = "DESCARTES",
-        string doctrineId = "DESCARTES_THINKING_LENS")
+        string doctrineId = "DESCARTES_THINKING_LENS",
+        Action<RunState, object, EventModel>? afterSelect = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
@@ -450,6 +464,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             journey = Get(after[1]!, "WesternJourney");
         }
 
+        afterSelect?.Invoke(run, query[1]!, room.CanonicalEvent);
         Put(journey, "LastFixedAct", actIndex + 2);
         object spent = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(spent, "CurrentDoctrine", doctrineState);
