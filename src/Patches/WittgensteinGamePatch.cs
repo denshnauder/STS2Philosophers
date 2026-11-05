@@ -29,7 +29,12 @@ internal static class WittgensteinGamePatch
         WesternJourneyState? journey = shared.WesternJourney;
         WittgensteinGameState? saved = shared.WittgensteinGame;
         WittgensteinGame? canonical = TryGetCanonicalEvent();
-        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (canonical is null) return null;
+        // The same event class owns the early act-two room and the late act-three
+        // room. A completed early room must not mark the whole person as visited:
+        // the late fixed phase is a new act with its own state.
+        bool lateFixedPhase = fixedEntry && run.CurrentActIndex == 2;
+        if (!lateFixedPhase && run.VisitedEventIds.Contains(canonical.Id)) return null;
         if (fixedEntry)
         {
             if (journey is null || run.CurrentActIndex is not (1 or 2)) return null;
@@ -56,6 +61,9 @@ internal static class WittgensteinGamePatch
                 if (fixedSource.Length == 0) return null;
             }
             if (journey.CurrentNodeId != fixedSource || journey.LastFixedAct != fixedAct) return null;
+            if (fixedAct == 2 && run.VisitedEventIds.Contains(canonical.Id)) return null;
+            if (fixedAct == 3 && saved is { Closed: true, FixedMode: true, ActIndex: 2 })
+                saved = null;
             if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
             var fixedCandidate = saved is { FixedMode: true } && saved.ActIndex == fixedAct && saved.EdgeId == fixedEdge
                 ? saved
