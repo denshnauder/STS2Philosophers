@@ -27,6 +27,9 @@ internal sealed class MarxAlienationState : IJsonOnDeserialized
 
     /// <summary>The node a route arrives from when it places this room.</summary>
     public string RouteSourceNodeId { get; set; } = string.Empty;
+
+    /// <summary>True when the boundary opens this room as a fixed slot, not a question.</summary>
+    public bool FixedMode { get; set; }
     public MarxAlienationStage Stage { get; set; }
     public MarxAlienationAction PendingAction { get; set; }
     public List<MarxAlienationAction> ConfirmedActions { get; set; } = [];
@@ -129,7 +132,12 @@ internal static class MarxAlienationFlow
         bool declines = action == MarxAlienationAction.KeepHegel;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
+        if (declines && state.FixedMode)
+        {
+            if (!journey.DeclinedFixedActs.Contains(state.ActIndex)
+                && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        }
+        else if (declines && !journey.ResolvedQuestionActs.Contains(state.ActIndex)
             && !graph.TryDecline(journey, "Question", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
@@ -147,6 +155,18 @@ internal static class MarxAlienationFlow
             || !state.RoutePlaced && !journey.CompletedEdgeIds.Contains(MarxAlienationState.RequiredEdgeId)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         bool asked = journey.ResolvedQuestionActs.Contains(act);
+        if (state.FixedMode)
+        {
+            if (!state.EdgeCommitted && !state.QuestionDeclined)
+                return journey.LastFixedAct == act && !adopted
+                    && (onRoute || atSource);
+            if (state.EdgeCommitted)
+                return !state.QuestionDeclined && adopted
+                    && journey.LastFixedAct >= Math.Min(3, act + 1)
+                    && journey.CurrentNodeId == MarxAlienationState.AdoptedNodeId;
+            return !adopted && journey.DeclinedFixedActs.Contains(act)
+                && journey.LastFixedAct == act && (onRoute || atSource);
+        }
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == act && !adopted && !asked
                 && (onRoute || atSource);

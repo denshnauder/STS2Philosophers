@@ -60,6 +60,7 @@ internal static class MarxAlienationPatch
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;
+            candidate.FixedMode = true;
             if (candidate.RouteSourceNodeId.Length == 0)
                 candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
                     .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)

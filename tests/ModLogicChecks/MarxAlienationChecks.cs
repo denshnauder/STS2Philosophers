@@ -44,6 +44,47 @@ internal static class MarxAlienationChecks
             && declined.CurrentNodeId == MarxAlienationState.SourceNodeId,
             "Declining must leave the player on Hegel's node.");
 
+        WesternJourneyState FixedJourney() => new()
+        {
+            CurrentNodeId = "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            LastFixedAct = 2,
+            RouteId = "SOCIAL_CRITIQUE",
+        };
+
+        var fixedAdopt = MarxAlienationState.CreateAt(
+            "MARX_ALIENATION:TEST:2", 2, "WESTERN_EDGE_118");
+        fixedAdopt.RoutePlaced = true;
+        fixedAdopt.FixedMode = true;
+        fixedAdopt.RouteSourceNodeId = "ROUSSEAU__HISTORY_AND_POWER__CORE";
+        var fixedJourney = FixedJourney();
+        Check(MarxAlienationFlow.IsRouteConsistent(fixedAdopt, fixedJourney),
+            "Marx opens in the second-act fixed slot after Rousseau.");
+        Check(MarxAlienationFlow.TryPrepare(fixedAdopt, MarxAlienationAction.AlienatedLabor),
+            "Fixed Marx can prepare alienated labor.");
+        var fixedReload = System.Text.Json.JsonSerializer.Deserialize<MarxAlienationState>(
+            System.Text.Json.JsonSerializer.Serialize(fixedAdopt))!;
+        Check(MarxAlienationFlow.TryCommitPending(fixedReload, fixedJourney, graph),
+            "Fixed Marx commits alienated labor after a reload.");
+        Check(fixedJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_118")
+            && fixedJourney.LastFixedAct == 3
+            && fixedJourney.CurrentNodeId == MarxAlienationState.AdoptedNodeId
+            && !fixedJourney.ResolvedQuestionActs.Contains(2),
+            "Fixed adoption advances the fixed slot and does not spend act two's question.");
+
+        var fixedDecline = MarxAlienationState.CreateAt(
+            "MARX_ALIENATION:TEST:2", 2, "WESTERN_EDGE_118");
+        fixedDecline.RoutePlaced = true;
+        fixedDecline.FixedMode = true;
+        fixedDecline.RouteSourceNodeId = "ROUSSEAU__HISTORY_AND_POWER__CORE";
+        var declinedFixedJourney = FixedJourney();
+        Check(MarxAlienationFlow.TryPrepare(fixedDecline, MarxAlienationAction.KeepHegel)
+            && MarxAlienationFlow.TryCommitPending(fixedDecline, declinedFixedJourney, graph),
+            "Fixed Marx declines the fixed slot rather than the question.");
+        Check(declinedFixedJourney.DeclinedFixedActs.Contains(2)
+            && !declinedFixedJourney.ResolvedQuestionActs.Contains(2)
+            && declinedFixedJourney.LastFixedAct == 2,
+            "Fixed decline records the slot and leaves the question open.");
+
         var tampered = MarxAlienationState.Create("MARX_ALIENATION:TEST:3");
         tampered.Standard = MarxAlienationStandard.Progress;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
