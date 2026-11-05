@@ -110,7 +110,13 @@ public sealed class LeviStraussMyth : EventModel
         ReferenceEquals(shared.LeviStraussMyth, state) && shared.WesternJourney is { } journey
         && LeviStraussMythFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 1);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.LeviStraussMyth is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(LeviStraussMythState state)
     {
@@ -140,7 +146,7 @@ public sealed class LeviStraussMyth : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.LeviStraussMyth is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && LeviStraussMythFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
