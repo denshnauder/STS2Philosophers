@@ -123,8 +123,8 @@ internal static class FichteSelfPositingFlow
         {
             // The act-two line treats this as an inner batch: it spends this
             // act's question and keeps the run on Kant, without a graph edge.
-            if (!journey.ResolvedQuestionActs.Contains(1)
-                && !graph.TryReserveQuestion(journey, 1)) return false;
+            if (!journey.ResolvedQuestionActs.Contains(2)
+                && !graph.TryReserveQuestion(journey, 2)) return false;
             Apply(state, action);
             return IsRouteConsistent(state, journey);
         }
@@ -145,7 +145,7 @@ internal static class FichteSelfPositingFlow
         if (state.ActIndex == 2)
         {
             if (!journey.CompletedEdgeIds.Contains(state.FixedEdgeId)) return false;
-            bool answered = journey.ResolvedQuestionActs.Contains(1);
+            bool answered = journey.ResolvedQuestionActs.Contains(2);
             if (!state.EdgeCommitted && !state.QuestionDeclined)
                 return journey.LastFixedAct >= 2 && !answered
                     && journey.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId;

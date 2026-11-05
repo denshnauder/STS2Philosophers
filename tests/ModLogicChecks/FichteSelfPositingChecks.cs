@@ -120,7 +120,7 @@ internal static class FichteSelfPositingChecks
         shared = Commit(shared, graph, FichteSelfPositingAction.ReviseAsSelfPosited);
         Check(shared.WesternJourney!.CurrentNodeId == FichteSelfPositingState.ActTwoSourceNodeId
             && shared.WesternJourney.LastFixedAct == 3
-            && shared.WesternJourney.ResolvedQuestionActs.Contains(1)
+            && shared.WesternJourney.ResolvedQuestionActs.Contains(2)
             && shared.FichteSelfPositing!.EdgeCommitted
             && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
             "Act-two revision spends the second act's question, keeps Kant, and does not apply 037.");
@@ -130,7 +130,7 @@ internal static class FichteSelfPositingChecks
         shared = ActTwoFixture();
         shared = Commit(shared, graph, FichteSelfPositingAction.KeepKant);
         Check(shared.FichteSelfPositing!.QuestionDeclined
-            && shared.WesternJourney!.ResolvedQuestionActs.Contains(1)
+            && shared.WesternJourney!.ResolvedQuestionActs.Contains(2)
             && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
             "Declining act-two Fichte spends only this act's question.");
         shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
