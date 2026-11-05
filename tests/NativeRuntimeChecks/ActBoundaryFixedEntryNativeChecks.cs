@@ -375,6 +375,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        Set(run, "_currentActIndex", 2);
+        Check(Call("BenjaminHistoryPatch", "TrySelectNative", run) is null,
+            "BenjaminHistoryPatch rejects a wrong-act question node.");
+        Set(run, "_currentActIndex", 1);
         object? selected = Call("BenjaminHistoryPatch", "TrySelectNative", run);
         Check(selected is BenjaminHistory,
             "Benjamin's independent perspective opens after Foucault's closed fixed room.");
@@ -421,6 +425,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        Set(run, "_currentActIndex", 2);
+        Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is null,
+            "BerkeleyPerceivedMarkPatch rejects a wrong-act question node.");
+        Set(run, "_currentActIndex", 1);
         object? selected = Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run);
         Check(selected is BerkeleyPerceivedMark,
             "Berkeley's independent question opens after Locke's closed fixed room.");
@@ -473,6 +481,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        Set(run, "_currentActIndex", 2);
+        Check(Call("JamesPragmatismPatch", "TrySelectNative", run) is null,
+            "JamesPragmatismPatch rejects a wrong-act question node.");
+        Set(run, "_currentActIndex", 1);
         object? selected = Call("JamesPragmatismPatch", "TrySelectNative", run);
         Check(selected is JamesPragmatism,
             "James's independent question opens after Peirce's closed fixed room.");

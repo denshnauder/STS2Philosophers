@@ -12,7 +12,8 @@ internal static class BenjaminHistoryPatch
     {
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null
-            || shared.BenjaminHistory is not { } saved || saved.Closed || !saved.IsUsable()) return null;
+            || shared.BenjaminHistory is not { } saved || saved.Closed || !saved.IsUsable()
+            || !MatchesOpenHost(shared, saved)) return null;
         BenjaminHistory? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         return canonical;
@@ -40,6 +41,14 @@ internal static class BenjaminHistoryPatch
         Log.Info("[STS2Philosophers] Presenting Benjamin's independent second-act perspective after Foucault.");
         return canonical;
     }
+
+    private static bool MatchesOpenHost(PhilosophyRunState shared, BenjaminHistoryState saved) =>
+        saved.ActIndex == 2
+        && shared.WesternJourney is { } journey
+        && shared.FoucaultPower is { Closed: true, EdgeCommitted: true, ActIndex: 2 }
+        && journey.CurrentNodeId == FoucaultPowerState.AdoptedNodeId
+        && journey.LastFixedAct == 3
+        && !journey.ResolvedQuestionActs.Contains(2);
 
     private static BenjaminHistory? TryGetCanonicalEvent()
     {

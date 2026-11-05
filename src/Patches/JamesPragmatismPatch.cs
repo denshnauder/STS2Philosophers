@@ -12,7 +12,8 @@ internal static class JamesPragmatismPatch
     {
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null
-            || shared.JamesPragmatism is not { } saved || saved.Closed || !saved.IsUsable()) return null;
+            || shared.JamesPragmatism is not { } saved || saved.Closed || !saved.IsUsable()
+            || !MatchesOpenHost(shared, saved)) return null;
         JamesPragmatism? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         return canonical;
@@ -40,6 +41,14 @@ internal static class JamesPragmatismPatch
         Log.Info("[STS2Philosophers] Presenting James's independent second-act question after Peirce.");
         return canonical;
     }
+
+    private static bool MatchesOpenHost(PhilosophyRunState shared, JamesPragmatismState saved) =>
+        saved.ActIndex == 2
+        && shared.WesternJourney is { } journey
+        && shared.PeirceInquiry is { Closed: true, EdgeCommitted: true, ActIndex: 2 }
+        && journey.CurrentNodeId == PeirceInquiryState.AdoptedNodeId
+        && journey.LastFixedAct == 3
+        && !journey.ResolvedQuestionActs.Contains(2);
 
     private static JamesPragmatism? TryGetCanonicalEvent()
     {

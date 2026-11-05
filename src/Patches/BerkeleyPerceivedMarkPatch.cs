@@ -12,7 +12,8 @@ internal static class BerkeleyPerceivedMarkPatch
     {
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null
-            || shared.BerkeleyPerceivedMark is not { } saved || saved.Closed || !saved.IsUsable()) return null;
+            || shared.BerkeleyPerceivedMark is not { } saved || saved.Closed || !saved.IsUsable()
+            || !MatchesOpenHost(shared, saved)) return null;
         BerkeleyPerceivedMark? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         return canonical;
@@ -40,6 +41,14 @@ internal static class BerkeleyPerceivedMarkPatch
         Log.Info("[STS2Philosophers] Presenting Berkeley's independent second-act question after Locke.");
         return canonical;
     }
+
+    private static bool MatchesOpenHost(PhilosophyRunState shared, BerkeleyPerceivedMarkState saved) =>
+        saved.ActIndex == 2
+        && shared.WesternJourney is { } journey
+        && shared.LockeCargoIdentity is { Closed: true, EdgeCommitted: true, ActIndex: 2 }
+        && journey.CurrentNodeId == LockeCargoIdentityState.AdoptedNodeId
+        && journey.LastFixedAct == 3
+        && !journey.ResolvedQuestionActs.Contains(2);
 
     private static BerkeleyPerceivedMark? TryGetCanonicalEvent()
     {
