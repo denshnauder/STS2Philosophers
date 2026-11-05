@@ -42,6 +42,7 @@ NewtonTwoSitesChecks.Run();
 SpinozaCauseNetworkChecks.Run();
 LeibnizIndependentClocksChecks.Run();
 HobbesAuthorizedSovereigntyChecks.Run();
+LockeHumeChecks.Run();
 NewtonCalibrationChecks.Run();
 BaconSampleLedgerChecks.Run();
 MachiavelliFloodPreparationChecks.Run();

@@ -1775,13 +1775,17 @@
       "context": {
         "from_problem_id": "BEING_AND_CHANGE",
         "to_problem_id": "BEING_AND_CHANGE",
-        "relation_types": ["ParallelComparison"],
+        "relation_types": [
+          "ParallelComparison"
+        ],
         "compressed_mediators": "",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "记录有限追问不授予战斗收益，也不自动替换当前学说。",
         "interpretation_boundary": "古代证言不完整；不声称两人直接影响、面对面争辩或无定者构成完整机制证明。",
         "evidence_status": "LocalPlanning",
-        "evidence_sources": ["13阿那克西曼德当前设计.md"]
+        "evidence_sources": [
+          "13阿那克西曼德当前设计.md"
+        ]
       }
     },
     {
@@ -1794,12 +1798,17 @@
       "confidence": "Medium",
       "relation_summary": "柏拉图传统的晚古代重释；从德性与教育追问共同根据与有差异的回归",
       "source": "https://plato.stanford.edu/entries/plotinus/",
-      "required_edge_ids": ["WESTERN_EDGE_009"],
+      "required_edge_ids": [
+        "WESTERN_EDGE_009"
+      ],
       "enabled": true,
       "context": {
         "from_problem_id": "VIRTUE_AND_HAPPINESS",
         "to_problem_id": "VIRTUE_AND_HAPPINESS",
-        "relation_types": ["LaterReinterpretation", "InheritanceAndRevision"],
+        "relation_types": [
+          "LaterReinterpretation",
+          "InheritanceAndRevision"
+        ],
         "compressed_mediators": "柏拉图文本与后世解读传统；不设历史人物面对面会晤。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "有限的结构核查与现场修订不评判玩家的灵魂等级，也不否定公共德性。",
@@ -1822,12 +1831,17 @@
       "confidence": "Medium",
       "relation_summary": "经翻译注释网络重构亚里士多德政治思想；从具体共同体转向法律的理性、共同善、权限与公布",
       "source": "https://www.newadvent.org/summa/2090.htm",
-      "required_edge_ids": ["WESTERN_EDGE_016"],
+      "required_edge_ids": [
+        "WESTERN_EDGE_016"
+      ],
       "enabled": true,
       "context": {
         "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
         "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
-        "relation_types": ["InheritanceAndRevision", "TextualCritique"],
+        "relation_types": [
+          "InheritanceAndRevision",
+          "TextualCritique"
+        ],
         "compressed_mediators": "晚期古代与中世纪阿拉伯语、希伯来语、拉丁语翻译及注释网络；不设历史人物直接会面。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "只记录公布、权限及具体例外的行动；不由程序判定法律、人格或信仰的终极正当性。",
@@ -1991,6 +2005,69 @@
           "docs/design/current/west/34莱布尼茨当前设计.md"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_091",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "转线；同题转向与批判，高；以意识连续讨论人格同一",
+      "source": "洛克与休谟分人物发布：先古之后固定承接",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift",
+          "TextualCritique"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "18游戏流程投影.md:339",
+          "18游戏流程投影.md#05压缩与中介说明",
+          "19反例与缺口审查.md#02入口强反例",
+          "洛克与休谟分人物发布：先古之后固定承接"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_201",
+      "from_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+      "to_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "继承与批判，高；把持续自我审查为知觉束，压缩贝克莱等中介",
+      "source": "洛克与休谟分人物发布：先古之后固定承接",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "InheritanceAndRevision"
+        ],
+        "compressed_mediators": "贝克莱及经验论争论。",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "知觉束不是对笛卡尔全部主体论的直接回应。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "18游戏流程投影.md:339",
+          "18游戏流程投影.md#05压缩与中介说明",
+          "19反例与缺口审查.md#02入口强反例",
+          "洛克与休谟分人物发布：先古之后固定承接"
+        ]
+      }
     }
   ],
   "samples": [
@@ -2048,7 +2125,10 @@
     {
       "sample_id": "SAMPLE_14",
       "entry_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-      "edge_ids": ["WESTERN_EDGE_016", "WESTERN_EDGE_045"],
+      "edge_ids": [
+        "WESTERN_EDGE_016",
+        "WESTERN_EDGE_045"
+      ],
       "terminal_node_id": "THOMAS_AQUINAS__FREEDOM_AND_INSTITUTIONS__CORE",
       "disposition": "Executable",
       "review_note": ""

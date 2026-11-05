@@ -4,6 +4,7 @@ internal enum CurrentEventKind
 {
     None,
     Neow,
+    Ancient,
     PhilosophersGaze,
     Other,
 }

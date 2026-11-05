@@ -19,6 +19,8 @@ const ADDITIONAL_EVENT_TEXTURES := [
 	"res://images/events/leibniz_independent_clocks.png",
 	"res://images/events/machiavelli_realist_challenge.png",
 	"res://images/events/hobbes_authorized_sovereignty.png",
+	"res://images/events/locke_cargo_identity.png",
+	"res://images/events/hume_induction.png",
 ]
 
 const REQUIRED_FILES := [
