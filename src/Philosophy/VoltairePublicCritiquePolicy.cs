@@ -18,7 +18,7 @@ internal static class VoltairePublicCritiquePolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed;
         return !context.AlreadyResolved && context.HostCompleted && context.HostRecordUsable
-            && context.LastFixedAct == 2
+            && context.LastFixedAct >= 2
             && context.CurrentNodeId == MontesquieuBalanceState.AdoptedNodeId
             && context.RouteId == "CHECKS_AND_JUSTICE";
     }

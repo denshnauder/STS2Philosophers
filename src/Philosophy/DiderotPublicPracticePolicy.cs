@@ -19,7 +19,7 @@ internal static class DiderotPublicPracticePolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed;
         return !context.AlreadyResolved && context.HostCompleted && context.HostRecordUsable
-            && context.LastFixedAct == 2
+            && context.LastFixedAct >= 2
             && context.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
             && context.RouteId == "SOCIAL_KNOWLEDGE";
     }

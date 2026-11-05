@@ -25,6 +25,8 @@ internal static class DiderotPublicPracticeChecks
             "Diderot must not appear in act three.");
         Check(!DiderotPublicPracticePolicy.ShouldInsert(At(host: false)),
             "Diderot must wait for Bacon's fixed room.");
+        Check(DiderotPublicPracticePolicy.ShouldInsert(At(lastFixed: 3)),
+            "The real boundary advances the fixed slot to three before the extra question.");
         Check(!DiderotPublicPracticePolicy.ShouldInsert(At(lastFixed: 1)),
             "Diderot must not stand in for the act's fixed slot.");
         Check(!DiderotPublicPracticePolicy.ShouldInsert(At(node: "ROUSSEAU__HISTORY_AND_POWER__CORE")),

@@ -25,6 +25,8 @@ internal static class VoltairePublicCritiqueChecks
             "Voltaire must not appear in act three.");
         Check(!VoltairePublicCritiquePolicy.ShouldInsert(At(host: false)),
             "Voltaire must wait for Montesquieu's fixed room.");
+        Check(VoltairePublicCritiquePolicy.ShouldInsert(At(lastFixed: 3)),
+            "The real boundary advances the fixed slot to three before the extra question.");
         Check(!VoltairePublicCritiquePolicy.ShouldInsert(At(lastFixed: 1)),
             "Voltaire must not stand in for the act's fixed slot.");
         Check(!VoltairePublicCritiquePolicy.ShouldInsert(At(node: "PLATO__FREEDOM_AND_INSTITUTIONS__CORE")),
