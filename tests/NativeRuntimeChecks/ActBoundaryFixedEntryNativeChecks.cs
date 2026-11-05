@@ -146,6 +146,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
+        CheckBenjaminIndependentQuestion();
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -342,6 +343,52 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckBenjaminIndependentQuestion()
+    {
+        ModelDb.Inject(typeof(FoucaultPower));
+        ModelDb.Inject(typeof(BenjaminHistory));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesQuestionCup), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "CurrentNodeId", "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE");
+        Put(journey, "LastFixedAct", 3);
+        object foucault = Call("FoucaultPowerState", "CreateAt",
+            "FOUCAULT_POWER:TEST:2", 2, "WESTERN_EDGE_063")!;
+        Put(foucault, "Closed", true);
+        Put(foucault, "EdgeCommitted", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "FoucaultPower", foucault);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object CurrentShared()
+        {
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            return query[1]!;
+        }
+
+        object? selected = Call("BenjaminHistoryPatch", "TrySelectNative", run);
+        Check(selected is BenjaminHistory,
+            "Benjamin's independent perspective opens after Foucault's closed fixed room.");
+        object state = Get(CurrentShared(), "BenjaminHistory");
+        Check(state is not null && Convert.ToInt32(Get(state, "ActIndex")) == 2
+            && (bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!,
+            "Benjamin's independent perspective persists a usable second-act record.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(), 1]);
+        state = Get(CurrentShared(), "BenjaminHistory");
+        Put(state, "Closed", true);
+        Check((bool)Get(state, "Closed")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "Benjamin's independent perspective closes without spending the main question.");
     }
 
     private static void CheckBerkeleyIndependentQuestion()

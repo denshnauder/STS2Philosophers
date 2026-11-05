@@ -230,6 +230,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.DiderotPublicPractice?.Closed ?? true, shared.DiderotPublicPractice?.IsUsable() ?? false)
             || Open(shared.FichteSelfPositing?.Closed ?? true, shared.FichteSelfPositing?.IsUsable() ?? false)
             || Open(shared.FoucaultPower?.Closed ?? true, shared.FoucaultPower?.IsUsable() ?? false)
+            || Open(shared.BenjaminHistory?.Closed ?? true, shared.BenjaminHistory?.IsUsable() ?? false)
             || Open(shared.DeleuzeDifference?.Closed ?? true, shared.DeleuzeDifference?.IsUsable() ?? false)
             || Open(shared.GadamerFusion?.Closed ?? true, shared.GadamerFusion?.IsUsable() ?? false)
             || Open(shared.RussellAnalysis?.Closed ?? true, shared.RussellAnalysis?.IsUsable() ?? false)

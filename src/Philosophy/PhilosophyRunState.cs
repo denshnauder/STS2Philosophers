@@ -87,6 +87,8 @@ internal sealed class PhilosophyRunState
     public SaussureSignState? SaussureSign { get; set; }
     public LeviStraussMythState? LeviStraussMyth { get; set; }
     public FoucaultPowerState? FoucaultPower { get; set; }
+    /// <summary>Benjamin's independent second-act perspective after Foucault's fixed room.</summary>
+    public BenjaminHistoryState? BenjaminHistory { get; set; }
     public DerridaDeconstructionState? DerridaDeconstruction { get; set; }
     public DeleuzeDifferenceState? DeleuzeDifference { get; set; }
     public GadamerFusionState? GadamerFusion { get; set; }
@@ -200,6 +202,7 @@ internal sealed class PhilosophyRunState
         || SaussureSign is not null
         || LeviStraussMyth is not null
         || FoucaultPower is not null
+        || BenjaminHistory is not null
         || DerridaDeconstruction is not null
         || DeleuzeDifference is not null
         || GadamerFusion is not null
@@ -445,6 +448,7 @@ internal sealed class PhilosophyRunState
         SaussureSign?.NormalizeAfterLoad();
         LeviStraussMyth?.NormalizeAfterLoad();
         FoucaultPower?.NormalizeAfterLoad();
+        BenjaminHistory?.NormalizeAfterLoad();
         DerridaDeconstruction?.NormalizeAfterLoad();
         DeleuzeDifference?.NormalizeAfterLoad();
         GadamerFusion?.NormalizeAfterLoad();
