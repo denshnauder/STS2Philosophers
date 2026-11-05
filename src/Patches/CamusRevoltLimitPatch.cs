@@ -30,20 +30,30 @@ internal static class CamusRevoltLimitPatch
         WesternJourneyState? journey = shared.WesternJourney;
         CamusRevoltLimit? canonical = TryGetCanonicalEvent();
         if (journey is null || canonical is null || run.VisitedEventIds.Contains(canonical.Id)
-            || journey.RetainedEnding
-            || journey.CurrentNodeId != CamusRevoltLimitState.SourceNodeId
+            || journey.RetainedEnding) return null;
+        bool afterNietzsche = journey.CurrentNodeId == CamusRevoltLimitState.NietzscheSourceNodeId;
+        string hostNode = afterNietzsche
+            ? CamusRevoltLimitState.NietzscheSourceNodeId : CamusRevoltLimitState.SourceNodeId;
+        string hostEdge = afterNietzsche ? string.Empty : CamusRevoltLimitState.RequiredEdgeId;
+        if (journey.CurrentNodeId != hostNode
             || journey.LastFixedAct != 3
-            || !journey.CompletedEdgeIds.Contains(CamusRevoltLimitState.RequiredEdgeId)
+            || hostEdge.Length > 0 && !journey.CompletedEdgeIds.Contains(hostEdge)
             || journey.ResolvedQuestionActs.Contains(3)) return null;
 
         CamusRevoltLimitState? saved = shared.CamusRevoltLimit;
         if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
-        var candidate = saved ?? CamusRevoltLimitState.Create($"CAMUS_REVOLT_LIMIT:{run.Rng.Seed}:3");
+        var candidate = saved is not null && saved.HostNode == hostNode && saved.HostEdgeId == hostEdge
+            ? saved
+            : CamusRevoltLimitState.Create($"CAMUS_REVOLT_LIMIT:{run.Rng.Seed}:3");
+        candidate.HostNode = hostNode;
+        candidate.HostEdgeId = hostEdge;
         if (!candidate.IsUsable()
             || !CamusRevoltLimitFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.CamusRevoltLimit = candidate;
 
-        Log.Info("[STS2Philosophers] Presenting Camus's limit of revolt at Zeno's terminal node.");
+        Log.Info(afterNietzsche
+            ? "[STS2Philosophers] Presenting Camus's limit of revolt after Nietzsche's third-act room."
+            : "[STS2Philosophers] Presenting Camus's limit of revolt at Zeno's terminal node.");
         return canonical;
     }
 

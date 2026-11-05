@@ -33,9 +33,14 @@ internal sealed class CamusRevoltLimitState : IEventGoldCostState
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "ZENO_OF_CITIUM__VIRTUE_AND_HAPPINESS__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_011";
+    public const string NietzscheSourceNodeId = "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>Zeno legacy source or Nietzsche's third-act fixed room.</summary>
+    public string HostNode { get; set; } = SourceNodeId;
+    /// <summary>The fixed edge required by the legacy source; empty after Nietzsche.</summary>
+    public string HostEdgeId { get; set; } = RequiredEdgeId;
     public CamusRevoltLimitStage Stage { get; set; }
     public CamusRevoltLimitAction PendingAction { get; set; }
     public List<CamusRevoltLimitAction> ConfirmedActions { get; set; } = [];
@@ -59,6 +64,8 @@ internal sealed class CamusRevoltLimitState : IEventGoldCostState
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        HostNode = string.IsNullOrWhiteSpace(HostNode) ? SourceNodeId : HostNode;
+        HostEdgeId ??= string.Empty;
         ConfirmedActions ??= [];
     }
 
@@ -170,9 +177,9 @@ internal static class CamusRevoltLimitFlow
     public static bool IsRouteConsistent(CamusRevoltLimitState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding
-            || journey.CurrentNodeId != CamusRevoltLimitState.SourceNodeId
+            || journey.CurrentNodeId != state.HostNode
             || journey.LastFixedAct != 3
-            || !journey.CompletedEdgeIds.Contains(CamusRevoltLimitState.RequiredEdgeId)
+            || state.HostEdgeId.Length > 0 && !journey.CompletedEdgeIds.Contains(state.HostEdgeId)
             || journey.ResolvedQuestionActs.Contains(3) != state.QuestionReserved
             || (!state.QuestionReserved && state.Outcome != CamusRevoltLimitOutcome.None)) return false;
         return state.Outcome == CamusRevoltLimitOutcome.None

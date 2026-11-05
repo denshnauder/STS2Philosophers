@@ -35,6 +35,21 @@ internal static class CamusRevoltLimitChecks
             "Camus restraint result closes.");
         Check(state.IsUsable(), "Camus restraint state replays after close.");
 
+        var nietzscheJourney = new WesternJourneyState
+        {
+            CurrentNodeId = CamusRevoltLimitState.NietzscheSourceNodeId,
+            LastFixedAct = 3,
+        };
+        var nietzscheState = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
+        nietzscheState.HostNode = CamusRevoltLimitState.NietzscheSourceNodeId;
+        nietzscheState.HostEdgeId = string.Empty;
+        Check(CamusRevoltLimitFlow.IsRouteConsistent(nietzscheState, nietzscheJourney),
+            "Camus opens after Nietzsche's third-act fixed room without the old Zeno edge.");
+        Check(CamusRevoltLimitFlow.TryPrepare(nietzscheState, CamusRevoltLimitAction.AcknowledgeLevy)
+            && CamusRevoltLimitFlow.TryCommitPending(nietzscheState, nietzscheJourney, graph)
+            && nietzscheJourney.ResolvedQuestionActs.Contains(3),
+            "Camus still reserves act three's question after Nietzsche.");
+
         var withdrawnJourney = NewJourney();
         var withdrawn = CamusRevoltLimitState.Create("CAMUS_REVOLT_LIMIT:TEST:3");
         Check(CamusRevoltLimitFlow.TryPrepare(withdrawn, CamusRevoltLimitAction.QuestionLevy)
