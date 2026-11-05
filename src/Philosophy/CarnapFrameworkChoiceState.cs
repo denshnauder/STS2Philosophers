@@ -43,6 +43,10 @@ internal sealed class CarnapFrameworkChoiceState : IEventGoldCostState
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>The node that hosts this extra question (Aristotle legacy or early Wittgenstein).</summary>
+    public string SourceNode { get; set; } = SourceNodeId;
+    /// <summary>Legacy Ockham path requires question 2; early Wittgenstein's fixed room does not.</summary>
+    public bool RequiresResolvedQuestion { get; set; } = true;
     public CarnapFrameworkChoiceStage Stage { get; set; }
     public CarnapFrameworkChoiceAction PendingAction { get; set; }
     public List<CarnapFrameworkChoiceAction> ConfirmedActions { get; set; } = [];
@@ -65,6 +69,7 @@ internal sealed class CarnapFrameworkChoiceState : IEventGoldCostState
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? SourceNodeId : SourceNode;
         ConfirmedActions ??= [];
     }
 
@@ -172,10 +177,11 @@ internal static class CarnapFrameworkChoiceFlow
 
     public static bool IsRouteConsistent(CarnapFrameworkChoiceState state, WesternJourneyState journey)
     {
+        int minimumFixed = state.RequiresResolvedQuestion ? 2 : 3;
         if (!state.IsUsable() || journey.RetainedEnding
-            || journey.CurrentNodeId != CarnapFrameworkChoiceState.SourceNodeId
-            || journey.LastFixedAct != 2
-            || !journey.ResolvedQuestionActs.Contains(2)
+            || journey.CurrentNodeId != state.SourceNode
+            || journey.LastFixedAct < minimumFixed
+            || state.RequiresResolvedQuestion && !journey.ResolvedQuestionActs.Contains(2)
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_029")
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_030")
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_011")) return false;

@@ -30,22 +30,32 @@ internal static class CarnapFrameworkChoicePatch
         WesternJourneyState? journey = shared.WesternJourney;
         CarnapFrameworkChoice? canonical = TryGetCanonicalEvent();
         if (journey is null || canonical is null || run.VisitedEventIds.Contains(canonical.Id)
-            || journey.RetainedEnding
-            || journey.CurrentNodeId != CarnapFrameworkChoiceState.SourceNodeId
-            || journey.LastFixedAct != 2
-            || !journey.ResolvedQuestionActs.Contains(2)
+            || journey.RetainedEnding) return null;
+        bool earlyWittgenstein = journey.CurrentNodeId == WittgensteinGameState.AdoptedNodeId;
+        string sourceNode = earlyWittgenstein
+            ? WittgensteinGameState.AdoptedNodeId : CarnapFrameworkChoiceState.SourceNodeId;
+        int minimumFixed = earlyWittgenstein ? 3 : 2;
+        if (journey.CurrentNodeId != sourceNode
+            || journey.LastFixedAct < minimumFixed
+            || !earlyWittgenstein && !journey.ResolvedQuestionActs.Contains(2)
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_029")
             || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_030")) return null;
 
         CarnapFrameworkChoiceState? saved = shared.CarnapFrameworkChoice;
         if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
-        var candidate = saved ?? CarnapFrameworkChoiceState.Create(
-            $"CARNAP_FRAMEWORK_CHOICE:{run.Rng.Seed}:2");
+        var candidate = saved is not null && saved.SourceNode == sourceNode
+                && saved.RequiresResolvedQuestion == !earlyWittgenstein
+            ? saved
+            : CarnapFrameworkChoiceState.Create($"CARNAP_FRAMEWORK_CHOICE:{run.Rng.Seed}:2");
+        candidate.SourceNode = sourceNode;
+        candidate.RequiresResolvedQuestion = !earlyWittgenstein;
         if (!candidate.IsUsable()
             || !CarnapFrameworkChoiceFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.CarnapFrameworkChoice = candidate;
 
-        Log.Info("[STS2Philosophers] Presenting Carnap's framework choice at Aristotle's language node after Ockham.");
+        Log.Info(earlyWittgenstein
+            ? "[STS2Philosophers] Presenting Carnap after early Wittgenstein's second-act room."
+            : "[STS2Philosophers] Presenting Carnap's framework choice at Aristotle's language node after Ockham.");
         return canonical;
     }
 

@@ -60,6 +60,20 @@ internal static class CarnapFrameworkChoiceChecks
             && convenient.CrossFrameworkLimitShown && convenient.Cost == 0,
             "Carnap convenient framework records its limit without a universal claim.");
 
+        var earlyJourney = new WesternJourneyState
+        {
+            CurrentNodeId = WittgensteinGameState.AdoptedNodeId,
+            LastFixedAct = 3,
+        };
+        var earlyCarnap = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
+        earlyCarnap.SourceNode = WittgensteinGameState.AdoptedNodeId;
+        earlyCarnap.RequiresResolvedQuestion = false;
+        Check(CarnapFrameworkChoiceFlow.IsRouteConsistent(earlyCarnap, earlyJourney),
+            "Carnap opens after early Wittgenstein's second-act fixed room without Ockham's question.");
+        Check(CarnapFrameworkChoiceFlow.TryPrepare(earlyCarnap, CarnapFrameworkChoiceAction.ChooseObservation)
+            && CarnapFrameworkChoiceFlow.TryCommitPending(earlyCarnap, earlyJourney),
+            "Carnap commits from the early Wittgenstein source.");
+
         var before = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         var corruptFramework = CarnapFrameworkChoiceState.Create("CARNAP_FRAMEWORK_CHOICE:TEST:2");
         corruptFramework.Framework = CarnapFramework.Observation;
