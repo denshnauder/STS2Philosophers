@@ -110,7 +110,13 @@ public sealed class MarxAlienation : EventModel
         ReferenceEquals(shared.MarxAlienation, state) && shared.WesternJourney is { } journey
         && MarxAlienationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.MarxAlienation is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(MarxAlienationState state)
     {
@@ -140,7 +146,7 @@ public sealed class MarxAlienation : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.MarxAlienation is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && MarxAlienationFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

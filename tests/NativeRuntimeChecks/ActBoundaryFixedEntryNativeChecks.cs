@@ -142,7 +142,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_197"], checkRoom: true);
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
-            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE");
+            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -415,7 +415,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             "The boundary selects a room that owns this act's fixed edge, got " + room.CanonicalEvent.GetType().Name + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
-        object current = Get(query[1]!, expected.Name);
+        object current = Get(query[1]!, expected!.Name);
         Check(current is not null && (bool)current.GetType().GetMethod("IsUsable")!.Invoke(current, null)!,
             "The boundary selection persists a usable room state for save recovery.");
         // The event body restores itself by matching its record's act, so a record
@@ -423,7 +423,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // the body reads; assert it here where the boundary wrote it.
         Type openedType = room.CanonicalEvent.GetType();
         if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
-            || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition))
+            || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition)
+            || openedType == typeof(MarxAlienation))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");
