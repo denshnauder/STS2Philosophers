@@ -47,6 +47,8 @@ internal static class FoucaultPowerChecks
         FoucaultPowerFlow.TryPrepare(benjamin, FoucaultPowerAction.PowerKnowledge);
         WesternJourneyState benjaminJourney = Journey();
         FoucaultPowerFlow.TryCommitPending(benjamin, benjaminJourney, graph);
+        Check((int)FoucaultPowerAction.Leave == 4 && (int)FoucaultPowerAction.BenjaminHistory == 5,
+            "The old numeric Leave value must remain 4 while Benjamin's new action appends after it.");
         Check(FoucaultPowerFlow.Options(benjamin.Stage).Contains(FoucaultPowerAction.BenjaminHistory),
             "The result page must offer Benjamin's historical perspective.");
         Check(FoucaultPowerFlow.TryPrepare(benjamin, FoucaultPowerAction.BenjaminHistory)

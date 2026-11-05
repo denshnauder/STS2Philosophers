@@ -3,7 +3,17 @@ using System.Text.Json.Serialization;
 namespace STS2Philosophers;
 
 internal enum FoucaultPowerStage { Invitation, ResultPower, ResultDiscipline, ResultKept, Benjamin }
-internal enum FoucaultPowerAction { None, PowerKnowledge, Discipline, KeepNietzsche, BenjaminHistory, Leave }
+internal enum FoucaultPowerAction
+{
+    None = 0,
+    PowerKnowledge = 1,
+    Discipline = 2,
+    KeepNietzsche = 3,
+    // Leave was the fourth value in every saved version before Benjamin's
+    // optional page existed. Keep its number stable and append the new page.
+    Leave = 4,
+    BenjaminHistory = 5,
+}
 internal enum FoucaultPowerStandard { None, Power, Discipline, Nietzschean }
 
 /// <summary>
