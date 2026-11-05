@@ -29,22 +29,36 @@ internal static class DerridaDeconstructionPatch
         DerridaDeconstruction? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
-        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
-            .GetEligibleEdges(journey, "Question")
-            .Any(edge => edge.EdgeId == DerridaDeconstructionState.CompletionEdgeId);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        bool fixedEntry = FixedEntryScope.Active;
+        bool fixedMode = fixedEntry && journey is not null
+            && journey.CompletedEdgeIds.Contains(DerridaDeconstructionState.FixedRequiredEdgeId)
+            && graph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == DerridaDeconstructionState.FixedCompletionEdgeId);
+        if (fixedEntry && !fixedMode) return null;
+        string edgeId = fixedMode
+            ? DerridaDeconstructionState.FixedCompletionEdgeId
+            : DerridaDeconstructionState.CompletionEdgeId;
+        string requiredEdgeId = fixedMode
+            ? DerridaDeconstructionState.FixedRequiredEdgeId
+            : DerridaDeconstructionState.RequiredEdgeId;
+        bool edgeEligible = journey is not null && graph
+            .GetEligibleEdges(journey, fixedMode ? "Fixed" : "Question")
+            .Any(edge => edge.EdgeId == edgeId);
         DerridaDeconstructionTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
-            journey?.CompletedEdgeIds.Contains(DerridaDeconstructionState.RequiredEdgeId) == true, edgeEligible,
+            journey?.CompletedEdgeIds.Contains(requiredEdgeId) == true, edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && DerridaDeconstructionFlow.IsRouteConsistent(saved, journey),
             canonical is not null);
         if (!DerridaDeconstructionTriggerPolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? DerridaDeconstructionState.Create($"DERRIDA_DECONSTRUCTION:{run.Rng.Seed}:3");
+        var candidate = saved ?? DerridaDeconstructionState.CreateAt(
+            $"DERRIDA_DECONSTRUCTION:{run.Rng.Seed}:3", 3, edgeId, fixedMode);
         if (journey is null || !DerridaDeconstructionFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.DerridaDeconstruction = candidate;
-        Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");
+        Log.Info("[STS2Philosophers] Presenting Derrida's deconstruction question.");
         return canonical;
     }
 

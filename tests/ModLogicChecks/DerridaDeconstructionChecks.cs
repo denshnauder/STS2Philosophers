@@ -44,8 +44,50 @@ internal static class DerridaDeconstructionChecks
             && declined.CurrentNodeId == DerridaDeconstructionState.SourceNodeId,
             "Declining must leave the player on Peirce's node.");
 
-        var tampered = DerridaDeconstructionState.Create("DERRIDA_DECONSTRUCTION:TEST:3");
+        var fixedJourney = new WesternJourneyState
+        {
+            CurrentNodeId = DerridaDeconstructionState.SourceNodeId,
+            LastFixedAct = 3,
+            RouteId = "STRUCTURE_AND_EXCLUSION",
+            CompletedEdgeIds = new(StringComparer.Ordinal) { DerridaDeconstructionState.FixedRequiredEdgeId },
+        };
+        var fixedState = DerridaDeconstructionState.CreateAt(
+            "DERRIDA_DECONSTRUCTION:TEST:3", 3, DerridaDeconstructionState.FixedCompletionEdgeId, fixedMode: true);
+        Check(DerridaDeconstructionFlow.IsRouteConsistent(fixedState, fixedJourney),
+            "The routed third-act fixed room must open after Levi-Strauss took 187.");
+        Check(DerridaDeconstructionFlow.TryPrepare(fixedState, DerridaDeconstructionAction.BinaryHierarchy)
+            && DerridaDeconstructionFlow.TryCommitPending(fixedState, fixedJourney, graph),
+            "The fixed room must commit through the fixed 188 edge.");
+        Check(fixedJourney.LastFixedAct == 3
+            && fixedJourney.CompletedEdgeIds.Contains(DerridaDeconstructionState.FixedCompletionEdgeId)
+            && fixedJourney.CurrentNodeId == DerridaDeconstructionState.AdoptedNodeId
+            && !fixedJourney.ResolvedQuestionActs.Contains(3)
+            && !fixedJourney.DeclinedFixedActs.Contains(3),
+            "The fixed room must adopt Derrida without consuming act three's question.");
+        Check(fixedState.IsUsable() && fixedState.FixedMode && fixedState.EdgeCommitted,
+            "The fixed mode and its edge must survive replay.");
+
+        var fixedKept = DerridaDeconstructionState.CreateAt(
+            "DERRIDA_DECONSTRUCTION:TEST:4", 3, DerridaDeconstructionState.FixedCompletionEdgeId, fixedMode: true);
+        var fixedDeclined = new WesternJourneyState
+        {
+            CurrentNodeId = DerridaDeconstructionState.SourceNodeId,
+            LastFixedAct = 3,
+            RouteId = "STRUCTURE_AND_EXCLUSION",
+            CompletedEdgeIds = new(StringComparer.Ordinal) { DerridaDeconstructionState.FixedRequiredEdgeId },
+        };
+        Check(DerridaDeconstructionFlow.TryPrepare(fixedKept, DerridaDeconstructionAction.KeepLeviStrauss)
+            && DerridaDeconstructionFlow.TryCommitPending(fixedKept, fixedDeclined, graph),
+            "Keeping Levi-Strauss must decline the fixed slot.");
+        Check(fixedDeclined.DeclinedFixedActs.Contains(3)
+            && !fixedDeclined.ResolvedQuestionActs.Contains(3)
+            && fixedDeclined.CurrentNodeId == DerridaDeconstructionState.SourceNodeId,
+            "Declining the fixed room must not resolve the act's question.");
+
+        var tampered = DerridaDeconstructionState.Create("DERRIDA_DECONSTRUCTION:TEST:5");
         tampered.Standard = DerridaDeconstructionStandard.Differance;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
+        Check(!tampered.FixedMode && tampered.EdgeId == DerridaDeconstructionState.CompletionEdgeId,
+            "Legacy question states must keep the question edge by default.");
     }
 }

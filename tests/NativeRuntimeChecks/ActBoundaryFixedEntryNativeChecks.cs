@@ -171,6 +171,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(AristotleCategoryTablet), "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
             [typeof(LeviStraussMyth)], doctrine: false, position: 2, actIndex: 2,
             route: "STRUCTURE_AND_EXCLUSION", required: ["WESTERN_EDGE_106"], checkRoom: true);
+        ModelDb.Inject(typeof(DerridaDeconstruction));
+        CheckBoundary(typeof(SocratesBalanceWeight), "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+            [typeof(DerridaDeconstruction)], doctrine: false, position: 3, actIndex: 2,
+            route: "STRUCTURE_AND_EXCLUSION", required: ["WESTERN_EDGE_187"], checkRoom: true);
         ModelDb.Inject(typeof(SartreExistence));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
             [typeof(SartreExistence)], doctrine: false, position: 3, actIndex: 2,
@@ -425,7 +429,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
             || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition)
             || openedType == typeof(MarxAlienation) || openedType == typeof(KantApperception)
-            || openedType == typeof(LeviStraussMyth) || openedType == typeof(SaussureSign))
+            || openedType == typeof(LeviStraussMyth) || openedType == typeof(SaussureSign)
+            || openedType == typeof(DerridaDeconstruction))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");

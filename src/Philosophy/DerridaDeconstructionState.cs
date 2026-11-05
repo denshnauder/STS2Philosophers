@@ -18,6 +18,8 @@ internal sealed class DerridaDeconstructionState : IJsonOnDeserialized
     public const string AdoptedNodeId = "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_081";
     public const string CompletionEdgeId = "WESTERN_EDGE_082";
+    public const string FixedRequiredEdgeId = "WESTERN_EDGE_187";
+    public const string FixedCompletionEdgeId = "WESTERN_EDGE_188";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -28,13 +30,24 @@ internal sealed class DerridaDeconstructionState : IJsonOnDeserialized
     public bool EdgeCommitted { get; set; }
     public bool QuestionDeclined { get; set; }
     public bool Closed { get; set; }
+    /// <summary>True when the route takes Derrida as the third act's fixed room.</summary>
+    public bool FixedMode { get; set; }
+    public int ActIndex { get; set; } = 3;
+    public string EdgeId { get; set; } = CompletionEdgeId;
 
-    public static DerridaDeconstructionState Create(string instanceId) => new() { InstanceId = instanceId };
+    public static DerridaDeconstructionState Create(string instanceId) =>
+        CreateAt(instanceId, 3, CompletionEdgeId, fixedMode: false);
+
+    public static DerridaDeconstructionState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
+        if (ActIndex is < 1 or > 3) ActIndex = 3;
+        EdgeId = string.IsNullOrWhiteSpace(EdgeId)
+            ? (FixedMode ? FixedCompletionEdgeId : CompletionEdgeId) : EdgeId;
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -48,7 +61,7 @@ internal sealed class DerridaDeconstructionState : IJsonOnDeserialized
             || Closed && PendingAction != DerridaDeconstructionAction.None
             || PendingAction != DerridaDeconstructionAction.None
                 && !DerridaDeconstructionFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
         foreach (DerridaDeconstructionAction action in ConfirmedActions)
         {
             if (replay.Closed || !DerridaDeconstructionFlow.Options(replay.Stage).Contains(action)) return false;
@@ -113,28 +126,37 @@ internal static class DerridaDeconstructionFlow
         DerridaDeconstructionAction action = state.PendingAction;
         bool adopts = action is DerridaDeconstructionAction.BinaryHierarchy or DerridaDeconstructionAction.Differance;
         bool declines = action == DerridaDeconstructionAction.KeepLeviStrauss;
-        if (adopts && !journey.CompletedEdgeIds.Contains(DerridaDeconstructionState.CompletionEdgeId)
-            && !graph.TryApply(journey, DerridaDeconstructionState.CompletionEdgeId)) return false;
-        if (declines && !journey.ResolvedQuestionActs.Contains(3)
-            && !graph.TryDecline(journey, "Question", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines)
+        {
+            string slot = state.FixedMode ? "Fixed" : "Question";
+            bool resolved = state.FixedMode
+                ? journey.DeclinedFixedActs.Contains(3)
+                : journey.ResolvedQuestionActs.Contains(3);
+            if (!resolved && !graph.TryDecline(journey, slot, 3)) return false;
+        }
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
 
     public static bool IsRouteConsistent(DerridaDeconstructionState state, WesternJourneyState journey)
     {
-        if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(DerridaDeconstructionState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(DerridaDeconstructionState.CompletionEdgeId);
+        if (!state.IsUsable() || journey.RetainedEnding) return false;
+        string required = state.FixedMode ? DerridaDeconstructionState.FixedRequiredEdgeId : DerridaDeconstructionState.RequiredEdgeId;
+        if (!journey.CompletedEdgeIds.Contains(required)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        bool slotResolved = state.FixedMode
+            ? journey.DeclinedFixedActs.Contains(3)
+            : journey.ResolvedQuestionActs.Contains(3);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
-            return journey.LastFixedAct == 3 && !adopted && !journey.ResolvedQuestionActs.Contains(3)
+            return journey.LastFixedAct == 3 && !adopted && !slotResolved
                 && journey.CurrentNodeId == DerridaDeconstructionState.SourceNodeId;
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == 3
-                && journey.ResolvedQuestionActs.Contains(3)
+                && (state.FixedMode || journey.ResolvedQuestionActs.Contains(3))
                 && journey.CurrentNodeId == DerridaDeconstructionState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3
-            && journey.ResolvedQuestionActs.Contains(3)
+        return !adopted && journey.LastFixedAct == 3 && slotResolved
             && journey.CurrentNodeId == DerridaDeconstructionState.SourceNodeId;
     }
 
