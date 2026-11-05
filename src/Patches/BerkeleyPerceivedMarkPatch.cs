@@ -33,7 +33,8 @@ internal static class BerkeleyPerceivedMarkPatch
         BerkeleyPerceivedMark? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         BerkeleyPerceivedMarkState? saved = shared.BerkeleyPerceivedMark;
-        if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
+        if (saved is { Closed: true }
+            || saved is not null && (!saved.IsUsable() || !MatchesOpenHost(shared, saved))) return null;
         var candidate = saved ?? BerkeleyPerceivedMarkState.CreateAt(
             $"BERKELEY_PERCEIVED_MARK:{run.Rng.Seed}:2", 2);
         if (!candidate.IsUsable()) return null;

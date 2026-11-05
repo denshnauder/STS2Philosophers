@@ -375,6 +375,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        object wrongSaved = Call("BenjaminHistoryState", "CreateAt", "BENJAMIN_HISTORY:TEST:1", 1)!;
+        Put(CurrentShared(), "BenjaminHistory", wrongSaved);
+        Check(Call("BenjaminHistoryPatch", "TrySelectNative", run) is null,
+            "BenjaminHistoryPatch rejects an open record from the wrong act.");
+        Put(CurrentShared(), "BenjaminHistory", null);
         Set(run, "_currentActIndex", 2);
         Check(Call("BenjaminHistoryPatch", "TrySelectNative", run) is null,
             "BenjaminHistoryPatch rejects a wrong-act question node.");
@@ -425,6 +430,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        object wrongSaved = Call("BerkeleyPerceivedMarkState", "CreateAt", "BERKELEY_PERCEIVED_MARK:TEST:1", 1)!;
+        Put(CurrentShared(), "BerkeleyPerceivedMark", wrongSaved);
+        Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is null,
+            "BerkeleyPerceivedMarkPatch rejects an open record from the wrong act.");
+        Put(CurrentShared(), "BerkeleyPerceivedMark", null);
         Set(run, "_currentActIndex", 2);
         Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is null,
             "BerkeleyPerceivedMarkPatch rejects a wrong-act question node.");
@@ -481,6 +491,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
             return query[1]!;
         }
 
+        object wrongSaved = Call("JamesPragmatismState", "CreateAt", "JAMES_PRAGMATISM:TEST:1", 1)!;
+        Put(CurrentShared(), "JamesPragmatism", wrongSaved);
+        Check(Call("JamesPragmatismPatch", "TrySelectNative", run) is null,
+            "JamesPragmatismPatch rejects an open record from the wrong act.");
+        Put(CurrentShared(), "JamesPragmatism", null);
         Set(run, "_currentActIndex", 2);
         Check(Call("JamesPragmatismPatch", "TrySelectNative", run) is null,
             "JamesPragmatismPatch rejects a wrong-act question node.");

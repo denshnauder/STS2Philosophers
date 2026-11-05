@@ -33,7 +33,8 @@ internal static class BenjaminHistoryPatch
         BenjaminHistory? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         BenjaminHistoryState? saved = shared.BenjaminHistory;
-        if (saved is { Closed: true } || saved is not null && !saved.IsUsable()) return null;
+        if (saved is { Closed: true }
+            || saved is not null && (!saved.IsUsable() || !MatchesOpenHost(shared, saved))) return null;
         var candidate = saved ?? BenjaminHistoryState.CreateAt(
             $"BENJAMIN_HISTORY:{run.Rng.Seed}:2", 2);
         if (!candidate.IsUsable()) return null;
