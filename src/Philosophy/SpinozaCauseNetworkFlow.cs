@@ -92,7 +92,10 @@ internal static class SpinozaCauseNetworkFlow
                 && !journey.SeenThinkerIds.Contains("BARUCH_SPINOZA");
         }
 
-        if (journey.LastFixedAct != 2) return false;
+        // The fixed slot is reserved before the room opens (LastFixedAct=2),
+        // then applying the completion edge advances it to three. Both are the
+        // same real second-act settlement; a stale equality rejected adoption.
+        if (journey.LastFixedAct is < 2 or > 3) return false;
         if (state.EdgeCommitted)
         {
             return journey.CurrentNodeId == SpinozaCauseNetworkState.AdoptedNodeId

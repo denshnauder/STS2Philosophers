@@ -116,6 +116,21 @@ internal static class SpinozaCauseNetworkChecks
             && !declined.WesternJourney.ResolvedQuestionActs.Contains(2),
             "Declining consumes no Question slot.");
 
+        // The real boundary reserves the second Fixed slot before the event opens,
+        // then the adoption edge advances the counter to three. Exercise that
+        // exact sequence instead of the fixture's pre-reservation start at one.
+        (PhilosophyRunState reserved, WesternRouteGraph reservedGraph) = Fixture();
+        reserved.WesternJourney!.LastFixedAct = 2;
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Accept);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.BlameEnemy);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Continue);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Intervene);
+        Check(reserved.WesternJourney!.LastFixedAct == 3
+            && reserved.SpinozaCauseNetwork!.EdgeCommitted
+            && reserved.WesternJourney.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId),
+            "Adoption must survive the real boundary's 2-to-3 Fixed slot advance.");
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Leave);
+
         SpinozaAttribution[] attributions = [SpinozaAttribution.BlameEnemy, SpinozaAttribution.TraceChains];
         SpinozaCauseNetworkAction[] decisions =
         [
