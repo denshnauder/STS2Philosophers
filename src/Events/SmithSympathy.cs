@@ -110,7 +110,13 @@ public sealed class SmithSympathy : EventModel
         ReferenceEquals(shared.SmithSympathy, state) && shared.WesternJourney is { } journey
         && SmithSympathyFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.SmithSympathy is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(SmithSympathyState state)
     {
@@ -140,7 +146,7 @@ public sealed class SmithSympathy : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.SmithSympathy is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && SmithSympathyFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }

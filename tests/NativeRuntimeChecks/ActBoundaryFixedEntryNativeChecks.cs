@@ -39,10 +39,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__VIRTUE_AND_HAPPINESS__CORE", [typeof(EpicurusSharedMargin)], doctrine: false, position: 2, actIndex: 2, required: ["WESTERN_EDGE_009"]);
         ModelDb.Inject(typeof(MontesquieuBalance));
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-            [typeof(MontesquieuBalance)], doctrine: false, position: 2, route: "CHECKS_AND_JUSTICE");
+            [typeof(MontesquieuBalance)], doctrine: false, position: 2, route: "CHECKS_AND_JUSTICE", checkRoom: true);
         ModelDb.Inject(typeof(SmithSympathy));
         CheckBoundary(typeof(SocratesBalanceWeight), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
-            [typeof(SmithSympathy)], doctrine: false, position: 2, route: "SYMPATHY_AND_PUBLIC_ACTION");
+            [typeof(SmithSympathy)], doctrine: false, position: 2, route: "SYMPATHY_AND_PUBLIC_ACTION", checkRoom: true);
         ModelDb.Inject(typeof(HusserlEpoche));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
             [typeof(HusserlEpoche)], doctrine: true, position: 2, route: "APPEARANCE_AND_INTERPRETATION", checkRoom: true);
@@ -430,7 +430,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition)
             || openedType == typeof(MarxAlienation) || openedType == typeof(KantApperception)
             || openedType == typeof(LeviStraussMyth) || openedType == typeof(SaussureSign)
-            || openedType == typeof(DerridaDeconstruction))
+            || openedType == typeof(DerridaDeconstruction) || openedType == typeof(SmithSympathy)
+            || openedType == typeof(MontesquieuBalance))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");

@@ -123,7 +123,13 @@ public sealed class MontesquieuBalance : EventModel
         ReferenceEquals(shared.MontesquieuBalance, state) && shared.WesternJourney is { } journey
         && MontesquieuBalanceFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 0);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.MontesquieuBalance is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(MontesquieuBalanceState state)
     {
@@ -174,7 +180,7 @@ public sealed class MontesquieuBalance : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.MontesquieuBalance is { } state && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:1"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && MontesquieuBalanceFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
