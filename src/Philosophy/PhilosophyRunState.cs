@@ -71,6 +71,8 @@ internal sealed class PhilosophyRunState
     public BenthamUtilityState? BenthamUtility { get; set; }
     public ComtePositivismState? ComtePositivism { get; set; }
     public PeirceInquiryState? PeirceInquiry { get; set; }
+    /// <summary>James's independent second-act question after Peirce's fixed room.</summary>
+    public JamesPragmatismState? JamesPragmatism { get; set; }
     public DeweyPublicExperimentState? DeweyPublicExperiment { get; set; }
     public RouteTurnQuestionState? RouteTurnQuestion { get; set; }
     public HusserlEpocheState? HusserlEpoche { get; set; }
@@ -183,6 +185,7 @@ internal sealed class PhilosophyRunState
         || BenthamUtility is not null
         || ComtePositivism is not null
         || PeirceInquiry is not null
+        || JamesPragmatism is not null
         || DeweyPublicExperiment is not null
         || HusserlEpoche is not null
         || HeideggerDasein is not null
@@ -425,6 +428,7 @@ internal sealed class PhilosophyRunState
         BenthamUtility?.NormalizeAfterLoad();
         ComtePositivism?.NormalizeAfterLoad();
         PeirceInquiry?.NormalizeAfterLoad();
+        JamesPragmatism?.NormalizeAfterLoad();
         DeweyPublicExperiment?.NormalizeAfterLoad();
         HusserlEpoche?.NormalizeAfterLoad();
         RouteTurnQuestion?.NormalizeAfterLoad();

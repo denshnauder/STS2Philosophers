@@ -144,6 +144,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
         CheckWittgensteinTwoActs();
+        CheckJamesIndependentQuestion();
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -340,6 +341,58 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckJamesIndependentQuestion()
+    {
+        ModelDb.Inject(typeof(PeirceInquiry));
+        ModelDb.Inject(typeof(JamesPragmatism));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesQuestionCup), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "RouteId", "FALLIBLE_INQUIRY");
+        Put(journey, "CurrentNodeId", "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE");
+        Put(journey, "LastFixedAct", 3);
+        object peirce = Call("PeirceInquiryState", "CreateAt",
+            "PEIRCE_INQUIRY:TEST:2", 2, "WESTERN_EDGE_098")!;
+        Put(peirce, "Closed", true);
+        Put(peirce, "EdgeCommitted", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "PeirceInquiry", peirce);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object CurrentShared()
+        {
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            return query[1]!;
+        }
+
+        object? selected = Call("JamesPragmatismPatch", "TrySelectNative", run);
+        Check(selected is JamesPragmatism,
+            "James's independent question opens after Peirce's closed fixed room.");
+        object state = Get(CurrentShared(), "JamesPragmatism");
+        Check(state is not null && Convert.ToInt32(Get(state, "ActIndex")) == 2
+            && (bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!,
+            "James's independent question persists a usable second-act record.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(), 1]);
+        foreach (string action in new[] { "TestPublicly", "Leave" })
+        {
+            object parsed = Enum.Parse(T("JamesPragmatismAction"), action);
+            Check((bool)Call("JamesPragmatismFlow", "TryPrepare", state, parsed)!
+                && (bool)Call("JamesPragmatismFlow", "TryCommitPending", state)!,
+                "James's independent question commits " + action + ".");
+        }
+        Check((bool)Get(state, "Closed")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "James's independent question closes without spending the main question.");
     }
 
     private static void CheckWittgensteinTwoActs()

@@ -17,6 +17,8 @@ internal sealed class JamesPragmatismState : IJsonOnDeserialized
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>The act this independent question was opened in; legacy nested segments normalize to two.</summary>
+    public int ActIndex { get; set; } = 2;
     public JamesPragmatismStage Stage { get; set; }
     public JamesPragmatismAction PendingAction { get; set; }
     public List<JamesPragmatismAction> ConfirmedActions { get; set; } = [];
@@ -25,9 +27,13 @@ internal sealed class JamesPragmatismState : IJsonOnDeserialized
 
     public static JamesPragmatismState Create(string instanceId) => new() { InstanceId = instanceId };
 
+    public static JamesPragmatismState CreateAt(string instanceId, int actIndex) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex };
+
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
+        if (ActIndex is < 1 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
     }
 
@@ -42,7 +48,7 @@ internal sealed class JamesPragmatismState : IJsonOnDeserialized
             || Closed && PendingAction != JamesPragmatismAction.None
             || PendingAction != JamesPragmatismAction.None
                 && !JamesPragmatismFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex);
         foreach (JamesPragmatismAction action in ConfirmedActions)
         {
             if (replay.Closed || !JamesPragmatismFlow.Options(replay.Stage).Contains(action)) return false;
@@ -66,6 +72,14 @@ internal static class JamesPragmatismFlow
         if (!state.IsUsable() || state.Closed || state.PendingAction != JamesPragmatismAction.None
             || !Options(state.Stage).Contains(action)) return false;
         state.PendingAction = action;
+        return true;
+    }
+
+    public static bool TryCommitPending(JamesPragmatismState state)
+    {
+        if (!state.IsUsable() || state.Closed || state.PendingAction == JamesPragmatismAction.None
+            || !Options(state.Stage).Contains(state.PendingAction)) return false;
+        Apply(state, state.PendingAction);
         return true;
     }
 
