@@ -155,8 +155,9 @@ public sealed class SchopenhauerWillDenial : EventModel
 
     private static bool CommitPending(PhilosophyRunState shared, SchopenhauerWillDenialState state) =>
         ReferenceEquals(shared.SchopenhauerWillDenial, state)
-        && shared.WesternJourney is { } journey && shared.KantApperception is { } kant
-        && SchopenhauerWillDenialFlow.TryCommitPending(state, journey, kant, WesternRouteGraph.LoadEmbedded());
+        && shared.WesternJourney is { } journey
+        && SchopenhauerWillDenialFlow.TryCommitPending(
+            state, journey, shared.KantApperception, WesternRouteGraph.LoadEmbedded());
 
     private bool IsActiveRoom(RunState run)
     {

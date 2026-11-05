@@ -127,7 +127,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SchopenhauerWillDenial));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(SchopenhauerWillDenial)], doctrine: false, position: 1, actIndex: 1,
-            route: "WILL_AND_VALUE", checkRoom: true);
+            route: "WILL_AND_VALUE", checkRoom: true, afterSelect: CheckSchopenhauerFixedCommit);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(NietzscheRevaluation)], doctrine: false, position: 2, route: "GENEALOGY_AND_POWER", checkRoom: true);
@@ -143,6 +143,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
+        CheckWittgensteinTwoActs();
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -341,9 +342,98 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
+    private static void CheckWittgensteinTwoActs()
+    {
+        ModelDb.Inject(typeof(WittgensteinGame));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(AristotleCategoryTablet), 1])!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
+        Put(journey, "RouteId", "ORDINARY_SPEECH");
+        Put(journey, "LastFixedAct", 2);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+
+        object Shared()
+        {
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            return query[1]!;
+        }
+
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!,
+            "Wittgenstein's early second-act room opens on the ordinary-speech line.");
+        var earlyRoom = (EventRoom)prepare[1]!;
+        Check(earlyRoom.CanonicalEvent is WittgensteinGame,
+            "The early boundary selects Wittgenstein, not another room.");
+        object early = Get(Shared(), "WittgensteinGame");
+        Check(Convert.ToInt32(Get(early, "ActIndex")) == 2 && (bool)Get(early, "FixedMode"),
+            "The early room records act two and fixed mode.");
+        foreach (string action in new[] { "LanguageGame", "Leave" })
+        {
+            object parsed = Enum.Parse(T("WittgensteinGameAction"), action);
+            Check((bool)Call("WittgensteinGameFlow", "TryPrepare", early, parsed)!
+                && (bool)Call("WittgensteinGameFlow", "TryCommitPending", early, journey, graph)!,
+                "The early Wittgenstein room commits " + action + ".");
+        }
+        Check((bool)Get(early, "Closed")
+            && ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains(
+                "WESTERN_EDGE_152")
+            && (string)Get(journey, "CurrentNodeId") == "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE"
+            && Convert.ToInt32(Get(journey, "LastFixedAct")) == 3,
+            "The early room closes after adopting 152 and keeps its completed edge.");
+        ((HashSet<ModelId>)run.VisitedEventIds).Add(earlyRoom.CanonicalEvent.Id);
+
+        Set(run, "_currentActIndex", 2);
+        object?[] late = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", late)!,
+            "The same run opens the late Wittgenstein room after the early room closed.");
+        var lateRoom = (EventRoom)late[1]!;
+        Check(lateRoom.CanonicalEvent is WittgensteinGame,
+            "The late boundary still selects Wittgenstein.");
+        object lateState = Get(Shared(), "WittgensteinGame");
+        Check(!ReferenceEquals(lateState, early)
+            && Convert.ToInt32(Get(lateState, "ActIndex")) == 3
+            && (bool)Get(lateState, "FixedMode")
+            && (string)Get(lateState, "EdgeId") == string.Empty,
+            "The late phase gets a new state instead of reusing the closed early record.");
+        foreach (string action in new[] { "LanguageGame", "Leave" })
+        {
+            object parsed = Enum.Parse(T("WittgensteinGameAction"), action);
+            Check((bool)Call("WittgensteinGameFlow", "TryPrepare", lateState, parsed)!
+                && (bool)Call("WittgensteinGameFlow", "TryCommitPending", lateState, journey, graph)!,
+                "The late Wittgenstein room commits " + action + ".");
+        }
+        Check((bool)Get(lateState, "Closed")
+            && Convert.ToInt32(Get(journey, "LastFixedAct")) == 3
+            && (string)Get(journey, "CurrentNodeId") == "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE"
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(3),
+            "The late room completes without spending the third-act question.");
+    }
+
+    private static void CheckSchopenhauerFixedCommit(RunState run, object shared, EventModel selected)
+    {
+        object state = Get(shared, "SchopenhauerWillDenial");
+        object action = Enum.Parse(T("SchopenhauerWillDenialAction"), "BuyExtra");
+        Check((bool)Call("SchopenhauerWillDenialFlow", "TryPrepare", state, action)!,
+            "Schopenhauer's fixed room can prepare its visible option without Kant.");
+        Check((bool)selected.GetType().GetMethod("CommitPending", Methods)!
+                .Invoke(null, [shared, state])!,
+            "Schopenhauer's event body commits a fixed-room option without a Kant record.");
+        Check(Enum.GetName(T("SchopenhauerWillDenialAction"), Get(state, "PendingAction")) == "None",
+            "Schopenhauer's fixed-room commit clears its pending choice.");
+    }
+
     private static void CheckBoundary(Type relic, string node, Type[] expectedRooms, bool doctrine, int position, int actIndex = 1, string[]? required = null, string? route = null, ModelId? priorEvent = null, string? seed = null,
         bool routeRules = false, bool checkRoom = false, string thinker = "DESCARTES",
-        string doctrineId = "DESCARTES_THINKING_LENS")
+        string doctrineId = "DESCARTES_THINKING_LENS",
+        Action<RunState, object, EventModel>? afterSelect = null)
     {
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [relic, actIndex])!;
@@ -450,6 +540,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             journey = Get(after[1]!, "WesternJourney");
         }
 
+        afterSelect?.Invoke(run, query[1]!, room.CanonicalEvent);
         Put(journey, "LastFixedAct", actIndex + 2);
         object spent = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
         Put(spent, "CurrentDoctrine", doctrineState);
