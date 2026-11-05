@@ -183,7 +183,7 @@ internal static class PopperFalsificationFlow
         if (state.ActIndex == 2)
         {
             if (journey.CurrentNodeId != PopperFalsificationState.NewtonSourceNodeId
-                || journey.LastFixedAct != 2
+                || journey.LastFixedAct < 2
                 || !journey.CompletedEdgeIds.Contains(PopperFalsificationState.NewtonRequiredEdgeId)
                 || journey.ResolvedQuestionActs.Contains(2)) return false;
         }

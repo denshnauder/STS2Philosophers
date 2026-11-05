@@ -97,13 +97,17 @@ internal static class PopperFalsificationChecks
 
         var newton = new WesternJourneyState
         {
-            CurrentNodeId = PopperFalsificationState.NewtonSourceNodeId,
+            CurrentNodeId = "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
             LastFixedAct = 2,
-            CompletedEdgeIds = new(StringComparer.Ordinal) { PopperFalsificationState.NewtonRequiredEdgeId },
+            RouteId = "SCIENTIFIC_MODEL",
         };
+        Check(graph.TryApply(newton, PopperFalsificationState.NewtonRequiredEdgeId)
+                && newton.CurrentNodeId == PopperFalsificationState.NewtonSourceNodeId
+                && newton.LastFixedAct == 3,
+            "The production graph must apply Newton's fixed 166 and advance the slot to three.");
         var newtonState = PopperFalsificationState.CreateAt("POPPER_FALSIFICATION:TEST:2", 2);
         Check(PopperFalsificationFlow.IsRouteConsistent(newtonState, newton),
-            "Popper's second-act probe opens after Newton on 166.");
+            "Popper's second-act probe opens after the real Newton settlement on 166.");
         Check(!PopperFalsificationFlow.IsRouteConsistent(
                 PopperFalsificationState.Create("POPPER_FALSIFICATION:TEST:3"), newton),
             "The legacy Bacon terminal probe must not open at Newton's second act.");
