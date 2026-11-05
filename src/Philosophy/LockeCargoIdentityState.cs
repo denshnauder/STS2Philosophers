@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 namespace STS2Philosophers;
 
 internal enum LockeCargoStage { Invitation, Evidence, ResultMemory, ResultSealed, ResultDuty, ResultKept }
-internal enum LockeCargoAction { None, CheckMemory, CheckSignature, CheckMark, ReturnByMemory, SealAndWitness, ConfirmDutyOnly, KeepDescartes, InspectScreen, Leave }
+internal enum LockeCargoAction { None, CheckMemory, CheckSignature, CheckMark, ReturnByMemory, SealAndWitness, ConfirmDutyOnly, KeepDescartes, Leave, InspectScreen }
 internal enum LockeEvidence { None, Memory, Signature, Mark }
 internal enum LockeJudgment { None, Identity, Custody }
 
 internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const string SourceNodeId = "DESCARTES__SELF_AND_OTHER__CORE";
     public const string AdoptedNodeId = "JOHN_LOCKE__SELF_AND_OTHER__CORE";
     public const string EdgeId = "WESTERN_EDGE_026";
@@ -44,6 +44,23 @@ internal sealed class LockeCargoIdentityState : IJsonOnDeserialized
 
     public void NormalizeAfterLoad()
     {
+        if (Version == 1)
+        {
+            // Released saves have no Berkeley payload and Leave=8. Earlier
+            // development payloads used InspectScreen=8 and Leave=9.
+            if (Berkeley is not null)
+            {
+                static LockeCargoAction Migrate(LockeCargoAction action) => (int)action switch
+                {
+                    8 => LockeCargoAction.InspectScreen,
+                    9 => LockeCargoAction.Leave,
+                    _ => action,
+                };
+                PendingAction = Migrate(PendingAction);
+                if (ConfirmedActions is not null) ConfirmedActions = ConfirmedActions.Select(Migrate).ToList();
+            }
+            Version = CurrentVersion;
+        }
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
         Berkeley?.NormalizeAfterLoad();
@@ -157,7 +174,9 @@ internal static class LockeCargoIdentityFlow
         // The first act's event is a question and leaves the position alone; the
         // second act's event is the act's fixed room and moves it on.
         int position = adopted && act > 1 ? Math.Min(3, act + 1) : act;
-        if (!state.IsUsable() || journey.RetainedEnding || journey.LastFixedAct != position) return false;
+        if (!state.IsUsable() || journey.RetainedEnding || !(journey.LastFixedAct == position
+                || act == 2 && adopted && journey.LastFixedAct == 2
+                || act == 2 && !adopted && !state.QuestionDeclined && journey.LastFixedAct == 1)) return false;
         // Act one's question names the route; a room the route places later has no
         // question of its own to resolve.
         bool asked = act == 1 && journey.ResolvedQuestionActs.Contains(1);
@@ -180,6 +199,8 @@ internal static class LockeCargoIdentityFlow
 
     public static string DescriptionKey(LockeCargoIdentityState state) => state.Stage switch
     {
+        LockeCargoStage.Invitation when state.ActIndex == 2 => "INVITATION_FIXED",
+        LockeCargoStage.ResultKept when state.ActIndex == 2 => "RESULT_KEPT_FIXED",
         LockeCargoStage.Invitation => "INVITATION",
         LockeCargoStage.Evidence => state.Evidence switch
         {

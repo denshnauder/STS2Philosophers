@@ -5888,6 +5888,37 @@
    "route_ids": [
     "SOCIAL_CRITIQUE"
    ]
+  },
+  {
+   "edge_id": "WESTERN_EDGE_201",
+   "from_node_id": "JOHN_LOCKE__SELF_AND_OTHER__CORE",
+   "to_node_id": "DAVID_HUME__SELF_AND_OTHER__CORE",
+   "act": 3,
+   "slot": "Fixed",
+   "outcome": "Adopt",
+   "confidence": "High",
+   "relation_summary": "继承与批判，高；把持续自我审查为知觉束，压缩贝克莱等中介",
+   "source": "洛克与休谟分人物发布：先古之后固定承接",
+   "required_edge_ids": [],
+   "enabled": true,
+   "context": {
+    "from_problem_id": "SELF_AND_OTHER",
+    "to_problem_id": "SELF_AND_OTHER",
+    "relation_types": [
+     "InheritanceAndRevision"
+    ],
+    "compressed_mediators": "贝克莱及经验论争论。",
+    "behavior_requirement": "NoAdditionalGate",
+    "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+    "interpretation_boundary": "知觉束不是对笛卡尔全部主体论的直接回应。",
+    "evidence_status": "LocalPlanning",
+    "evidence_sources": [
+     "18游戏流程投影.md:339",
+     "18游戏流程投影.md#05压缩与中介说明",
+     "19反例与缺口审查.md#02入口强反例",
+     "洛克与休谟分人物发布：先古之后固定承接"
+    ]
+   }
   }
  ],
  "samples": [

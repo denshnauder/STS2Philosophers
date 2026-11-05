@@ -25,6 +25,8 @@ internal static class LockeCargoIdentityPatch
         if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
+        if (!run.Players[0].Relics.OfType<DescartesThinkingLens>()
+            .Any(relic => relic.CanOfferNativeQuestion)) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         LockeCargoIdentityState? saved = shared.LockeCargoIdentity;
         LockeCargoIdentity? canonical = TryGetCanonicalEvent();

@@ -160,11 +160,13 @@ public sealed class HumeInduction : EventModel
         string instanceId = state.InstanceId;
         HumeInductionStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
+        string stageKey = HumeInductionFlow.StageKey(stage);
+        if (state.ActIndex == 3 && (stage == HumeInductionStage.Invitation)) stageKey += "_FIXED";
         return HumeInductionFlow.Options(stage)
             .Where(action => action != HumeInductionAction.RepairFirst || CanAffordRepair())
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{HumeInductionFlow.StageKey(stage)}.options.{HumeInductionFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{stageKey}.options.{HumeInductionFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }

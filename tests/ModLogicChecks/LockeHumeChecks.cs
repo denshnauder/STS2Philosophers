@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using STS2Philosophers;
 
 internal static class LockeHumeChecks
@@ -49,8 +51,36 @@ internal static class LockeHumeChecks
         return shared;
     }
 
+    private static void CheckPublishedSaveCompatibility()
+    {
+        // The first public selective release used Leave=8 and no Berkeley field.
+        const string released = """
+            {"Version":1,"InstanceId":"LOCKE_CARGO_IDENTITY:PUBLIC:2","ActIndex":2,
+             "Stage":2,"PendingAction":0,"ConfirmedActions":[1,4,8],"Evidence":1,
+             "Judgment":1,"EdgeCommitted":true,"QuestionDeclined":false,"Closed":true}
+            """;
+        LockeCargoIdentityState published = JsonSerializer.Deserialize<LockeCargoIdentityState>(released)!;
+        Check(published.IsUsable() && published.Closed && published.Berkeley is null
+            && published.ConfirmedActions.Last() == LockeCargoAction.Leave,
+            "Published v1 Leave=8 must remain Leave after the development merge.");
+        foreach (LockeCargoAction last in new[] { LockeCargoAction.Leave, LockeCargoAction.InspectScreen })
+        {
+            var state = LockeCargoIdentityState.CreateAt("LOCKE_CARGO_IDENTITY:DEVELOPMENT:2", 2);
+            foreach (LockeCargoAction action in new[] { LockeCargoAction.CheckMemory, LockeCargoAction.ReturnByMemory, last })
+                LockeCargoIdentityFlow.Apply(state, action);
+            JsonObject payload = JsonNode.Parse(JsonSerializer.Serialize(state))!.AsObject();
+            payload["Version"] = 1;
+            // These are the actual pre-release development numeric values.
+            payload["ConfirmedActions"]![2] = last == LockeCargoAction.Leave ? 9 : 8;
+            var restored = JsonSerializer.Deserialize<LockeCargoIdentityState>(payload.ToJsonString())!;
+            Check(restored.IsUsable() && restored.ConfirmedActions.Last() == last,
+                "Earlier development data must preserve Leave/InspectScreen semantics.");
+        }
+    }
+
     public static void Run()
     {
+        CheckPublishedSaveCompatibility();
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         PhilosophyRunState shared = LockeFixture(graph);
         Check(LockeCargoIdentityFlow.IsRouteConsistent(shared.LockeCargoIdentity!, shared.WesternJourney!), "Locke opens at Descartes' self node.");

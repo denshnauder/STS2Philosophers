@@ -174,11 +174,14 @@ public sealed class LockeCargoIdentity : EventModel
         string instanceId = state.InstanceId;
         LockeCargoStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
+        string stageKey = LockeCargoIdentityFlow.StageKey(stage);
+        if (state.ActIndex == 2 && (stage is LockeCargoStage.Invitation or LockeCargoStage.Evidence)) stageKey += "_FIXED";
         return LockeCargoIdentityFlow.Options(stage)
+            .Where(action => action != LockeCargoAction.ReturnByMemory || state.Evidence == LockeEvidence.Memory)
             .Where(action => action != LockeCargoAction.InspectScreen || state.Berkeley is { Closed: false })
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{LockeCargoIdentityFlow.StageKey(stage)}.options.{LockeCargoIdentityFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{stageKey}.options.{LockeCargoIdentityFlow.ActionKey(action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }

@@ -25,7 +25,17 @@ internal static class HumeInductionPatch
         if (!NativeQuestionNodeEvents.IsEntry(run) || run.Players.Count != 1) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
+        if (!run.Players[0].Relics.OfType<DescartesThinkingLens>()
+            .Any(relic => relic.CanOfferNativeQuestion)) return null;
         WesternJourneyState? journey = shared.WesternJourney;
+        // Continue a published run whose journey predates route-name fields.
+        if (FixedEntryScope.Active && run.CurrentActIndex == 2 && journey is not null
+            && !journey.RouteRules && journey.CompletedEdgeIds.Contains(LockeCargoIdentityState.SecondActEdgeId))
+        {
+            journey.EntryNodeId = LockeCargoIdentityState.SourceNodeId;
+            journey.RouteId = "EXPERIENCE_AND_SELF";
+            journey.RouteRules = true;
+        }
         HumeInductionState? saved = shared.HumeInduction;
         HumeInduction? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
