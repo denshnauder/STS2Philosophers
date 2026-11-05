@@ -279,7 +279,8 @@ internal static class NativeQuestionNodeChecks
                     + " last=" + Get(fjourney, "LastFixedAct") + " node=" + Get(fjourney, "CurrentNodeId")
                     + " active=" + Call("RouteEventMapBoundary", "IsActiveEvent", run, local, 2));
             }
-            if (local is SchellingNature || local is HegelRecognition || local is MarxAlienation)
+            if (local is SchellingNature || local is HegelRecognition || local is MarxAlienation
+                || local is KantApperception)
                 Check((bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
                     "The room body accepts the act its record names.");

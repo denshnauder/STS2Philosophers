@@ -73,7 +73,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // route gate keeps a room of another line from taking the slot.
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE",
             [typeof(KantApperception)], doctrine: false, position: 2, actIndex: 1,
-            route: "AUTONOMY_AND_HISTORY");
+            route: "AUTONOMY_AND_HISTORY", checkRoom: true);
         // The rest of the second acts, one room each: the boundary has to hand
         // the slot to the figure the line names, not to whatever opens first.
         ModelDb.Inject(typeof(SaussureSign));
@@ -424,7 +424,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Type openedType = room.CanonicalEvent.GetType();
         if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
             || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition)
-            || openedType == typeof(MarxAlienation))
+            || openedType == typeof(MarxAlienation) || openedType == typeof(KantApperception))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");
