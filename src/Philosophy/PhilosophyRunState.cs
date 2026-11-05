@@ -49,6 +49,8 @@ internal sealed class PhilosophyRunState
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
     public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
+    /// <summary>Berkeley's independent second-act question after Locke's fixed room.</summary>
+    public BerkeleyPerceivedMarkState? BerkeleyPerceivedMark { get; set; }
     public HumeInductionState? HumeInduction { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public KantApperceptionState? KantApperception { get; set; }
@@ -163,6 +165,7 @@ internal sealed class PhilosophyRunState
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
         || LockeCargoIdentity is not null
+        || BerkeleyPerceivedMark is not null
         || HumeInduction is not null
         || WollstonecraftAdmission is not null
         || KantApperception is not null
@@ -406,6 +409,7 @@ internal sealed class PhilosophyRunState
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
         LockeCargoIdentity?.NormalizeAfterLoad();
+        BerkeleyPerceivedMark?.NormalizeAfterLoad();
         HumeInduction?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();

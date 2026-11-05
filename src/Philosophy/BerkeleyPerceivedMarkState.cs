@@ -25,6 +25,8 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGo
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
+    /// <summary>The act this independent question was opened in; nested legacy segments normalize to two.</summary>
+    public int ActIndex { get; set; } = 2;
     public BerkeleyMarkStage Stage { get; set; }
     public BerkeleyMarkAction PendingAction { get; set; }
     public List<BerkeleyMarkAction> ConfirmedActions { get; set; } = [];
@@ -41,6 +43,9 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGo
         ? SecondObserverGoldCost : 0m;
 
     public static BerkeleyPerceivedMarkState Create(string instanceId) => new() { InstanceId = instanceId };
+
+    public static BerkeleyPerceivedMarkState CreateAt(string instanceId, int actIndex) =>
+        new() { InstanceId = instanceId, ActIndex = actIndex };
 
     public void NormalizeAfterLoad()
     {
@@ -63,6 +68,7 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGo
             Version = CurrentVersion;
         }
         InstanceId ??= string.Empty;
+        if (ActIndex is < 1 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
         HiddenObject ??= null;
     }
@@ -81,7 +87,7 @@ internal sealed class BerkeleyPerceivedMarkState : IJsonOnDeserialized, IEventGo
                 && !BerkeleyPerceivedMarkFlow.Options(Stage).Contains(PendingAction)
             || HiddenObject is not null && HiddenObject != HiddenObjectId) return false;
 
-        var replay = Create(InstanceId);
+        var replay = CreateAt(InstanceId, ActIndex);
         foreach (BerkeleyMarkAction action in ConfirmedActions)
         {
             if (replay.Closed || !BerkeleyPerceivedMarkFlow.Options(replay.Stage).Contains(action)) return false;
@@ -111,6 +117,14 @@ internal static class BerkeleyPerceivedMarkFlow
         if (!state.IsUsable() || state.Closed || state.PendingAction != BerkeleyMarkAction.None
             || !Options(state.Stage).Contains(action)) return false;
         state.PendingAction = action;
+        return true;
+    }
+
+    public static bool TryCommitPending(BerkeleyPerceivedMarkState state)
+    {
+        if (!state.IsUsable() || state.Closed || state.PendingAction == BerkeleyMarkAction.None
+            || !Options(state.Stage).Contains(state.PendingAction)) return false;
+        Apply(state, state.PendingAction);
         return true;
     }
 

@@ -145,6 +145,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
+        CheckBerkeleyIndependentQuestion();
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -341,6 +342,57 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckBerkeleyIndependentQuestion()
+    {
+        ModelDb.Inject(typeof(LockeCargoIdentity));
+        ModelDb.Inject(typeof(BerkeleyPerceivedMark));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "CurrentNodeId", "JOHN_LOCKE__SELF_AND_OTHER__CORE");
+        Put(journey, "LastFixedAct", 3);
+        object locke = Call("LockeCargoIdentityState", "CreateAt",
+            "LOCKE_CARGO_IDENTITY:TEST:2", 2)!;
+        Put(locke, "Closed", true);
+        Put(locke, "EdgeCommitted", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "LockeCargoIdentity", locke);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object CurrentShared()
+        {
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            return query[1]!;
+        }
+
+        object? selected = Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run);
+        Check(selected is BerkeleyPerceivedMark,
+            "Berkeley's independent question opens after Locke's closed fixed room.");
+        object state = Get(CurrentShared(), "BerkeleyPerceivedMark");
+        Check(state is not null && Convert.ToInt32(Get(state, "ActIndex")) == 2
+            && (bool)state.GetType().GetMethod("IsUsable")!.Invoke(state, null)!,
+            "Berkeley's independent question persists a usable second-act record.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, fixture.Player, selected!, CurrentShared(), 1]);
+        foreach (string action in new[] { "CheckTouch", "RejectMaterialSubstance", "Leave" })
+        {
+            object parsed = Enum.Parse(T("BerkeleyMarkAction"), action);
+            Check((bool)Call("BerkeleyPerceivedMarkFlow", "TryPrepare", state, parsed)!
+                && (bool)Call("BerkeleyPerceivedMarkFlow", "TryCommitPending", state)!,
+                "Berkeley's independent question commits " + action + ".");
+        }
+        Check((bool)Get(state, "Closed")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "Berkeley's independent question closes without spending the main question.");
     }
 
     private static void CheckJamesIndependentQuestion()

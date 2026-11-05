@@ -149,4 +149,27 @@ internal static class BerkeleyPerceivedMarkChecks
         Check(!LockeCargoIdentityFlow.TryApplyBerkeley(locke, BerkeleyMarkAction.CheckTouch),
             "A closed segment must not accept a second observation.");
     }
+
+    internal static void Run()
+    {
+        var independent = BerkeleyPerceivedMarkState.CreateAt("BERKELEY_PERCEIVED_MARK:TEST:2", 2);
+        Check(independent.ActIndex == 2 && independent.IsUsable(),
+            "The independent Berkeley question records its second-act identity.");
+        Check(BerkeleyPerceivedMarkFlow.TryPrepare(independent, BerkeleyMarkAction.CheckTouch)
+            && BerkeleyPerceivedMarkFlow.TryCommitPending(independent)
+            && independent.Stage == BerkeleyMarkStage.Observed
+            && independent.Channel == BerkeleyChannel.Touch,
+            "The independent Berkeley question records the observed channel.");
+        var reloaded = System.Text.Json.JsonSerializer.Deserialize<BerkeleyPerceivedMarkState>(
+            System.Text.Json.JsonSerializer.Serialize(independent))!;
+        Check(reloaded.IsUsable() && reloaded.ActIndex == 2
+            && BerkeleyPerceivedMarkFlow.TryPrepare(reloaded, BerkeleyMarkAction.RejectMaterialSubstance)
+            && BerkeleyPerceivedMarkFlow.TryCommitPending(reloaded)
+            && BerkeleyPerceivedMarkFlow.TryPrepare(reloaded, BerkeleyMarkAction.Leave)
+            && BerkeleyPerceivedMarkFlow.TryCommitPending(reloaded)
+            && reloaded.Closed,
+            "The independent Berkeley question survives a reload and closes.");
+        Check(BerkeleyPerceivedMarkState.Create("BERKELEY_PERCEIVED_MARK:TEST:2").ActIndex == 2,
+            "The legacy factory still opens at act two.");
+    }
 }

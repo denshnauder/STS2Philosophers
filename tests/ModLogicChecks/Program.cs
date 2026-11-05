@@ -65,6 +65,7 @@ try { BenthamUtilityChecks.Run(); } catch (Exception e) { failures.Add("BenthamU
 try { ComtePositivismChecks.Run(); } catch (Exception e) { failures.Add("ComtePositivismChecks: " + e.Message); }
 try { PeirceInquiryChecks.Run(); } catch (Exception e) { failures.Add("PeirceInquiryChecks: " + e.Message); }
 try { JamesPragmatismChecks.Run(); } catch (Exception e) { failures.Add("JamesPragmatismChecks: " + e.Message); }
+try { BerkeleyPerceivedMarkChecks.Run(); } catch (Exception e) { failures.Add("BerkeleyPerceivedMarkChecks: " + e.Message); }
 try { DeweyPublicExperimentChecks.Run(); } catch (Exception e) { failures.Add("DeweyPublicExperimentChecks: " + e.Message); }
 try { HusserlEpocheChecks.Run(); } catch (Exception e) { failures.Add("HusserlEpocheChecks: " + e.Message); }
 try { HeideggerDaseinChecks.Run(); } catch (Exception e) { failures.Add("HeideggerDaseinChecks: " + e.Message); }

@@ -193,6 +193,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.HegelSubstanceSubject?.Closed ?? true, shared.HegelSubstanceSubject?.IsUsable() ?? false)
             || Open(shared.HobbesAuthorizedSovereignty?.Closed ?? true, shared.HobbesAuthorizedSovereignty?.IsUsable() ?? false)
             || Open(shared.LockeCargoIdentity?.Closed ?? true, shared.LockeCargoIdentity?.IsUsable() ?? false)
+            || Open(shared.BerkeleyPerceivedMark?.Closed ?? true, shared.BerkeleyPerceivedMark?.IsUsable() ?? false)
             || Open(shared.HumeInduction?.Closed ?? true, shared.HumeInduction?.IsUsable() ?? false)
             || Open(shared.WollstonecraftAdmission?.Closed ?? true, shared.WollstonecraftAdmission?.IsUsable() ?? false)
             || Open(shared.KantApperception?.Closed ?? true, shared.KantApperception?.IsUsable() ?? false)
