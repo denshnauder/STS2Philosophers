@@ -280,7 +280,7 @@ internal static class NativeQuestionNodeChecks
                     + " active=" + Call("RouteEventMapBoundary", "IsActiveEvent", run, local, 2));
             }
             if (local is SchellingNature || local is HegelRecognition || local is MarxAlienation
-                || local is KantApperception || local is LeviStraussMyth)
+                || local is KantApperception || local is LeviStraussMyth || local is SaussureSign)
                 Check((bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
                     "The room body accepts the act its record names.");

@@ -78,7 +78,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // the slot to the figure the line names, not to whatever opens first.
         ModelDb.Inject(typeof(SaussureSign));
         CheckBoundary(typeof(AristotleCategoryTablet), "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
-            [typeof(SaussureSign)], doctrine: false, position: 2, route: "STRUCTURE_AND_EXCLUSION");
+            [typeof(SaussureSign)], doctrine: false, position: 2, route: "STRUCTURE_AND_EXCLUSION", checkRoom: true);
         ModelDb.Inject(typeof(BenthamUtility));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
@@ -425,7 +425,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         if (openedType == typeof(LockeCargoIdentity) || openedType == typeof(HumeInduction)
             || openedType == typeof(SchellingNature) || openedType == typeof(HegelRecognition)
             || openedType == typeof(MarxAlienation) || openedType == typeof(KantApperception)
-            || openedType == typeof(LeviStraussMyth))
+            || openedType == typeof(LeviStraussMyth) || openedType == typeof(SaussureSign))
         {
             int recordedAct = (int)Get(current!, "ActIndex");
             string instanceId = (string)Get(current!, "InstanceId");
