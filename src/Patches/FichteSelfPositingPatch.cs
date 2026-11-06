@@ -41,7 +41,7 @@ internal static class FichteSelfPositingPatch
             && journey.CurrentNodeId == KantApperceptionState.AdoptedNodeId;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = actTwo
-            ? journey is not null && !journey.ResolvedQuestionActs.Contains(1)
+            ? journey is not null && !journey.ResolvedQuestionActs.Contains(2)
                 && journey.LastFixedAct >= 2
             : journey is not null && WesternRouteGraph.LoadEmbedded()
                 .GetEligibleEdges(journey, "Question")

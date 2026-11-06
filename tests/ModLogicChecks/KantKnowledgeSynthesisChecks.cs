@@ -85,6 +85,29 @@ internal static class KantKnowledgeSynthesisChecks
             && declined.WesternJourney.LastFixedAct == 3,
             "Declining Kant's knowledge event spends only the act-three fixed slot.");
 
+        // The actual third-act host fills slot 3 before asking the selector.
+        // Old records at slot 2 must keep working alongside that boundary.
+        foreach (KantKnowledgeSynthesisAction judgment in new[]
+            { KantKnowledgeSynthesisAction.Synthesize, KantKnowledgeSynthesisAction.DrawLimit,
+                KantKnowledgeSynthesisAction.KeepHume })
+        {
+            var boundary = new PhilosophyRunState
+            {
+                WesternJourney = Fixture(graph),
+                KantKnowledgeSynthesis = KantKnowledgeSynthesisState.Create("KANT_KNOWLEDGE_SYNTHESIS:BOUNDARY:3"),
+            };
+            boundary.WesternJourney.LastFixedAct = 3;
+            boundary.WesternJourney.Act = 3;
+            Check(KantKnowledgeSynthesisFlow.IsRouteConsistent(boundary.KantKnowledgeSynthesis,
+                boundary.WesternJourney), "The actual third-act boundary remains eligible.");
+            if (judgment != KantKnowledgeSynthesisAction.KeepHume)
+                boundary = Commit(boundary, graph, KantKnowledgeSynthesisAction.InspectHume);
+            boundary = Commit(boundary, graph, judgment);
+            boundary = Commit(boundary, graph, KantKnowledgeSynthesisAction.Leave);
+            Check(boundary.KantKnowledgeSynthesis!.Closed,
+                "All real-boundary judgments close after pending and confirmed reloads.");
+        }
+
         var early = new PhilosophyRunState
         {
             WesternJourney = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"),

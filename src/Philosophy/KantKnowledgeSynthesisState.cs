@@ -153,7 +153,7 @@ internal static class KantKnowledgeSynthesisFlow
             || !journey.ResolvedQuestionActs.Contains(2)) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(KantKnowledgeSynthesisState.CompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == 2 && !adopted
+            return journey.LastFixedAct is 2 or 3 && !adopted
                 && !journey.DeclinedFixedActs.Contains(3)
                 && journey.CurrentNodeId == KantKnowledgeSynthesisState.SourceNodeId;
         if (state.EdgeCommitted)

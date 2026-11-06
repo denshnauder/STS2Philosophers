@@ -246,6 +246,8 @@ internal static class AllRouteQuestionNodeChecks
         }
         if (person == "FichteSelfPositing")
         {
+            // The first act's answered question cannot consume act two's question.
+            ((HashSet<int>)Get(journey!, "ResolvedQuestionActs")).Add(1);
             // Default autonomy line: Kant's subject/autonomy room took act two's
             // fixed slot, and this act's question is still open.
             Put(journey!, "LastFixedAct", 3);
