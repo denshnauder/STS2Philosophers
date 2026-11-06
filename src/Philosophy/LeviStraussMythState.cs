@@ -127,10 +127,11 @@ internal static class LeviStraussMythFlow
         LeviStraussMythAction action = state.PendingAction;
         bool adopts = action is LeviStraussMythAction.StructuralReading or LeviStraussMythAction.HistoricalReading;
         bool declines = action == LeviStraussMythAction.KeepSaussure;
-        if (adopts && !journey.CompletedEdgeIds.Contains(LeviStraussMythState.CompletionEdgeId)
-            && !graph.TryApply(journey, LeviStraussMythState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        if (declines && !journey.DeclinedFixedActs.Contains(declineAct)
+            && !graph.TryDecline(journey, "Fixed", declineAct)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -138,14 +139,15 @@ internal static class LeviStraussMythFlow
     public static bool IsRouteConsistent(LeviStraussMythState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(LeviStraussMythState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(declineAct)
                 && (journey.CurrentNodeId == LeviStraussMythState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == LeviStraussMythState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
+        return !adopted && journey.LastFixedAct == declineAct && journey.DeclinedFixedActs.Contains(declineAct)
             && (journey.CurrentNodeId == LeviStraussMythState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
