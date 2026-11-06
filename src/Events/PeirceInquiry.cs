@@ -57,10 +57,20 @@ public sealed class PeirceInquiry : EventModel
             {
                 Block("PeirceInquiry entry persistence is unknown."); return;
             }
-            if (state.PendingAction != PeirceInquiryAction.None
-                && (!CommitPending(shared, state) || !await RouteEventMapBoundary.PersistEventAsync(run, shared)))
+            if (state.PendingAction != PeirceInquiryAction.None)
             {
-                Block("The saved PeirceInquiry choice remains blocked for recovery."); return;
+                if (PeirceInquiryFlow.TryCancelClosedJamesReentry(state))
+                {
+                    if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+                    {
+                        Block("PeirceInquiry cancelled re-entry persistence is unknown."); return;
+                    }
+                }
+                else if (!CommitPending(shared, state)
+                    || !await RouteEventMapBoundary.PersistEventAsync(run, shared))
+                {
+                    Block("The saved PeirceInquiry choice remains blocked for recovery."); return;
+                }
             }
             if (IsActiveRoom(run)) ShowConfirmedState(state);
         }
@@ -137,8 +147,11 @@ public sealed class PeirceInquiry : EventModel
         bool jamesAlreadyMet = Owner?.RunState is RunState ownerRun
             && PhilosophyRunStateService.TryGet(ownerRun, out PhilosophyRunState? ownerShared)
             && ownerShared?.JamesForcedBridge is not null;
+        // AskJames is only offered when a live (unclosed) nested segment already
+        // exists; new runs reach James through his own independent second-act room.
+        bool jamesAvailable = state.James is { Closed: false };
         return PeirceInquiryFlow.Options(stage)
-            .Where(action => !(action == PeirceInquiryAction.AskJames && jamesAlreadyMet))
+            .Where(action => action != PeirceInquiryAction.AskJames || jamesAvailable && !jamesAlreadyMet)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{PeirceInquiryFlow.StageKey(stage)}.options.{PeirceInquiryFlow.ActionKey(action)}",

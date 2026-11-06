@@ -49,15 +49,25 @@ internal static class FoucaultPowerChecks
         FoucaultPowerFlow.TryCommitPending(benjamin, benjaminJourney, graph);
         Check((int)FoucaultPowerAction.Leave == 4 && (int)FoucaultPowerAction.BenjaminHistory == 5,
             "The old numeric Leave value must remain 4 while Benjamin's new action appends after it.");
-        Check(FoucaultPowerFlow.Options(benjamin.Stage).Contains(FoucaultPowerAction.BenjaminHistory),
-            "The result page must offer Benjamin's historical perspective.");
-        Check(FoucaultPowerFlow.TryPrepare(benjamin, FoucaultPowerAction.BenjaminHistory)
-            && FoucaultPowerFlow.TryCommitPending(benjamin, benjaminJourney, graph)
-            && benjamin.Stage == FoucaultPowerStage.Benjamin,
-            "Benjamin's perspective must open without touching the route.");
-        Check(FoucaultPowerFlow.TryPrepare(benjamin, FoucaultPowerAction.Leave)
-            && FoucaultPowerFlow.TryCommitPending(benjamin, benjaminJourney, graph) && benjamin.Closed,
-            "The perspective page must close the room.");
+        Check(!FoucaultPowerFlow.VisibleOptions(benjamin).Contains(FoucaultPowerAction.BenjaminHistory)
+            && !FoucaultPowerFlow.TryPrepare(benjamin, FoucaultPowerAction.BenjaminHistory),
+            "A new run must not open Benjamin from Foucault's result page.");
+
+        var legacy = FoucaultPowerState.Create("FOUCAULT_POWER:TEST:5");
+        legacy.Version = 1;
+        legacy.NormalizeAfterLoad();
+        FoucaultPowerFlow.TryPrepare(legacy, FoucaultPowerAction.PowerKnowledge);
+        WesternJourneyState legacyJourney = Journey();
+        FoucaultPowerFlow.TryCommitPending(legacy, legacyJourney, graph);
+        Check(legacy.LegacyNestedBenjamin
+            && FoucaultPowerFlow.VisibleOptions(legacy).Contains(FoucaultPowerAction.BenjaminHistory)
+            && FoucaultPowerFlow.TryPrepare(legacy, FoucaultPowerAction.BenjaminHistory)
+            && FoucaultPowerFlow.TryCommitPending(legacy, legacyJourney, graph)
+            && legacy.Stage == FoucaultPowerStage.Benjamin,
+            "An old save must keep the nested Benjamin page without touching the route.");
+        Check(FoucaultPowerFlow.TryPrepare(legacy, FoucaultPowerAction.Leave)
+            && FoucaultPowerFlow.TryCommitPending(legacy, legacyJourney, graph) && legacy.Closed,
+            "The legacy perspective page must close the room.");
 
         var tampered = FoucaultPowerState.Create("FOUCAULT_POWER:TEST:3");
         tampered.Standard = FoucaultPowerStandard.Discipline;

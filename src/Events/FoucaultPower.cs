@@ -134,7 +134,7 @@ public sealed class FoucaultPower : EventModel
         string instanceId = state.InstanceId;
         FoucaultPowerStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
-        return FoucaultPowerFlow.Options(stage)
+        return FoucaultPowerFlow.VisibleOptions(state)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
                 $"{LocalizationRoot}.pages.{FoucaultPowerFlow.StageKey(stage)}.options.{FoucaultPowerFlow.ActionKey(action)}",

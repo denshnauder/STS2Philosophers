@@ -26,7 +26,10 @@ internal static class BenjaminHistoryPatch
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             return null;
         if (shared.WesternJourney is not { } journey
-            || shared.FoucaultPower is not { Closed: true, EdgeCommitted: true, ActIndex: 2 }
+            || shared.FoucaultPower is not { Closed: true, EdgeCommitted: true, ActIndex: 2 } host
+            || host.LegacyNestedBenjamin
+            || host.Stage == FoucaultPowerStage.Benjamin
+            || host.ConfirmedActions.Contains(FoucaultPowerAction.BenjaminHistory)
             || journey.CurrentNodeId != FoucaultPowerState.AdoptedNodeId
             || journey.LastFixedAct != 3
             || journey.ResolvedQuestionActs.Contains(2)) return null;

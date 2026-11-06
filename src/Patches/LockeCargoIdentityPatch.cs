@@ -56,6 +56,11 @@ internal static class LockeCargoIdentityPatch
         if (!LockeCargoIdentityTriggerPolicy.ShouldInsert(context)) return null;
 
         var candidate = saved ?? LockeCargoIdentityState.CreateAt($"LOCKE_CARGO_IDENTITY:{run.Rng.Seed}:{run.CurrentActIndex + 1}", run.CurrentActIndex + 1);
+        // A fresh Locke record must not carry the nested Berkeley sub-record: the
+        // result screen would offer it as an INSPECT_SCREEN entry that bypasses the
+        // real question node. Only new records are cleared; a saved record keeps
+        // whatever sub-record it already holds.
+        if (saved is null) candidate.Berkeley = null;
         if (journey is null || !LockeCargoIdentityFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LockeCargoIdentity = candidate;
 

@@ -35,6 +35,11 @@ internal static class BerkeleyPerceivedMarkPatch
         BerkeleyPerceivedMarkState? saved = shared.BerkeleyPerceivedMark;
         if (saved is { Closed: true }
             || saved is not null && (!saved.IsUsable() || !MatchesOpenHost(shared, saved))) return null;
+        // A genuinely completed nested Berkeley segment on the parent Locke record
+        // means the encounter already happened; do not open a second independent
+        // one. An empty, never-entered sub-record does not block the opportunity.
+        if (saved is null && shared.LockeCargoIdentity?.Berkeley is { Closed: true } nested
+            && nested.IsUsable()) return null;
         var candidate = saved ?? BerkeleyPerceivedMarkState.CreateAt(
             $"BERKELEY_PERCEIVED_MARK:{run.Rng.Seed}:2", 2);
         if (!candidate.IsUsable()) return null;

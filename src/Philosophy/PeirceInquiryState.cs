@@ -46,6 +46,9 @@ internal sealed class PeirceInquiryState : IJsonOnDeserialized
         EdgeId ??= CompletionEdgeId;
         if (ActIndex is < 1 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
+        // A closed nested segment can never be re-entered; clear the stale
+        // inspection flag left by the old deadlock without dropping the segment.
+        if (InspectingJames && James is { Closed: true }) InspectingJames = false;
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -89,7 +92,23 @@ internal static class PeirceInquiryFlow
     {
         if (!state.IsUsable() || state.Closed || state.PendingAction != PeirceInquiryAction.None
             || !Options(state.Stage).Contains(action)) return false;
+        // A closed nested segment must never be re-entered.
+        if (action == PeirceInquiryAction.AskJames && state.James is { Closed: true }) return false;
         state.PendingAction = action;
+        return true;
+    }
+
+    /// <summary>
+    /// Cancels a restored AskJames pending action whose nested segment is already
+    /// closed. This is a no-op re-entry: it returns to the parent result page
+    /// without recording a confirmed action.
+    /// </summary>
+    public static bool TryCancelClosedJamesReentry(PeirceInquiryState state)
+    {
+        if (state.PendingAction != PeirceInquiryAction.AskJames
+            || state.James is not { Closed: true }) return false;
+        state.PendingAction = PeirceInquiryAction.None;
+        state.InspectingJames = false;
         return true;
     }
 

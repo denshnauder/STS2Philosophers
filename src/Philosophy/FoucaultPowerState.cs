@@ -23,7 +23,7 @@ internal enum FoucaultPowerStandard { None, Power, Discipline, Nietzschean }
 /// </summary>
 internal sealed class FoucaultPowerState : IJsonOnDeserialized
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     public const string SourceNodeId = "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE";
     public const string AdoptedNodeId = "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE";
     public const string CompletionEdgeId = "WESTERN_EDGE_063";
@@ -46,6 +46,8 @@ internal sealed class FoucaultPowerState : IJsonOnDeserialized
 
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
+    /// <summary>Old saves may still use the nested Benjamin page inside this room.</summary>
+    public bool LegacyNestedBenjamin { get; set; }
 
     public static FoucaultPowerState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
 
@@ -54,6 +56,13 @@ internal sealed class FoucaultPowerState : IJsonOnDeserialized
 
     public void NormalizeAfterLoad()
     {
+        // Version 1 saves predate the independent Benjamin question. Keep their
+        // old nested page available, but never expose it to a new run.
+        if (Version == 1)
+        {
+            LegacyNestedBenjamin = true;
+            Version = CurrentVersion;
+        }
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
@@ -70,7 +79,7 @@ internal sealed class FoucaultPowerState : IJsonOnDeserialized
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
             || Closed && PendingAction != FoucaultPowerAction.None
             || PendingAction != FoucaultPowerAction.None
-                && !FoucaultPowerFlow.Options(Stage).Contains(PendingAction)) return false;
+                && !FoucaultPowerFlow.VisibleOptions(this).Contains(PendingAction)) return false;
         var replay = CreateAt(InstanceId, ActIndex, EdgeId);
         foreach (FoucaultPowerAction action in ConfirmedActions)
         {
@@ -96,10 +105,16 @@ internal static class FoucaultPowerFlow
         _ => [],
     };
 
+    public static IReadOnlyList<FoucaultPowerAction> VisibleOptions(FoucaultPowerState state) =>
+        Options(state.Stage)
+            .Where(action => action != FoucaultPowerAction.BenjaminHistory
+                || state.LegacyNestedBenjamin || state.Stage == FoucaultPowerStage.Benjamin)
+            .ToArray();
+
     public static bool TryPrepare(FoucaultPowerState state, FoucaultPowerAction action)
     {
         if (!state.IsUsable() || state.Closed || state.PendingAction != FoucaultPowerAction.None
-            || !Options(state.Stage).Contains(action)) return false;
+            || !VisibleOptions(state).Contains(action)) return false;
         state.PendingAction = action;
         return true;
     }

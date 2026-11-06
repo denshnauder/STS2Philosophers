@@ -458,6 +458,58 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check((bool)Get(state, "Closed")
             && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
             "Berkeley's independent question closes without spending the main question.");
+        CheckBerkeleyNestedSegmentBlocksIndependent();
+    }
+
+    private static void CheckBerkeleyNestedSegmentBlocksIndependent()
+    {
+        ModelDb.Inject(typeof(LockeCargoIdentity));
+        ModelDb.Inject(typeof(BerkeleyPerceivedMark));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 1])!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "CurrentNodeId", "JOHN_LOCKE__SELF_AND_OTHER__CORE");
+        Put(journey, "LastFixedAct", 3);
+        object locke = Call("LockeCargoIdentityState", "CreateAt",
+            "LOCKE_CARGO_IDENTITY:TEST:2", 2)!;
+        Put(locke, "Closed", true);
+        Put(locke, "EdgeCommitted", true);
+        // The nested segment is completed through the production flow, not faked.
+        object nested = Get(locke, "Berkeley")!;
+        foreach (string action in new[] { "CheckTouch", "RejectMaterialSubstance", "Leave" })
+        {
+            object parsed = Enum.Parse(T("BerkeleyMarkAction"), action);
+            Check((bool)Call("BerkeleyPerceivedMarkFlow", "TryPrepare", nested, parsed)!
+                && (bool)Call("BerkeleyPerceivedMarkFlow", "TryCommitPending", nested)!,
+                "The nested Berkeley segment commits " + action + ".");
+        }
+        Check((bool)Get(nested, "Closed"),
+            "The nested Berkeley segment is genuinely closed before the negative case.");
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "LockeCargoIdentity", locke);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object CurrentShared()
+        {
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            return query[1]!;
+        }
+
+        Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is null,
+            "A completed nested Berkeley segment must not open a second independent encounter.");
+        Check(Get(CurrentShared(), "BerkeleyPerceivedMark") is null,
+            "The negative case must not persist an independent Berkeley record.");
+        // An already-open independent record still resumes.
+        object open = Call("BerkeleyPerceivedMarkState", "CreateAt", "BERKELEY_PERCEIVED_MARK:TEST:2", 2)!;
+        Put(CurrentShared(), "BerkeleyPerceivedMark", open);
+        Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is BerkeleyPerceivedMark,
+            "An existing independent Berkeley record still resumes.");
     }
 
     private static void CheckJamesIndependentQuestion()
@@ -686,6 +738,14 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Type? expected = expectedRooms.FirstOrDefault(candidate => candidate == room.CanonicalEvent.GetType());
         Check(expected is not null,
             "The boundary selects a room that owns this act's fixed edge, got " + room.CanonicalEvent.GetType().Name + ".");
+        if (room.CanonicalEvent is LockeCargoIdentity)
+        {
+            object?[] lockeQuery = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", lockeQuery);
+            object lockeState = Get(lockeQuery[1]!, "LockeCargoIdentity");
+            Check(Get(lockeState, "Berkeley") is null,
+                "A freshly created Locke record must not carry a nested Berkeley sub-record.");
+        }
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         object current = Get(query[1]!, expected!.Name);

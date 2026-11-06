@@ -35,6 +35,9 @@ internal static class JamesPragmatismPatch
         JamesPragmatismState? saved = shared.JamesPragmatism;
         if (saved is { Closed: true }
             || saved is not null && (!saved.IsUsable() || !MatchesOpenHost(shared, saved))) return null;
+        // Only refuse a fresh independent record when the parent already created a
+        // nested James segment; an existing independent record still restores.
+        if (saved is null && shared.PeirceInquiry?.James is not null) return null;
         var candidate = saved ?? JamesPragmatismState.CreateAt(
             $"JAMES_PRAGMATISM:{run.Rng.Seed}:2", 2);
         if (!candidate.IsUsable()) return null;
