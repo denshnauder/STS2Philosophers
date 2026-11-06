@@ -11,7 +11,8 @@ using static NativeRuntimeFixture;
 
 // Real native cost queries and SpendResources, with the native ordering of
 // parent payment -> child automatic receipt -> parent receipt. Card effects,
-// selection screens and Sly's full OnPlay animation are not replayed here.
+// selection screens are not replayed by this receipt matrix. Run() also invokes
+// SlyFullDiscardNativeChecks for native discard, card effects and hook ordering.
 internal static class SlyCostReceiptNativeChecks
 {
     private const BindingFlags Fields = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -270,7 +271,8 @@ internal static class SlyCostReceiptNativeChecks
                         () => ManualDiscardSameCardReplay(attack, sly));
             await Scenario("independent native mutable receipt lifecycles", IndependentMutableCopies);
             if (failures.Count != 0) throw new AggregateException("ENC198 native cost receipt failures", failures);
-            Console.WriteLine("ENC198 native checks passed: real native hand cost queries/SpendResources, nested Sly and ordinary automatic receipts, same-card replay, manual lawmaking, once-only discount/surcharge, duplicate callbacks, payload/turn invalidation and independent mutable lifecycles. No full Sly card effects, rendered hand, player saves or game replay.");
+            await SlyFullDiscardNativeChecks.Run();
+            Console.WriteLine("ENC198 native checks passed: real native hand cost queries/SpendResources, nested Sly and ordinary automatic receipts, same-card replay, manual lawmaking, once-only discount/surcharge, duplicate callbacks, payload/turn invalidation and independent mutable lifecycles. Full native Sly/card-effect checks also passed; no rendered hand, player saves or full game replay.");
         }
         finally
         {
