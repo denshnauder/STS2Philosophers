@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Runs.History;
 using MegaCrit.Sts2.Core.Models;
@@ -147,6 +148,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
         CheckBenjaminIndependentQuestion();
+        CheckLegacyNestedOptionsAreHidden();
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
@@ -511,6 +513,62 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check(Call("BerkeleyPerceivedMarkPatch", "TrySelectNative", run) is BerkeleyPerceivedMark,
             "An existing independent Berkeley record still resumes.");
     }
+
+    private static void CheckLegacyNestedOptionsAreHidden()
+    {
+        ModelDb.Inject(typeof(PeirceInquiry));
+        ModelDb.Inject(typeof(FoucaultPower));
+        EventModel peirceModel = ModelDb.Event<PeirceInquiry>().ToMutable();
+        object peirce = Call("PeirceInquiryState", "CreateAt",
+            "PEIRCE_INQUIRY:TEST:2", 2, "WESTERN_EDGE_070")!;
+        Put(peirce, "Stage", Enum.Parse(T("PeirceInquiryStage"), "ResultTest"));
+        MethodInfo peirceGenerate = typeof(PeirceInquiry).GetMethod("GenerateOptions", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        IReadOnlyList<EventOption> peirceOptions = (IReadOnlyList<EventOption>)peirceGenerate.Invoke(peirceModel, [peirce])!;
+        Check(peirceOptions.All(option => !OptionKey(option).Contains("ASK_JAMES")),
+            "A new Peirce run must not offer the old nested AskJames page.");
+        object james = Call("JamesPragmatismState", "CreateAt", "JAMES_PRAGMATISM:TEST:2", 2)!;
+        Put(james, "Closed", true);
+        Put(peirce, "James", james);
+        peirceOptions = (IReadOnlyList<EventOption>)peirceGenerate.Invoke(peirceModel, [peirce])!;
+        Check(peirceOptions.All(option => !OptionKey(option).Contains("ASK_JAMES")),
+            "A closed nested James page must not be offered again.");
+
+        EventModel foucaultModel = ModelDb.Event<FoucaultPower>().ToMutable();
+        object fresh = Call("FoucaultPowerState", "CreateAt",
+            "FOUCAULT_POWER:TEST:6", 1, "WESTERN_EDGE_063")!;
+        Put(fresh, "Stage", Enum.Parse(T("FoucaultPowerStage"), "ResultPower"));
+        Put(fresh, "Standard", Enum.Parse(T("FoucaultPowerStandard"), "Power"));
+        Put(fresh, "EdgeCommitted", true);
+        Put(fresh, "ConfirmedActions", EnumList("FoucaultPowerAction", "PowerKnowledge"));
+        MethodInfo foucaultGenerate = typeof(FoucaultPower).GetMethod("GenerateOptions", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        IReadOnlyList<EventOption> freshOptions = (IReadOnlyList<EventOption>)foucaultGenerate.Invoke(foucaultModel, [fresh])!;
+        Check(freshOptions.All(option => !OptionKey(option).Contains("BENJAMIN_HISTORY")),
+            "A new Foucault run must not offer the old nested Benjamin page.");
+
+        object legacy = Call("FoucaultPowerState", "CreateAt",
+            "FOUCAULT_POWER:TEST:7", 1, "WESTERN_EDGE_063")!;
+        Put(legacy, "Version", 1);
+        legacy.GetType().GetMethod("NormalizeAfterLoad", BindingFlags.Instance | BindingFlags.Public)!
+            .Invoke(legacy, null);
+        Put(legacy, "Stage", Enum.Parse(T("FoucaultPowerStage"), "ResultPower"));
+        Put(legacy, "Standard", Enum.Parse(T("FoucaultPowerStandard"), "Power"));
+        Put(legacy, "EdgeCommitted", true);
+        Put(legacy, "ConfirmedActions", EnumList("FoucaultPowerAction", "PowerKnowledge"));
+        IReadOnlyList<EventOption> legacyOptions = (IReadOnlyList<EventOption>)foucaultGenerate.Invoke(foucaultModel, [legacy])!;
+        Check(legacyOptions.Any(option => OptionKey(option).Contains("BENJAMIN_HISTORY")),
+            "An old Foucault save must keep the nested Benjamin page.");
+    }
+
+    private static object EnumList(string type, params string[] names)
+    {
+        var list = (System.Collections.IList)Activator.CreateInstance(
+            typeof(List<>).MakeGenericType(T(type)))!;
+        foreach (string name in names) list.Add(Enum.Parse(T(type), name));
+        return list;
+    }
+
+    private static string OptionKey(EventOption option) =>
+        (string)Get(Get(option, "HistoryName"), "LocEntryKey");
 
     private static void CheckJamesIndependentQuestion()
     {
