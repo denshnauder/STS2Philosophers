@@ -2863,6 +2863,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "Turn to Embodied Perception (Husserl)",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.description": "After the suspension more remains than description: the body has already given meaning before judgement.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.STAY.title": "Stay on This Line",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_PEIRCE.title": "Follow Peirce's fallible inquiry",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_PEIRCE.description": "Take Hume's doubt into Peirce's community of inquiry: beliefs are tested by consequences, not held as certain.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SMITH.title": "Turn to Adam Smith",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SMITH.description": "Take the sympathy line: public order rests on fellow-feeling, not only on checks and balances.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SAUSSURE.title": "Turn to Saussure",

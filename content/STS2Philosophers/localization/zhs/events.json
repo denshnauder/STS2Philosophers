@@ -2863,6 +2863,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "转向具身知觉（胡塞尔）",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.description": "悬置之后不只剩描述：身体先于判断已经给出了意义。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.STAY.title": "留在原线",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_PEIRCE.title": "转向皮尔士的可错探究",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_PEIRCE.description": "把休谟的怀疑带进皮尔士的探究共同体：信念由后果检验，而不是当作确定无疑。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SMITH.title": "转向亚当·斯密",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SMITH.description": "改走同感线：公共秩序不只靠制衡，也靠人与人之间的同感。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SAUSSURE.title": "转向索绪尔",

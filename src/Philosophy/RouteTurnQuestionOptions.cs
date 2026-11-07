@@ -45,6 +45,11 @@ internal static class RouteTurnQuestionOptions
                 choices.Add(new Choice(key, edge.EdgeId,
                     thinker == "ADAM_SMITH" ? "SYMPATHY_AND_PUBLIC_ACTION" : null));
         }
+        // The fallible-inquiry line begins with Hume's fixed handover rather than
+        // a question edge, so the graph cannot derive this turn from slot alone.
+        if (journey.EntryNodeId == "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_069"))
+            choices.Add(new Choice("TO_PEIRCE", "WESTERN_EDGE_069", "FALLIBLE_INQUIRY"));
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
         if (graph.GetEligibleEdges(journey, "Question")
@@ -62,7 +67,7 @@ internal static class RouteTurnQuestionOptions
 
     internal static readonly string[] AllKeys =
         ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
-            "TO_SAUSSURE", "TO_SMITH", AppearanceKey, EmbodiedKey, StayKey];
+            "TO_SAUSSURE", "TO_SMITH", "TO_PEIRCE", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }
