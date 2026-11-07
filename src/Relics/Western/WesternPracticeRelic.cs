@@ -14,6 +14,7 @@ using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using MegaCrit.Sts2.Core.ValueProps;
 
 namespace STS2Philosophers;
 
@@ -37,6 +38,7 @@ public abstract class WesternPracticeRelic : RelicModel
         NativeQuestionNodeEvents.ModifyNextEvent(this, nextEvent);
 
     private WesternEntryPracticeState? _practice;
+    private WesternPracticeState? _nodePractice;
     private HashSet<object>? _callbacks;
     private CardModel? _currentCard;
     private CardModel? _practiceCard;
@@ -112,6 +114,18 @@ public abstract class WesternPracticeRelic : RelicModel
     }
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public string NodePracticePayload
+    {
+        get => _nodePractice is null || _nodePractice.NodeId.Length == 0
+            ? string.Empty : WesternPracticeStateCodec.Encode(_nodePractice);
+        set
+        {
+            AssertMutable();
+            _nodePractice = WesternPracticeStateCodec.RestoreNode(value);
+        }
+    }
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string PracticePayload
     {
         get => _practice is null ? string.Empty : WesternEntryPracticeStateCodec.Encode(_practice);
@@ -132,9 +146,26 @@ public abstract class WesternPracticeRelic : RelicModel
     public override Task BeforeCombatStart()
     {
         Practice.BeginCombat(ProblemId);
+        BindNodePractice();
         ResetRuntimeTracking();
         InvokeDisplayAmountChanged();
         return Task.CompletedTask;
+    }
+
+    private void BindNodePractice()
+    {
+        _nodePractice = WesternPracticeStateCodec.RestoreNode(NodePracticePayload);
+        if (Owner?.RunState is not RunState run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.WesternJourney is not { } journey
+            || !WesternNodePracticePolicy.ShouldBindNode(journey.CurrentNodeId))
+        {
+            _nodePractice = null;
+            return;
+        }
+        if (_nodePractice.NodeId == journey.CurrentNodeId) return;
+        var candidate = new WesternPracticeState();
+        _nodePractice = candidate.TryBindNode(journey.CurrentNodeId) ? candidate : null;
     }
 
     public override Task BeforeSideTurnStart(
@@ -148,6 +179,7 @@ public abstract class WesternPracticeRelic : RelicModel
             && Owner.PlayerCombatState is { } state
             && Practice.BeginTurn(state.TurnNumber))
         {
+            _nodePractice?.BeginTurn(state.TurnNumber);
             _callbacks = null;
             _currentCard = null;
             _flowReleasePrepared = null;
@@ -269,6 +301,10 @@ public abstract class WesternPracticeRelic : RelicModel
         _callbacks ??= new(ReferenceEqualityComparer.Instance);
         if (!_callbacks.Add(cardPlay)) return;
 
+        if (_nodePractice is { NodeId.Length: > 0 } node && node.Turn == state.TurnNumber)
+            node.RecordPlay(state.TurnNumber, $"Node:{state.TurnNumber}:{node.Plays.Count}",
+                CardId(cardPlay.Card), KindOf(cardPlay.Card), cardPlay.IsAutoPlay);
+
         // The card has normally left the hand by this callback. Keep the exact reference
         // captured before play instead of trying to recover a same-model copy from the hand.
         bool trackedCurrent = ReferenceEquals(cardPlay.Card, _currentCard);
@@ -384,14 +420,23 @@ public abstract class WesternPracticeRelic : RelicModel
         return Task.CompletedTask;
     }
 
-    public override Task AfterSideTurnEnd(
+    public override async Task AfterSideTurnEnd(
         PlayerChoiceContext choiceContext,
         CombatSide side,
         IEnumerable<Creature> participants)
     {
-        if (side == CombatSide.Player && participants.Contains(Owner.Creature) && Practice.CloseTurn())
-            InvokeDisplayAmountChanged();
-        return Task.CompletedTask;
+        if (side != CombatSide.Player || !participants.Contains(Owner.Creature)) return;
+        bool closedEntry = Practice.CloseTurn();
+        bool closedNode = _nodePractice?.CloseTurn(_nodePractice.Turn) == true;
+        if (closedNode)
+        {
+            WesternPracticeReward reward = _nodePractice!.ClaimReward();
+            if (reward.Energy > 0) await PlayerCmd.GainEnergy(reward.Energy, Owner);
+            if (reward.Draw > 0) await CardPileCmd.Draw(choiceContext, reward.Draw, Owner);
+            if (reward.Block > 0)
+                await CreatureCmd.GainBlock(Owner.Creature, reward.Block, ValueProp.Unpowered, cardPlay: null, fast: true);
+        }
+        if (closedEntry || closedNode) InvokeDisplayAmountChanged();
     }
 
     public override Task AfterCombatEnd(CombatRoom room)

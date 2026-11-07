@@ -157,9 +157,9 @@ internal static class SmithSympathyFlow
     public static string DescriptionKey(SmithSympathyState state) => state.Stage switch
     {
         SmithSympathyStage.Invitation => "INVITATION",
-        SmithSympathyStage.ResultSympathy => "RESULT_SEPARATION",
-        SmithSympathyStage.ResultExchange => "RESULT_BALANCE",
-        SmithSympathyStage.ResultArrangement => "RESULT_PRIVILEGE",
+        SmithSympathyStage.ResultSympathy => "RESULT_SYMPATHY",
+        SmithSympathyStage.ResultExchange => "RESULT_EXCHANGE",
+        SmithSympathyStage.ResultArrangement => "RESULT_ARRANGEMENT",
         _ => "INVITATION",
     };
 

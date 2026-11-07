@@ -177,8 +177,8 @@ internal static class DeweyPublicExperimentFlow
     public static string DescriptionKey(DeweyPublicExperimentState state) => state.Stage switch
     {
         DeweyPublicExperimentStage.Invitation => "INVITATION",
-        DeweyPublicExperimentStage.ResultExperiment => "RESULT_ALIENATION",
-        DeweyPublicExperimentStage.ResultCommunity => "RESULT_PROGRESS",
+        DeweyPublicExperimentStage.ResultExperiment => "RESULT_EXPERIMENT",
+        DeweyPublicExperimentStage.ResultCommunity => "RESULT_COMMUNITY",
         DeweyPublicExperimentStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };

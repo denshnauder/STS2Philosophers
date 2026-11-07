@@ -26,6 +26,14 @@ internal static class KierkegaardFaithTriggerPolicy
         }
         // The early-turn question opens in the room's own act; a route may place
         // this room in act two or three, and then only that act accepts it.
+        // 158 is itself the completed first-act question. The scene belongs
+        // immediately after that choice, before the second-act boundary, so it
+        // must not require an extra combat that the route question never had.
+        if (context.RouteAct == 1 && context.CurrentActIndex == 0
+            && !context.HasSavedInstance
+            && context.CurrentNodeId == KierkegaardFaithState.AdoptedNodeId
+            && context.LastFixedAct == 1 && context.CompletionEdgeEligible)
+            return true;
         int act = context.RouteAct >= 2 ? context.RouteAct - 1 : 0;
         int position = context.RouteAct >= 2 ? context.RouteAct : 1;
         if (context.CurrentActIndex != act) return false;

@@ -35,12 +35,20 @@ internal static class MerleauPontyBodyPatch
             .Select(route => route.ActTwoFigure == "MAURICE_MERLEAU_PONTY" ? 2
                 : route.ActThreeFigure == "MAURICE_MERLEAU_PONTY" ? 3 : 0)
             .DefaultIfEmpty(0).First();
-        string edgeId = routeAct >= 2
+        // The embodied direction at Descartes' first-act question reaches
+        // Husserl early; its Merleau room is the second-act handover 195, not
+        // the default third-act 103.
+        if (journey is not null && run.CurrentActIndex == 1
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_160")) routeAct = 2;
+        WesternGraphEdge[] incoming = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == MerleauPontyBodyState.AdoptedNodeId)
-                .Select(edge => edge.EdgeId).FirstOrDefault()
-                ?? MerleauPontyBodyState.CompletionEdgeId
-            : MerleauPontyBodyState.CompletionEdgeId;
+                .ToArray()
+            : [];
+        string edgeId = incoming.FirstOrDefault(edge =>
+                edge.RouteIds?.Contains(journey!.RouteId) == true)?.EdgeId
+            ?? incoming.FirstOrDefault()?.EdgeId
+            ?? MerleauPontyBodyState.CompletionEdgeId;
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         MerleauPontyBodyTriggerContext context = new(
@@ -64,7 +72,7 @@ internal static class MerleauPontyBodyPatch
         }
         if (journey is null || !MerleauPontyBodyFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.MerleauPontyBody = candidate;
-        Log.Info("[STS2Philosophers] Presenting Mill's harm question.");
+        Log.Info("[STS2Philosophers] Presenting Merleau-Ponty's body room.");
         return canonical;
     }
 

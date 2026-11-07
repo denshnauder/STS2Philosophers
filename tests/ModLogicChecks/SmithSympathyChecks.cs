@@ -1,3 +1,4 @@
+using System.Text.Json;
 using STS2Philosophers;
 
 internal static class SmithSympathyChecks
@@ -55,5 +56,25 @@ internal static class SmithSympathyChecks
             "The act-one question hands Smith out on the sympathy branch.");
         Check(!earlyGraph.GetEligibleEdges(early, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_116"),
             "Smith is not granted twice after the early question.");
+
+        foreach (var (action, stage) in new[]
+        {
+            (SmithSympathyAction.SympathyOrder, SmithSympathyStage.ResultSympathy),
+            (SmithSympathyAction.ExchangeOrder, SmithSympathyStage.ResultExchange),
+            (SmithSympathyAction.PreserveArrangement, SmithSympathyStage.ResultArrangement),
+        })
+        {
+            var result = SmithSympathyState.Create("SMITH_SYMPATHY:PAGE:" + stage);
+            Check(SmithSympathyFlow.TryPrepare(result, action), "Every Smith result must be selectable.");
+            SmithSympathyFlow.Apply(result, action);
+            string key = $"SMITH_SYMPATHY.pages.{SmithSympathyFlow.DescriptionKey(result)}.description";
+            foreach (string language in new[] { "eng", "zhs" })
+            {
+                using JsonDocument text = JsonDocument.Parse(File.ReadAllText(
+                    $"content/STS2Philosophers/localization/{language}/events.json"));
+                Check(text.RootElement.TryGetProperty(key, out _),
+                    $"Smith's {stage} page key {key} must exist in {language}.");
+            }
+        }
     }
 }

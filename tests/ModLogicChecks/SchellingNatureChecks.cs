@@ -1,3 +1,4 @@
+using System.Text.Json;
 using STS2Philosophers;
 
 internal static class SchellingNatureChecks
@@ -107,5 +108,24 @@ internal static class SchellingNatureChecks
         var tampered = SchellingNatureState.Create("SCHELLING_NATURE:TEST:3");
         tampered.Standard = SchellingNatureStandard.Mechanism;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
+
+        foreach (var (action, stage) in new[]
+        {
+            (SchellingNatureAction.NatureAsSpirit, SchellingNatureStage.ResultSpirit),
+            (SchellingNatureAction.NatureAsMechanism, SchellingNatureStage.ResultMechanism),
+            (SchellingNatureAction.KeepSpinoza, SchellingNatureStage.ResultKept)
+        })
+        {
+            var page = SchellingNatureState.Create("SCHELLING_NATURE:PAGE:" + stage);
+            SchellingNatureFlow.Apply(page, action);
+            string key = $"SCHELLING_NATURE.pages.{SchellingNatureFlow.DescriptionKey(page)}.description";
+            foreach (string language in new[] { "eng", "zhs" })
+            {
+                using JsonDocument text = JsonDocument.Parse(File.ReadAllText(
+                    $"content/STS2Philosophers/localization/{language}/events.json"));
+                Check(text.RootElement.TryGetProperty(key, out _),
+                    $"SCHELLING_NATURE page key {key} must exist in {language}.");
+            }
+        }
     }
 }

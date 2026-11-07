@@ -1,3 +1,4 @@
+using System.Text.Json;
 using STS2Philosophers;
 
 internal static class ComtePositivismChecks
@@ -97,6 +98,26 @@ internal static class ComtePositivismChecks
                 true, true, true, 0, true, 1, ComtePositivismState.SourceNodeId, 3, true, true,
                 false, false, false, false, true, 3)),
             "The Comte fixed entry must not trigger in the first act.");
+
+        foreach (var (action, stage) in new[]
+        {
+            (ComtePositivismAction.ThreeStages, ComtePositivismStage.ResultStages),
+            (ComtePositivismAction.KeepAnomaly, ComtePositivismStage.ResultAnomaly),
+            (ComtePositivismAction.KeepBacon, ComtePositivismStage.ResultKept),
+        })
+        {
+            var result = ComtePositivismState.Create("COMTE_POSITIVISM:PAGE:" + stage);
+            Check(ComtePositivismFlow.TryPrepare(result, action), "Every Comte result must be selectable.");
+            ComtePositivismFlow.Apply(result, action);
+            string key = $"COMTE_POSITIVISM.pages.{ComtePositivismFlow.DescriptionKey(result)}.description";
+            foreach (string language in new[] { "eng", "zhs" })
+            {
+                using JsonDocument text = JsonDocument.Parse(File.ReadAllText(
+                    $"content/STS2Philosophers/localization/{language}/events.json"));
+                Check(text.RootElement.TryGetProperty(key, out _),
+                    $"Comte's {stage} page key {key} must exist in {language}.");
+            }
+        }
 
         var tampered = ComtePositivismState.Create("COMTE_POSITIVISM:TEST:5");
         tampered.Standard = ComtePositivismStandard.Anomaly;

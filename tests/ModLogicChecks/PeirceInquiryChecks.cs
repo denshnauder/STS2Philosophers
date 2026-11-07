@@ -1,3 +1,4 @@
+using System.Text.Json;
 using STS2Philosophers;
 
 internal static class PeirceInquiryChecks
@@ -141,5 +142,24 @@ internal static class PeirceInquiryChecks
             "The parent must still offer AskJames for an open nested segment.");
         Check(PeirceInquiryFlow.TryPrepare(restored, PeirceInquiryAction.AskJames),
             "An open legacy nested segment must remain re-enterable.");
+
+        foreach (var (action, stage) in new[]
+        {
+            (PeirceInquiryAction.TestByConsequences, PeirceInquiryStage.ResultTest),
+            (PeirceInquiryAction.FallibleCommunity, PeirceInquiryStage.ResultCommunity),
+            (PeirceInquiryAction.KeepHume, PeirceInquiryStage.ResultKept)
+        })
+        {
+            var page = PeirceInquiryState.Create("PEIRCE_INQUIRY:PAGE:" + stage);
+            PeirceInquiryFlow.Apply(page, action);
+            string key = $"PEIRCE_INQUIRY.pages.{PeirceInquiryFlow.DescriptionKey(page)}.description";
+            foreach (string language in new[] { "eng", "zhs" })
+            {
+                using JsonDocument text = JsonDocument.Parse(File.ReadAllText(
+                    $"content/STS2Philosophers/localization/{language}/events.json"));
+                Check(text.RootElement.TryGetProperty(key, out _),
+                    $"PEIRCE_INQUIRY page key {key} must exist in {language}.");
+            }
+        }
     }
 }

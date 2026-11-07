@@ -178,8 +178,8 @@ internal static class ComtePositivismFlow
     public static string DescriptionKey(ComtePositivismState state) => state.Stage switch
     {
         ComtePositivismStage.Invitation => "INVITATION",
-        ComtePositivismStage.ResultStages => "RESULT_ALIENATION",
-        ComtePositivismStage.ResultAnomaly => "RESULT_PROGRESS",
+        ComtePositivismStage.ResultStages => "RESULT_STAGES",
+        ComtePositivismStage.ResultAnomaly => "RESULT_ANOMALY",
         ComtePositivismStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };

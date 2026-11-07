@@ -107,6 +107,8 @@ await NewtonTwoSitesNativeChecks.Run();
 await SpinozaCauseNetworkNativeChecks.Run();
 await LeibnizIndependentClocksNativeChecks.Run();
 await NativeQuestionNodeChecks.Run();
+await WesternNodePracticeNativeChecks.Run();
+await HeraclitusSpinozaNativeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();
 await SlyCostReceiptNativeChecks.Run();

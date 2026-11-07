@@ -19,6 +19,8 @@ internal sealed class MillHarmState : IJsonOnDeserialized
     public string InstanceId { get; set; } = string.Empty;
     public int ActIndex { get; set; } = 2;
     public string EdgeId { get; set; } = CompletionEdgeId;
+    public string TargetNodeId { get; set; } = "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+    public string RoomSourceNodeId { get; set; } = string.Empty;
     public bool FixedMode { get; set; }
     public MillHarmStage Stage { get; set; }
     public MillHarmAction PendingAction { get; set; }
@@ -31,13 +33,24 @@ internal sealed class MillHarmState : IJsonOnDeserialized
 
     public static MillHarmState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId, fixedMode: false);
 
-    public static MillHarmState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode) =>
-        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId, FixedMode = fixedMode };
+    public static MillHarmState CreateAt(string instanceId, int actIndex, string edgeId, bool fixedMode,
+        string? targetNodeId = null, string? roomSourceNodeId = null) => new()
+    {
+        InstanceId = instanceId,
+        ActIndex = actIndex,
+        EdgeId = edgeId,
+        FixedMode = fixedMode,
+        TargetNodeId = targetNodeId ?? "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+        RoomSourceNodeId = roomSourceNodeId ?? string.Empty,
+    };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
+        TargetNodeId = string.IsNullOrWhiteSpace(TargetNodeId)
+            ? "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE" : TargetNodeId;
+        RoomSourceNodeId ??= string.Empty;
         if (ActIndex is < 2 or > 3) ActIndex = 2;
         ConfirmedActions ??= [];
     }
@@ -53,7 +66,7 @@ internal sealed class MillHarmState : IJsonOnDeserialized
             || Closed && PendingAction != MillHarmAction.None
             || PendingAction != MillHarmAction.None
                 && !MillHarmFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, FixedMode, TargetNodeId, RoomSourceNodeId);
         foreach (MillHarmAction action in ConfirmedActions)
         {
             if (replay.Closed || !MillHarmFlow.Options(replay.Stage).Contains(action)) return false;
@@ -126,14 +139,16 @@ internal static class MillHarmFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (state.FixedMode)
         {
-            bool source = journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
-                or MillHarmState.SmithSourceNodeId;
+            bool source = state.RoomSourceNodeId.Length > 0
+                ? journey.CurrentNodeId == state.RoomSourceNodeId
+                : journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
+                    or MillHarmState.SmithSourceNodeId;
             bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
             if (!state.EdgeCommitted && !declined)
                 return journey.LastFixedAct == state.ActIndex && !adopted && source;
             if (state.EdgeCommitted)
                 return adopted && journey.LastFixedAct == state.ActIndex
-                    && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+                    && journey.CurrentNodeId == state.TargetNodeId;
             return !adopted && declined && journey.LastFixedAct == state.ActIndex && source;
         }
         if (!journey.CompletedEdgeIds.Contains(MillHarmState.RequiredEdgeId)) return false;

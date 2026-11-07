@@ -127,10 +127,11 @@ internal static class MerleauPontyBodyFlow
         MerleauPontyBodyAction action = state.PendingAction;
         bool adopts = action is MerleauPontyBodyAction.BodyAsSubject or MerleauPontyBodyAction.ObjectiveBody;
         bool declines = action == MerleauPontyBodyAction.KeepHusserl;
-        if (adopts && !journey.CompletedEdgeIds.Contains(MerleauPontyBodyState.CompletionEdgeId)
-            && !graph.TryApply(journey, MerleauPontyBodyState.CompletionEdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3)
-            && !graph.TryDecline(journey, "Fixed", 3)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        if (declines && !journey.DeclinedFixedActs.Contains(declineAct)
+            && !graph.TryDecline(journey, "Fixed", declineAct)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -138,14 +139,17 @@ internal static class MerleauPontyBodyFlow
     public static bool IsRouteConsistent(MerleauPontyBodyState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(MerleauPontyBodyState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted
+                && !journey.DeclinedFixedActs.Contains(state.RoutePlaced ? state.ActIndex : 3)
                 && (journey.CurrentNodeId == MerleauPontyBodyState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == MerleauPontyBodyState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == 3 && journey.DeclinedFixedActs.Contains(3)
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        return !adopted && journey.LastFixedAct == declineAct
+            && journey.DeclinedFixedActs.Contains(declineAct)
             && (journey.CurrentNodeId == MerleauPontyBodyState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
