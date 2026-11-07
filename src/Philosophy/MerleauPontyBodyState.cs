@@ -129,8 +129,9 @@ internal static class MerleauPontyBodyFlow
         bool declines = action == MerleauPontyBodyAction.KeepHusserl;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
-            && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        if (declines && !journey.DeclinedFixedActs.Contains(declineAct)
+            && !graph.TryDecline(journey, "Fixed", declineAct)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -141,13 +142,14 @@ internal static class MerleauPontyBodyFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted
-                && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+                && !journey.DeclinedFixedActs.Contains(state.RoutePlaced ? state.ActIndex : 3)
                 && (journey.CurrentNodeId == MerleauPontyBodyState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == MerleauPontyBodyState.AdoptedNodeId;
-        return !adopted && journey.LastFixedAct == state.ActIndex
-            && journey.DeclinedFixedActs.Contains(state.ActIndex)
+        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        return !adopted && journey.LastFixedAct == declineAct
+            && journey.DeclinedFixedActs.Contains(declineAct)
             && (journey.CurrentNodeId == MerleauPontyBodyState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 
