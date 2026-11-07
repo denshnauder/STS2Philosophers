@@ -14,7 +14,7 @@ public sealed class LacanSignifier : EventModel
     private bool _blocked;
 
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
-        L10NLookup($"{LocalizationRoot}.pages.INVITATION.description");
+        L10NLookup($"{LocalizationRoot}.pages.REQUEST.description");
 
     public override IEnumerable<MegaCrit.Sts2.Core.Localization.LocString> GameInfoOptions =>
         new[]
