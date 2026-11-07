@@ -163,9 +163,9 @@ internal static class WesternBranchChainChecks
         // out, and no two options may share a key.
         var noTurn = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         noTurn.RouteRules = true;
-        var onlyStay = RouteTurnQuestionOptions.For(noTurn, graph);
-        Check(onlyStay.Count == 1 && onlyStay[0].Key == RouteTurnQuestionOptions.StayKey,
-            "An entry with nothing to turn onto must still leave a way out.");
+        var language = RouteTurnQuestionOptions.For(noTurn, graph);
+        Check(language.Select(choice => choice.Key).SequenceEqual(["TO_SAUSSURE", RouteTurnQuestionOptions.StayKey]),
+            "Aristotle's language entry must offer the real Saussure turn and a way into the local inquiry.");
         var offered = RouteTurnQuestionOptions.For(offer, graph);
         Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
             "No two options of the question may share a key.");
@@ -208,8 +208,8 @@ internal static class WesternBranchChainChecks
             "The knowledge entry must offer only the scientific line and staying.");
         var quiet = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         quiet.RouteRules = true;
-        Check(!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
-            "An entry whose lines a branch already reaches must not open a turn question.");
+        Check(RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
+            "Aristotle's language entry must expose the Saussure turn.");
 
         // The first act's fixed branch is the older way into a line. It names
         // the same line the question would, so the run can continue on that

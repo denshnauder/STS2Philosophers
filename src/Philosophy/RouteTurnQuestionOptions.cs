@@ -25,6 +25,7 @@ internal static class RouteTurnQuestionOptions
         ["KARL_MARX"] = "TO_MARX",
         ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
         ["MARY_WOLLSTONECRAFT"] = "TO_WOLLSTONECRAFT",
+        ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -58,7 +59,7 @@ internal static class RouteTurnQuestionOptions
 
     internal static readonly string[] AllKeys =
         ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
-            AppearanceKey, EmbodiedKey, StayKey];
+            "TO_SAUSSURE", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

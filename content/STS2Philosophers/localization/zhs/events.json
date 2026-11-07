@@ -2863,6 +2863,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "转向具身知觉（胡塞尔）",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.description": "悬置之后不只剩描述：身体先于判断已经给出了意义。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.STAY.title": "留在原线",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SAUSSURE.title": "转向索绪尔",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_SAUSSURE.description": "改走结构线：意义来自差异系统，而不是说话者的意图。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.STAY.description": "不作转线，继续沿当前这条线走。",
  "ROUTE_TURN_QUESTION.pages.RESULT.description": "岔路已选定。",
   "KANT_KNOWLEDGE_SYNTHESIS.title": "康德：先天综合知识如何可能",
