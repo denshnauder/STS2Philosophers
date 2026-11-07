@@ -35,6 +35,8 @@ internal sealed class HorkheimerReasonState : IJsonOnDeserialized
     public bool Closed { get; set; }
 
     public int ActIndex { get; set; } = 1;
+    /// <summary>The fixed act the journey had already reached when this route room opened.</summary>
+    public int OpeningFixedAct { get; set; }
     public string EdgeId { get; set; } = CompletionEdgeId;
 
     public static HorkheimerReasonState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
@@ -47,6 +49,7 @@ internal sealed class HorkheimerReasonState : IJsonOnDeserialized
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
+        if (OpeningFixedAct is < 0 or > 3) OpeningFixedAct = 0;
         ConfirmedActions ??= [];
     }
 
@@ -129,7 +132,9 @@ internal static class HorkheimerReasonFlow
         bool declines = action == HorkheimerReasonAction.KeepMarx;
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
+        int declineAct = state.RoutePlaced
+            ? (state.OpeningFixedAct > 0 ? Math.Min(3, state.OpeningFixedAct + 1) : state.ActIndex)
+            : 3;
         if (declines && !journey.DeclinedFixedActs.Contains(declineAct)
             && !graph.TryDecline(journey, "Fixed", declineAct)) return false;
         Apply(state, action);
@@ -140,15 +145,20 @@ internal static class HorkheimerReasonFlow
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
+        // A route room may open before its fixed edge (LastFixedAct == ActIndex - 1)
+        // or after the older branch already consumed that edge (== ActIndex).
+        int opening = state.RoutePlaced
+            ? (state.OpeningFixedAct > 0 ? state.OpeningFixedAct : state.ActIndex)
+            : 2;
+        int completed = Math.Min(3, opening + 1);
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
+            return journey.LastFixedAct == opening && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && (journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == completed
                 && journey.CurrentNodeId == HorkheimerReasonState.AdoptedNodeId;
-        int declineAct = state.RoutePlaced ? state.ActIndex : 3;
-        return !adopted && journey.LastFixedAct == declineAct
-            && journey.DeclinedFixedActs.Contains(declineAct)
+        return !adopted && journey.LastFixedAct == completed
+            && journey.DeclinedFixedActs.Contains(completed)
             && (journey.CurrentNodeId == HorkheimerReasonState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
     }
 

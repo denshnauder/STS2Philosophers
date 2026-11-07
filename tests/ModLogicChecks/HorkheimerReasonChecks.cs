@@ -44,6 +44,29 @@ internal static class HorkheimerReasonChecks
             "Declining must leave the player on Hume's node.");
 
 
+        // The first-act Marx turn opens this room before act two's fixed edge:
+        // the room itself takes 178, so the next act can open on Horkheimer.
+        var early = new WesternJourneyState
+        {
+            CurrentNodeId = HorkheimerReasonState.SourceNodeId,
+            RouteId = "SOCIAL_CRITIQUE",
+            LastFixedAct = 1,
+            CompletedEdgeIds = new(StringComparer.Ordinal) { "WESTERN_EDGE_177" },
+        };
+        var earlyState = HorkheimerReasonState.CreateAt(
+            "HORKHEIMER_REASON:TEST:E", 2, "WESTERN_EDGE_178");
+        earlyState.RoutePlaced = true;
+        earlyState.OpeningFixedAct = 1;
+        Check(HorkheimerReasonFlow.IsRouteConsistent(earlyState, early),
+            "The social-critique room must open after the first-act Marx turn.");
+        Check(HorkheimerReasonFlow.TryPrepare(earlyState, HorkheimerReasonAction.InstrumentalReason)
+            && HorkheimerReasonFlow.TryCommitPending(earlyState, early, graph),
+            "The early room must take the second-act fixed edge.");
+        Check(early.CompletedEdgeIds.Contains("WESTERN_EDGE_178")
+            && early.CurrentNodeId == HorkheimerReasonState.AdoptedNodeId
+            && early.LastFixedAct == 2,
+            "The early room must reach Horkheimer and consume act two.");
+
         var tampered = HorkheimerReasonState.Create("HORKHEIMER_REASON:TEST:3");
         tampered.Standard = HorkheimerReasonStandard.Culture;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

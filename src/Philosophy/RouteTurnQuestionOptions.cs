@@ -13,12 +13,16 @@ internal static class RouteTurnQuestionOptions
     internal const string AppearanceKey = "TO_HUSSERL_APPEARANCE";
     internal const string EmbodiedKey = "TO_HUSSERL_EMBODIED";
 
-    /// <summary>Figures whose line no first-act branch reaches, so only a question can open it.</summary>
+    /// <summary>
+    /// Figures a first-act question may name. A fixed branch is chosen from the
+    /// run seed, so it cannot stand in for the player's own turn.
+    /// </summary>
     private static readonly Dictionary<string, string> TurnKeys = new(StringComparer.Ordinal)
     {
         ["IMMANUEL_KANT"] = "TO_KANT",
         ["SIGMUND_FREUD"] = "TO_FREUD",
         ["FRANCIS_BACON"] = "TO_BACON",
+        ["KARL_MARX"] = "TO_MARX",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -51,7 +55,7 @@ internal static class RouteTurnQuestionOptions
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
     internal static readonly string[] AllKeys =
-        ["TO_KANT", "TO_FREUD", "TO_BACON", AppearanceKey, EmbodiedKey, StayKey];
+        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

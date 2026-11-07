@@ -38,7 +38,8 @@ internal static class HorkheimerReasonPatch
                 : route.ActThreeFigure == "MAX_HORKHEIMER" ? 3 : 0)
             .DefaultIfEmpty(0).First();
         if (journey is not null && run.CurrentActIndex == 1
-            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_083")) routeAct = 2;
+            && (journey.CompletedEdgeIds.Contains("WESTERN_EDGE_083")
+                || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_177"))) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == HorkheimerReasonState.AdoptedNodeId)
@@ -61,6 +62,8 @@ internal static class HorkheimerReasonPatch
         if (routeAct >= 2)
         {
             candidate.RoutePlaced = true;
+            if (candidate.OpeningFixedAct == 0)
+                candidate.OpeningFixedAct = journey?.LastFixedAct ?? 0;
             if (candidate.RouteSourceNodeId.Length == 0)
                 candidate.RouteSourceNodeId = graph.GetEligibleEdges(journey!, "Fixed")
                     .Where(edge => edge.EdgeId == edgeId).Select(edge => edge.FromNodeId)

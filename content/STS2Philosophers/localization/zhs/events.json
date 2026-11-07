@@ -2852,6 +2852,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_FREUD.description": "把理性的自我交还给它不认识的冲动：症状不是错误，而是被压抑的答案。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_BACON.title": "转向培根",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_BACON.description": "不再从词句出发，而从可重复的观察与归纳出发，按经验重排知识的秩序。",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.title": "转向社会批判（马克思）",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.description": "让阶级与劳动的历史成为下一幕的问题：劳动所生产的东西究竟归谁所有？",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.title": "转向现象与解释（胡塞尔）",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.description": "回到事情本身：先描述显现，再谈解释。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "转向具身知觉（胡塞尔）",

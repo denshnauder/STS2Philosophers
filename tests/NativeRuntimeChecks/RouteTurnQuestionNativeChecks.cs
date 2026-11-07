@@ -36,6 +36,7 @@ internal static class RouteTurnQuestionNativeChecks
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_160", "EMBODIED_PERCEPTION", true, []),
         ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_165", "SCIENTIFIC_MODEL", false, ["SextusOpposedAppearances"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_197", "SOCIAL_KNOWLEDGE", false, ["MillHarm"]),
+        ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_177", "SOCIAL_CRITIQUE", false, ["MillHarm"]),
     ];
 
     public static Task Run()

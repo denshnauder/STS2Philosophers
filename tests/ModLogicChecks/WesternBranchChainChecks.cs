@@ -89,6 +89,14 @@ internal static class WesternBranchChainChecks
             .SequenceEqual(["WESTERN_EDGE_026", "WESTERN_EDGE_153", "WESTERN_EDGE_189"]),
             "Naming the default line must not take the other lines off the question.");
 
+        // The history entry's fixed branch is chosen from the seed, so the
+        // first-act question must also offer its social-critique line. Without
+        // this option the player can only ever turn onto the default line.
+        var history = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        history.RouteRules = true;
+        Check(RouteTurnQuestionOptions.For(history, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_MARX", "TO_BACON", RouteTurnQuestionOptions.StayKey]),
+            "Rousseau's question must offer the social-critique line, the scientific line, and staying.");
         var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
         bacon.RouteRules = true;
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
