@@ -2854,6 +2854,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_BACON.description": "不再从词句出发，而从可重复的观察与归纳出发，按经验重排知识的秩序。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.title": "转向社会批判（马克思）",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.description": "让阶级与劳动的历史成为下一幕的问题：劳动所生产的东西究竟归谁所有？",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_NIETZSCHE.title": "转向谱系与权力（尼采）",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_NIETZSCHE.description": "追问那些自称永恒的价值如何被制造出来：沿着它们背后的权力意志往回查。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.title": "转向现象与解释（胡塞尔）",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.description": "回到事情本身：先描述显现，再谈解释。",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "转向具身知觉（胡塞尔）",

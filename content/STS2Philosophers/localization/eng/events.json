@@ -2854,6 +2854,8 @@
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_BACON.description": "Start from repeatable observation and induction rather than from words, and reorder knowledge by experience.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.title": "Turn to Social Critique (Marx)",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_MARX.description": "Let the history of class and labor become the next act's question: who owns what the work produces?",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_NIETZSCHE.title": "Turn to Genealogy and Power (Nietzsche)",
+ "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_NIETZSCHE.description": "Ask how the values that claim to be eternal were made: trace the will to power behind them.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.title": "Turn to Appearance and Interpretation (Husserl)",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_APPEARANCE.description": "Back to the things themselves: describe the appearing before explaining it.",
  "ROUTE_TURN_QUESTION.pages.INVITATION.options.TO_HUSSERL_EMBODIED.title": "Turn to Embodied Perception (Husserl)",
