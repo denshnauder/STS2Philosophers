@@ -160,7 +160,9 @@ internal static class WesternQuestionNodePolicy
         || shared.ZenoCivicChallenge is { Closed: false } || shared.AnaximanderOriginInquiry is { Closed: false }
         || shared.EmpedoclesRootsInquiry is { Closed: false } || shared.AnaxagorasMixtureInquiry is { Closed: false }
         || shared.PyrrhoReportedCrossing is { Closed: false } || shared.OckhamNamesInquiry is { Closed: false }
-        || shared.LutherSignedCare is { Closed: false } || shared.AnselmUnfinishedProof is { Closed: false };
+        || shared.LutherSignedCare is { Closed: false } || shared.AnselmUnfinishedProof is { Closed: false }
+        || shared.BerkeleyPerceivedMark is { Closed: false } || shared.CamusRevoltLimit is { Closed: false }
+        || shared.SchopenhauerWillDenial is { Closed: false } || shared.NietzscheRevaluation is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()
     {

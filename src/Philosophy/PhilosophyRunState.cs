@@ -47,6 +47,11 @@ internal sealed class PhilosophyRunState
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
     public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
     public HumeInductionState? HumeInduction { get; set; }
+    public BerkeleyPerceivedMarkState? BerkeleyPerceivedMark { get; set; }
+    public SchopenhauerWillDenialState? SchopenhauerWillDenial { get; set; }
+    public NietzscheRevaluationState? NietzscheRevaluation { get; set; }
+    public CamusRevoltLimitState? CamusRevoltLimit { get; set; }
+    public KantApperceptionState? KantApperception { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -107,6 +112,11 @@ internal sealed class PhilosophyRunState
         || HobbesAuthorizedSovereignty is not null
         || LockeCargoIdentity is not null
         || HumeInduction is not null
+        || BerkeleyPerceivedMark is not null
+        || SchopenhauerWillDenial is not null
+        || NietzscheRevaluation is not null
+        || CamusRevoltLimit is not null
+        || KantApperception is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
 
@@ -298,6 +308,11 @@ internal sealed class PhilosophyRunState
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
         LockeCargoIdentity?.NormalizeAfterLoad();
         HumeInduction?.NormalizeAfterLoad();
+        BerkeleyPerceivedMark?.NormalizeAfterLoad();
+        SchopenhauerWillDenial?.NormalizeAfterLoad();
+        NietzscheRevaluation?.NormalizeAfterLoad();
+        CamusRevoltLimit?.NormalizeAfterLoad();
+        KantApperception?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {
             behaviorState.NormalizeAfterLoad();

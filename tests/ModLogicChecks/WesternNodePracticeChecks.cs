@@ -120,7 +120,17 @@ internal static class WesternNodePracticeChecks
         Check(WesternNodePracticePolicy.Evaluate(leibnizHarmony, Plays("SASP", "abcd"), previous, 3) == default,
             "Leibniz's harmony ending must not add a second generic node reward next to the relic practices.");
         covered.Add(leibnizHarmony);
-        Check(covered.Count == 55 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        foreach (string node in new[]
+            { "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
+                "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE" })
+        {
+            foreach (string sequence in new[] { "A", "AS", "ASP", "AASS" })
+                Check(WesternNodePracticePolicy.Evaluate(node,
+                    Plays(sequence, "abcd"[..sequence.Length]), previous, 3) == default,
+                    "This narrative route node must not invent a generic combat payout.");
+            covered.Add(node);
+        }
+        Check(covered.Count == 57 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")

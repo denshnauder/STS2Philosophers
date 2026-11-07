@@ -84,7 +84,9 @@ internal static class NativeQuestionNodeEvents
             ?? PyrrhoReportedCrossingPatch.TrySelectExistingNative(run)
             ?? AnselmUnfinishedProofPatch.TrySelectExistingNative(run)
             ?? OckhamNamesInquiryPatch.TrySelectExistingNative(run)
-            ?? LutherSignedCarePatch.TrySelectExistingNative(run);
+            ?? LutherSignedCarePatch.TrySelectExistingNative(run)
+            ?? BerkeleyPerceivedMarkPatch.TrySelectExistingNative(run)
+            ?? CamusRevoltLimitPatch.TrySelectExistingNative(run);
         if (existing is not null) return existing;
         if (WesternQuestionNodePolicy.HasOpenQuestion(shared)) return nextEvent;
 
@@ -125,7 +127,9 @@ internal static class NativeQuestionNodeEvents
             ?? Question(WesternQuestionKind.Sextus)
             ?? DescartesMethodicReconstructionPatch.TrySelectNative(run)
             ?? LockeCargoIdentityPatch.TrySelectNative(run)
+            ?? BerkeleyPerceivedMarkPatch.TrySelectNative(run)
             ?? HumeInductionPatch.TrySelectNative(run)
+            ?? CamusRevoltLimitPatch.TrySelectNative(run)
             ?? HanFeiPublicStandardPatch.TrySelectNative(run)
             ?? Question(WesternQuestionKind.Parmenides)
             ?? Question(WesternQuestionKind.Anaximander)

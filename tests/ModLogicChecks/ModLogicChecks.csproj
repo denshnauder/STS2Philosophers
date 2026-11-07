@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Philosophy\BerkeleyPerceivedMarkState.cs" Link="BerkeleyPerceivedMarkState.cs" />
+    <Compile Include="..\..\src\Philosophy\SchopenhauerWillDenialState.cs" Link="SchopenhauerWillDenialState.cs" />
+    <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />
+    <Compile Include="..\..\src\Philosophy\CamusRevoltLimitState.cs" Link="CamusRevoltLimitState.cs" />
+    <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesTriggerPolicy.cs" Link="NewtonTwoSitesTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesFlow.cs" Link="NewtonTwoSitesFlow.cs" />
