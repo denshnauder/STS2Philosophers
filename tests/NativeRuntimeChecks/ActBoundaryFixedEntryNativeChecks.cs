@@ -161,6 +161,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
+        CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
         CheckEarlyMerleauContinuation();
         CheckEarlyDeweyContinuation();
@@ -628,6 +629,46 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_170")
             && (string)Get(journey, "CurrentNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
             "The early Mill choice reaches Rawls on 170.");
+    }
+
+    private static void CheckEarlyKierkegaardScene()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(KierkegaardFaith));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        object? direct = Call("KierkegaardFaithPatch", "TrySelectNative", run);
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is KierkegaardFaith,
+            "The real Kierkegaard direction must show Kierkegaard's own scene, got "
+            + selected.GetType().Name + "; direct=" + (direct?.GetType().Name ?? "null")
+            + ", entry=" + (bool)Call("NativeQuestionNodeEvents", "IsEntry", run)
+            + ", act=" + run.CurrentActIndex + ", rooms=" + run.CurrentRoomCount + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "KierkegaardFaith");
+        object journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 1 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_158",
+            "The 158 scene must record its first-act identity without spending a second fixed slot.");
+        object action = Enum.Parse(T("KierkegaardFaithAction"), "FaithLeap");
+        Check((bool)Call("KierkegaardFaithFlow", "TryPrepare", state, action)!
+            && (bool)Call("KierkegaardFaithFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The 158 scene commits the leap without moving off Kierkegaard.");
+        Check((bool)Get(state, "EdgeCommitted")
+            && ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_158")
+            && (string)Get(journey, "CurrentNodeId") == "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE"
+            && (int)Get(journey, "LastFixedAct") == 1,
+            "The 158 scene leaves the second-act Sartre room untouched.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] next = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", next)!
+            && next[1] is EventRoom { CanonicalEvent: SartreExistence },
+            "The completed Kierkegaard scene must still leave Sartre at the second-act boundary.");
     }
 
     private static void CheckEarlySartreContinuation()

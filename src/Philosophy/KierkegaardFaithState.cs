@@ -131,6 +131,15 @@ internal static class KierkegaardFaithFlow
     public static bool IsRouteConsistent(KierkegaardFaithState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
+        // The 158 direction has already moved the player onto Kierkegaard. This
+        // is his own first-act scene: it records the choice without spending a
+        // second fixed slot, and leaves the second-act Sartre room untouched.
+        if (state.ActIndex == 1 && state.EdgeId == "WESTERN_EDGE_158")
+            return !state.FixedDeclined
+                && (!state.Closed || state.EdgeCommitted)
+                && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_158")
+                && journey.LastFixedAct == 1
+                && journey.CurrentNodeId == KierkegaardFaithState.AdoptedNodeId;
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
