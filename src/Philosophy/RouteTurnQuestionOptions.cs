@@ -20,6 +20,8 @@ internal static class RouteTurnQuestionOptions
     private static readonly Dictionary<string, string> TurnKeys = new(StringComparer.Ordinal)
     {
         ["SIGMUND_FREUD"] = "TO_FREUD",
+        ["FRANCIS_BACON"] = "TO_BACON",
+        ["KARL_MARX"] = "TO_MARX",
         ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
     };
 
@@ -45,6 +47,7 @@ internal static class RouteTurnQuestionOptions
                 .Any(edge => edge.EdgeId == "WESTERN_EDGE_160"))
         {
             choices.Add(new Choice(AppearanceKey, "WESTERN_EDGE_160", "APPEARANCE_AND_INTERPRETATION"));
+            choices.Add(new Choice(EmbodiedKey, "WESTERN_EDGE_160", "EMBODIED_PERCEPTION"));
         }
         choices.Add(new Choice(StayKey, null, null));
         return choices;
@@ -53,7 +56,7 @@ internal static class RouteTurnQuestionOptions
     /// <summary>True when the question has something to ask beyond staying.</summary>
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
-    internal static readonly string[] AllKeys = ["TO_FREUD", "TO_SAUSSURE", AppearanceKey, StayKey];
+    internal static readonly string[] AllKeys = ["TO_FREUD", "TO_SAUSSURE", "TO_BACON", "TO_MARX", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

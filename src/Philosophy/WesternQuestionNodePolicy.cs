@@ -175,6 +175,11 @@ internal static class WesternQuestionNodePolicy
         || shared.LacanSignifier is { Closed: false }
         || shared.ButlerAddress is { Closed: false }
         || shared.RouteTurnQuestion is { Closed: false }
+        || shared.HorkheimerReason is { Closed: false }
+        || shared.HabermasCommunication is { Closed: false }
+        || shared.ComtePositivism is { Closed: false }
+        || shared.KuhnParadigm is { Closed: false }
+        || shared.MerleauPontyBody is { Closed: false }
         || shared.SchopenhauerWillDenial is { Closed: false } || shared.NietzscheRevaluation is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()

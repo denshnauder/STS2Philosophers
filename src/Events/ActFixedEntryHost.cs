@@ -143,8 +143,10 @@ internal static class ActFixedEntryHost
         if (journey.DeclinedFixedActs.Contains(act) || journey.LastFixedAct > act) return null;
         bool carrier = journey.RouteId == "STRUCTURE_AND_EXCLUSION"
             ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
-            : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM"
-                && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
+            : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE"
+                ? run.Players[0].Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion)
+                : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION"
+                    && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
         if (!carrier) return null;
         int prior = journey.LastFixedAct, priorAct = journey.Act;
         journey.LastFixedAct = act; journey.Act = act;
@@ -159,6 +161,12 @@ internal static class ActFixedEntryHost
                 ("APPEARANCE_AND_INTERPRETATION", 3) => GadamerFusionPatch.TrySelectNative(run),
                 ("UNCONSCIOUS_AND_NORM", 2) => LacanSignifierPatch.TrySelectNative(run),
                 ("UNCONSCIOUS_AND_NORM", 3) => ButlerAddressPatch.TrySelectNative(run),
+                ("SOCIAL_CRITIQUE", 2) => HorkheimerReasonPatch.TrySelectNative(run),
+                ("SOCIAL_CRITIQUE", 3) => HabermasCommunicationPatch.TrySelectNative(run),
+                ("SOCIAL_KNOWLEDGE", 2) => ComtePositivismPatch.TrySelectNative(run),
+                ("SOCIAL_KNOWLEDGE", 3) => KuhnParadigmPatch.TrySelectNative(run),
+                ("EMBODIED_PERCEPTION", 2) => MerleauPontyBodyPatch.TrySelectNative(run),
+                ("EMBODIED_PERCEPTION", 3) => BeauvoirOtherPatch.TrySelectNative(run),
                 _ => null,
             };
         }

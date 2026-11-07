@@ -521,6 +521,46 @@
       "stage_id": "CORE",
       "display_name": "巴特勒",
       "terminal": true
+    },
+    {
+      "node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "thinker_id": "MAX_HORKHEIMER",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "霍克海默",
+      "terminal": false
+    },
+    {
+      "node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+      "thinker_id": "MAURICE_MERLEAU_PONTY",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "梅洛庞蒂",
+      "terminal": false
+    },
+    {
+      "node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "AUGUSTE_COMTE",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "孔德",
+      "terminal": false
+    },
+    {
+      "node_id": "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE",
+      "thinker_id": "THOMAS_KUHN",
+      "problem_id": "KNOWLEDGE_AND_DOUBT",
+      "stage_id": "CORE",
+      "display_name": "库恩：异常与范式",
+      "terminal": false
+    },
+    {
+      "node_id": "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE",
+      "thinker_id": "JURGEN_HABERMAS",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "哈贝马斯",
+      "terminal": true
     }
   ],
   "edges": [
@@ -2611,6 +2651,255 @@
       },
       "route_ids": [
         "UNCONSCIOUS_AND_NORM"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_084",
+      "from_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "to_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从异化劳动转入工具理性批判",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_177"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "社会批判须保留被批判者的具体处境，不能把工具理性写成无主体的命运。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_177",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第一幕接受马克思后转入社会批判",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      },
+      "route_ids": []
+    },
+    {
+      "edge_id": "WESTERN_EDGE_195",
+      "from_node_id": "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+      "to_node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线（具身方向），高；接受胡塞尔后第二幕固定承接梅洛庞蒂",
+      "source": "00西哲当前路线.md:25",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:25"
+        ]
+      },
+      "route_ids": [
+        "EMBODIED_PERCEPTION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_196",
+      "from_node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线（具身方向），高；第三幕固定承接波伏瓦",
+      "source": "00西哲当前路线.md:25",
+      "required_edge_ids": [
+        "WESTERN_EDGE_195"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:25"
+        ]
+      },
+      "route_ids": [
+        "EMBODIED_PERCEPTION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_197",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第一幕接受培根后转入社会知识",
+      "source": "00西哲当前路线.md:37",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:37"
+        ]
+      },
+      "route_ids": []
+    },
+    {
+      "edge_id": "WESTERN_EDGE_198",
+      "from_node_id": "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；接受培根后第二幕固定承接孔德",
+      "source": "00西哲当前路线.md:37",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:37"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_KNOWLEDGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_199",
+      "from_node_id": "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
+      "to_node_id": "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第三幕固定承接库恩",
+      "source": "00西哲当前路线.md:37",
+      "required_edge_ids": [
+        "WESTERN_EDGE_198"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "to_problem_id": "KNOWLEDGE_AND_DOUBT",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:37"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_KNOWLEDGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_200",
+      "from_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "to_node_id": "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "早期马克思转线后的霍克海默固定承接哈贝马斯，高；第三幕固定",
+      "source": "00西哲当前路线.md:33",
+      "required_edge_ids": [
+        "WESTERN_EDGE_084"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:33"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_CRITIQUE"
       ]
     }
   ],

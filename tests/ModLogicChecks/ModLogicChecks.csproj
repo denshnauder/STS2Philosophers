@@ -206,4 +206,16 @@
     <Compile Include="../../src/Philosophy/RouteTurnQuestionOptions.cs" Link="RouteTurnQuestionOptions.cs" />
     <Compile Include="../../src/Philosophy/RouteTurnQuestionState.cs" Link="RouteTurnQuestionState.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Philosophy/ComtePositivismState.cs" Link="ComtePositivismState.cs" />
+    <Compile Include="../../src/Philosophy/ComtePositivismTriggerPolicy.cs" Link="ComtePositivismTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/HabermasCommunicationState.cs" Link="HabermasCommunicationState.cs" />
+    <Compile Include="../../src/Philosophy/HabermasCommunicationTriggerPolicy.cs" Link="HabermasCommunicationTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/HorkheimerReasonState.cs" Link="HorkheimerReasonState.cs" />
+    <Compile Include="../../src/Philosophy/HorkheimerReasonTriggerPolicy.cs" Link="HorkheimerReasonTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/KuhnParadigmState.cs" Link="KuhnParadigmState.cs" />
+    <Compile Include="../../src/Philosophy/KuhnParadigmTriggerPolicy.cs" Link="KuhnParadigmTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/MerleauPontyBodyState.cs" Link="MerleauPontyBodyState.cs" />
+    <Compile Include="../../src/Philosophy/MerleauPontyBodyTriggerPolicy.cs" Link="MerleauPontyBodyTriggerPolicy.cs" />
+  </ItemGroup>
 </Project>

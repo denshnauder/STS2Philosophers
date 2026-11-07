@@ -33,7 +33,7 @@ internal static class RouteEventMapBoundary
         or AquinasBridgeNotice or MachiavelliRealistChallenge or OckhamNamesInquiry or MachiavelliFloodPreparation or LutherSignedCare or BaconSampleLedger or CopernicusShiftedCenter or GalileoMeasuredPractice
         or AnaxagorasMixtureInquiry or GorgiasSpeechInquiry or SenecaDailyReview
         or EpictetusGuidePractice or MarcusAureliusCampPractice or PyrrhoReportedCrossing
-        or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizIndependentClocks or HobbesAuthorizedSovereignty or LockeCargoIdentity or HumeInduction or BerkeleyPerceivedMark or SchellingNature or FregeSense or RussellAnalysis or WollstonecraftAdmission or BeauvoirOther or LeviStraussMyth or DerridaDeconstruction or HeideggerDasein or GadamerFusion or LacanSignifier or ButlerAddress or RouteTurnQuestion or SchopenhauerWillDenial or NietzscheRevaluation or CamusRevoltLimit;
+        or DiogenesStaySwitch or ZenoAssentBoundary or LeibnizIndependentClocks or HobbesAuthorizedSovereignty or LockeCargoIdentity or HumeInduction or BerkeleyPerceivedMark or SchellingNature or FregeSense or RussellAnalysis or WollstonecraftAdmission or BeauvoirOther or LeviStraussMyth or DerridaDeconstruction or HeideggerDasein or GadamerFusion or LacanSignifier or ButlerAddress or RouteTurnQuestion or HorkheimerReason or HabermasCommunication or ComtePositivism or KuhnParadigm or MerleauPontyBody or SchopenhauerWillDenial or NietzscheRevaluation or CamusRevoltLimit;
 
     internal static bool IsSafe(RunState run) => IsSafe(run, allowOwnTravelLock: false);
 

@@ -48,6 +48,11 @@ internal sealed class PhilosophyRunState
     public RussellAnalysisState? RussellAnalysis { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
+    public HorkheimerReasonState? HorkheimerReason { get; set; }
+    public HabermasCommunicationState? HabermasCommunication { get; set; }
+    public ComtePositivismState? ComtePositivism { get; set; }
+    public KuhnParadigmState? KuhnParadigm { get; set; }
+    public MerleauPontyBodyState? MerleauPontyBody { get; set; }
     public LeviStraussMythState? LeviStraussMyth { get; set; }
     public DerridaDeconstructionState? DerridaDeconstruction { get; set; }
     public HeideggerDaseinState? HeideggerDasein { get; set; }
@@ -125,6 +130,11 @@ internal sealed class PhilosophyRunState
         || RussellAnalysis is not null
         || WollstonecraftAdmission is not null
         || BeauvoirOther is not null
+        || HorkheimerReason is not null
+        || HabermasCommunication is not null
+        || ComtePositivism is not null
+        || KuhnParadigm is not null
+        || MerleauPontyBody is not null
         || LeviStraussMyth is not null
         || DerridaDeconstruction is not null
         || HeideggerDasein is not null
@@ -333,6 +343,11 @@ internal sealed class PhilosophyRunState
         RussellAnalysis?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
+        HorkheimerReason?.NormalizeAfterLoad();
+        HabermasCommunication?.NormalizeAfterLoad();
+        ComtePositivism?.NormalizeAfterLoad();
+        KuhnParadigm?.NormalizeAfterLoad();
+        MerleauPontyBody?.NormalizeAfterLoad();
         LeviStraussMyth?.NormalizeAfterLoad();
         DerridaDeconstruction?.NormalizeAfterLoad();
         HeideggerDasein?.NormalizeAfterLoad();

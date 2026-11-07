@@ -225,6 +225,7 @@ func _initialize() -> void:
 		"machiavelli_realist_challenge", "hobbes_authorized_sovereignty", "locke_cargo_identity", "hume_induction",
 		"schelling_nature", "frege_sense", "russell_analysis", "wollstonecraft_admission", "beauvoir_other",
 		"levi_strauss_myth", "derrida_deconstruction", "heidegger_dasein", "gadamer_fusion", "lacan_signifier", "butler_address", "route_turn_question",
+		"horkheimer_reason", "habermas_communication", "comte_positivism", "kuhn_paradigm", "merleau_ponty_body",
 		"berkeley_perceived_mark", "schopenhauer_will_denial", "nietzsche_revaluation", "camus_revolt_limit",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",
