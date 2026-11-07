@@ -252,6 +252,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(ButlerAddress)], doctrine: false, position: 2, actIndex: 2,
             route: "EDUCATION_AND_SITUATION", required: ["WESTERN_EDGE_193"],
             priorEvent: ModelDb.GetId<BeauvoirOther>());
+        // The same third-act room also closes the unconscious line after Lacan.
+        ModelDb.Inject(typeof(LacanSignifier));
+        CheckBoundary(typeof(DescartesThinkingLens), "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+            [typeof(ButlerAddress)], doctrine: true, position: 2, actIndex: 2,
+            route: "UNCONSCIOUS_AND_NORM", required: ["WESTERN_EDGE_190"],
+            priorEvent: ModelDb.GetId<LacanSignifier>());
         // Rawls closes two lines, so both boundaries must hand her the slot: after
         // Kant's institutions (172 -> 173) and after Mill's freedom (169 -> 170).
         // Montesquieu owns the act-two fixed slot of the checks line. The run has

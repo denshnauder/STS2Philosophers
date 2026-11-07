@@ -30,6 +30,28 @@ internal static class ButlerAddressChecks
         };
     }
 
+    private static PhilosophyRunState LacanFixture(WesternRouteGraph graph)
+    {
+        WesternJourneyState journey = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
+        journey.RouteId = "UNCONSCIOUS_AND_NORM";
+        journey.RouteRules = true;
+        journey.CompletedEdgeIds.Add("WESTERN_EDGE_189");
+        journey.CompletedEdgeIds.Add(ButlerAddressState.LacanRequiredEdgeId);
+        journey.SeenThinkerIds.Add("SIGMUND_FREUD");
+        journey.SeenThinkerIds.Add("JACQUES_LACAN");
+        journey.CurrentNodeId = ButlerAddressState.LacanSourceNodeId;
+        journey.LastFixedAct = 2;
+        return new PhilosophyRunState
+        {
+            WesternJourney = journey,
+            ButlerAddress = new ButlerAddressState
+            {
+                InstanceId = "BUTLER_ADDRESS:TEST:3",
+                FromLacan = true,
+            },
+        };
+    }
+
     private static PhilosophyRunState Commit(PhilosophyRunState shared, WesternRouteGraph graph,
         ButlerAddressAction action)
     {
@@ -91,6 +113,28 @@ internal static class ButlerAddressChecks
             "Keeping the ledger declines the act-three fixed slot without completing 194.");
         kept = Commit(kept, graph, ButlerAddressAction.Leave);
         Check(kept.ButlerAddress!.Closed, "The kept ledger still closes the room.");
+
+        // The same room must close the unconscious line after Lacan, not look
+        // for Beauvoir's 193. The route is named and 190 is already complete.
+        PhilosophyRunState lacan = LacanFixture(graph);
+        Check(ButlerAddressFlow.IsRouteConsistent(lacan.ButlerAddress!, lacan.WesternJourney!),
+            "Butler opens at Lacan after 190.");
+        lacan = Commit(lacan, graph, ButlerAddressAction.ObserveLedger);
+        lacan = Commit(lacan, graph, ButlerAddressAction.AmendRegistry);
+        Check(lacan.ButlerAddress!.Judgment == ButlerAddressJudgment.Amended
+            && lacan.WesternJourney!.CompletedEdgeIds.Contains(ButlerAddressState.LacanCompletionEdgeId)
+            && !lacan.WesternJourney.CompletedEdgeIds.Contains(ButlerAddressState.CompletionEdgeId)
+            && lacan.WesternJourney.CurrentNodeId == ButlerAddressState.AdoptedNodeId
+            && lacan.WesternJourney.LastFixedAct == 3,
+            "Lacan's line must complete 191, not Beauvoir's 194.");
+        lacan = Commit(lacan, graph, ButlerAddressAction.Leave);
+        Check(lacan.ButlerAddress!.Closed, "The Lacan line closes Butler after Leave.");
+
+        PhilosophyRunState lacanKept = Commit(LacanFixture(graph), graph, ButlerAddressAction.KeepLedger);
+        Check(lacanKept.ButlerAddress!.FixedDeclined
+            && lacanKept.WesternJourney!.DeclinedFixedActs.Contains(3)
+            && !lacanKept.WesternJourney.CompletedEdgeIds.Contains(ButlerAddressState.LacanCompletionEdgeId),
+            "Keeping the ledger declines Lacan's act-three slot without completing 191.");
 
         // The record is replayable: a tampered history is rejected, a reload is not.
         PhilosophyRunState tampered = Fixture(graph);

@@ -3,7 +3,7 @@ namespace STS2Philosophers;
 internal sealed record ButlerAddressTriggerContext(
     bool RunInProgress, bool AtSafeMapBoundary, bool IsSingleplayer, int CurrentActIndex,
     bool SourceIsCompletedNonBossCombat, int CompletedCombatCount, string? CurrentNodeId,
-    int LastFixedAct, bool RequiredEdgeCompleted, bool CompletionEdgeEligible,
+    int LastFixedAct, string SourceNodeId, bool RequiredEdgeCompleted, bool CompletionEdgeEligible,
     bool HasSavedInstance, bool SavedInstanceUsable, bool SavedInstanceClosed,
     bool SavedRouteConsistent, bool ModelAvailable);
 
@@ -16,7 +16,7 @@ internal static class ButlerAddressTriggerPolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed && context.SavedRouteConsistent;
         return context.SourceIsCompletedNonBossCombat && context.CompletedCombatCount >= 1
-            && context.CurrentNodeId == ButlerAddressState.SourceNodeId
+            && context.CurrentNodeId == context.SourceNodeId
             && context.LastFixedAct >= 2 && context.RequiredEdgeCompleted
             && context.CompletionEdgeEligible;
     }
