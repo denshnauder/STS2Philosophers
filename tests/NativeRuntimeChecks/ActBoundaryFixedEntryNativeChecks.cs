@@ -148,6 +148,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
         CheckEarlySaussureContinuation();
+        CheckEarlyNietzscheContinuation();
         CheckBenjaminIndependentQuestion();
         CheckLegacyNestedOptionsAreHidden();
         // The third acts of the same lines, one room each. The boundary is
@@ -346,6 +347,69 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckEarlyNietzscheContinuation()
+    {
+        ModelDb.Inject(typeof(FoucaultPower));
+        ModelDb.Inject(typeof(BenjaminHistory));
+        ModelDb.Inject(typeof(ArendtBeginning));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 1])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 1);
+        Put(journey, "Act", 1);
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph,
+            [journey, "WESTERN_EDGE_180"])!, "The real first-act Nietzsche turn applies.");
+        Put(journey, "TurnedAct", 1); // Written by RouteTurnQuestion.Choose.
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        shared.GetType().GetMethod("RecordCurrentDoctrine")!.Invoke(shared,
+            ["ROUSSEAU", "ROUSSEAU_UNCARVED_STONE", new[] { "WESTERN", "HISTORY_AND_POWER" }]);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: FoucaultPower },
+            "The Nietzsche turn opens Foucault at the actual second-act boundary.");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object state = Get(shared, "FoucaultPower");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_181",
+            "Early Foucault uses 181 instead of the legacy 063 or default 121.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "FoucaultPower");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "PowerKnowledge", "Leave" })
+        {
+            object action = Enum.Parse(T("FoucaultPowerAction"), name);
+            Check((bool)Call("FoucaultPowerFlow", "TryPrepare", state, action)!
+                && (bool)Call("FoucaultPowerFlow", "TryCommitPending", state, journey, graph)!,
+                "Early Foucault commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_181")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "Early Foucault completes its fixed edge without spending a question.");
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        EventModel question = run.Act.PullNextEvent(run);
+        Check(question is BenjaminHistory,
+            "The actual native question after early Foucault selects independent Benjamin.");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        Check(!((HashSet<int>)Get(Get(shared, "WesternJourney"), "ResolvedQuestionActs")).Contains(2),
+            "Presenting Benjamin does not consume the main question.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], question, shared, 1]);
     }
 
     private static void CheckEarlySaussureContinuation()

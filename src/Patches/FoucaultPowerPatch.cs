@@ -35,9 +35,14 @@ internal static class FoucaultPowerPatch
             .Select(route => route.ActTwoFigure == "MICHEL_FOUCAULT" ? 2
                 : route.ActThreeFigure == "MICHEL_FOUCAULT" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // A first-act Nietzsche turn places Foucault in act two, ahead of
+        // the unturned table's third-act position.
+        if (journey is { TurnedAct: 1, RouteId: "GENEALOGY_AND_POWER" }
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_180")) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == FoucaultPowerState.AdoptedNodeId)
+                .OrderByDescending(edge => edge.RouteIds?.Contains(journey!.RouteId) == true)
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? FoucaultPowerState.CompletionEdgeId
             : FoucaultPowerState.CompletionEdgeId;

@@ -271,10 +271,10 @@ internal static class NativeQuestionNodeChecks
             {
                 object fstate = Get(CurrentShared(run), "FoucaultPower");
                 object fjourney = Get(CurrentShared(run), "WesternJourney");
-                Check((int)Get(fstate, "ActIndex") == 3
+                Check((int)Get(fstate, "ActIndex") == actIndex + 1
                     && (bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
-                    "FoucaultPower's selected third-act record must name act three and own its room; act="
+                    "FoucaultPower's selected record must name its actual act and own its room; act="
                     + Get(fstate, "ActIndex") + " id=" + Get(fstate, "InstanceId")
                     + " last=" + Get(fjourney, "LastFixedAct") + " node=" + Get(fjourney, "CurrentNodeId")
                     + " active=" + Call("RouteEventMapBoundary", "IsActiveEvent", run, local, 2));
