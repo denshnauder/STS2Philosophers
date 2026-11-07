@@ -230,7 +230,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_177"], checkRoom: true);
         ModelDb.Inject(typeof(AdornoNegative));
         CheckBoundary(typeof(RousseauUncarvedStone), "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
-            [typeof(AdornoNegative)], doctrine: false, position: 3, actIndex: 2,
+            [typeof(AdornoNegative)], doctrine: false, position: 2, actIndex: 2,
             route: "SOCIAL_CRITIQUE", required: ["WESTERN_EDGE_178"], checkRoom: true);
         ModelDb.Inject(typeof(NietzscheRevaluation));
         CheckBoundary(typeof(SocratesBalanceWeight), "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",

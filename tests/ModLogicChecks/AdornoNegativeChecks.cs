@@ -63,6 +63,32 @@ internal static class AdornoNegativeChecks
             && fixedJourney.LastFixedAct == 3 && fixedJourney.ResolvedQuestionActs.Count == 0,
             "The fixed room must not consume a question slot.");
 
+        // The same run must walk from the real first-act Marx turn, through
+        // Horkheimer's 178, to this room's 179 without prefilled route state.
+        var chain = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        chain.RouteRules = true;
+        Check(graph.TryApply(chain, "WESTERN_EDGE_177")
+            && chain.RouteId == "SOCIAL_CRITIQUE"
+            && chain.CurrentNodeId == HorkheimerReasonState.SourceNodeId,
+            "The first-act Marx turn must name social critique and stand on Marx.");
+        var horkheimer = HorkheimerReasonState.CreateAt(
+            "HORKHEIMER_REASON:TEST:CHAIN", 2, "WESTERN_EDGE_178");
+        horkheimer.RoutePlaced = true;
+        horkheimer.OpeningFixedAct = chain.LastFixedAct;
+        Check(HorkheimerReasonFlow.TryPrepare(horkheimer, HorkheimerReasonAction.InstrumentalReason)
+            && HorkheimerReasonFlow.TryCommitPending(horkheimer, chain, graph)
+            && chain.CompletedEdgeIds.Contains("WESTERN_EDGE_178")
+            && chain.LastFixedAct == 2,
+            "Horkheimer must take 178 after the first-act turn.");
+        var chainedAdorno = AdornoNegativeState.CreateAt(
+            "ADORNO_NEGATIVE:TEST:CHAIN", 3, AdornoNegativeState.FixedCompletionEdgeId, fixedMode: true);
+        Check(AdornoNegativeFlow.TryPrepare(chainedAdorno, AdornoNegativeAction.NegativeDialectics)
+            && AdornoNegativeFlow.TryCommitPending(chainedAdorno, chain, graph)
+            && chain.CompletedEdgeIds.Contains(AdornoNegativeState.FixedCompletionEdgeId)
+            && chain.CurrentNodeId == AdornoNegativeState.AdoptedNodeId
+            && chain.LastFixedAct == 3,
+            "Adorno must take 179 in the same run after Horkheimer.");
+
         var tampered = AdornoNegativeState.Create("ADORNO_NEGATIVE:TEST:3");
         tampered.Standard = AdornoNegativeStandard.Critique;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

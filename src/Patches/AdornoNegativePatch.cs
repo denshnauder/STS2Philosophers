@@ -34,7 +34,7 @@ internal static class AdornoNegativePatch
         {
             if (journey is null || run.CurrentActIndex != 2
                 || !journey.CompletedEdgeIds.Contains(AdornoNegativeState.FixedRequiredEdgeId)
-                || journey.LastFixedAct != 3) return null;
+                || journey.LastFixedAct is < 2 or > 3) return null;
             WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
             if (!fixedGraph.GetEligibleEdges(journey, "Fixed")
                 .Any(edge => edge.EdgeId == AdornoNegativeState.FixedCompletionEdgeId)) return null;
