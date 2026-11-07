@@ -292,7 +292,9 @@ RouteTurnQuestionPatch.TrySelectExistingNative(run)
 
         // Preserve the existing route dispatch priority. Resolve eligibility only
         // until the first event is selected, so one node has one business claim.
-        return Question(WesternQuestionKind.Protagoras)
+        return (shared.WesternJourney?.CurrentNodeId == ProtagorasSharedDeliberationState.SourceNodeId
+                ? RouteTurnQuestionPatch.TrySelectNative(run) : null)
+            ?? Question(WesternQuestionKind.Protagoras)
             // Plato's line turn is the real entry even though the same node also
             // has a local Zeno question; staying delegates to that question.
             ?? (shared.WesternJourney?.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId
@@ -301,6 +303,11 @@ RouteTurnQuestionPatch.TrySelectExistingNative(run)
             ?? PlatoWholeArrangementPatch.TrySelectNative(run)
             ?? EpicurusSharedMarginPatch.TrySelectNative(run)
             ?? PlotinusCommonGroundPatch.TrySelectNative(run)
+            // The knowledge entry has a real route fork before its local Sextus
+            // question. Asking the fork first keeps the first-act question for
+            // the player's direction; staying delegates to Sextus.
+            ?? (shared.WesternJourney?.CurrentNodeId == SextusOpposedAppearancesState.RequiredNodeId
+                ? RouteTurnQuestionPatch.TrySelectNative(run) : null)
             ?? Question(WesternQuestionKind.Sextus)
             ?? DescartesMethodicReconstructionPatch.TrySelectNative(run)
             ?? LockeCargoIdentityPatch.TrySelectNative(run)

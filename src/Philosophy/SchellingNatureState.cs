@@ -160,9 +160,9 @@ internal static class SchellingNatureFlow
     public static string DescriptionKey(SchellingNatureState state) => state.Stage switch
     {
         SchellingNatureStage.Invitation => "INVITATION",
-        SchellingNatureStage.ResultSpirit => "RESULT_SEPARATION",
-        SchellingNatureStage.ResultMechanism => "RESULT_BALANCE",
-        SchellingNatureStage.ResultKept => "RESULT_PRIVILEGE",
+        SchellingNatureStage.ResultSpirit => "RESULT_SPIRIT",
+        SchellingNatureStage.ResultMechanism => "RESULT_MECHANISM",
+        SchellingNatureStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };
 

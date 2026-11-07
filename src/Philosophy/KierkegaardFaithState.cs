@@ -146,9 +146,9 @@ internal static class KierkegaardFaithFlow
     public static string DescriptionKey(KierkegaardFaithState state) => state.Stage switch
     {
         KierkegaardFaithStage.Invitation => "INVITATION",
-        KierkegaardFaithStage.ResultFaith => "RESULT_SEPARATION",
-        KierkegaardFaithStage.ResultEthical => "RESULT_BALANCE",
-        KierkegaardFaithStage.ResultKept => "RESULT_PRIVILEGE",
+        KierkegaardFaithStage.ResultFaith => "RESULT_FAITH",
+        KierkegaardFaithStage.ResultEthical => "RESULT_ETHICAL",
+        KierkegaardFaithStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };
 

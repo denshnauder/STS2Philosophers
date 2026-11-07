@@ -1,3 +1,4 @@
+using System.Text.Json;
 using STS2Philosophers;
 
 internal static class DeweyPublicExperimentChecks
@@ -67,5 +68,24 @@ internal static class DeweyPublicExperimentChecks
         var tampered = DeweyPublicExperimentState.Create("DEWEY_PUBLIC_EXPERIMENT:TEST:5");
         tampered.Standard = DeweyPublicExperimentStandard.Community;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");
+
+        foreach (var (action, stage) in new[]
+        {
+            (DeweyPublicExperimentAction.PublicExperiment, DeweyPublicExperimentStage.ResultExperiment),
+            (DeweyPublicExperimentAction.KeepInquiryCommunity, DeweyPublicExperimentStage.ResultCommunity),
+            (DeweyPublicExperimentAction.KeepPeirce, DeweyPublicExperimentStage.ResultKept)
+        })
+        {
+            var page = DeweyPublicExperimentState.Create("DEWEY_PUBLIC_EXPERIMENT:PAGE:" + stage);
+            DeweyPublicExperimentFlow.Apply(page, action);
+            string key = $"DEWEY_PUBLIC_EXPERIMENT.pages.{DeweyPublicExperimentFlow.DescriptionKey(page)}.description";
+            foreach (string language in new[] { "eng", "zhs" })
+            {
+                using JsonDocument text = JsonDocument.Parse(File.ReadAllText(
+                    $"content/STS2Philosophers/localization/{language}/events.json"));
+                Check(text.RootElement.TryGetProperty(key, out _),
+                    $"DEWEY_PUBLIC_EXPERIMENT page key {key} must exist in {language}.");
+            }
+        }
     }
 }

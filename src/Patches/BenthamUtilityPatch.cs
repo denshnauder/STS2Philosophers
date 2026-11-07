@@ -37,12 +37,33 @@ internal static class BenthamUtilityPatch
             .Select(route => route.ActTwoFigure == "JEREMY_BENTHAM" ? 2
                 : route.ActThreeFigure == "JEREMY_BENTHAM" ? 3 : 0)
             .DefaultIfEmpty(0).First();
-        string edgeId = routeAct >= 2
-            ? graph.GetEligibleEdges(journey!, "Fixed")
-                .Where(edge => edge.Act == routeAct && edge.ToNodeId == BenthamUtilityState.AdoptedNodeId)
-                .Select(edge => edge.EdgeId).FirstOrDefault()
-                ?? BenthamUtilityState.CompletionEdgeId
-            : BenthamUtilityState.CompletionEdgeId;
+        bool early = journey?.CurrentNodeId == BenthamUtilityState.AdoptedNodeId;
+        string? targetNodeId = null;
+        string? roomSourceNodeId = null;
+        string edgeId;
+        if (routeAct >= 2 && early)
+        {
+            WesternGraphEdge[] forwardEdges = graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.FromNodeId == BenthamUtilityState.AdoptedNodeId)
+                .ToArray();
+            WesternGraphEdge? forward = forwardEdges.FirstOrDefault(edge =>
+                    edge.RouteIds?.Contains(journey!.RouteId) == true)
+                ?? forwardEdges.FirstOrDefault();
+            edgeId = forward?.EdgeId ?? BenthamUtilityState.CompletionEdgeId;
+            targetNodeId = forward?.ToNodeId ?? BenthamUtilityState.AdoptedNodeId;
+            roomSourceNodeId = BenthamUtilityState.AdoptedNodeId;
+        }
+        else
+        {
+            edgeId = routeAct >= 2
+                ? graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.Act == routeAct && edge.ToNodeId == BenthamUtilityState.AdoptedNodeId)
+                    .Select(edge => edge.EdgeId).FirstOrDefault()
+                    ?? BenthamUtilityState.CompletionEdgeId
+                : BenthamUtilityState.CompletionEdgeId;
+            targetNodeId = BenthamUtilityState.AdoptedNodeId;
+            roomSourceNodeId = BenthamUtilityState.SourceNodeId;
+        }
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         BenthamUtilityTriggerContext context = new(
@@ -58,7 +79,8 @@ internal static class BenthamUtilityPatch
             routeAct);
         if (!BenthamUtilityTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? (routeAct >= 2
-            ? BenthamUtilityState.CreateAt($"BENTHAM_UTILITY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            ? BenthamUtilityState.CreateAt($"BENTHAM_UTILITY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId,
+                targetNodeId, roomSourceNodeId)
             : BenthamUtilityState.Create($"BENTHAM_UTILITY:{run.Rng.Seed}:1"));
         if (journey is null || !BenthamUtilityFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.BenthamUtility = candidate;

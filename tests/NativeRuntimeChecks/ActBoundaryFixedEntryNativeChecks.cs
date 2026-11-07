@@ -160,6 +160,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlySaussureContinuation();
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
+        CheckEarlyBenthamContinuation();
+        CheckEarlySartreContinuation();
         CheckEarlyNietzscheContinuation();
         CheckEarlyHabermasContinuation();
         CheckBenjaminIndependentQuestion();
@@ -384,6 +386,121 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static EventModel ChooseVirtueDirection(RunState run, string node, string key)
+    {
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is RouteTurnQuestion,
+            "The real virtue entry must ask the route fork first, got " + selected.GetType().Name + ".");
+        EventModel local = selected.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+        object direction = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == key);
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, direction])!;
+        task.GetAwaiter().GetResult();
+        return selected;
+    }
+
+    private static void CheckEarlyBenthamContinuation()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(BenthamUtility));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_BENTHAM");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_168")
+            && (string)Get(journey, "RouteId") == "CONSEQUENCE_AND_FREEDOM",
+            "The real Bentham direction takes 168 and names the consequence line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: BenthamUtility },
+            "The real Bentham direction opens Bentham at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "BenthamUtility");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_169"
+            && (string)Get(state, "TargetNodeId") == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+            "The early Bentham room takes 169 and targets Mill.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "BenthamUtility");
+        journey = Get(shared, "WesternJourney");
+        object action = Enum.Parse(T("BenthamUtilityAction"), "AggregateUtility");
+        Check((bool)Call("BenthamUtilityFlow", "TryPrepare", state, action)!
+            && (bool)Call("BenthamUtilityFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The early Bentham room commits its utility standard.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_169")
+            && (string)Get(journey, "CurrentNodeId") == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+            "The early Bentham choice reaches Mill on 169.");
+    }
+
+    private static void CheckEarlySartreContinuation()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(SartreExistence));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_158")
+            && (string)Get(journey, "RouteId") == "INDIVIDUAL_COMMITMENT",
+            "The real Kierkegaard direction takes 158 and names the individual line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: SartreExistence },
+            "The real Kierkegaard direction opens Sartre at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "SartreExistence");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_060",
+            "The early Sartre room uses 060 at act two.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "SartreExistence");
+        journey = Get(shared, "WesternJourney");
+        object action = Enum.Parse(T("SartreExistenceAction"), "ExistencePrecedesEssence");
+        Check((bool)Call("SartreExistenceFlow", "TryPrepare", state, action)!
+            && (bool)Call("SartreExistenceFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The early Sartre room commits its existence standard.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_060"),
+            "The early Sartre choice reaches Sartre on 060.");
     }
 
     private static void CheckEarlyPeirceContinuation()

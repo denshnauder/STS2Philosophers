@@ -179,9 +179,9 @@ internal static class PeirceInquiryFlow
     public static string DescriptionKey(PeirceInquiryState state) => state.Stage switch
     {
         PeirceInquiryStage.Invitation => "INVITATION",
-        PeirceInquiryStage.ResultTest => "RESULT_SEPARATION",
-        PeirceInquiryStage.ResultCommunity => "RESULT_BALANCE",
-        PeirceInquiryStage.ResultKept => "RESULT_PRIVILEGE",
+        PeirceInquiryStage.ResultTest => "RESULT_TEST",
+        PeirceInquiryStage.ResultCommunity => "RESULT_COMMUNITY",
+        PeirceInquiryStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };
 

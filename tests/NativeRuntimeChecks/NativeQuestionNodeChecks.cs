@@ -91,15 +91,15 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
-                if (item.Kind is "Gorgias" or "Zeno" && chosen is RouteTurnQuestion)
+                if (item.Kind is "Protagoras" or "Gorgias" or "Zeno" or "Sextus" && chosen is RouteTurnQuestion)
                 {
-                    // The language entry now asks the real Saussure turn first.
-                    // Staying delegates to the local Gorgias inquiry instead of
+                    // The entry asks the real route fork first. Staying delegates
+                    // to the local Protagoras/Gorgias/Zeno/Sextus question instead of
                     // spending the question silently.
                     EventModel routeQuestion = chosen;
                     chosen = await ChooseRouteStayAsync(run, fixture.Player, chosen);
                     Check(run.VisitedEventIds.Contains(routeQuestion.Id) && run.VisitedEventIds.Contains(chosen.Id),
-                        "The language entry records both the route question and the local Gorgias question.");
+                        "The entry records both the route question and the delegated local question.");
                 }
                 else
                 {

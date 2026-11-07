@@ -34,8 +34,8 @@ internal static class RouteTurnQuestionNativeChecks
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_153", "AUTONOMY_AND_HISTORY", false, []),
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_189", "UNCONSCIOUS_AND_NORM", false, []),
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_160", "EMBODIED_PERCEPTION", true, []),
-        ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_165", "SCIENTIFIC_MODEL", false, ["SextusOpposedAppearances"]),
-        ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_069", "FALLIBLE_INQUIRY", true, ["SextusOpposedAppearances"]),
+        ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_165", "SCIENTIFIC_MODEL", false, []),
+        ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_069", "FALLIBLE_INQUIRY", true, []),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_197", "SOCIAL_KNOWLEDGE", false, ["MillHarm"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_177", "SOCIAL_CRITIQUE", false, ["MillHarm"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_180", "GENEALOGY_AND_POWER", false, ["MillHarm"]),
@@ -47,6 +47,7 @@ internal static class RouteTurnQuestionNativeChecks
     public static Task Run()
     {
         ModelDb.Inject(T("RouteTurnQuestion"));
+        CheckKnowledgeAnswerAndContinuation();
         foreach (var item in Cases)
         {
             var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
@@ -139,6 +140,65 @@ internal static class RouteTurnQuestionNativeChecks
             Console.WriteLine($"Route turn question: {item.Node} opens the question and {item.Edge} names {item.Route}.");
         }
         return Task.CompletedTask;
+    }
+
+    private static void CheckKnowledgeAnswerAndContinuation()
+    {
+        ModelDb.Inject(typeof(PeirceInquiry));
+        ModelDb.Inject(typeof(JamesPragmatism));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is RouteTurnQuestion,
+            "The real knowledge entry must ask the route fork before Sextus, got " + selected.GetType().Name + ".");
+        Check(!run.VisitedEventIds.Contains(ModelDb.GetId<SextusOpposedAppearances>()),
+            "The route fork must not pre-visit the local Sextus question.");
+        EventModel local = selected.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+        object peirce = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_PEIRCE");
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, peirce])!;
+        task.GetAwaiter().GetResult();
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_069")
+            && (string)Get(journey, "RouteId") == "FALLIBLE_INQUIRY"
+            && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1),
+            "Choosing Peirce on the real fork takes 069, names the fallible line, and spends act one's question.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: PeirceInquiry },
+            "The same real fork reaches Peirce at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object state = Get(shared, "PeirceInquiry");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "TestByConsequences", "Leave" })
+        {
+            object action = Enum.Parse(T("PeirceInquiryAction"), name);
+            Check((bool)Call("PeirceInquiryFlow", "TryPrepare", state, action)!
+                && (bool)Call("PeirceInquiryFlow", "TryCommitPending", state, journey, graph)!,
+                "The real Peirce continuation commits " + name + ".");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        EventModel james = run.Act.PullNextEvent(run);
+        Check(james is JamesPragmatism,
+            "The same real run selects James after Peirce, got " + james.GetType().Name + ".");
     }
 
     private static string Snake(string name)

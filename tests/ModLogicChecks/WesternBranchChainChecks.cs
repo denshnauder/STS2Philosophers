@@ -206,6 +206,11 @@ internal static class WesternBranchChainChecks
         Check(RouteTurnQuestionOptions.For(bacon, graph).Select(choice => choice.Key)
                 .SequenceEqual(["TO_BACON", "TO_PEIRCE", RouteTurnQuestionOptions.StayKey]),
             "The knowledge entry must offer the scientific and fallible-inquiry lines, and staying.");
+        var virtue = graph.Start("SOCRATES__VIRTUE_AND_HAPPINESS__CORE");
+        virtue.RouteRules = true;
+        Check(RouteTurnQuestionOptions.For(virtue, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_KIERKEGAARD", "TO_BENTHAM", RouteTurnQuestionOptions.StayKey]),
+            "The virtue entry must offer the individual-commitment and consequence lines, and staying.");
         var quiet = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         quiet.RouteRules = true;
         Check(RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
