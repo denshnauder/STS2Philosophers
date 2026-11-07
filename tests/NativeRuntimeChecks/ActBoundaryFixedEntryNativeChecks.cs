@@ -316,9 +316,15 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_172"],
             priorEvent: ModelDb.GetId<KantUniversalization>());
         CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
-            [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
             route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_169"],
-            priorEvent: ModelDb.GetId<MillHarm>());
+            priorEvent: ModelDb.GetId<MillHarm>(), afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((string)Get(mill, "EdgeId") == "WESTERN_EDGE_170"
+                    && (string)Get(mill, "TargetNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+                    "The early Mill room takes 170 and targets Rawls.");
+            });
         // Arendt also closes two lines: after Mill's sympathy (175 -> 176) and
         // after Foucault's genealogy (181 -> 182).
         CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
@@ -579,6 +585,49 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_169")
             && (string)Get(journey, "CurrentNodeId") == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
             "The early Bentham choice reaches Mill on 169.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MillHarm },
+            "The real consequence path opens Mill at the third-act boundary, got "
+            + (prepare[1] is EventRoom millRoom ? millRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object millState = Get(shared, "MillHarm");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(millState, "ActIndex") == 3 && (string)Get(millState, "EdgeId") == "WESTERN_EDGE_170"
+            && (string)Get(millState, "TargetNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE"
+            && (string)Get(millState, "RoomSourceNodeId") == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+            "The early Mill room takes 170 and targets Rawls from Mill.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 2]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        millState = Get(shared, "MillHarm");
+        journey = Get(shared, "WesternJourney");
+        object millAction = Enum.Parse(T("MillHarmAction"), "ApplyHarmTest");
+        bool millPrepared = (bool)Call("MillHarmFlow", "TryPrepare", millState, millAction)!;
+        bool millCommitted = millPrepared && (bool)Call("MillHarmFlow", "TryCommitPending", millState, journey,
+            Call("WesternRouteGraph", "LoadEmbedded")!)!;
+        Check(millPrepared && millCommitted,
+            "The early Mill room starts its harm test.");
+        millAction = Enum.Parse(T("MillHarmAction"), "ProtectConduct");
+        millPrepared = (bool)Call("MillHarmFlow", "TryPrepare", millState, millAction)!;
+        millCommitted = millPrepared && (bool)Call("MillHarmFlow", "TryCommitPending", millState, journey,
+            Call("WesternRouteGraph", "LoadEmbedded")!)!;
+        Check(millPrepared && millCommitted,
+            "The early Mill room commits its conduct standard: prepared=" + millPrepared
+            + ", committed=" + millCommitted + ", act=" + Get(millState, "ActIndex")
+            + ", edge=" + Get(millState, "EdgeId") + ", target=" + Get(millState, "TargetNodeId")
+            + ", source=" + Get(millState, "RoomSourceNodeId")
+            + ", lastFixed=" + Get(journey, "LastFixedAct") + ", node=" + Get(journey, "CurrentNodeId")
+            + ", committedEdge=" + Get(millState, "EdgeCommitted") + ".");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_170")
+            && (string)Get(journey, "CurrentNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+            "The early Mill choice reaches Rawls on 170.");
     }
 
     private static void CheckEarlySartreContinuation()

@@ -32,21 +32,49 @@ internal static class MillHarmPatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         if (fixedEntry)
         {
-            if (journey is null || run.CurrentActIndex != 2 || journey.LastFixedAct != 3
-                || journey.CurrentNodeId is not (MillHarmState.BenthamSourceNodeId
-                    or MillHarmState.SmithSourceNodeId)) return null;
+            if (journey is null || run.CurrentActIndex != 2 || journey.LastFixedAct != 3) return null;
+            bool early = journey.RouteId == "CONSEQUENCE_AND_FREEDOM"
+                && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
+                && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_169");
+            bool source = journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
+                or MillHarmState.SmithSourceNodeId;
+            if (!early && !source) return null;
             WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
-            string fixedEdge = fixedGraph.GetEligibleEdges(journey, "Fixed")
-                .Where(edge => edge.Act == 3
-                    && edge.ToNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE")
-                .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty;
+            string fixedEdge;
+            string targetNodeId;
+            string roomSourceNodeId;
+            if (early)
+            {
+                WesternGraphEdge[] outgoing = fixedGraph.GetEligibleEdges(journey, "Fixed")
+                    .Where(edge => edge.Act == 3
+                        && edge.FromNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE")
+                    .ToArray();
+                WesternGraphEdge? forward = outgoing.FirstOrDefault(edge =>
+                        edge.RouteIds?.Contains(journey.RouteId) == true)
+                    ?? outgoing.FirstOrDefault();
+                if (forward is null) return null;
+                fixedEdge = forward.EdgeId;
+                targetNodeId = forward.ToNodeId;
+                roomSourceNodeId = "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+            }
+            else
+            {
+                fixedEdge = fixedGraph.GetEligibleEdges(journey, "Fixed")
+                    .Where(edge => edge.Act == 3
+                        && edge.ToNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE")
+                    .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty;
+                targetNodeId = "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+                roomSourceNodeId = journey.CurrentNodeId;
+            }
             if (fixedEdge.Length == 0) return null;
             var fixedCandidate = saved is { FixedMode: true } ? saved : MillHarmState.CreateAt(
-                $"MILL_HARM:{run.Rng.Seed}:3", 3, fixedEdge, fixedMode: true);
+                $"MILL_HARM:{run.Rng.Seed}:3", 3, fixedEdge, fixedMode: true, targetNodeId, roomSourceNodeId);
             if (!fixedCandidate.EdgeCommitted && !fixedCandidate.FixedDeclined && !fixedCandidate.Closed)
             {
                 fixedCandidate.ActIndex = 3;
                 fixedCandidate.EdgeId = fixedEdge;
+                fixedCandidate.TargetNodeId = targetNodeId;
+                fixedCandidate.RoomSourceNodeId = roomSourceNodeId;
                 fixedCandidate.FixedMode = true;
             }
             if (!MillHarmFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
