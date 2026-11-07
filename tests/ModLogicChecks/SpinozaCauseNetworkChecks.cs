@@ -38,7 +38,7 @@ internal static class SpinozaCauseNetworkChecks
             fresh with { HasSourceDoctrine = false },
             fresh with { HasOpenRouteQuestion = true },
             fresh with { CurrentNodeId = "DESCARTES__KNOWLEDGE_AND_DOUBT__CORE" },
-            fresh with { LastFixedAct = 2 },
+            fresh with { LastFixedAct = 3 },
             fresh with { FixedActTwoResolved = true },
             fresh with { RetainedEnding = true },
             fresh with { HasEligibleFixedEdge = false },
@@ -115,6 +115,21 @@ internal static class SpinozaCauseNetworkChecks
         Check(!declined.WesternJourney.ResolvedQuestionActs.Contains(1)
             && !declined.WesternJourney.ResolvedQuestionActs.Contains(2),
             "Declining consumes no Question slot.");
+
+        // The real boundary reserves the second Fixed slot before the event opens,
+        // then the adoption edge advances the counter to three. Exercise that
+        // exact sequence instead of the fixture's pre-reservation start at one.
+        (PhilosophyRunState reserved, WesternRouteGraph reservedGraph) = Fixture();
+        reserved.WesternJourney!.LastFixedAct = 2;
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Accept);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.BlameEnemy);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Continue);
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Intervene);
+        Check(reserved.WesternJourney!.LastFixedAct == 3
+            && reserved.SpinozaCauseNetwork!.EdgeCommitted
+            && reserved.WesternJourney.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId),
+            "Adoption must survive the real boundary's 2-to-3 Fixed slot advance.");
+        reserved = Commit(reserved, reservedGraph, SpinozaCauseNetworkAction.Leave);
 
         SpinozaAttribution[] attributions = [SpinozaAttribution.BlameEnemy, SpinozaAttribution.TraceChains];
         SpinozaCauseNetworkAction[] decisions =
@@ -219,6 +234,22 @@ internal static class SpinozaCauseNetworkChecks
         Check(!SpinozaCauseNetworkFlow.IsRouteConsistent(mismatched.SpinozaCauseNetwork!,
             mismatched.WesternJourney!),
             "A state bound to another route node is inconsistent.");
+
+        // The nature line reaches Spinoza from Heraclitus, not from Descartes.
+        WesternRouteGraph natureGraph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState natureJourney = natureGraph.Start("HERACLITUS__BEING_AND_CHANGE__CORE");
+        natureJourney.RouteId = "NATURE_AND_BECOMING";
+        natureJourney.LastFixedAct = 1;
+        natureJourney.SeenThinkerIds.Add("HERACLITUS");
+        var natureState = SpinozaCauseNetworkState.Create("SPINOZA:TEST:NATURE");
+        natureState.SourceNode = "HERACLITUS__BEING_AND_CHANGE__CORE";
+        natureState.SourceThinker = "HERACLITUS";
+        natureState.AdoptEdge = "WESTERN_EDGE_110";
+        Check(SpinozaCauseNetworkFlow.IsRouteConsistent(natureState, natureJourney),
+            "The nature line's Heraclitus-to-Spinoza fixed room is consistent without Descartes.");
+        natureJourney.CurrentNodeId = SpinozaCauseNetworkState.SourceNodeId;
+        Check(!SpinozaCauseNetworkFlow.IsRouteConsistent(natureState, natureJourney),
+            "The nature line's room rejects a Descartes node mismatch.");
 
         Console.WriteLine("Spinoza cause network event checks passed: 7 paths, adoption and save integrity.");
     }

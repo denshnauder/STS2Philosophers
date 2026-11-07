@@ -162,6 +162,12 @@ internal static class WesternQuestionNodePolicy
         || shared.PyrrhoReportedCrossing is { Closed: false } || shared.OckhamNamesInquiry is { Closed: false }
         || shared.LutherSignedCare is { Closed: false } || shared.AnselmUnfinishedProof is { Closed: false }
         || shared.BerkeleyPerceivedMark is { Closed: false } || shared.CamusRevoltLimit is { Closed: false }
+        || shared.SpinozaCauseNetwork is { Closed: false }
+        || shared.SchellingNature is { Closed: false }
+        || shared.FregeSense is { Closed: false }
+        || shared.RussellAnalysis is { Closed: false }
+        || shared.WollstonecraftAdmission is { Closed: false }
+        || shared.BeauvoirOther is { Closed: false }
         || shared.SchopenhauerWillDenial is { Closed: false } || shared.NietzscheRevaluation is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()

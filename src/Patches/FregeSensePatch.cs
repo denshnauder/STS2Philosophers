@@ -1,0 +1,99 @@
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Runs;
+
+namespace STS2Philosophers;
+
+internal static class FregeSensePatch
+{
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        FregeSenseState? saved = shared.FregeSense;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (journey is null || !FregeSenseFlow.IsRouteConsistent(saved, journey)) return null;
+        FregeSense? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
+    internal static EventModel? TrySelectNative(RunState run)
+    {
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        FregeSenseState? saved = shared.FregeSense;
+        FregeSense? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 1
+                || journey.LastFixedAct != 2
+                || journey.CurrentNodeId != FregeSenseState.SourceNodeId) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            string fixedEdge = fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Where(edge => edge.Act == 2 && edge.ToNodeId == FregeSenseState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault() ?? string.Empty;
+            if (fixedEdge.Length == 0) return null;
+            var fixedCandidate = saved ?? FregeSenseState.CreateAt(
+                $"FREGE_SENSE:{run.Rng.Seed}:2", 2, fixedEdge);
+            if (saved is not null && !saved.EdgeCommitted && !saved.FixedDeclined && !saved.Closed)
+            {
+                fixedCandidate.ActIndex = 2;
+                fixedCandidate.EdgeId = fixedEdge;
+            }
+            if (!FregeSenseFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.FregeSense = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Frege's sense room.");
+            return canonical;
+        }
+        ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+            .Where(route => route.RouteId == journey.RouteId)
+            .Select(route => route.ActTwoFigure == "GOTTLOB_FREGE" ? 2
+                : route.ActThreeFigure == "GOTTLOB_FREGE" ? 3 : 0)
+            .DefaultIfEmpty(0).First();
+        string edgeId = routeAct >= 2
+            ? graph.GetEligibleEdges(journey!, "Fixed")
+                .Where(edge => edge.Act == routeAct && edge.ToNodeId == FregeSenseState.AdoptedNodeId)
+                .Select(edge => edge.EdgeId).FirstOrDefault()
+                ?? FregeSenseState.CompletionEdgeId
+            : FregeSenseState.CompletionEdgeId;
+        bool edgeEligible = journey is not null
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
+        FregeSenseTriggerContext context = new(
+            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
+            NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
+            edgeEligible && journey is not null
+                && (routeAct >= 2 || WesternFirstActBranch.IsOnBranch(run, journey, graph, FregeSenseState.SourceNodeId)),
+            saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
+            saved is not null && journey is not null && FregeSenseFlow.IsRouteConsistent(saved, journey),
+            canonical is not null,
+            routeAct);
+        if (!FregeSenseTriggerPolicy.ShouldInsert(context)) return null;
+        var candidate = saved ?? (routeAct >= 2
+            ? FregeSenseState.CreateAt($"FREGE_SENSE:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            : FregeSenseState.Create($"FREGE_SENSE:{run.Rng.Seed}:1"));
+        if (journey is null || !FregeSenseFlow.IsRouteConsistent(candidate, journey)) return null;
+        shared.FregeSense = candidate;
+        Log.Info("[STS2Philosophers] Presenting FregeSense room.");
+        return canonical;
+    }
+
+    private static FregeSense? TryGetCanonicalEvent()
+    {
+        try { return ModelDb.Event<FregeSense>(); }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] FregeSense is unavailable: {exception}");
+            return null;
+        }
+    }
+}

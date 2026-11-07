@@ -19,7 +19,8 @@ internal sealed record SpinozaCauseNetworkTriggerContext(
     bool SavedInstanceUsable,
     bool SavedInstanceClosed,
     bool SavedInstanceConsistent,
-    bool ModelAvailable);
+    bool ModelAvailable,
+    string? SourceNode = null);
 
 internal static class SpinozaCauseNetworkTriggerPolicy
 {
@@ -33,8 +34,8 @@ internal static class SpinozaCauseNetworkTriggerPolicy
         if (context.HasSavedInstance)
             return context.SavedInstanceUsable && !context.SavedInstanceClosed
                 && context.SavedInstanceConsistent;
-        return context.CurrentNodeId == SourceNodeId
-            && context.LastFixedAct == 1
+        return context.CurrentNodeId == (context.SourceNode ?? SourceNodeId)
+            && context.LastFixedAct <= 2
             && !context.FixedActTwoResolved
             && !context.RetainedEnding
             && context.HasEligibleFixedEdge

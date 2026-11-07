@@ -78,31 +78,34 @@ internal static class SpinozaCauseNetworkFlow
         if (state is null || journey is null || !state.IsUsable()) return false;
         if (journey.SeenThinkerIds is null || journey.ResolvedQuestionActs is null
             || journey.DeclinedFixedActs is null || journey.CompletedEdgeIds is null) return false;
-        if (!journey.SeenThinkerIds.Contains("DESCARTES")) return false;
+        if (!journey.SeenThinkerIds.Contains(state.SourceThinker)) return false;
         if (journey.RetainedEnding) return false;
         if (journey.ResolvedQuestionActs.Contains(2) || journey.ResolvedQuestionActs.Contains(3)) return false;
         if (journey.DeclinedFixedActs.Contains(3)) return false;
 
         if (!state.FixedSlotResolved)
         {
-            return journey.CurrentNodeId == SpinozaCauseNetworkState.SourceNodeId
-                && journey.LastFixedAct == 1
+            return journey.CurrentNodeId == state.SourceNode
+                && journey.LastFixedAct is 1 or 2
                 && !journey.DeclinedFixedActs.Contains(2)
-                && !journey.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId)
+                && !journey.CompletedEdgeIds.Contains(state.AdoptEdge)
                 && !journey.SeenThinkerIds.Contains("BARUCH_SPINOZA");
         }
 
-        if (journey.LastFixedAct != 2) return false;
+        // The fixed slot is reserved before the room opens (LastFixedAct=2),
+        // then applying the completion edge advances it to three. Both are the
+        // same real second-act settlement; a stale equality rejected adoption.
+        if (journey.LastFixedAct is < 2 or > 3) return false;
         if (state.EdgeCommitted)
         {
             return journey.CurrentNodeId == SpinozaCauseNetworkState.AdoptedNodeId
                 && journey.SeenThinkerIds.Contains("BARUCH_SPINOZA")
-                && journey.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId)
+                && journey.CompletedEdgeIds.Contains(state.AdoptEdge)
                 && !journey.DeclinedFixedActs.Contains(2);
         }
-        return journey.CurrentNodeId == SpinozaCauseNetworkState.SourceNodeId
-            && journey.SeenThinkerIds.Contains("DESCARTES")
-            && !journey.CompletedEdgeIds.Contains(SpinozaCauseNetworkState.CompletionEdgeId)
+        return journey.CurrentNodeId == state.SourceNode
+            && journey.SeenThinkerIds.Contains(state.SourceThinker)
+            && !journey.CompletedEdgeIds.Contains(state.AdoptEdge)
             && !journey.SeenThinkerIds.Contains("BARUCH_SPINOZA")
             && journey.DeclinedFixedActs.Contains(2);
     }
@@ -117,7 +120,7 @@ internal static class SpinozaCauseNetworkFlow
 
         if (action is SpinozaCauseNetworkAction.Intervene or SpinozaCauseNetworkAction.Reorder)
         {
-            if (!graph.TryApply(journey, SpinozaCauseNetworkState.CompletionEdgeId)) return false;
+            if (!graph.TryApply(journey, state.AdoptEdge)) return false;
         }
         else if (action is SpinozaCauseNetworkAction.Decline or SpinozaCauseNetworkAction.CorrectRecord)
         {

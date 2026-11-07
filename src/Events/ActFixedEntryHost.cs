@@ -14,7 +14,8 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         using (FixedEntryScope.Begin())
         {
-            EventModel? model = run.CurrentActIndex == 1
+            EventModel? model = TrySelectReviewedDefaults(run);
+            model ??= run.CurrentActIndex == 1
                 ? LockeCargoIdentityPatch.TrySelectNative(run)
                 : HumeInductionPatch.TrySelectNative(run);
             model ??= TrySelectSocraticLine(run);
@@ -30,6 +31,10 @@ internal static class ActFixedEntryHost
             || !run.Players[0].Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             || shared?.WesternJourney is not { } journey) return null;
+        if (journey.RouteId.Length == 0
+            && (journey.CurrentNodeId == SchopenhauerWillDenialState.FixedSourceNodeId
+                || journey.CurrentNodeId == "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE"))
+            journey.RouteId = "WILL_AND_VALUE";
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         if (run.CurrentActIndex == 1)
         {
@@ -67,6 +72,65 @@ internal static class ActFixedEntryHost
         EventModel selected = ModelDb.Event<NietzscheRevaluation>();
         if (run.VisitedEventIds.Contains(selected.Id)) return null;
         shared.NietzscheRevaluation = next;
+        return selected;
+    }
+
+    // The three independently reviewed default lines are installed together.
+    // Existing unrelated lines keep the previously released handover.
+    private static EventModel? TrySelectReviewedDefaults(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run) || !NativeQuestionNodeEvents.HasSoleDoctrineCarrier(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.WesternJourney is not { } journey || journey.RetainedEnding) return null;
+        var player = run.Players[0];
+        string route, entry;
+        if (player.Relics.OfType<HeraclitusLyre>().Any(relic => relic.CanOfferNativeQuestion))
+        { route = "NATURE_AND_BECOMING"; entry = "HERACLITUS__BEING_AND_CHANGE__CORE"; }
+        else if (player.Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion))
+        { route = "FORMAL_LANGUAGE"; entry = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"; }
+        else if (player.Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion))
+        { route = "EDUCATION_AND_SITUATION"; entry = "ROUSSEAU__HISTORY_AND_POWER__CORE"; }
+        else return null;
+        string parent = route switch
+        {
+            "NATURE_AND_BECOMING" => SpinozaCauseNetworkState.AdoptedNodeId,
+            "FORMAL_LANGUAGE" => FregeSenseState.AdoptedNodeId,
+            _ => WollstonecraftAdmissionState.AdoptedNodeId,
+        };
+        int act = run.CurrentActIndex + 1;
+        if (act == 2 && journey.CurrentNodeId != entry
+            || act == 3 && journey.CurrentNodeId != parent
+            || journey.LastFixedAct > act
+            || journey.DeclinedFixedActs.Contains(act)) return null;
+        int previous = journey.LastFixedAct;
+        string oldRoute = journey.RouteId, oldEntry = journey.EntryNodeId;
+        bool oldRules = journey.RouteRules;
+        int oldAct = journey.Act;
+        journey.RouteId = route; journey.EntryNodeId = entry;
+        journey.RouteRules = true; journey.Act = act; journey.LastFixedAct = act;
+        EventModel? selected = null;
+        try
+        {
+            selected = (route, act) switch
+        {
+            ("NATURE_AND_BECOMING", 2) => SpinozaCauseNetworkPatch.TrySelectNative(run),
+            ("NATURE_AND_BECOMING", 3) => SchellingNaturePatch.TrySelectNative(run),
+            ("FORMAL_LANGUAGE", 2) => FregeSensePatch.TrySelectNative(run),
+            ("FORMAL_LANGUAGE", 3) => RussellAnalysisPatch.TrySelectNative(run),
+            ("EDUCATION_AND_SITUATION", 2) => WollstonecraftAdmissionPatch.TrySelectNative(run),
+            ("EDUCATION_AND_SITUATION", 3) => BeauvoirOtherPatch.TrySelectNative(run),
+            _ => null,
+            };
+        }
+        catch (Exception exception)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Error($"[STS2Philosophers] Reviewed fixed handover failed: {exception}");
+        }
+        if (selected is null)
+        {
+            journey.RouteId = oldRoute; journey.EntryNodeId = oldEntry;
+            journey.RouteRules = oldRules; journey.Act = oldAct; journey.LastFixedAct = previous;
+        }
         return selected;
     }
 }

@@ -457,6 +457,22 @@
       "stage_id": "CORE",
       "display_name": "尼采",
       "terminal": false
+    },
+    {
+      "node_id": "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "BERTRAND_RUSSELL",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "罗素",
+      "terminal": false
+    },
+    {
+      "node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+      "thinker_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING",
+      "problem_id": "BEING_AND_CHANGE",
+      "stage_id": "CORE",
+      "display_name": "谢林",
+      "terminal": false
     }
   ],
   "edges": [
@@ -1754,9 +1770,7 @@
       "confidence": "Medium",
       "relation_summary": "后世同题转向，中；转入主体与他者，不是直接单线继承",
       "source": "18游戏流程投影.md:367",
-      "required_edge_ids": [
-        "WESTERN_EDGE_041"
-      ],
+      "required_edge_ids": [],
       "enabled": true,
       "context": {
         "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
@@ -1767,14 +1781,15 @@
         "compressed_mediators": "已完成密尔问号及女性权利的后世重开；这是同题转向，不作直接单线继承。",
         "behavior_requirement": "NoAdditionalGate",
         "ethical_boundary": "制度与自由的实践须保留排除检查与机会成本，不能把制度选择写成无条件服从或普遍解放。",
-        "interpretation_boundary": "不把女性主义诸人物画成无争议的单线升级树。",
+        "interpretation_boundary": "第三幕固定波伏娃不依赖第二幕问号密尔：问号是另一条分支，不是前置。",
         "evidence_status": "LocalPlanning",
         "evidence_sources": [
           "18游戏流程投影.md:367",
           "18游戏流程投影.md#05压缩与中介说明",
           "19反例与缺口审查.md#02入口强反例"
         ]
-      }
+      },
+      "interpretation_boundary": "不把女性主义诸人物画成无争议的单线升级树。"
     },
     {
       "edge_id": "WESTERN_EDGE_043",
@@ -2145,6 +2160,130 @@
       },
       "route_ids": [
         "WILL_AND_VALUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_104",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "FORMAL_LANGUAGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_105",
+      "from_node_id": "GOTTLOB_FREGE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "FORMAL_LANGUAGE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_110",
+      "from_node_id": "HERACLITUS__BEING_AND_CHANGE__CORE",
+      "to_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "NATURE_AND_BECOMING"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_111",
+      "from_node_id": "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE",
+      "to_node_id": "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "BEING_AND_CHANGE",
+        "to_problem_id": "BEING_AND_CHANGE",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "NATURE_AND_BECOMING"
       ]
     }
   ],

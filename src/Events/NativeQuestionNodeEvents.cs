@@ -30,7 +30,14 @@ internal static class NativeQuestionNodeEvents
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) && shared is not null;
     }
 
+    internal static int CombatCount(ActBehaviorState? behavior) =>
+        FixedEntryScope.Active ? Math.Max(1, behavior?.CompletedCombatCount ?? 0) : behavior?.CompletedCombatCount ?? 0;
+
+    internal static bool HasSoleDoctrineCarrier(RunState run) =>
+        run.Players.Count == 1 && run.Players[0].Relics.Count(IsDoctrineCarrier) == 1;
+
     internal static bool HasCompletedCombat(RunState run, bool normalOnly = false) =>
+        FixedEntryScope.Active ||
         run.CurrentActIndex >= 0 && run.MapPointHistory.Count > run.CurrentActIndex
         && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
         && shared?.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount > 0

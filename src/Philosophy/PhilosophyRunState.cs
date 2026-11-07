@@ -43,6 +43,11 @@ internal sealed class PhilosophyRunState
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
     public NewtonTwoSitesState? NewtonTwoSites { get; set; }
     public SpinozaCauseNetworkState? SpinozaCauseNetwork { get; set; }
+    public SchellingNatureState? SchellingNature { get; set; }
+    public FregeSenseState? FregeSense { get; set; }
+    public RussellAnalysisState? RussellAnalysis { get; set; }
+    public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
+    public BeauvoirOtherState? BeauvoirOther { get; set; }
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
     public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
@@ -108,6 +113,11 @@ internal sealed class PhilosophyRunState
         || AnselmUnfinishedProof is not null
         || NewtonTwoSites is not null
         || SpinozaCauseNetwork is not null
+        || SchellingNature is not null
+        || FregeSense is not null
+        || RussellAnalysis is not null
+        || WollstonecraftAdmission is not null
+        || BeauvoirOther is not null
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
         || LockeCargoIdentity is not null
@@ -304,6 +314,11 @@ internal sealed class PhilosophyRunState
         AnselmUnfinishedProof?.NormalizeAfterLoad();
         NewtonTwoSites?.NormalizeAfterLoad();
         SpinozaCauseNetwork?.NormalizeAfterLoad();
+        SchellingNature?.NormalizeAfterLoad();
+        FregeSense?.NormalizeAfterLoad();
+        RussellAnalysis?.NormalizeAfterLoad();
+        WollstonecraftAdmission?.NormalizeAfterLoad();
+        BeauvoirOther?.NormalizeAfterLoad();
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
         LockeCargoIdentity?.NormalizeAfterLoad();
