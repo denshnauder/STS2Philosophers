@@ -180,6 +180,12 @@ internal static class WesternQuestionNodePolicy
         || shared.ComtePositivism is { Closed: false }
         || shared.KuhnParadigm is { Closed: false }
         || shared.MerleauPontyBody is { Closed: false }
+        || shared.PeirceInquiry is { Closed: false }
+        || shared.JamesPragmatism is { Closed: false }
+        || shared.DeweyPublicExperiment is { Closed: false }
+        || shared.FoucaultPower is { Closed: false }
+        || shared.BenjaminHistory is { Closed: false }
+        || shared.ArendtBeginning is { Closed: false }
         || shared.SchopenhauerWillDenial is { Closed: false } || shared.NietzscheRevaluation is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()

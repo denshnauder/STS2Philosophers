@@ -143,7 +143,9 @@ internal static class ActFixedEntryHost
         if (journey.DeclinedFixedActs.Contains(act) || journey.LastFixedAct > act) return null;
         bool carrier = journey.RouteId == "STRUCTURE_AND_EXCLUSION"
             ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
-            : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE"
+            : journey.RouteId == "FALLIBLE_INQUIRY"
+                ? run.Players[0].Relics.OfType<SocratesQuestionCup>().Any(relic => relic.CanOfferNativeQuestion)
+                : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE" or "GENEALOGY_AND_POWER"
                 ? run.Players[0].Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION"
                     && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
@@ -167,6 +169,10 @@ internal static class ActFixedEntryHost
                 ("SOCIAL_KNOWLEDGE", 3) => KuhnParadigmPatch.TrySelectNative(run),
                 ("EMBODIED_PERCEPTION", 2) => MerleauPontyBodyPatch.TrySelectNative(run),
                 ("EMBODIED_PERCEPTION", 3) => BeauvoirOtherPatch.TrySelectNative(run),
+                ("FALLIBLE_INQUIRY", 2) => PeirceInquiryPatch.TrySelectNative(run),
+                ("FALLIBLE_INQUIRY", 3) => DeweyPublicExperimentPatch.TrySelectNative(run),
+                ("GENEALOGY_AND_POWER", 2) => FoucaultPowerPatch.TrySelectNative(run),
+                ("GENEALOGY_AND_POWER", 3) => ArendtBeginningPatch.TrySelectNative(run),
                 _ => null,
             };
         }

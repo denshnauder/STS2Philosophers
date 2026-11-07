@@ -20,6 +20,7 @@ internal static class RouteTurnQuestionOptions
     private static readonly Dictionary<string, string> TurnKeys = new(StringComparer.Ordinal)
     {
         ["SIGMUND_FREUD"] = "TO_FREUD",
+        ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
         ["FRANCIS_BACON"] = "TO_BACON",
         ["KARL_MARX"] = "TO_MARX",
         ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
@@ -41,6 +42,10 @@ internal static class RouteTurnQuestionOptions
                 choices.Add(new Choice(key, edge.EdgeId,
                     thinker == "ADAM_SMITH" ? "SYMPATHY_AND_PUBLIC_ACTION" : null));
         }
+        // The question's fallible-inquiry direction uses the existing Hume handover.
+        if (journey.EntryNodeId == "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_069"))
+            choices.Add(new Choice("TO_PEIRCE", "WESTERN_EDGE_069", "FALLIBLE_INQUIRY"));
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
         if (graph.GetEligibleEdges(journey, "Question")
@@ -56,7 +61,7 @@ internal static class RouteTurnQuestionOptions
     /// <summary>True when the question has something to ask beyond staying.</summary>
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
-    internal static readonly string[] AllKeys = ["TO_FREUD", "TO_SAUSSURE", "TO_BACON", "TO_MARX", AppearanceKey, EmbodiedKey, StayKey];
+    internal static readonly string[] AllKeys = ["TO_FREUD", "TO_SAUSSURE", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_PEIRCE", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

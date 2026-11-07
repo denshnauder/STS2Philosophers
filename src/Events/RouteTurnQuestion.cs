@@ -98,8 +98,11 @@ public sealed class RouteTurnQuestion : EventModel
             // it. Everywhere else staying spends the question and names the line.
             bool delegateToLocalQuestion = choice.EdgeId is null
                 && (journey.CurrentNodeId == GorgiasSpeechInquiryState.RequiredNodeId
-                    || journey.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId)
+                    || journey.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId
+                    || journey.CurrentNodeId == SextusOpposedAppearancesState.RequiredNodeId)
                 && !journey.ResolvedQuestionActs.Contains(1);
+            if (choice.EdgeId == "WESTERN_EDGE_069" && !journey.ResolvedQuestionActs.Contains(1))
+                journey.ResolvedQuestionActs.Add(1);
             if (choice.EdgeId is null && !delegateToLocalQuestion)
             {
                 // Staying keeps the line the run was given, and it has to be named:

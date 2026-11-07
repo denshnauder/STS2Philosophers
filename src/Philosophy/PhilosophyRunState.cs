@@ -48,6 +48,13 @@ internal sealed class PhilosophyRunState
     public RussellAnalysisState? RussellAnalysis { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
+    public PeirceInquiryState? PeirceInquiry { get; set; }
+    public JamesPragmatismState? JamesPragmatism { get; set; }
+    public JamesForcedBridgeState? JamesForcedBridge { get; set; }
+    public DeweyPublicExperimentState? DeweyPublicExperiment { get; set; }
+    public FoucaultPowerState? FoucaultPower { get; set; }
+    public BenjaminHistoryState? BenjaminHistory { get; set; }
+    public ArendtBeginningState? ArendtBeginning { get; set; }
     public HorkheimerReasonState? HorkheimerReason { get; set; }
     public HabermasCommunicationState? HabermasCommunication { get; set; }
     public ComtePositivismState? ComtePositivism { get; set; }
@@ -130,6 +137,13 @@ internal sealed class PhilosophyRunState
         || RussellAnalysis is not null
         || WollstonecraftAdmission is not null
         || BeauvoirOther is not null
+        || PeirceInquiry is not null
+        || JamesPragmatism is not null
+        || JamesForcedBridge is not null
+        || DeweyPublicExperiment is not null
+        || FoucaultPower is not null
+        || BenjaminHistory is not null
+        || ArendtBeginning is not null
         || HorkheimerReason is not null
         || HabermasCommunication is not null
         || ComtePositivism is not null
@@ -343,6 +357,13 @@ internal sealed class PhilosophyRunState
         RussellAnalysis?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
+        PeirceInquiry?.NormalizeAfterLoad();
+        JamesPragmatism?.NormalizeAfterLoad();
+        JamesForcedBridge?.NormalizeAfterLoad();
+        DeweyPublicExperiment?.NormalizeAfterLoad();
+        FoucaultPower?.NormalizeAfterLoad();
+        BenjaminHistory?.NormalizeAfterLoad();
+        ArendtBeginning?.NormalizeAfterLoad();
         HorkheimerReason?.NormalizeAfterLoad();
         HabermasCommunication?.NormalizeAfterLoad();
         ComtePositivism?.NormalizeAfterLoad();

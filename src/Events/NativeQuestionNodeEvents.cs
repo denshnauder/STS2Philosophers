@@ -130,6 +130,12 @@ internal static class NativeQuestionNodeEvents
             ?? ComtePositivismPatch.TrySelectExistingNative(run)
             ?? KuhnParadigmPatch.TrySelectExistingNative(run)
             ?? MerleauPontyBodyPatch.TrySelectExistingNative(run)
+            ?? PeirceInquiryPatch.TrySelectExistingNative(run)
+            ?? JamesPragmatismPatch.TrySelectExistingNative(run)
+            ?? DeweyPublicExperimentPatch.TrySelectExistingNative(run)
+            ?? FoucaultPowerPatch.TrySelectExistingNative(run)
+            ?? BenjaminHistoryPatch.TrySelectExistingNative(run)
+            ?? ArendtBeginningPatch.TrySelectExistingNative(run)
             ?? ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
@@ -156,6 +162,9 @@ internal static class NativeQuestionNodeEvents
 
         EventModel? reviewedTurn = RouteTurnQuestionPatch.TrySelectNative(run);
         if (reviewedTurn is not null) return reviewedTurn;
+
+        EventModel? reviewedExtra = JamesPragmatismPatch.TrySelectNative(run) ?? BenjaminHistoryPatch.TrySelectNative(run);
+        if (reviewedExtra is not null) return reviewedExtra;
 
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
         WesternQuestionKind kind = carrier is WesternPracticeRelic

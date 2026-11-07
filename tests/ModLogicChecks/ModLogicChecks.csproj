@@ -218,4 +218,17 @@
     <Compile Include="../../src/Philosophy/MerleauPontyBodyState.cs" Link="MerleauPontyBodyState.cs" />
     <Compile Include="../../src/Philosophy/MerleauPontyBodyTriggerPolicy.cs" Link="MerleauPontyBodyTriggerPolicy.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Philosophy/ArendtBeginningState.cs" Link="ArendtBeginningState.cs" />
+    <Compile Include="../../src/Philosophy/ArendtBeginningTriggerPolicy.cs" Link="ArendtBeginningTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/BenjaminHistoryState.cs" Link="BenjaminHistoryState.cs" />
+    <Compile Include="../../src/Philosophy/DeweyPublicExperimentState.cs" Link="DeweyPublicExperimentState.cs" />
+    <Compile Include="../../src/Philosophy/DeweyPublicExperimentTriggerPolicy.cs" Link="DeweyPublicExperimentTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/FoucaultPowerState.cs" Link="FoucaultPowerState.cs" />
+    <Compile Include="../../src/Philosophy/FoucaultPowerTriggerPolicy.cs" Link="FoucaultPowerTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/JamesPragmatismState.cs" Link="JamesPragmatismState.cs" />
+    <Compile Include="../../src/Philosophy/PeirceInquiryState.cs" Link="PeirceInquiryState.cs" />
+    <Compile Include="../../src/Philosophy/PeirceInquiryTriggerPolicy.cs" Link="PeirceInquiryTriggerPolicy.cs" />
+  </ItemGroup>
+  <ItemGroup><Compile Include="../../src/Philosophy/JamesForcedBridgeState.cs" Link="JamesForcedBridgeState.cs" /></ItemGroup>
 </Project>
