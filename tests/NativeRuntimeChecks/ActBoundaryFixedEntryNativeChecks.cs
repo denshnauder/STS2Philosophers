@@ -162,6 +162,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
         CheckEarlySartreContinuation();
+        CheckEarlyMerleauContinuation();
         CheckEarlyNietzscheContinuation();
         CheckEarlyHabermasContinuation();
         CheckBenjaminIndependentQuestion();
@@ -411,6 +412,51 @@ internal static class ActBoundaryFixedEntryNativeChecks
             .Invoke(local, [journey, direction])!;
         task.GetAwaiter().GetResult();
         return selected;
+    }
+
+    private static void CheckEarlyMerleauContinuation()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(MerleauPontyBody));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection(run, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_EMBODIED");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_160")
+            && (string)Get(journey, "RouteId") == "EMBODIED_PERCEPTION",
+            "The real embodied direction takes 160 and names the embodied line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MerleauPontyBody },
+            "The real embodied direction opens Merleau at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "MerleauPontyBody");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_195",
+            "The early Merleau room uses 195 at act two.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "MerleauPontyBody");
+        journey = Get(shared, "WesternJourney");
+        object action = Enum.Parse(T("MerleauPontyBodyAction"), "BodyAsSubject");
+        Check((bool)Call("MerleauPontyBodyFlow", "TryPrepare", state, action)!
+            && (bool)Call("MerleauPontyBodyFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The early Merleau room commits its body standard.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_195")
+            && (string)Get(journey, "CurrentNodeId") == "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+            "The early Merleau choice reaches Merleau on 195.");
     }
 
     private static void CheckEarlyBenthamContinuation()
