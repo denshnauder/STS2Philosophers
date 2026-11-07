@@ -91,9 +91,15 @@ public sealed class RouteTurnQuestion : EventModel
                     return;
                 }
             }
-            // Staying is an answer: the act's question is spent either way, or the
-            // next question node would ask the same fork again.
-            if (choice.EdgeId is null)
+            // At Aristotle's language entry the local Gorgias inquiry is the
+            // act's question. Staying here means taking that inquiry, not
+            // spending the question on a silent default; the local event resolves
+            // it. Everywhere else staying spends the question and names the line.
+            bool delegateToLocalQuestion = choice.EdgeId is null
+                && (journey.CurrentNodeId == GorgiasSpeechInquiryState.RequiredNodeId
+                    || journey.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId)
+                && !journey.ResolvedQuestionActs.Contains(1);
+            if (choice.EdgeId is null && !delegateToLocalQuestion)
             {
                 // Staying keeps the line the run was given, and it has to be named:
                 // an unnamed run cannot take a single edge from the second act on.

@@ -293,6 +293,10 @@ RouteTurnQuestionPatch.TrySelectExistingNative(run)
         // Preserve the existing route dispatch priority. Resolve eligibility only
         // until the first event is selected, so one node has one business claim.
         return Question(WesternQuestionKind.Protagoras)
+            // Plato's line turn is the real entry even though the same node also
+            // has a local Zeno question; staying delegates to that question.
+            ?? (shared.WesternJourney?.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId
+                ? RouteTurnQuestionPatch.TrySelectNative(run) : null)
             ?? Question(WesternQuestionKind.Zeno)
             ?? PlatoWholeArrangementPatch.TrySelectNative(run)
             ?? EpicurusSharedMarginPatch.TrySelectNative(run)

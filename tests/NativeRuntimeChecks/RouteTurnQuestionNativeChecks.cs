@@ -35,7 +35,13 @@ internal static class RouteTurnQuestionNativeChecks
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_189", "UNCONSCIOUS_AND_NORM", false, []),
         ("DESCARTES__SELF_AND_OTHER__CORE", typeof(DescartesThinkingLens), "WESTERN_EDGE_160", "EMBODIED_PERCEPTION", true, []),
         ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_165", "SCIENTIFIC_MODEL", false, ["SextusOpposedAppearances"]),
+        ("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", typeof(SocratesQuestionCup), "WESTERN_EDGE_069", "FALLIBLE_INQUIRY", true, ["SextusOpposedAppearances"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_197", "SOCIAL_KNOWLEDGE", false, ["MillHarm"]),
+        ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_177", "SOCIAL_CRITIQUE", false, ["MillHarm"]),
+        ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_180", "GENEALOGY_AND_POWER", false, ["MillHarm"]),
+        ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_192", "EDUCATION_AND_SITUATION", false, ["MillHarm"]),
+        ("ARISTOTLE__LANGUAGE_AND_MEANING__CORE", typeof(AristotleCategoryTablet), "WESTERN_EDGE_186", "STRUCTURE_AND_EXCLUSION", false, []),
+        ("PLATO__FREEDOM_AND_INSTITUTIONS__CORE", typeof(PlatoCivicSeal), "WESTERN_EDGE_174", "SYMPATHY_AND_PUBLIC_ACTION", false, []),
     ];
 
     public static Task Run()

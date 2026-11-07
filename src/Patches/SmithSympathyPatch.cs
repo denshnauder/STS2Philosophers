@@ -35,12 +35,34 @@ internal static class SmithSympathyPatch
             .Select(route => route.ActTwoFigure == "ADAM_SMITH" ? 2
                 : route.ActThreeFigure == "ADAM_SMITH" ? 3 : 0)
             .DefaultIfEmpty(0).First();
-        string edgeId = routeAct >= 2
-            ? graph.GetEligibleEdges(journey!, "Fixed")
-                .Where(edge => edge.Act == routeAct && edge.ToNodeId == SmithSympathyState.AdoptedNodeId)
-                .Select(edge => edge.EdgeId).FirstOrDefault()
-                ?? SmithSympathyState.CompletionEdgeId
-            : SmithSympathyState.CompletionEdgeId;
+        // The first-act Smith turn moves the sympathy line's next fixed
+        // figure forward one act; the default table describes the unturned route.
+        if (journey is { TurnedAct: 1, RouteId: "SYMPATHY_AND_PUBLIC_ACTION" }
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_174")) routeAct = 2;
+        string targetNodeId = SmithSympathyState.AdoptedNodeId;
+        string edgeId;
+        if (routeAct >= 2 && journey?.CurrentNodeId == SmithSympathyState.AdoptedNodeId)
+        {
+            // The first-act turn already stands on Smith; this room completes
+            // forward on the route's second-act edge to Mill.
+            WesternGraphEdge[] forwardEdges = graph.GetEligibleEdges(journey, "Fixed")
+                .Where(edge => edge.Act == routeAct
+                    && edge.FromNodeId == SmithSympathyState.AdoptedNodeId).ToArray();
+            WesternGraphEdge? forward = forwardEdges.FirstOrDefault(edge =>
+                    edge.RouteIds?.Contains(journey.RouteId) == true)
+                ?? forwardEdges.FirstOrDefault();
+            edgeId = forward?.EdgeId ?? SmithSympathyState.CompletionEdgeId;
+            targetNodeId = forward?.ToNodeId ?? SmithSympathyState.AdoptedNodeId;
+        }
+        else
+        {
+            edgeId = routeAct >= 2
+                ? graph.GetEligibleEdges(journey!, "Fixed")
+                    .Where(edge => edge.Act == routeAct && edge.ToNodeId == SmithSympathyState.AdoptedNodeId)
+                    .Select(edge => edge.EdgeId).FirstOrDefault()
+                    ?? SmithSympathyState.CompletionEdgeId
+                : SmithSympathyState.CompletionEdgeId;
+        }
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         SmithSympathyTriggerContext context = new(
@@ -55,7 +77,9 @@ internal static class SmithSympathyPatch
             routeAct);
         if (!SmithSympathyTriggerPolicy.ShouldInsert(context)) return null;
         var candidate = saved ?? (routeAct >= 2
-            ? SmithSympathyState.CreateAt($"SMITH_SYMPATHY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId)
+            ? SmithSympathyState.CreateAt($"SMITH_SYMPATHY:{run.Rng.Seed}:{routeAct}", routeAct, edgeId,
+                targetNodeId, journey.CurrentNodeId == SmithSympathyState.AdoptedNodeId
+                    ? SmithSympathyState.AdoptedNodeId : SmithSympathyState.SourceNodeId)
             : SmithSympathyState.Create($"SMITH_SYMPATHY:{run.Rng.Seed}:1"));
         if (journey is null || !SmithSympathyFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.SmithSympathy = candidate;

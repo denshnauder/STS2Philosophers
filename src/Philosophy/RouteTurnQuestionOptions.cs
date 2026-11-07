@@ -13,12 +13,20 @@ internal static class RouteTurnQuestionOptions
     internal const string AppearanceKey = "TO_HUSSERL_APPEARANCE";
     internal const string EmbodiedKey = "TO_HUSSERL_EMBODIED";
 
-    /// <summary>Figures whose line no first-act branch reaches, so only a question can open it.</summary>
+    /// <summary>
+    /// Figures a first-act question may name. A fixed branch is chosen from the
+    /// run seed, so it cannot stand in for the player's own turn.
+    /// </summary>
     private static readonly Dictionary<string, string> TurnKeys = new(StringComparer.Ordinal)
     {
         ["IMMANUEL_KANT"] = "TO_KANT",
         ["SIGMUND_FREUD"] = "TO_FREUD",
         ["FRANCIS_BACON"] = "TO_BACON",
+        ["KARL_MARX"] = "TO_MARX",
+        ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
+        ["MARY_WOLLSTONECRAFT"] = "TO_WOLLSTONECRAFT",
+        ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
+        ["ADAM_SMITH"] = "TO_SMITH",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -33,8 +41,15 @@ internal static class RouteTurnQuestionOptions
         foreach (WesternGraphEdge edge in graph.FirstActTurnOptions(journey))
         {
             string thinker = graph.GetNode(edge.ToNodeId).ThinkerId;
-            if (TurnKeys.TryGetValue(thinker, out string? key)) choices.Add(new Choice(key, edge.EdgeId, null));
+            if (TurnKeys.TryGetValue(thinker, out string? key))
+                choices.Add(new Choice(key, edge.EdgeId,
+                    thinker == "ADAM_SMITH" ? "SYMPATHY_AND_PUBLIC_ACTION" : null));
         }
+        // The fallible-inquiry line begins with Hume's fixed handover rather than
+        // a question edge, so the graph cannot derive this turn from slot alone.
+        if (journey.EntryNodeId == "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_069"))
+            choices.Add(new Choice("TO_PEIRCE", "WESTERN_EDGE_069", "FALLIBLE_INQUIRY"));
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
         if (graph.GetEligibleEdges(journey, "Question")
@@ -51,7 +66,8 @@ internal static class RouteTurnQuestionOptions
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
     internal static readonly string[] AllKeys =
-        ["TO_KANT", "TO_FREUD", "TO_BACON", AppearanceKey, EmbodiedKey, StayKey];
+        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
+            "TO_SAUSSURE", "TO_SMITH", "TO_PEIRCE", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

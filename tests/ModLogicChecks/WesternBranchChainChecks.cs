@@ -48,7 +48,10 @@ internal static class WesternBranchChainChecks
             "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE");
 
         CheckTurn(graph, "SOCIAL_CRITIQUE", "ROUSSEAU__HISTORY_AND_POWER__CORE",
-            ["WESTERN_EDGE_177", "WESTERN_EDGE_178", "WESTERN_EDGE_179"],
+            ["WESTERN_EDGE_177", "WESTERN_EDGE_084", "WESTERN_EDGE_200"],
+            "JURGEN_HABERMAS__HISTORY_AND_POWER__CORE");
+        CheckTurn(graph, "SOCIAL_CRITIQUE", "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            ["WESTERN_EDGE_083", "WESTERN_EDGE_178", "WESTERN_EDGE_179"],
             "THEODOR_ADORNO__HISTORY_AND_POWER__CORE");
         CheckTurn(graph, "GENEALOGY_AND_POWER", "ROUSSEAU__HISTORY_AND_POWER__CORE",
             ["WESTERN_EDGE_180", "WESTERN_EDGE_181", "WESTERN_EDGE_182"],
@@ -89,6 +92,15 @@ internal static class WesternBranchChainChecks
             .SequenceEqual(["WESTERN_EDGE_026", "WESTERN_EDGE_153", "WESTERN_EDGE_189"]),
             "Naming the default line must not take the other lines off the question.");
 
+        // The history entry's fixed branch is chosen from the seed, so the
+        // first-act question must also offer its social-critique line. Without
+        // this option the player can only ever turn onto the default line.
+        var history = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        history.RouteRules = true;
+        Check(RouteTurnQuestionOptions.For(history, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT", "TO_BACON",
+                    RouteTurnQuestionOptions.StayKey]),
+            "Rousseau's question must offer the social-critique, genealogy, education, and scientific lines, and staying.");
         var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
         bacon.RouteRules = true;
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),
@@ -151,9 +163,9 @@ internal static class WesternBranchChainChecks
         // out, and no two options may share a key.
         var noTurn = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         noTurn.RouteRules = true;
-        var onlyStay = RouteTurnQuestionOptions.For(noTurn, graph);
-        Check(onlyStay.Count == 1 && onlyStay[0].Key == RouteTurnQuestionOptions.StayKey,
-            "An entry with nothing to turn onto must still leave a way out.");
+        var language = RouteTurnQuestionOptions.For(noTurn, graph);
+        Check(language.Select(choice => choice.Key).SequenceEqual(["TO_SAUSSURE", RouteTurnQuestionOptions.StayKey]),
+            "Aristotle's language entry must offer the real Saussure turn and a way into the local inquiry.");
         var offered = RouteTurnQuestionOptions.For(offer, graph);
         Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
             "No two options of the question may share a key.");
@@ -192,12 +204,12 @@ internal static class WesternBranchChainChecks
                 .SequenceEqual(["TO_KANT", "TO_FREUD", RouteTurnQuestionOptions.AppearanceKey, RouteTurnQuestionOptions.EmbodiedKey, RouteTurnQuestionOptions.StayKey]),
             "Descartes' question must offer its three named lines, Husserl's two directions, and staying.");
         Check(RouteTurnQuestionOptions.For(bacon, graph).Select(choice => choice.Key)
-                .SequenceEqual(["TO_BACON", RouteTurnQuestionOptions.StayKey]),
-            "The knowledge entry must offer only the scientific line and staying.");
+                .SequenceEqual(["TO_BACON", "TO_PEIRCE", RouteTurnQuestionOptions.StayKey]),
+            "The knowledge entry must offer the scientific and fallible-inquiry lines, and staying.");
         var quiet = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         quiet.RouteRules = true;
-        Check(!RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
-            "An entry whose lines a branch already reaches must not open a turn question.");
+        Check(RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
+            "Aristotle's language entry must expose the Saussure turn.");
 
         // The first act's fixed branch is the older way into a line. It names
         // the same line the question would, so the run can continue on that

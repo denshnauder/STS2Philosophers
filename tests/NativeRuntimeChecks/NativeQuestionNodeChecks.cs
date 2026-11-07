@@ -70,7 +70,7 @@ internal static class NativeQuestionNodeChecks
         }
     }
 
-    public static Task Run()
+    public static async Task Run()
     {
         RunManager manager = RunManager.Instance;
         RunState? prior = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
@@ -91,9 +91,22 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
+                if (item.Kind is "Gorgias" or "Zeno" && chosen is RouteTurnQuestion)
+                {
+                    // The language entry now asks the real Saussure turn first.
+                    // Staying delegates to the local Gorgias inquiry instead of
+                    // spending the question silently.
+                    EventModel routeQuestion = chosen;
+                    chosen = await ChooseRouteStayAsync(run, fixture.Player, chosen);
+                    Check(run.VisitedEventIds.Contains(routeQuestion.Id) && run.VisitedEventIds.Contains(chosen.Id),
+                        "The language entry records both the route question and the local Gorgias question.");
+                }
+                else
+                {
+                    Check(run.VisitedEventIds.SetEquals([chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
+                        "The native visited set records the returned question, leaving the displaced original unvisited.");
+                }
                 Check(chosen.GetType() == TypeOf(item.Person), $"Actual native PullNextEvent selects {item.Person}.");
-                Check(run.VisitedEventIds.SetEquals([chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
-                    "The native visited set records the returned question, leaving the displaced original unvisited.");
                 Check(JsonSerializer.Serialize(run.Rng.ToSerializable()) == rng
                     && (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)! == originalQueueIndex,
                     "The override consumes neither a second RNG value nor another native event queue entry.");
@@ -113,7 +126,6 @@ internal static class NativeQuestionNodeChecks
             CheckNativeNonEvent();
             CheckBindings();
             Console.WriteLine("Native question node checks passed: all 12 real person initializations through native PullNextEvent/public relic hook, exact visited IDs and unchanged RNG/event queue, actual sole-carrier/current-run/room/Unknown gates, native room round-trips and one/two-room recovery, shared-only allocated record recovery without factory/budget refresh, wrong-act/visited/corrupt/absent-record rejection, legacy entry/factory removal, unchanged native Shop roll/creation, and save/Roll/CreateRoom/history ordering. No rendered UI, full map travel, or player-save access.");
-            return Task.CompletedTask;
         }
         finally
         {
@@ -246,6 +258,23 @@ internal static class NativeQuestionNodeChecks
         ((List<Player>)run.Players).RemoveAt(1);
     }
 
+    private static async Task<EventModel> ChooseRouteStayAsync(RunState run, Player player, EventModel chosen)
+    {
+        EventModel local = chosen.ToMutable();
+        Set(local, "Owner", player);
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object choices = TypeOf("RouteTurnQuestionOptions").GetMethod("For", Methods)!
+            .Invoke(null, [journey, graph])!;
+        object stay = ((System.Collections.IEnumerable)choices).Cast<object>().Last();
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, stay])!;
+        await task;
+        return run.Act.PullNextEvent(run);
+    }
+
     private static void CheckRoomRecovery(RunState run, Player player, EventModel chosen, object shared, int actIndex)
     {
         EventRoom room = new(chosen);
@@ -280,7 +309,8 @@ internal static class NativeQuestionNodeChecks
                     + " active=" + Call("RouteEventMapBoundary", "IsActiveEvent", run, local, 2));
             }
             if (local is SchellingNature || local is HegelRecognition || local is MarxAlienation
-                || local is KantApperception || local is LeviStraussMyth || local is SaussureSign)
+                || local is KantApperception || local is LeviStraussMyth || local is SaussureSign
+                || local is SmithSympathy)
                 Check((bool)local.GetType().GetMethod("IsActiveRoom",
                         BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(local, [run])!,
                     "The room body accepts the act its record names.");

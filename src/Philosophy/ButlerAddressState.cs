@@ -18,6 +18,10 @@ internal sealed class ButlerAddressState : IJsonOnDeserialized, IEventGoldCostSt
     public const string AdoptedNodeId = "JUDITH_BUTLER__SELF_AND_OTHER__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_193";
     public const string CompletionEdgeId = "WESTERN_EDGE_194";
+    // The same room also closes the unconscious-and-norm line after Lacan.
+    public const string LacanSourceNodeId = "JACQUES_LACAN__SELF_AND_OTHER__CORE";
+    public const string LacanRequiredEdgeId = "WESTERN_EDGE_190";
+    public const string LacanCompletionEdgeId = "WESTERN_EDGE_191";
 
     // Reprinting the sign-off table is the price of changing the procedure
     // instead of only explaining it to the person it excludes.
@@ -34,6 +38,8 @@ internal sealed class ButlerAddressState : IJsonOnDeserialized, IEventGoldCostSt
     public bool FixedDeclined { get; set; }
     public bool Closed { get; set; }
     public bool CostAttempted { get; set; }
+    /// <summary>True when this room follows Lacan's 190/191 line instead of Beauvoir's 193/194.</summary>
+    public bool FromLacan { get; set; }
     public bool CostPaid { get; set; }
     public decimal CostGoldBefore { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
     public decimal CostGoldAfter { get; set; } = EventGoldCostProtocol.NoGoldSnapshot;
@@ -41,6 +47,10 @@ internal sealed class ButlerAddressState : IJsonOnDeserialized, IEventGoldCostSt
     public decimal Cost => Judgment == ButlerAddressJudgment.Amended ? ReprintGoldCost : 0m;
 
     public static ButlerAddressState Create(string instanceId) => new() { InstanceId = instanceId };
+
+    public string EffectiveSourceNodeId => FromLacan ? LacanSourceNodeId : SourceNodeId;
+    public string EffectiveRequiredEdgeId => FromLacan ? LacanRequiredEdgeId : RequiredEdgeId;
+    public string EffectiveCompletionEdgeId => FromLacan ? LacanCompletionEdgeId : CompletionEdgeId;
 
     public void NormalizeAfterLoad()
     {
@@ -119,8 +129,9 @@ internal static class ButlerAddressFlow
         ButlerAddressAction action = state.PendingAction;
         bool adopts = action is ButlerAddressAction.AmendRegistry or ButlerAddressAction.AlternativeProcess;
         bool declines = action == ButlerAddressAction.KeepLedger;
-        if (adopts && !journey.CompletedEdgeIds.Contains(ButlerAddressState.CompletionEdgeId)
-            && !graph.TryApply(journey, ButlerAddressState.CompletionEdgeId)) return false;
+        string completionEdge = state.EffectiveCompletionEdgeId;
+        if (adopts && !journey.CompletedEdgeIds.Contains(completionEdge)
+            && !graph.TryApply(journey, completionEdge)) return false;
         if (declines && !journey.DeclinedFixedActs.Contains(3)
             && !graph.TryDecline(journey, "Fixed", 3)) return false;
         Apply(state, action);
@@ -130,16 +141,16 @@ internal static class ButlerAddressFlow
     public static bool IsRouteConsistent(ButlerAddressState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding
-            || !journey.CompletedEdgeIds.Contains(ButlerAddressState.RequiredEdgeId)) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(ButlerAddressState.CompletionEdgeId);
+            || !journey.CompletedEdgeIds.Contains(state.EffectiveRequiredEdgeId)) return false;
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EffectiveCompletionEdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct >= 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)
-                && journey.CurrentNodeId == ButlerAddressState.SourceNodeId;
+                && journey.CurrentNodeId == state.EffectiveSourceNodeId;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == 3
                 && journey.CurrentNodeId == ButlerAddressState.AdoptedNodeId;
         return !adopted && journey.LastFixedAct == 3
-            && journey.CurrentNodeId == ButlerAddressState.SourceNodeId
+            && journey.CurrentNodeId == state.EffectiveSourceNodeId
             && journey.DeclinedFixedActs.Contains(3);
     }
 

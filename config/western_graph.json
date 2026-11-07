@@ -3141,7 +3141,7 @@
    "relation_summary": "问题展开，高；从异化劳动转入工具理性批判",
    "source": "00西哲当前路线.md:34",
    "required_edge_ids": [
-    "WESTERN_EDGE_083"
+    "WESTERN_EDGE_177"
    ],
    "enabled": true,
    "context": {
@@ -5180,7 +5180,9 @@
    "confidence": "High",
    "relation_summary": "问号转线，高；接受马克思后第二幕固定承接霍克海默",
    "source": "00西哲当前路线.md:34",
-   "required_edge_ids": [],
+   "required_edge_ids": [
+    "WESTERN_EDGE_083"
+   ],
    "enabled": true,
    "context": {
     "from_problem_id": "HISTORY_AND_POWER",
