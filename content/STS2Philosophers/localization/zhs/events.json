@@ -2939,5 +2939,8 @@
  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE.title": "离开旅站。",
  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE.description": "关闭记录。",
  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.title": "离开旅站。",
- "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.description": "关闭记录。"
+ "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.description": "关闭记录。",
+ "JAMES_PRAGMATISM.title": "詹姆斯",
+ "BENJAMIN_HISTORY.title": "本雅明",
+ "LACAN_SIGNIFIER.title": "拉康"
 }

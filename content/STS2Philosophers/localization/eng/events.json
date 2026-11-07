@@ -2939,5 +2939,8 @@
  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE.title": "Leave the waystation.",
  "LACAN_SIGNIFIER.pages.RESULT_CLAIMED.options.LEAVE.description": "Close the record.",
  "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.title": "Leave the waystation.",
- "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.description": "Close the record."
+ "LACAN_SIGNIFIER.pages.RESULT_UNRESOLVED.options.LEAVE.description": "Close the record.",
+ "JAMES_PRAGMATISM.title": "William James",
+ "BENJAMIN_HISTORY.title": "Walter Benjamin",
+ "LACAN_SIGNIFIER.title": "Jacques Lacan"
 }
