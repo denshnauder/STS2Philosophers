@@ -97,7 +97,7 @@ internal static class NativeQuestionNodeChecks
                     // Staying delegates to the local Gorgias inquiry instead of
                     // spending the question silently.
                     EventModel routeQuestion = chosen;
-                    chosen = await ChooseRouteStayAsync(run, fixture.Player, chosen);
+                    chosen = await ChooseReviewedStay(fixture, run, chosen);
                     Check(run.VisitedEventIds.Contains(routeQuestion.Id) && run.VisitedEventIds.Contains(chosen.Id),
                         "The language entry records both the route question and the local Gorgias question.");
                 }
@@ -258,20 +258,26 @@ internal static class NativeQuestionNodeChecks
         ((List<Player>)run.Players).RemoveAt(1);
     }
 
-    private static async Task<EventModel> ChooseRouteStayAsync(RunState run, Player player, EventModel chosen)
+    private static async Task<EventModel> ChooseReviewedStay(NativeRuntimeFixture fixture, RunState run, EventModel canonical)
     {
-        EventModel local = chosen.ToMutable();
-        Set(local, "Owner", player);
-        object?[] live = [run, null];
-        Call("PhilosophyRunStateService", "TryGet", live);
-        object journey = Get(live[1]!, "WesternJourney");
-        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object choices = TypeOf("RouteTurnQuestionOptions").GetMethod("For", Methods)!
-            .Invoke(null, [journey, graph])!;
-        object stay = ((System.Collections.IEnumerable)choices).Cast<object>().Last();
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, stay])!;
-        await task;
+        var acts = run.Acts;
+        using (var memory = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            var local = canonical.ToMutable(); Set(local, "Owner", fixture.Player);
+            Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(canonical) });
+            typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            object shared = CurrentShared(run), journey = Get(shared, "WesternJourney");
+            object graph = Call("WesternRouteGraph", "LoadEmbedded");
+            object choices = TypeOf("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+            object stay = ((System.Collections.IEnumerable)choices).Cast<object>().Last();
+            await (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!.Invoke(local, [journey, stay])!;
+            Check(local.IsFinished && memory.SaveAttempts > 0 && memory.Json.Contains("ROUTE_TURN_QUESTION")
+                && !(bool)typeof(RouteTurnQuestion).GetField("_blocked", Methods)!.GetValue(local)!,
+                "Stay must finish only after the real Ritsu memory writer confirms its record, without a failed-save fallback.");
+            Check(!((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1),
+                "Staying delegates to the original local question instead of consuming its budget.");
+        }
+        Set(run, "Acts", acts); Set(run, "_currentRooms", new List<AbstractRoom>());
         return run.Act.PullNextEvent(run);
     }
 
