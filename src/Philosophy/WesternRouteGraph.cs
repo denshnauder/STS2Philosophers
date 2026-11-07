@@ -516,10 +516,10 @@ internal sealed class WesternRouteGraph
         return TryApply(copy, edgeId) && CanFinish(copy);
     }
 
-    // The act an event happens in. A legacy save has no act of its own, so the
-    // act written on the edge is the only thing left to fall back to.
+    // New rooms carry their actual act. Legacy rooms used the saved fixed
+    // position as their question act, including deferred earlier questions.
     private static int ActualAct(WesternJourneyState state, int writtenAct) =>
-        state.Act is >= 1 and <= 3 ? state.Act : writtenAct;
+        state.Act is >= 1 and <= 3 ? state.Act : state.LastFixedAct is >= 1 and <= 3 ? state.LastFixedAct : writtenAct;
 
     private static WesternJourneyState CopyState(WesternJourneyState state) => new()
         {

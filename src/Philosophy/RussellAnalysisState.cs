@@ -127,8 +127,8 @@ internal static class RussellAnalysisFlow
         RussellAnalysisAction action = state.PendingAction;
         bool adopts = action is RussellAnalysisAction.DefiniteDescription or RussellAnalysisAction.LogicalAtomism;
         bool declines = action == RussellAnalysisAction.KeepFrege;
-        if (adopts && !journey.CompletedEdgeIds.Contains(RussellAnalysisState.CompletionEdgeId)
-            && !graph.TryApply(journey, RussellAnalysisState.CompletionEdgeId)) return false;
+        if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
+            && !graph.TryApply(journey, state.EdgeId)) return false;
         if (declines && !journey.DeclinedFixedActs.Contains(3)
             && !graph.TryDecline(journey, "Fixed", 3)) return false;
         Apply(state, action);
@@ -138,7 +138,7 @@ internal static class RussellAnalysisFlow
     public static bool IsRouteConsistent(RussellAnalysisState state, WesternJourneyState journey)
     {
         if (!state.IsUsable() || journey.RetainedEnding) return false;
-        bool adopted = journey.CompletedEdgeIds.Contains(RussellAnalysisState.CompletionEdgeId);
+        bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == (state.RoutePlaced ? state.ActIndex : 2) && !adopted && !journey.DeclinedFixedActs.Contains(3)
                 && (journey.CurrentNodeId == RussellAnalysisState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
