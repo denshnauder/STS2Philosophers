@@ -35,6 +35,10 @@ internal static class LeviStraussMythPatch
             .Select(route => route.ActTwoFigure == "CLAUDE_LEVI_STRAUSS" ? 2
                 : route.ActThreeFigure == "CLAUDE_LEVI_STRAUSS" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // The first-act Saussure turn moves this route's next fixed figure
+        // forward one act; the default table describes the unturned route.
+        if (journey is { TurnedAct: 1, RouteId: "STRUCTURE_AND_EXCLUSION" }
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_186")) routeAct = 2;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == LeviStraussMythState.AdoptedNodeId)

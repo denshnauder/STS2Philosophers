@@ -147,6 +147,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
+        CheckEarlySaussureContinuation();
         CheckBenjaminIndependentQuestion();
         CheckLegacyNestedOptionsAreHidden();
         // The third acts of the same lines, one room each. The boundary is
@@ -345,6 +346,62 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckEarlySaussureContinuation()
+    {
+        ModelDb.Inject(typeof(LeviStraussMyth));
+        ModelDb.Inject(typeof(DerridaDeconstruction));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(AristotleCategoryTablet), 1])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 1);
+        Put(journey, "Act", 1);
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph,
+            [journey, "WESTERN_EDGE_186"])!, "The real first-act Saussure turn applies.");
+        // RouteTurnQuestion.Choose records this after committing the edge.
+        Put(journey, "TurnedAct", 1);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: LeviStraussMyth },
+            "The Saussure turn opens Levi-Strauss at the real second-act boundary.");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object state = Get(shared, "LeviStraussMyth");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_187",
+            "The early continuation uses its actual second-act edge and identity.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "LeviStraussMyth");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "StructuralReading", "Leave" })
+        {
+            object action = Enum.Parse(T("LeviStraussMythAction"), name);
+            Check((bool)Call("LeviStraussMythFlow", "TryPrepare", state, action)!
+                && (bool)Call("LeviStraussMythFlow", "TryCommitPending", state, journey, graph)!,
+                "The early continuation commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_187")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "The continuation completes 187 without consuming a second-act question.");
+        Set(run, "_currentActIndex", 2);
+        prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: DerridaDeconstruction },
+            "The same turned run continues to Derrida at the third-act boundary.");
     }
 
     private static void CheckBenjaminIndependentQuestion()
