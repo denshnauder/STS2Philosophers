@@ -48,6 +48,13 @@ internal sealed class PhilosophyRunState
     public RussellAnalysisState? RussellAnalysis { get; set; }
     public WollstonecraftAdmissionState? WollstonecraftAdmission { get; set; }
     public BeauvoirOtherState? BeauvoirOther { get; set; }
+    public LeviStraussMythState? LeviStraussMyth { get; set; }
+    public DerridaDeconstructionState? DerridaDeconstruction { get; set; }
+    public HeideggerDaseinState? HeideggerDasein { get; set; }
+    public GadamerFusionState? GadamerFusion { get; set; }
+    public LacanSignifierState? LacanSignifier { get; set; }
+    public ButlerAddressState? ButlerAddress { get; set; }
+    public RouteTurnQuestionState? RouteTurnQuestion { get; set; }
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
     public LockeCargoIdentityState? LockeCargoIdentity { get; set; }
@@ -118,6 +125,13 @@ internal sealed class PhilosophyRunState
         || RussellAnalysis is not null
         || WollstonecraftAdmission is not null
         || BeauvoirOther is not null
+        || LeviStraussMyth is not null
+        || DerridaDeconstruction is not null
+        || HeideggerDasein is not null
+        || GadamerFusion is not null
+        || LacanSignifier is not null
+        || ButlerAddress is not null
+        || RouteTurnQuestion is not null
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
         || LockeCargoIdentity is not null
@@ -319,6 +333,13 @@ internal sealed class PhilosophyRunState
         RussellAnalysis?.NormalizeAfterLoad();
         WollstonecraftAdmission?.NormalizeAfterLoad();
         BeauvoirOther?.NormalizeAfterLoad();
+        LeviStraussMyth?.NormalizeAfterLoad();
+        DerridaDeconstruction?.NormalizeAfterLoad();
+        HeideggerDasein?.NormalizeAfterLoad();
+        GadamerFusion?.NormalizeAfterLoad();
+        LacanSignifier?.NormalizeAfterLoad();
+        ButlerAddress?.NormalizeAfterLoad();
+        RouteTurnQuestion?.NormalizeAfterLoad();
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();
         LockeCargoIdentity?.NormalizeAfterLoad();

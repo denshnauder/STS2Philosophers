@@ -190,4 +190,20 @@
     <Compile Include="../../src/Philosophy/WollstonecraftAdmissionState.cs" Link="WollstonecraftAdmissionState.cs" />
     <Compile Include="../../src/Philosophy/WollstonecraftAdmissionTriggerPolicy.cs" Link="WollstonecraftAdmissionTriggerPolicy.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Philosophy/ButlerAddressState.cs" Link="ButlerAddressState.cs" />
+    <Compile Include="../../src/Philosophy/ButlerAddressTriggerPolicy.cs" Link="ButlerAddressTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/DerridaDeconstructionState.cs" Link="DerridaDeconstructionState.cs" />
+    <Compile Include="../../src/Philosophy/DerridaDeconstructionTriggerPolicy.cs" Link="DerridaDeconstructionTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/GadamerFusionState.cs" Link="GadamerFusionState.cs" />
+    <Compile Include="../../src/Philosophy/GadamerFusionTriggerPolicy.cs" Link="GadamerFusionTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/HeideggerDaseinState.cs" Link="HeideggerDaseinState.cs" />
+    <Compile Include="../../src/Philosophy/HeideggerDaseinTriggerPolicy.cs" Link="HeideggerDaseinTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/LacanSignifierState.cs" Link="LacanSignifierState.cs" />
+    <Compile Include="../../src/Philosophy/LacanSignifierTriggerPolicy.cs" Link="LacanSignifierTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/LeviStraussMythState.cs" Link="LeviStraussMythState.cs" />
+    <Compile Include="../../src/Philosophy/LeviStraussMythTriggerPolicy.cs" Link="LeviStraussMythTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/RouteTurnQuestionOptions.cs" Link="RouteTurnQuestionOptions.cs" />
+    <Compile Include="../../src/Philosophy/RouteTurnQuestionState.cs" Link="RouteTurnQuestionState.cs" />
+  </ItemGroup>
 </Project>

@@ -168,6 +168,13 @@ internal static class WesternQuestionNodePolicy
         || shared.RussellAnalysis is { Closed: false }
         || shared.WollstonecraftAdmission is { Closed: false }
         || shared.BeauvoirOther is { Closed: false }
+        || shared.LeviStraussMyth is { Closed: false }
+        || shared.DerridaDeconstruction is { Closed: false }
+        || shared.HeideggerDasein is { Closed: false }
+        || shared.GadamerFusion is { Closed: false }
+        || shared.LacanSignifier is { Closed: false }
+        || shared.ButlerAddress is { Closed: false }
+        || shared.RouteTurnQuestion is { Closed: false }
         || shared.SchopenhauerWillDenial is { Closed: false } || shared.NietzscheRevaluation is { Closed: false };
 
     private static WesternJourneyState CopyJourney(WesternJourneyState source) => new()

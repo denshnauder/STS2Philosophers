@@ -1,0 +1,142 @@
+using MegaCrit.Sts2.Core.Events;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Runs;
+
+namespace STS2Philosophers;
+
+/// <summary>
+/// The first act's question at the entry. A run that answers it turns onto the
+/// line the answer names; a run that stays keeps the line it was given. The
+/// question costs no fixed slot and moves no act: it only decides where the run
+/// goes next.
+/// </summary>
+public sealed class RouteTurnQuestion : EventModel
+{
+    private const string LocalizationRoot = RouteTurnQuestionOptions.LocalizationRoot;
+    private int _resolving;
+    private bool _blocked;
+
+    public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
+        L10NLookup($"{LocalizationRoot}.pages.INVITATION.description");
+
+    public override IEnumerable<MegaCrit.Sts2.Core.Localization.LocString> GameInfoOptions =>
+        RouteTurnQuestionOptions.AllKeys.Select(key =>
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{key}"));
+
+    protected override IReadOnlyList<EventOption> GenerateInitialOptions() => Options();
+
+    protected override void SetInitialEventState(bool isPreFinished)
+    {
+        SetEventState(InitialDescription, Options());
+    }
+
+    public override Task AfterEventStarted() => Task.CompletedTask;
+
+    private IReadOnlyList<EventOption> Options()
+    {
+        if (TryGetRun() is not { } pair) return Locked();
+        return RouteTurnQuestionOptions.For(pair.Journey, pair.Graph)
+            .Select(choice => new EventOption(this,
+                () => Choose(pair.Journey, choice),
+                RouteTurnQuestionOptions.OptionKey(choice),
+                Array.Empty<IHoverTip>()))
+            .ToArray();
+    }
+
+    /// <summary>
+    /// An event with no options cannot be left, so the room that cannot read the
+    /// run still offers the one answer that ends it: leaving unchanged.
+    /// </summary>
+    private IReadOnlyList<EventOption> Locked() =>
+    [
+        new EventOption(this, Leave, $"{LocalizationRoot}.pages.INVITATION.options.{RouteTurnQuestionOptions.StayKey}", Array.Empty<IHoverTip>()),
+    ];
+
+    private Task Leave()
+    {
+        if (!_blocked) SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.RESULT.description"));
+        return Task.CompletedTask;
+    }
+
+    private (RunState Run, PhilosophyRunState Shared, WesternJourneyState Journey, WesternRouteGraph Graph)? TryGetRun()
+    {
+        if (Owner?.RunState is not RunState run) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        if (shared.WesternJourney is not { } journey) return null;
+        return (run, shared, journey, WesternRouteGraph.LoadEmbedded());
+    }
+
+    private async Task Choose(WesternJourneyState journey, RouteTurnQuestionOptions.Choice choice)
+    {
+        if (_blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
+        try
+        {
+            if (Owner?.RunState is not RunState run) return;
+            if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
+            if (!ReferenceEquals(shared.WesternJourney, journey)) return;
+            WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+            if (choice.EdgeId is { } edgeId)
+            {
+                journey.RouteRules = true;
+                if (!graph.TryApply(journey, edgeId))
+                {
+                    Block($"RouteTurnQuestion could not take {edgeId}.");
+                    return;
+                }
+                journey.TurnedAct = 1;
+                if (choice.RouteId is { } route && !graph.TryNameRoute(journey, route))
+                {
+                    Block($"RouteTurnQuestion could not name {route}.");
+                    return;
+                }
+            }
+            // At Aristotle's language entry the local Gorgias inquiry is the
+            // act's question. Staying here means taking that inquiry, not
+            // spending the question on a silent default; the local event resolves
+            // it. Everywhere else staying spends the question and names the line.
+            bool delegateToLocalQuestion = choice.EdgeId is null
+                && (journey.CurrentNodeId == GorgiasSpeechInquiryState.RequiredNodeId
+                    || journey.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId)
+                && !journey.ResolvedQuestionActs.Contains(1);
+            if (choice.EdgeId is null && !delegateToLocalQuestion)
+            {
+                // Staying keeps the line the run was given, and it has to be named:
+                // an unnamed run cannot take a single edge from the second act on.
+                if (string.IsNullOrEmpty(journey.RouteId))
+                {
+                    WesternRouteDefinition? line = WesternRouteTable.Instance.ForEntry(journey.EntryNodeId);
+                    if (line is not null) journey.RouteId = line.RouteId;
+                }
+                journey.ResolvedQuestionActs.Add(1);
+            }
+            // The record is what keeps the fork from being asked twice; if it was
+            // lost between asking and answering, the answer still has to close it.
+            RouteTurnQuestionState record = shared.RouteTurnQuestion ??= RouteTurnQuestionState.Create(
+                $"{RouteTurnQuestionOptions.InstanceIdPrefix}:{run.Rng.Seed}:{run.CurrentActIndex}");
+            record.Closed = true;
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            {
+                Block("RouteTurnQuestion could not persist its answer.");
+                return;
+            }
+            SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.RESULT.description"));
+        }
+        catch (Exception exception)
+        {
+            Block($"RouteTurnQuestion failed: {exception}");
+        }
+        finally
+        {
+            Volatile.Write(ref _resolving, 0);
+        }
+    }
+
+    private void Block(string reason)
+    {
+        _blocked = true;
+        Log.Error($"[STS2Philosophers] {reason}");
+        SetEventFinished(L10NLookup($"{LocalizationRoot}.pages.RESULT.description"));
+    }
+}

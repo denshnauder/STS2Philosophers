@@ -14,7 +14,7 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         using (FixedEntryScope.Begin())
         {
-            EventModel? model = TrySelectReviewedDefaults(run);
+            EventModel? model = TrySelectReviewedTurns(run) ?? TrySelectReviewedDefaults(run);
             model ??= run.CurrentActIndex == 1
                 ? LockeCargoIdentityPatch.TrySelectNative(run)
                 : HumeInductionPatch.TrySelectNative(run);
@@ -132,5 +132,38 @@ internal static class ActFixedEntryHost
             journey.RouteRules = oldRules; journey.Act = oldAct; journey.LastFixedAct = previous;
         }
         return selected;
+    }
+
+    private static EventModel? TrySelectReviewedTurns(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run) || !NativeQuestionNodeEvents.HasSoleDoctrineCarrier(run)
+            || !PhilosophyRunStateService.TryGet(run, out var shared)
+            || shared?.WesternJourney is not { TurnedAct: 1 } journey) return null;
+        int act = run.CurrentActIndex + 1;
+        if (journey.DeclinedFixedActs.Contains(act) || journey.LastFixedAct > act) return null;
+        bool carrier = journey.RouteId == "STRUCTURE_AND_EXCLUSION"
+            ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
+            : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM"
+                && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
+        if (!carrier) return null;
+        int prior = journey.LastFixedAct, priorAct = journey.Act;
+        journey.LastFixedAct = act; journey.Act = act;
+        EventModel? model;
+        try
+        {
+            model = (journey.RouteId, act) switch
+            {
+                ("STRUCTURE_AND_EXCLUSION", 2) => LeviStraussMythPatch.TrySelectNative(run),
+                ("STRUCTURE_AND_EXCLUSION", 3) => DerridaDeconstructionPatch.TrySelectNative(run),
+                ("APPEARANCE_AND_INTERPRETATION", 2) => HeideggerDaseinPatch.TrySelectNative(run),
+                ("APPEARANCE_AND_INTERPRETATION", 3) => GadamerFusionPatch.TrySelectNative(run),
+                ("UNCONSCIOUS_AND_NORM", 2) => LacanSignifierPatch.TrySelectNative(run),
+                ("UNCONSCIOUS_AND_NORM", 3) => ButlerAddressPatch.TrySelectNative(run),
+                _ => null,
+            };
+        }
+        catch { journey.LastFixedAct = prior; journey.Act = priorAct; throw; }
+        if (model is null) { journey.LastFixedAct = prior; journey.Act = priorAct; }
+        return model;
     }
 }

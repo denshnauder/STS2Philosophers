@@ -80,7 +80,14 @@ internal static class NativeQuestionNodeEvents
 
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
-        EventModel? existing = ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
+        EventModel? existing = RouteTurnQuestionPatch.TrySelectExistingNative(run)
+            ?? LeviStraussMythPatch.TrySelectExistingNative(run)
+            ?? DerridaDeconstructionPatch.TrySelectExistingNative(run)
+            ?? HeideggerDaseinPatch.TrySelectExistingNative(run)
+            ?? GadamerFusionPatch.TrySelectExistingNative(run)
+            ?? LacanSignifierPatch.TrySelectExistingNative(run)
+            ?? ButlerAddressPatch.TrySelectExistingNative(run)
+            ?? ProtagorasSharedDeliberationPatch.TrySelectExistingNative(run)
             ?? ZenoCivicChallengePatch.TrySelectExistingNative(run)
             ?? SextusOpposedAppearancesPatch.TrySelectExistingNative(run)
             ?? ParmenidesInquiryPatch.TrySelectExistingNative(run)
@@ -103,6 +110,9 @@ internal static class NativeQuestionNodeEvents
             ?? DiogenesStaySwitchEntrySession.TrySelectNative(run)
             ?? ZenoRouteNativeTriggerRegistry.TrySelectNative(run);
         if (special is not null) return special;
+
+        EventModel? reviewedTurn = RouteTurnQuestionPatch.TrySelectNative(run);
+        if (reviewedTurn is not null) return reviewedTurn;
 
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;
         WesternQuestionKind kind = carrier is WesternPracticeRelic

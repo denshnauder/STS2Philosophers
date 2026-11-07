@@ -124,7 +124,13 @@ internal static class WesternNodePracticeChecks
             { "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
                 "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
                 "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
-                "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE" })
+                "BERTRAND_RUSSELL__LANGUAGE_AND_MEANING__CORE",
+                "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+                "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
+                "HANS_GEORG_GADAMER__SELF_AND_OTHER__CORE",
+                "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+                "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+                "JUDITH_BUTLER__SELF_AND_OTHER__CORE" })
         {
             foreach (string sequence in new[] { "A", "AS", "ASP", "AASS" })
                 Check(WesternNodePracticePolicy.Evaluate(node,
@@ -132,7 +138,7 @@ internal static class WesternNodePracticeChecks
                     "This narrative route node must not invent a generic combat payout.");
             covered.Add(node);
         }
-        Check(covered.Count == 59 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 65 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")
