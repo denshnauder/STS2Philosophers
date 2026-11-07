@@ -83,6 +83,16 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(BenthamUtility));
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(BenthamUtility)], doctrine: false, position: 2, route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
+        ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(SocratesBalanceWeight), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 3, actIndex: 2,
+            route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((string)Get(mill, "EdgeId") == "WESTERN_EDGE_131" && (bool)Get(mill, "FixedMode"),
+                    "Mill's fixed room must take 131 from Bentham, not the question edge 041.");
+            });
         ModelDb.Inject(typeof(PeirceInquiry));
         CheckBoundary(typeof(SocratesQuestionCup), "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(PeirceInquiry)], doctrine: false, position: 2, route: "FALLIBLE_INQUIRY", checkRoom: true);
