@@ -196,7 +196,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_100"], checkRoom: true);
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
             [typeof(HeideggerDasein)], doctrine: true, position: 2, actIndex: 1,
-            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_160"], checkRoom: true);
+            route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_160"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object heidegger = Get(shared, "HeideggerDasein");
+                Check((string)Get(heidegger, "EdgeId") == "WESTERN_EDGE_164",
+                    "The appearance route must take 164, not the legacy 073.");
+            });
         ModelDb.Inject(typeof(MerleauPontyBody));
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
             [typeof(MerleauPontyBody)], doctrine: true, position: 2, actIndex: 2,

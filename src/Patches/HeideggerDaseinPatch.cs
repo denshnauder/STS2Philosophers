@@ -43,6 +43,9 @@ internal static class HeideggerDaseinPatch
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == HeideggerDaseinState.AdoptedNodeId)
+                // A route handover (164) must win over the legacy edge (073) to
+                // the same figure; Gadamer's fixed room requires that handover.
+                .OrderByDescending(edge => edge.RouteIds?.Contains(journey!.RouteId) == true)
                 .Select(edge => edge.EdgeId).FirstOrDefault()
                 ?? HeideggerDaseinState.CompletionEdgeId
             : HeideggerDaseinState.CompletionEdgeId;
