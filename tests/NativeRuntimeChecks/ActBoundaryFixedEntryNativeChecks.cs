@@ -387,6 +387,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
 
     private static void CheckEarlySmithContinuation()
     {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
         ModelDb.Inject(typeof(SmithSympathy));
         ModelDb.Inject(typeof(ArendtBeginning));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
@@ -421,6 +422,14 @@ internal static class ActBoundaryFixedEntryNativeChecks
             "The early continuation uses its actual second-act edge and identity.");
         typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
             [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        // The selector test alone is insufficient: the body must offer its
+        // three visible choices from the real act-two record, not a locked shell.
+        object bodyState = Get(shared, "SmithSympathy");
+        EventModel body = ModelDb.Event<SmithSympathy>();
+        IReadOnlyList<EventOption> bodyOptions = (IReadOnlyList<EventOption>)body.GetType()
+            .GetMethod("GenerateOptions", Methods)!.Invoke(body, [bodyState])!;
+        Check(bodyOptions.Count == 3 && bodyOptions.All(option => !option.IsLocked),
+            "The Smith body opens its three visible choices, not the recovering lock.");
         query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         shared = query[1]!;
