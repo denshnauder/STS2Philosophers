@@ -70,7 +70,7 @@ internal static class NativeQuestionNodeChecks
         }
     }
 
-    public static Task Run()
+    public static async Task Run()
     {
         RunManager manager = RunManager.Instance;
         RunState? prior = manager.IsInProgress ? manager.DebugOnlyGetState() : null;
@@ -91,9 +91,17 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
+                if (item.Kind == "Gorgias" && chosen is RouteTurnQuestion)
+                {
+                    EventModel turn = chosen;
+                    chosen = await ChooseReviewedStay(fixture, run, turn);
+                    Check(run.VisitedEventIds.SetEquals([turn.Id, chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
+                        "The real saved Stay retains both native identities and leaves the displaced event unvisited.");
+                }
+                else
+                    Check(run.VisitedEventIds.SetEquals([chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
+                        "The native visited set records the returned question, leaving the displaced original unvisited.");
                 Check(chosen.GetType() == TypeOf(item.Person), $"Actual native PullNextEvent selects {item.Person}.");
-                Check(run.VisitedEventIds.SetEquals([chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
-                    "The native visited set records the returned question, leaving the displaced original unvisited.");
                 Check(JsonSerializer.Serialize(run.Rng.ToSerializable()) == rng
                     && (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)! == originalQueueIndex,
                     "The override consumes neither a second RNG value nor another native event queue entry.");
@@ -113,7 +121,7 @@ internal static class NativeQuestionNodeChecks
             CheckNativeNonEvent();
             CheckBindings();
             Console.WriteLine("Native question node checks passed: all 12 real person initializations through native PullNextEvent/public relic hook, exact visited IDs and unchanged RNG/event queue, actual sole-carrier/current-run/room/Unknown gates, native room round-trips and one/two-room recovery, shared-only allocated record recovery without factory/budget refresh, wrong-act/visited/corrupt/absent-record rejection, legacy entry/factory removal, unchanged native Shop roll/creation, and save/Roll/CreateRoom/history ordering. No rendered UI, full map travel, or player-save access.");
-            return Task.CompletedTask;
+
         }
         finally
         {
@@ -182,6 +190,29 @@ internal static class NativeQuestionNodeChecks
         Put(shared, personName, null!);
         Check(selector.Invoke(null, [run]) is null, "An absent saved record cannot be created by compatibility selection.");
         Put(shared, personName, recovered);
+    }
+
+    private static async Task<EventModel> ChooseReviewedStay(NativeRuntimeFixture fixture, RunState run, EventModel canonical)
+    {
+        var acts = run.Acts;
+        using (var memory = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            var local = canonical.ToMutable(); Set(local, "Owner", fixture.Player);
+            Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(canonical) });
+            typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            object shared = CurrentShared(run), journey = Get(shared, "WesternJourney");
+            object graph = Call("WesternRouteGraph", "LoadEmbedded");
+            object choices = TypeOf("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+            object stay = ((System.Collections.IEnumerable)choices).Cast<object>().Last();
+            await (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!.Invoke(local, [journey, stay])!;
+            Check(local.IsFinished && memory.SaveAttempts > 0 && memory.Json.Contains("ROUTE_TURN_QUESTION")
+                && !(bool)typeof(RouteTurnQuestion).GetField("_blocked", Methods)!.GetValue(local)!,
+                "Stay must finish only after the real Ritsu memory writer confirms its record, without a failed-save fallback.");
+            Check(!((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1),
+                "Staying delegates to the original local question instead of consuming its budget.");
+        }
+        Set(run, "Acts", acts); Set(run, "_currentRooms", new List<AbstractRoom>());
+        return run.Act.PullNextEvent(run);
     }
 
     private static (NativeRuntimeFixture Fixture, RunState Run, QuestionMap Map, RoomSet Pool, EventModel Original) Fixture(Type relic, int actIndex)
