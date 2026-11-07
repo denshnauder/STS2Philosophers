@@ -76,6 +76,17 @@ internal sealed class WesternPracticeState
         return true;
     }
 
+    // A closed turn's reward is paid immediately by the carrier; the older
+    // TakeReward path waits for the next BeginTurn and is kept for old callers.
+    public WesternPracticeReward ClaimReward()
+    {
+        if (Turn <= 0 || PendingTurn != Turn + 1 || Turn <= LastClaimedTurn) return default;
+        WesternPracticeReward result = PendingReward;
+        LastClaimedTurn = Turn;
+        ClearPending();
+        return result;
+    }
+
     public WesternPracticeReward TakeReward(int turn)
     {
         if (turn != Turn || Closed || PendingTurn != turn || turn <= LastClaimedTurn) return default;
