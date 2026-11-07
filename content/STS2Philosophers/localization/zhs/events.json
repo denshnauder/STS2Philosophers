@@ -2902,5 +2902,8 @@
  "HUME_INDUCTION.pages.INVITATION_FIXED.options.KEEP_LOCKE.title": "保留洛克",
  "HUME_INDUCTION.pages.INVITATION_FIXED.options.KEEP_LOCKE.description": "[谢绝] 保留洛克；用掉第三幕固定机会。",
  "LOCKE_CARGO_IDENTITY.pages.RESULT_KEPT_FIXED.description": "你保留笛卡尔的框架，谢绝货箱问题。第二幕固定机会已谢绝，洛克路线未完成。",
- "HUME_INDUCTION.pages.RESULT_KEPT_FIXED.description": "你保留洛克，谢绝固定机会。第三幕固定机会已谢绝，休谟路线未完成。"
+ "HUME_INDUCTION.pages.RESULT_KEPT_FIXED.description": "你保留洛克，谢绝固定机会。第三幕固定机会已谢绝，休谟路线未完成。",
+ "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_SCHOPENHAUER.title": "保留叔本华",
+ "NIETZSCHE_REVALUATION.pages.INVITATION.options.KEEP_SCHOPENHAUER.description": "停留在叔本华，拒绝这个问题。",
+ "NIETZSCHE_REVALUATION.pages.RESULT_KEPT_WILL.description": "你保留叔本华。问题保持关闭，本幕不再取得固定承接。"
 }

@@ -155,7 +155,7 @@ internal static class SchopenhauerWillDenialFlow
     }
 
     public static bool TryCommitPending(SchopenhauerWillDenialState state, WesternJourneyState journey,
-        KantApperceptionState kant, WesternRouteGraph graph)
+        KantApperceptionState? kant, WesternRouteGraph graph)
     {
         if (!IsRouteConsistent(state, journey, kant) || state.Closed
             || state.PendingAction == SchopenhauerWillDenialAction.None) return false;
@@ -184,8 +184,8 @@ internal static class SchopenhauerWillDenialFlow
             bool adopted = journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.FixedCompletionEdgeId);
             if (!state.Closed)
                 return !adopted && journey.CurrentNodeId == SchopenhauerWillDenialState.FixedSourceNodeId
-                    && journey.LastFixedAct == state.ActIndex;
-            return adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
+                    && journey.LastFixedAct is 1 or 2;
+            return adopted && journey.LastFixedAct is 2 or 3
                 && journey.CurrentNodeId == "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE";
         }
         return kant is not null && kant.IsUsable() && kant.Closed && kant.EdgeCommitted

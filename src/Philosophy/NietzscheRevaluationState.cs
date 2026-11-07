@@ -140,7 +140,7 @@ internal static class NietzscheRevaluationFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
-            return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
+            return (journey.LastFixedAct == state.ActIndex || state.EdgeId == "WESTERN_EDGE_151" && journey.LastFixedAct == 2) && !adopted && !journey.DeclinedFixedActs.Contains(declined)
                 && (journey.CurrentNodeId == NietzscheRevaluationState.SourceNodeId || state.RouteSourceNodeId.Length > 0 && journey.CurrentNodeId == state.RouteSourceNodeId);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
@@ -152,9 +152,10 @@ internal static class NietzscheRevaluationFlow
     public static string DescriptionKey(NietzscheRevaluationState state) => state.Stage switch
     {
         NietzscheRevaluationStage.Invitation => "INVITATION",
-        NietzscheRevaluationStage.ResultRevalue => "RESULT_SEPARATION",
-        NietzscheRevaluationStage.ResultGenealogy => "RESULT_BALANCE",
-        NietzscheRevaluationStage.ResultKept => "RESULT_PRIVILEGE",
+        NietzscheRevaluationStage.ResultRevalue => "RESULT_REVALUE",
+        NietzscheRevaluationStage.ResultGenealogy => "RESULT_GENEALOGY",
+        NietzscheRevaluationStage.ResultKept when state.EdgeId == "WESTERN_EDGE_151" => "RESULT_KEPT_WILL",
+        NietzscheRevaluationStage.ResultKept => "RESULT_KEPT",
         _ => "INVITATION",
     };
 

@@ -28,7 +28,7 @@ internal static class BerkeleyPerceivedMarkPatch
         if (shared.WesternJourney is not { } journey
             || shared.LockeCargoIdentity is not { Closed: true, EdgeCommitted: true, ActIndex: 2 }
             || journey.CurrentNodeId != LockeCargoIdentityState.AdoptedNodeId
-            || journey.LastFixedAct != 3
+            || journey.LastFixedAct is not (2 or 3)
             || journey.ResolvedQuestionActs.Contains(2)) return null;
         BerkeleyPerceivedMark? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
@@ -53,7 +53,7 @@ internal static class BerkeleyPerceivedMarkPatch
         && shared.WesternJourney is { } journey
         && shared.LockeCargoIdentity is { Closed: true, EdgeCommitted: true, ActIndex: 2 }
         && journey.CurrentNodeId == LockeCargoIdentityState.AdoptedNodeId
-        && journey.LastFixedAct == 3
+        && journey.LastFixedAct is 2 or 3
         && !journey.ResolvedQuestionActs.Contains(2);
 
     private static BerkeleyPerceivedMark? TryGetCanonicalEvent()

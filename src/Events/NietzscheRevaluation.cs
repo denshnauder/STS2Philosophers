@@ -142,7 +142,7 @@ public sealed class NietzscheRevaluation : EventModel
         return NietzscheRevaluationFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{NietzscheRevaluationFlow.StageKey(stage)}.options.{NietzscheRevaluationFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{NietzscheRevaluationFlow.StageKey(stage)}.options.{(state.EdgeId == "WESTERN_EDGE_151" && action == NietzscheRevaluationAction.KeepRousseau ? "KEEP_SCHOPENHAUER" : NietzscheRevaluationFlow.ActionKey(action))}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }

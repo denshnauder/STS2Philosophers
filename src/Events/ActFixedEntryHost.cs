@@ -18,6 +18,23 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared?.WesternJourney is not { } journey)
             return false;
+        // Released 0.5.25 records predate route-name fields, but their exact
+        // fixed Schopenhauer record witnesses the Socratic will/value line.
+        // Recover that identity before the third-act selector asks its route.
+        if (!journey.RouteRules && journey.EntryNodeId.Length == 0
+            && shared.SchopenhauerWillDenial is { FixedMode: true, ActIndex: 2 } released
+            && released.InstanceId == $"SCHOPENHAUER_WILL_DENIAL:{run.Rng.Seed}:2"
+            && released.IsUsable()
+            && run.Players.Count == 1
+            && run.Players[0].Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
+            && ((!released.Closed && journey.CurrentNodeId == SchopenhauerWillDenialState.FixedSourceNodeId)
+                || (released.Closed && journey.CompletedEdgeIds.Contains(SchopenhauerWillDenialState.FixedCompletionEdgeId)
+                    && journey.CurrentNodeId == "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE")))
+        {
+            journey.EntryNodeId = SchopenhauerWillDenialState.FixedSourceNodeId;
+            journey.RouteId = "WILL_AND_VALUE";
+            journey.RouteRules = true;
+        }
         // The position is open when the previous act's fixed event was taken
         // (act index + 1) or when it was not (act index). Both are real runs.
         int act = run.CurrentActIndex;
