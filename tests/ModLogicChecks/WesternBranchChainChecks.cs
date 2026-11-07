@@ -95,8 +95,9 @@ internal static class WesternBranchChainChecks
         var history = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
         history.RouteRules = true;
         Check(RouteTurnQuestionOptions.For(history, graph).Select(choice => choice.Key)
-                .SequenceEqual(["TO_MARX", "TO_NIETZSCHE", "TO_BACON", RouteTurnQuestionOptions.StayKey]),
-            "Rousseau's question must offer the social-critique, genealogy, and scientific lines, and staying.");
+                .SequenceEqual(["TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT", "TO_BACON",
+                    RouteTurnQuestionOptions.StayKey]),
+            "Rousseau's question must offer the social-critique, genealogy, education, and scientific lines, and staying.");
         var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
         bacon.RouteRules = true;
         Check(graph.FirstActTurnOptions(bacon).Select(edge => edge.EdgeId).SequenceEqual(["WESTERN_EDGE_165"]),

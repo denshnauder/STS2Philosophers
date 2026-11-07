@@ -38,6 +38,7 @@ internal static class RouteTurnQuestionNativeChecks
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_197", "SOCIAL_KNOWLEDGE", false, ["MillHarm"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_177", "SOCIAL_CRITIQUE", false, ["MillHarm"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_180", "GENEALOGY_AND_POWER", false, ["MillHarm"]),
+        ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_192", "EDUCATION_AND_SITUATION", false, ["MillHarm"]),
     ];
 
     public static Task Run()

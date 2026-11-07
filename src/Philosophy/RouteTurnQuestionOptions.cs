@@ -24,6 +24,7 @@ internal static class RouteTurnQuestionOptions
         ["FRANCIS_BACON"] = "TO_BACON",
         ["KARL_MARX"] = "TO_MARX",
         ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
+        ["MARY_WOLLSTONECRAFT"] = "TO_WOLLSTONECRAFT",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -56,7 +57,8 @@ internal static class RouteTurnQuestionOptions
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
     internal static readonly string[] AllKeys =
-        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", AppearanceKey, EmbodiedKey, StayKey];
+        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
+            AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }
