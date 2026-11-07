@@ -163,6 +163,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlyBenthamContinuation();
         CheckEarlySartreContinuation();
         CheckEarlyMerleauContinuation();
+        CheckEarlyDeweyContinuation();
         CheckEarlyNietzscheContinuation();
         CheckEarlyHabermasContinuation();
         CheckBenjaminIndependentQuestion();
@@ -457,6 +458,81 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_195")
             && (string)Get(journey, "CurrentNodeId") == "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             "The early Merleau choice reaches Merleau on 195.");
+    }
+
+    private static void CheckEarlyDeweyContinuation()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(PeirceInquiry));
+        ModelDb.Inject(typeof(DeweyPublicExperiment));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection(run, "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", "TO_PEIRCE");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_069")
+            && (string)Get(journey, "RouteId") == "FALLIBLE_INQUIRY",
+            "The real Peirce direction takes 069 and names the fallible line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: PeirceInquiry },
+            "The real Peirce direction opens Peirce at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "PeirceInquiry");
+        journey = Get(shared, "WesternJourney");
+        Check((string)Get(state, "EdgeId") == "WESTERN_EDGE_070",
+            "The early Peirce room uses 070.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "PeirceInquiry");
+        journey = Get(shared, "WesternJourney");
+        object action = Enum.Parse(T("PeirceInquiryAction"), "TestByConsequences");
+        Check((bool)Call("PeirceInquiryFlow", "TryPrepare", state, action)!
+            && (bool)Call("PeirceInquiryFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The early Peirce room commits its inquiry standard.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_070")
+            && (string)Get(journey, "CurrentNodeId") == "CHARLES_SANDERS_PEIRCE__KNOWLEDGE_AND_DOUBT__CORE",
+            "The early Peirce choice reaches Peirce on 070.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: DeweyPublicExperiment },
+            "The real Peirce path opens Dewey at the third-act boundary, got "
+            + (prepare[1] is EventRoom deweyRoom ? deweyRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "DeweyPublicExperiment");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 3 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_109",
+            "The early Dewey room uses 109 at act three.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 2]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "DeweyPublicExperiment");
+        journey = Get(shared, "WesternJourney");
+        action = Enum.Parse(T("DeweyPublicExperimentAction"), "PublicExperiment");
+        Check((bool)Call("DeweyPublicExperimentFlow", "TryPrepare", state, action)!
+            && (bool)Call("DeweyPublicExperimentFlow", "TryCommitPending", state, journey,
+                Call("WesternRouteGraph", "LoadEmbedded")!),
+            "The early Dewey room commits its public-experiment standard.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_109")
+            && (string)Get(journey, "CurrentNodeId") == "JOHN_DEWEY__KNOWLEDGE_AND_DOUBT__CORE",
+            "The early Dewey choice reaches Dewey on 109.");
     }
 
     private static void CheckEarlyBenthamContinuation()

@@ -50,7 +50,8 @@ internal static class DeweyPublicExperimentPatch
             RunManager.Instance.IsInProgress, fixedEntry || NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
             NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
-            journey?.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId) == true, edgeEligible,
+            journey is not null && (journey.CompletedEdgeIds.Contains(DeweyPublicExperimentState.RequiredEdgeId)
+                || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_070")), edgeEligible,
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             saved is not null && journey is not null && DeweyPublicExperimentFlow.IsRouteConsistent(saved, journey),
             canonical is not null, routeAct);
