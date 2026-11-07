@@ -30,16 +30,27 @@ internal sealed class SmithSympathyState : IJsonOnDeserialized
 
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
+    // The node this room's fixed edge leads to. The default room adopts Smith;
+    // the early turn room already stands on Smith and completes on 175 to Mill.
+    public string TargetNodeId { get; set; } = AdoptedNodeId;
+    public string RoomSourceNodeId { get; set; } = SourceNodeId;
 
     public static SmithSympathyState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
-    public static SmithSympathyState CreateAt(string instanceId, int actIndex, string edgeId) =>
-        new() { InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId };
+    public static SmithSympathyState CreateAt(string instanceId, int actIndex, string edgeId,
+        string? targetNodeId = null, string? roomSourceNodeId = null) => new()
+    {
+        InstanceId = instanceId, ActIndex = actIndex, EdgeId = edgeId,
+        TargetNodeId = targetNodeId ?? AdoptedNodeId,
+        RoomSourceNodeId = roomSourceNodeId ?? SourceNodeId,
+    };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
+        TargetNodeId = string.IsNullOrWhiteSpace(TargetNodeId) ? AdoptedNodeId : TargetNodeId;
+        RoomSourceNodeId = string.IsNullOrWhiteSpace(RoomSourceNodeId) ? SourceNodeId : RoomSourceNodeId;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
@@ -55,7 +66,7 @@ internal sealed class SmithSympathyState : IJsonOnDeserialized
             || Closed && PendingAction != SmithSympathyAction.None
             || PendingAction != SmithSympathyAction.None
                 && !SmithSympathyFlow.Options(Stage).Contains(PendingAction)) return false;
-        var replay = CreateAt(InstanceId, ActIndex, EdgeId);
+        var replay = CreateAt(InstanceId, ActIndex, EdgeId, TargetNodeId, RoomSourceNodeId);
         foreach (SmithSympathyAction action in ConfirmedActions)
         {
             if (replay.Closed || !SmithSympathyFlow.Options(replay.Stage).Contains(action)) return false;
@@ -135,12 +146,12 @@ internal static class SmithSympathyFlow
         int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == SmithSympathyState.SourceNodeId;
+                && journey.CurrentNodeId == state.RoomSourceNodeId;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
-                && journey.CurrentNodeId == SmithSympathyState.AdoptedNodeId;
+                && journey.CurrentNodeId == state.TargetNodeId;
         return !adopted && journey.LastFixedAct == state.ActIndex && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == SmithSympathyState.SourceNodeId;
+            && journey.CurrentNodeId == state.RoomSourceNodeId;
     }
 
     public static string DescriptionKey(SmithSympathyState state) => state.Stage switch

@@ -158,6 +158,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
         CheckEarlySaussureContinuation();
+        CheckEarlySmithContinuation();
         CheckEarlyNietzscheContinuation();
         CheckEarlyHabermasContinuation();
         CheckBenjaminIndependentQuestion();
@@ -315,7 +316,6 @@ internal static class ActBoundaryFixedEntryNativeChecks
             priorEvent: ModelDb.GetId<MillHarm>());
         // Arendt also closes two lines: after Mill's sympathy (175 -> 176) and
         // after Foucault's genealogy (181 -> 182).
-        ModelDb.Inject(typeof(ArendtBeginning));
         CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
             route: "SYMPATHY_AND_PUBLIC_ACTION", required: ["WESTERN_EDGE_175"],
@@ -383,6 +383,59 @@ internal static class ActBoundaryFixedEntryNativeChecks
     {
         object table = T("PhilosophyRunStateRitsuStore").GetField("IsolatedRuns", Methods)!.GetValue(null)!;
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
+    }
+
+    private static void CheckEarlySmithContinuation()
+    {
+        ModelDb.Inject(typeof(SmithSympathy));
+        ModelDb.Inject(typeof(ArendtBeginning));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(PlatoCivicSeal), 1])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["PLATO__FREEDOM_AND_INSTITUTIONS__CORE"])!;
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 1);
+        Put(journey, "Act", 1);
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph,
+            [journey, "WESTERN_EDGE_174"])!, "The real first-act Smith turn applies.");
+        Check((bool)graph.GetType().GetMethod("TryNameRoute")!.Invoke(graph,
+            [journey, "SYMPATHY_AND_PUBLIC_ACTION"])!, "The Smith turn names its line.");
+        Put(journey, "TurnedAct", 1);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: SmithSympathy },
+            "The Smith turn opens Smith at the real second-act boundary, got "
+            + (prepare[1] is EventRoom er ? er.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object state = Get(shared, "SmithSympathy");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_175",
+            "The early continuation uses its actual second-act edge and identity.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "SmithSympathy");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "SympathyOrder", "Leave" })
+        {
+            object action = Enum.Parse(T("SmithSympathyAction"), name);
+            Check((bool)Call("SmithSympathyFlow", "TryPrepare", state, action)!
+                && (bool)Call("SmithSympathyFlow", "TryCommitPending", state, journey, graph)!,
+                "The early Smith continuation commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_175")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
+            "The continuation completes 175 without consuming a second-act question.");
     }
 
     private static void CheckEarlyNietzscheContinuation()

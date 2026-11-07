@@ -26,6 +26,7 @@ internal static class RouteTurnQuestionOptions
         ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
         ["MARY_WOLLSTONECRAFT"] = "TO_WOLLSTONECRAFT",
         ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
+        ["ADAM_SMITH"] = "TO_SMITH",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -40,7 +41,9 @@ internal static class RouteTurnQuestionOptions
         foreach (WesternGraphEdge edge in graph.FirstActTurnOptions(journey))
         {
             string thinker = graph.GetNode(edge.ToNodeId).ThinkerId;
-            if (TurnKeys.TryGetValue(thinker, out string? key)) choices.Add(new Choice(key, edge.EdgeId, null));
+            if (TurnKeys.TryGetValue(thinker, out string? key))
+                choices.Add(new Choice(key, edge.EdgeId,
+                    thinker == "ADAM_SMITH" ? "SYMPATHY_AND_PUBLIC_ACTION" : null));
         }
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
@@ -59,7 +62,7 @@ internal static class RouteTurnQuestionOptions
 
     internal static readonly string[] AllKeys =
         ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
-            "TO_SAUSSURE", AppearanceKey, EmbodiedKey, StayKey];
+            "TO_SAUSSURE", "TO_SMITH", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

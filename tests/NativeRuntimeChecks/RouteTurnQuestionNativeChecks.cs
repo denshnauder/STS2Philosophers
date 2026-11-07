@@ -40,6 +40,7 @@ internal static class RouteTurnQuestionNativeChecks
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_180", "GENEALOGY_AND_POWER", false, ["MillHarm"]),
         ("ROUSSEAU__HISTORY_AND_POWER__CORE", typeof(RousseauUncarvedStone), "WESTERN_EDGE_192", "EDUCATION_AND_SITUATION", false, ["MillHarm"]),
         ("ARISTOTLE__LANGUAGE_AND_MEANING__CORE", typeof(AristotleCategoryTablet), "WESTERN_EDGE_186", "STRUCTURE_AND_EXCLUSION", false, []),
+        ("PLATO__FREEDOM_AND_INSTITUTIONS__CORE", typeof(PlatoCivicSeal), "WESTERN_EDGE_174", "SYMPATHY_AND_PUBLIC_ACTION", false, []),
     ];
 
     public static Task Run()

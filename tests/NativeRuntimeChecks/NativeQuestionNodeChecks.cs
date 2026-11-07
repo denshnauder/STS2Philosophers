@@ -91,7 +91,7 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
-                if (item.Kind == "Gorgias" && chosen is RouteTurnQuestion)
+                if (item.Kind is "Gorgias" or "Zeno" && chosen is RouteTurnQuestion)
                 {
                     // The language entry now asks the real Saussure turn first.
                     // Staying delegates to the local Gorgias inquiry instead of
