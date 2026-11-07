@@ -376,7 +376,12 @@ internal sealed class WesternRouteGraph
             .FirstOrDefault(candidate => candidate.RouteId == state.RouteId);
         if (route is null || !_nodes.TryGetValue(state.CurrentNodeId, out WesternGraphNode? node)) return false;
         if (node.ThinkerId == route.ClosingFigure) return false;
-        if (node.ThinkerId != route.ActThreeFigure) return true;
+        // A terminal alternative may close the line after the route's own third
+        // act has already been walked (Habermas after Horkheimer). It must not
+        // close a line whose third act is still ahead (Kant before Hegel).
+        if (node.ThinkerId != route.ActThreeFigure)
+            return !state.SeenThinkerIds.Contains(route.ActThreeFigure)
+                || ClosingStepReachable(state, route);
         // The route's own third act can still have a documented closing step:
         // the design's turn reaches a further figure from here. Only a run that
         // walked the turn can take it, so the default chain still ends here.
