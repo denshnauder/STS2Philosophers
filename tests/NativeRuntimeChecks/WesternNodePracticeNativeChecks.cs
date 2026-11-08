@@ -2,6 +2,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -66,6 +67,25 @@ internal static class WesternNodePracticeNativeChecks
         return (f, run);
     }
 
+    // Simulates the native player turn start: energy resets to the base value and
+    // Block is cleared, then the relic's late turn-start hook pays the reward.
+    private static async Task<int> StartPlayerTurn(NativeRuntimeFixture f, int baseEnergy)
+    {
+        f.PlayerState.Energy = baseEnergy;
+        decimal block = f.Player.Creature.Block;
+        if (block > 0)
+        {
+            var context = new ThrowingPlayerChoiceContext();
+            Type creature = typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature);
+            var clear = (Task)typeof(CreatureCmd).GetMethod("LoseBlock", Methods,
+                    null, [typeof(PlayerChoiceContext), creature, typeof(decimal), creature], null)!
+                .Invoke(null, [context, f.Player.Creature, block, f.Player.Creature])!;
+            await clear;
+        }
+        await f.Relic.AfterPlayerTurnStartLate(new ThrowingPlayerChoiceContext(), f.Player);
+        return f.PlayerState.Energy;
+    }
+
     private static async Task Case(Type relic, string node, string[] kinds, int energy, int draw, int block)
     {
         var (f, _) = Fixture(relic, node);
@@ -81,13 +101,79 @@ internal static class WesternNodePracticeNativeChecks
         int blockBefore = f.Player.Creature.Block;
         int drawBeforeClose = f.PlayerState.DrawPile.Cards.Count;
         await f.Relic.AfterSideTurnEnd(new ThrowingPlayerChoiceContext(), CombatSide.Player, [f.Player.Creature]);
-        Check(f.PlayerState.Energy == energyBefore + energy,
-            $"{node} must grant {energy} native energy, got {f.PlayerState.Energy - energyBefore}.");
-        Check(f.Player.Creature.Block == blockBefore + block,
-            $"{node} must grant {block} native Block, got {f.Player.Creature.Block - blockBefore}.");
+        // Closing must not pay temporary energy that the next turn would reset.
+        Check(f.PlayerState.Energy == energyBefore,
+            $"{node} must not pay energy at turn end, got {f.PlayerState.Energy - energyBefore}.");
+        Check(f.Player.Creature.Block == blockBefore,
+            $"{node} must not pay Block at turn end, got {f.Player.Creature.Block - blockBefore}.");
+        Check(f.PlayerState.DrawPile.Cards.Count == drawBeforeClose,
+            $"{node} must not draw at turn end, got {drawBeforeClose - f.PlayerState.DrawPile.Cards.Count}.");
+        // Native turn start resets energy/Block, then the reward is paid.
+        int baseEnergy = 3;
+        int energyAtStart = await StartPlayerTurn(f, baseEnergy);
+        Check(energyAtStart == baseEnergy + energy,
+            $"{node} must grant {energy} usable energy at turn start, got {energyAtStart - baseEnergy}.");
+        Check(f.Player.Creature.Block == block,
+            $"{node} must grant {block} native Block at turn start, got {f.Player.Creature.Block}.");
         Check(f.PlayerState.DrawPile.Cards.Count == drawBeforeClose - draw,
-            $"{node} must draw {draw} native cards, got {drawBeforeClose - f.PlayerState.DrawPile.Cards.Count}.");
+            $"{node} must draw {draw} native cards at turn start, got {drawBeforeClose - f.PlayerState.DrawPile.Cards.Count}.");
         Check(drawBefore >= 0, "The fixture has a native draw pile.");
+    }
+
+    // Two combats on the same relic and node must each pay; a save/restore of the
+    // node payload must not re-pay a claimed reward nor drop an unclaimed one.
+    private static async Task TwoCombats(Type relic, string node, string[] kinds, int energy, int draw, int block)
+    {
+        var (f, _) = Fixture(relic, node);
+        await f.Begin();
+        f.PlayerState.Energy = 40;
+        foreach (string kind in kinds)
+        {
+            CardModel card = kind == "A" ? f.AddCard<StrikeSilent>() : f.AddCard<DefendSilent>();
+            await f.PayAndComplete(card, kind == "A" ? f.Enemy : null);
+        }
+        await f.Relic.AfterSideTurnEnd(new ThrowingPlayerChoiceContext(), CombatSide.Player, [f.Player.Creature]);
+        int firstEnergy = await StartPlayerTurn(f, 3);
+        Check(firstEnergy == 3 + energy, $"{node} first combat must pay {energy} energy, got {firstEnergy - 3}.");
+
+        // End combat, then start a second combat on the same relic and node.
+        await f.Relic.AfterCombatEnd((CombatRoom)RuntimeHelpers.GetUninitializedObject(typeof(CombatRoom)));
+        await f.Relic.BeforeCombatStart();
+        await f.Relic.BeforeSideTurnStart(new ThrowingPlayerChoiceContext(), CombatSide.Player,
+            [f.Player.Creature], f.Combat);
+        f.PlayerState.Energy = 40;
+        foreach (string kind in kinds)
+        {
+            CardModel card = kind == "A" ? f.AddCard<StrikeSilent>() : f.AddCard<DefendSilent>();
+            await f.PayAndComplete(card, kind == "A" ? f.Enemy : null);
+        }
+        await f.Relic.AfterSideTurnEnd(new ThrowingPlayerChoiceContext(), CombatSide.Player, [f.Player.Creature]);
+        int secondEnergy = await StartPlayerTurn(f, 3);
+        Check(secondEnergy == 3 + energy, $"{node} second combat must pay {energy} energy, got {secondEnergy - 3}.");
+        Check(f.Player.Creature.Block == block, $"{node} second combat must pay {block} Block, got {f.Player.Creature.Block}.");
+    }
+
+    private static async Task SaveRestore(Type relic, string node, string[] kinds, int energy)
+    {
+        var (f, _) = Fixture(relic, node);
+        await f.Begin();
+        f.PlayerState.Energy = 40;
+        foreach (string kind in kinds)
+        {
+            CardModel card = kind == "A" ? f.AddCard<StrikeSilent>() : f.AddCard<DefendSilent>();
+            await f.PayAndComplete(card, kind == "A" ? f.Enemy : null);
+        }
+        await f.Relic.AfterSideTurnEnd(new ThrowingPlayerChoiceContext(), CombatSide.Player, [f.Player.Creature]);
+        // Restore before claiming: the pending reward must survive.
+        string pending = (string)Get(f.Relic, "NodePracticePayload");
+        Put(f.Relic, "NodePracticePayload", pending);
+        int energyAtStart = await StartPlayerTurn(f, 3);
+        Check(energyAtStart == 3 + energy, $"{node} restored pending reward must pay {energy} energy, got {energyAtStart - 3}.");
+        // Restore after claiming: the reward must not be paid again.
+        string claimed = (string)Get(f.Relic, "NodePracticePayload");
+        Put(f.Relic, "NodePracticePayload", claimed);
+        int energyAfterRestore = await StartPlayerTurn(f, 3);
+        Check(energyAfterRestore == 3, $"{node} claimed reward must not re-pay, got {energyAfterRestore - 3}.");
     }
 
     public static async Task Run()
@@ -98,6 +184,10 @@ internal static class WesternNodePracticeNativeChecks
             ["S", "A", "S", "A"], 1, 1, 0);
         await Case(typeof(PlatoCivicSeal), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
             ["S", "A", "S"], 1, 0, 2);
-        Console.WriteLine("Western node practice checks passed: real carrier bind from journey node, native manual card sequence, actual energy/draw/Block rewards for Wollstonecraft, Beauvoir and Kant.");
+        await TwoCombats(typeof(PlatoCivicSeal), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+            ["S", "A", "S"], 1, 0, 2);
+        await SaveRestore(typeof(PlatoCivicSeal), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+            ["S", "A", "S"], 1);
+        Console.WriteLine("Western node practice checks passed: real carrier bind from journey node, native manual card sequence, actual energy/draw/Block rewards for Wollstonecraft, Beauvoir and Kant, two combats on one relic/node, and save/restore of claimed vs unclaimed rewards.");
     }
 }

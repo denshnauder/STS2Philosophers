@@ -697,8 +697,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object shared = query[1]!;
         object state = Get(shared, "SartreExistence");
         journey = Get(shared, "WesternJourney");
-        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_060",
-            "The early Sartre room uses 060 at act two.");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_163",
+            $"The early Sartre room uses the individual line's 163 at act two, got {Get(state, "ActIndex")}/{Get(state, "EdgeId")}.");
         typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
             [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
         query = [run, null];
@@ -711,8 +711,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             && (bool)Call("SartreExistenceFlow", "TryCommitPending", state, journey,
                 Call("WesternRouteGraph", "LoadEmbedded")!),
             "The early Sartre room commits its existence standard.");
-        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_060"),
-            "The early Sartre choice reaches Sartre on 060.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_163"),
+            "The early Sartre choice reaches Sartre on the individual line's 163.");
     }
 
     private static void CheckEarlyPeirceContinuation()

@@ -25,6 +25,23 @@ internal static class FichteSelfPositingChecks
         };
     }
 
+    private static PhilosophyRunState ActThreeInnerFixture()
+    {
+        var journey = new WesternJourneyState
+        {
+            CurrentNodeId = FichteSelfPositingState.SourceNodeId,
+            LastFixedAct = 3,
+        };
+        journey.CompletedEdgeIds.Add(FichteSelfPositingState.ActThreeRequiredEdgeId);
+        return new PhilosophyRunState
+        {
+            WesternJourney = journey,
+            FichteSelfPositing = FichteSelfPositingState.CreateAt(
+                "FICHTE_SELF_POSITING:TEST:3:115", 3,
+                FichteSelfPositingState.ActThreeRequiredEdgeId),
+        };
+    }
+
     private static PhilosophyRunState ActTwoFixture()
     {
         var journey = new WesternJourneyState
@@ -110,6 +127,28 @@ internal static class FichteSelfPositingChecks
         shared.WesternJourney!.CompletedEdgeIds.Remove(FichteSelfPositingState.RequiredEdgeId);
         Check(!FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
             shared.WesternJourney!), "Fichte cannot open without 022.");
+
+        shared = ActThreeInnerFixture();
+        Check(FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,
+            shared.WesternJourney!), "Fichte opens at the third-act Kant room after 115.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.ReviseAsSelfPosited);
+        Check(shared.WesternJourney!.CurrentNodeId == FichteSelfPositingState.SourceNodeId
+            && shared.WesternJourney.LastFixedAct == 3
+            && shared.WesternJourney.ResolvedQuestionActs.Contains(3)
+            && !shared.WesternJourney.ResolvedQuestionActs.Contains(2)
+            && shared.FichteSelfPositing!.EdgeCommitted
+            && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
+            "The third-act inner batch spends the third act's question, keeps Kant, and does not apply 037.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
+        Check(shared.FichteSelfPositing!.Closed, "Act-three Fichte closes after Leave.");
+
+        shared = ActThreeInnerFixture();
+        shared = Commit(shared, graph, FichteSelfPositingAction.KeepKant);
+        Check(shared.FichteSelfPositing!.QuestionDeclined
+            && shared.WesternJourney!.ResolvedQuestionActs.Contains(3)
+            && !shared.WesternJourney.CompletedEdgeIds.Contains(FichteSelfPositingState.CompletionEdgeId),
+            "Declining third-act Fichte spends only this act's question.");
+        shared = Commit(shared, graph, FichteSelfPositingAction.Leave);
 
         shared = ActTwoFixture();
         Check(FichteSelfPositingFlow.IsRouteConsistent(shared.FichteSelfPositing!,

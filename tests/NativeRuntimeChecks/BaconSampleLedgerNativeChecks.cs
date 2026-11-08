@@ -70,9 +70,30 @@ internal static class BaconSampleLedgerNativeChecks
             foreach (bool named in new[] { false, true })
             foreach (string outcome in new[] { "KeepPrediction", "DeclineInvitation" })
                 await RetainedScenario(named, outcome);
+            ActTwoInnerBatch();
             Console.WriteLine("Bacon native checks passed: real saved Gorgias/Ockham/Fixed3 chains, real 2/3-card draws from two different native card types, same-type failure, no-second/missed-window loss, automatic exclusion, old broad/named costs suppressed, retained old cost practice, saved partial/spent receipts, malformed-payload isolation and clone isolation; no rendered UI/full game replay.");
         }
         finally { Set(manager, "State", prior); }
+    }
+
+    private static void ActTwoInnerBatch()
+    {
+        object graph = Call("WesternRouteGraph", "LoadEmbedded");
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteRules", true);
+        Check((bool)graph.GetType().GetMethod("TryNameRoute")!.Invoke(graph, [journey, "SOCIAL_KNOWLEDGE"])!,
+            "The social-knowledge line names its act-two Bacon room.");
+        Put(journey, "CurrentNodeId", "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE");
+        Put(journey, "LastFixedAct", 1);
+        ((HashSet<string>)Get(journey, "SeenThinkerIds")).Add("FRANCIS_BACON");
+        object bacon = Call("BaconSampleLedgerState", "CreateAt", "BACON:NATIVE:2", 2, "ACT_TWO_BACON");
+        foreach (string action in new[] { "AcceptInvitation", "CheckTribe", "TakeCounterSample", "PublishLimited", "Leave" })
+            Commit("BaconSampleLedgerFlow", "BaconSampleLedgerAction", bacon, action, journey, null!, null!, graph);
+        Check((int)Get(journey, "LastFixedAct") == 2
+            && (string)Get(journey, "CurrentNodeId") == "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE"
+            && (bool)Get(bacon, "EdgeCommitted")
+            && !((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_198"),
+            "The act-two Bacon inner batch takes the fixed slot, keeps Bacon, and leaves 198 unspent.");
     }
 
     private static (NativeRuntimeFixture Fixture, RunState Run) FixtureFor(object shared)

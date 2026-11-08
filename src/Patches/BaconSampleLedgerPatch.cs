@@ -21,6 +21,30 @@ internal static class BaconSampleLedgerPatch
         catch (Exception e) { Log.Error($"[STS2Philosophers] Bacon event unavailable: {e}"); return null; }
         if (run.VisitedEventIds.Contains(canonical.Id)) return null;
         var player = run.Players.Count == 1 ? run.Players[0] : null;
+        if (run.CurrentActIndex == 1)
+        {
+            string actTwoId = $"BACON_SAMPLE_LEDGER:{run.Rng.Seed}:2";
+            bool ActTwoConsistent(BaconSampleLedgerState state) => journey is not null
+                && state.InstanceId == actTwoId
+                && BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham!, gorgias!);
+            if (saved is not null && saved.ActIndex != 2) return null;
+            bool actTwoReady = journey is not null
+                && journey.RouteId == "SOCIAL_KNOWLEDGE"
+                && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                && journey.LastFixedAct == 1
+                && !journey.ResolvedQuestionActs.Contains(2)
+                && !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_198")
+                && WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
+                    .Any(edge => edge.EdgeId == "WESTERN_EDGE_198");
+            bool actTwoRelic = player?.GetRelicById(ModelDb.GetId<AristotleCategoryTablet>())
+                is AristotleCategoryTablet { CanOfferBacon: true };
+            if (!manager.IsInProgress || !actTwoReady || !actTwoRelic) return null;
+            if (saved is not null && (!saved.IsUsable() || saved.Closed || !ActTwoConsistent(saved))) return null;
+            var actTwo = saved ?? BaconSampleLedgerState.CreateAt(actTwoId, 2, "ACT_TWO_BACON");
+            if (!ActTwoConsistent(actTwo)) return null;
+            shared.BaconSampleLedger = actTwo;
+            return canonical;
+        }
         string id = $"BACON_SAMPLE_LEDGER:{run.Rng.Seed}:3";
         bool Consistent(BaconSampleLedgerState state) => journey is not null && ockham is not null && gorgias is not null
             && state.InstanceId == id && BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham, gorgias);

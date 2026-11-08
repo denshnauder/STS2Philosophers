@@ -15,6 +15,8 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     public const string CompletionEdgeId = "WESTERN_EDGE_048";
     private bool? _closed;
     public int Version { get; set; }
+    /// <summary>1-based act the ledger opened in; the old nested scene is three.</summary>
+    public int ActIndex { get; set; } = 3;
     public string InstanceId { get; set; } = string.Empty;
     public string OckhamInstanceId { get; set; } = string.Empty;
     public BaconSampleLedgerStage Stage { get; set; } = (BaconSampleLedgerStage)(-1);
@@ -28,9 +30,11 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     public bool Inspecting { get; set; }
     public DiderotPracticeState? Diderot { get; set; }
     public bool Closed { get => _closed ?? false; set => _closed = value; }
-    public static BaconSampleLedgerState Create(string instanceId, string ockhamInstanceId) => new()
+    public static BaconSampleLedgerState Create(string instanceId, string ockhamInstanceId) =>
+        CreateAt(instanceId, 3, ockhamInstanceId);
+    public static BaconSampleLedgerState CreateAt(string instanceId, int actIndex, string ockhamInstanceId) => new()
     {
-        Version = 1, InstanceId = instanceId, OckhamInstanceId = ockhamInstanceId,
+        Version = 1, ActIndex = actIndex, InstanceId = instanceId, OckhamInstanceId = ockhamInstanceId,
         Stage = BaconSampleLedgerStage.Invitation, PendingAction = BaconSampleLedgerAction.None,
         ConfirmedActions = [], Samples = [BaconObservedSample.WarmRich, BaconObservedSample.ColdPoor], Closed = false,
         Diderot = DiderotPracticeState.Create($"{instanceId}:DIDEROT"),
@@ -38,18 +42,20 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty; OckhamInstanceId ??= string.Empty;
+        if (ActIndex is < 2 or > 3) ActIndex = 3;
         Diderot?.NormalizeAfterLoad();
         if (!_closed.HasValue) Version = 0;
     }
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
     public bool IsUsable()
     {
-        if (Version != 1 || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(OckhamInstanceId)
+        if (Version != 1 || ActIndex is < 2 or > 3
+            || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(OckhamInstanceId)
             || !_closed.HasValue || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction)
             || Inspecting && (Diderot is null || Diderot.Closed)
             || Diderot is not null && !Diderot.IsUsable()
             || ConfirmedActions is null || ConfirmedActions.Count > 5 || Samples is null) return false;
-        var replay = Create(InstanceId, OckhamInstanceId);
+        var replay = CreateAt(InstanceId, ActIndex, OckhamInstanceId);
         foreach (var action in ConfirmedActions)
         {
             if (replay.Closed || !BaconSampleLedgerFlow.Options(replay.Stage).Contains(action)) return false;
@@ -116,6 +122,21 @@ internal static class BaconSampleLedgerFlow
     public static bool IsRouteConsistent(BaconSampleLedgerState state, WesternJourneyState journey,
         OckhamNamesInquiryState ockham, GorgiasSpeechInquiryState gorgias)
     {
+        if (state.ActIndex == 2)
+        {
+            if (!state.IsUsable() || journey.RetainedEnding) return false;
+            bool laterEdge = journey.CompletedEdgeIds.Contains("WESTERN_EDGE_198")
+                || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_166");
+            if (!state.FixedSlotResolved)
+                return !laterEdge && journey.LastFixedAct == 1
+                    && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                    && !journey.ResolvedQuestionActs.Contains(2);
+            return journey.LastFixedAct == 2
+                && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                && (state.EdgeCommitted
+                    ? !journey.ResolvedQuestionActs.Contains(2)
+                    : journey.DeclinedFixedActs.Contains(2) && !state.EdgeCommitted);
+        }
         if (!state.IsUsable() || !ockham.IsUsable() || !ockham.Closed || !ockham.QuestionReserved
             || !ockham.SecondFixedDeclined || state.OckhamInstanceId != ockham.InstanceId
             || ockham.Disposition is not (OckhamNamesDisposition.Annotated or OckhamNamesDisposition.Named or OckhamNamesDisposition.Kept)
@@ -145,6 +166,13 @@ internal static class BaconSampleLedgerFlow
         var action = state.PendingAction;
         bool adopts = action is BaconSampleLedgerAction.PublishLimited or BaconSampleLedgerAction.TakeControlSample;
         bool declines = action is BaconSampleLedgerAction.DeclineInvitation or BaconSampleLedgerAction.KeepPrediction;
+        if (state.ActIndex == 2)
+        {
+            if (adopts && !graph.TryReserveFixed(journey, 2)
+                || declines && !graph.TryDecline(journey, "Fixed", 2)) return false;
+            Apply(state, action);
+            return IsRouteConsistent(state, journey, ockham, gorgias);
+        }
         if (adopts && !graph.TryApply(journey, BaconSampleLedgerState.CompletionEdgeId)
             || declines && (!graph.TryDecline(journey, "Fixed", 3) || !graph.TryRetainEnding(journey))) return false;
         Apply(state, action); return IsRouteConsistent(state, journey, ockham, gorgias);

@@ -115,7 +115,18 @@ public sealed class BenthamUtility : EventModel
         int actIndex = 0;
         if (PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.BenthamUtility is { } state)
-            actIndex = state.EdgeId == "WESTERN_EDGE_130" ? 1 : 0;
+        {
+            // The old first-act room (065) and second-act route room (130) keep
+            // their saved meanings. A route-placed room records its own act, so a
+            // new second-act Bentham room must be read from that field rather than
+            // from an edge whitelist that only knew 130.
+            actIndex = state.EdgeId switch
+            {
+                "WESTERN_EDGE_065" => 0,
+                "WESTERN_EDGE_130" => 1,
+                _ => Math.Clamp(state.ActIndex - 1, 0, 2),
+            };
+        }
         return RouteEventMapBoundary.IsActiveEvent(run, this, actIndex);
     }
 

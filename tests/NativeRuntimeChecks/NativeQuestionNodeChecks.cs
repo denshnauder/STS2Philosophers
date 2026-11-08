@@ -91,10 +91,10 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
-                if (item.Kind is "Protagoras" or "Gorgias" or "Zeno" or "Sextus" && chosen is RouteTurnQuestion)
+                if (item.Kind is "Parmenides" or "Protagoras" or "Gorgias" or "Zeno" or "Sextus" && chosen is RouteTurnQuestion)
                 {
                     // The entry asks the real route fork first. Staying delegates
-                    // to the local Protagoras/Gorgias/Zeno/Sextus question instead of
+                    // to the local Parmenides/Protagoras/Gorgias/Zeno/Sextus question instead of
                     // spending the question silently.
                     EventModel routeQuestion = chosen;
                     chosen = await ChooseReviewedStay(fixture, run, chosen);

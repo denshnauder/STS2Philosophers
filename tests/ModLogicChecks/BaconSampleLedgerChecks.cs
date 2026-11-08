@@ -31,6 +31,21 @@ internal static class BaconSampleLedgerChecks
         Check(!CommitPending(s, graph), "A confirmed operation cannot replay.");
         s = Reload(s); Check(Consistent(s), "Event, samples and real journey remain consistent after saved commit."); return s;
     }
+    private static PhilosophyRunState ActTwoFixture(WesternRouteGraph graph)
+    {
+        var journey = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        journey.RouteRules = true;
+        Check(graph.TryNameRoute(journey, "SOCIAL_KNOWLEDGE"), "The social-knowledge line names its second-act Bacon room.");
+        journey.CurrentNodeId = BaconSampleLedgerState.AdoptedNodeId;
+        journey.SeenThinkerIds.Add("FRANCIS_BACON");
+        journey.LastFixedAct = 1;
+        return Reload(new()
+        {
+            WesternJourney = journey,
+            BaconSampleLedger = BaconSampleLedgerState.CreateAt("BACON:TEST:2", 2, "ACT_TWO_BACON"),
+        });
+    }
+
     public static void Run()
     {
         var graph = WesternRouteGraph.LoadEmbedded();
@@ -66,6 +81,27 @@ internal static class BaconSampleLedgerChecks
                 Check(graph.GetEligibleEdges(s.WesternJourney!, "Fixed").Count == 0, "No fourth fixed opportunity is created.");
             }
         }
+        var actTwo = ActTwoFixture(graph);
+        Check(BaconSampleLedgerFlow.IsRouteConsistent(actTwo.BaconSampleLedger!, actTwo.WesternJourney!,
+                actTwo.OckhamNamesInquiry!, actTwo.GorgiasSpeechInquiry!),
+            "The second-act Bacon room opens on the real social-knowledge handover.");
+        foreach (var action in new[] { BaconSampleLedgerAction.AcceptInvitation, BaconSampleLedgerAction.CheckTribe,
+            BaconSampleLedgerAction.TakeCounterSample, BaconSampleLedgerAction.PublishLimited })
+        {
+            Check(BaconSampleLedgerFlow.TryPrepare(actTwo.BaconSampleLedger!, action), $"Prepare act-two {action}.");
+            actTwo = Reload(actTwo);
+            Check(BaconSampleLedgerFlow.TryCommitPending(actTwo.BaconSampleLedger!, actTwo.WesternJourney!,
+                actTwo.OckhamNamesInquiry!, actTwo.GorgiasSpeechInquiry!, graph), $"Commit act-two {action}.");
+        }
+        Check(actTwo.BaconSampleLedger!.EdgeCommitted && actTwo.WesternJourney!.LastFixedAct == 2
+            && actTwo.WesternJourney.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+            && !actTwo.WesternJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_198"),
+            "The act-two inner batch takes the fixed slot, keeps Bacon, and leaves the 198 handover unspent.");
+        Check(DiderotPublicPracticePolicy.ShouldInsert(new DiderotPublicPracticeContext(
+                true, true, true, 1, "SOCIAL_KNOWLEDGE", BaconSampleLedgerState.AdoptedNodeId, 2, true, true,
+                false, false, false, false, true)),
+            "Diderot's public practice is available after the real act-two Bacon ledger.");
+
         var shared = Fixture(graph, OckhamNamesAction.UseNamedList);
         foreach (string field in new[] { "Closed", "Version", "Stage", "PendingAction", "ConfirmedActions", "Samples", "OckhamInstanceId" })
         {

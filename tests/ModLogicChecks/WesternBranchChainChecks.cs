@@ -77,6 +77,43 @@ internal static class WesternBranchChainChecks
             ["WESTERN_EDGE_197", "WESTERN_EDGE_198", "WESTERN_EDGE_199"],
             "THOMAS_KUHN__KNOWLEDGE_AND_DOUBT__CORE");
 
+        // The social-critique fixed branch (083) must reach the route's own
+        // Horkheimer handover (178), then Adorno. The question turn (177) keeps
+        // its Habermas handover (084); the two branches stay distinct.
+        var critique = graph.Start("ROUSSEAU__HISTORY_AND_POWER__CORE");
+        critique.RouteRules = true;
+        Check(graph.TryApply(critique, "WESTERN_EDGE_083")
+            && critique.RouteId == "SOCIAL_CRITIQUE"
+            && critique.CurrentNodeId == HorkheimerReasonState.SourceNodeId,
+            "The social-critique fixed branch must name the line and stand on Marx.");
+        Check(graph.TryApply(critique, "WESTERN_EDGE_178")
+            && critique.CurrentNodeId == HorkheimerReasonState.AdoptedNodeId
+            && critique.LastFixedAct == 3,
+            "The 083 path must take the route's 178 Horkheimer handover.");
+        Check(graph.TryApply(critique, "WESTERN_EDGE_179")
+            && critique.CurrentNodeId == AdornoNegativeState.AdoptedNodeId
+            && critique.LastFixedAct == 3,
+            "Adorno must be reachable through the 083/178/179 fixed path.");
+
+        // The ordinary-language direction is a route name, not an early move:
+        // the second-act fixed handover 110 must place Spinoza, then 162 places
+        // Schelling and 157 closes on Deleuze.
+        var natureRoute = graph.Start("HERACLITUS__BEING_AND_CHANGE__CORE");
+        natureRoute.RouteRules = true;
+        Check(graph.TryNameRoute(natureRoute, "NATURE_AND_BECOMING"),
+            "The nature direction must name its line without moving the entry node.");
+        Check(graph.TryApply(natureRoute, "WESTERN_EDGE_110")
+            && natureRoute.CurrentNodeId == SpinozaCauseNetworkState.AdoptedNodeId
+            && natureRoute.LastFixedAct == 2,
+            "The nature line's real second-act handover must place Spinoza.");
+        Check(graph.TryApply(natureRoute, "WESTERN_EDGE_162")
+            && natureRoute.CurrentNodeId == DeleuzeDifferenceState.SourceNodeId
+            && natureRoute.LastFixedAct == 3,
+            "Schelling's second-act handover must follow Spinoza.");
+        Check(graph.TryApply(natureRoute, "WESTERN_EDGE_157")
+            && natureRoute.CurrentNodeId == DeleuzeDifferenceState.AdoptedNodeId,
+            "Deleuze must close the nature line after Schelling.");
+
         // What the first act's question may offer: the lines this run could turn
         // onto. A figure two lines share is not an option on its own.
         var offer = graph.Start("DESCARTES__SELF_AND_OTHER__CORE");
@@ -99,7 +136,7 @@ internal static class WesternBranchChainChecks
         history.RouteRules = true;
         Check(RouteTurnQuestionOptions.For(history, graph).Select(choice => choice.Key)
                 .SequenceEqual(["TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT", "TO_BACON",
-                    RouteTurnQuestionOptions.StayKey]),
+                    "TO_ADORNO", RouteTurnQuestionOptions.StayKey]),
             "Rousseau's question must offer the social-critique, genealogy, education, and scientific lines, and staying.");
         var bacon = graph.Start("SOCRATES__KNOWLEDGE_AND_DOUBT__CORE");
         bacon.RouteRules = true;
@@ -164,8 +201,9 @@ internal static class WesternBranchChainChecks
         var noTurn = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         noTurn.RouteRules = true;
         var language = RouteTurnQuestionOptions.For(noTurn, graph);
-        Check(language.Select(choice => choice.Key).SequenceEqual(["TO_SAUSSURE", RouteTurnQuestionOptions.StayKey]),
-            "Aristotle's language entry must offer the real Saussure turn and a way into the local inquiry.");
+        Check(language.Select(choice => choice.Key).SequenceEqual(
+                ["TO_FREGE", "TO_SAUSSURE", "TO_WITTGENSTEIN", RouteTurnQuestionOptions.StayKey]),
+            "Aristotle's language entry must offer the formal, structural and ordinary-language turns, plus staying.");
         var offered = RouteTurnQuestionOptions.For(offer, graph);
         Check(offered.Select(RouteTurnQuestionOptions.OptionKey).Distinct().Count() == offered.Count,
             "No two options of the question may share a key.");
@@ -214,7 +252,12 @@ internal static class WesternBranchChainChecks
         var quiet = graph.Start("ARISTOTLE__LANGUAGE_AND_MEANING__CORE");
         quiet.RouteRules = true;
         Check(RouteTurnQuestionOptions.HasTurn(RouteTurnQuestionOptions.For(quiet, graph)),
-            "Aristotle's language entry must expose the Saussure turn.");
+            "Aristotle's language entry must expose a real language turn.");
+        var nature = graph.Start("HERACLITUS__BEING_AND_CHANGE__CORE");
+        nature.RouteRules = true;
+        Check(RouteTurnQuestionOptions.For(nature, graph).Select(choice => choice.Key)
+                .SequenceEqual(["TO_SPINOZA", RouteTurnQuestionOptions.StayKey]),
+            "Heraclitus' nature entry must expose the real Spinoza direction and staying.");
 
         // The first act's fixed branch is the older way into a line. It names
         // the same line the question would, so the run can continue on that

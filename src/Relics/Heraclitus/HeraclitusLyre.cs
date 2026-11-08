@@ -187,11 +187,15 @@ public sealed class HeraclitusLyre : WesternPracticeRelic
             || !ReferenceEquals(run.Players[0], Owner) || !IsSoleDoctrine
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             || shared?.WesternJourney is not { } journey
+            || shared.SpinozaCauseNetwork is not { } state
             || journey.CurrentNodeId != "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE"
-            || !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_023")
+            // The natural Heraclitus line arrives through 110; Descartes' older
+            // save path used 023. The completed edge is recorded on the state, so
+            // both are the same settled disposition without rewriting old saves.
+            || string.IsNullOrEmpty(state.AdoptEdge)
+            || !journey.CompletedEdgeIds.Contains(state.AdoptEdge)
             || !journey.SeenThinkerIds.Contains("BARUCH_SPINOZA")
             || journey.LastFixedAct is not (2 or 3)
-            || shared.SpinozaCauseNetwork is not { } state
             || !state.Closed || !state.EdgeCommitted || !state.IsUsable()
             || state.Disposition is not (SpinozaDisposition.Intervened or SpinozaDisposition.Reordered))
             return false;
