@@ -172,6 +172,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
+        ModelDb.Inject(typeof(FichteSelfPositing));
+        CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(FichteSelfPositing)], doctrine: false, position: 3, actIndex: 2,
+            route: "AUTONOMY_AND_HISTORY", required: ["WESTERN_EDGE_115"], checkRoom: true);
         ModelDb.Inject(typeof(HumeInduction));
         CheckBoundary(typeof(DescartesThinkingLens), "JOHN_LOCKE__SELF_AND_OTHER__CORE",
             [typeof(HumeInduction)], doctrine: true, position: 2, actIndex: 2,

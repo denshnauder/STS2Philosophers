@@ -56,7 +56,7 @@ internal static class FichteSelfPositingPatch
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            actTwo
+            actTwo || actThreeKant
                 ? NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true)
                 : NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                     ModelDb.GetId<KantUniversalization>(), "KANT_UNIVERSALIZATION"),
