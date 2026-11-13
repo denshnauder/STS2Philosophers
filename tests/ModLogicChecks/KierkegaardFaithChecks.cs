@@ -60,6 +60,25 @@ internal static class KierkegaardFaithChecks
             KierkegaardFaithState.SourceNodeId, 2, true, false, false, false, false, true, 0, true)),
             "The default fixed room is not offered in the first act.");
 
+        // The first-act 158 scene already stands on Kierkegaard. Keeping Socrates
+        // is a choice inside that scene, not a second fixed slot, and must leave
+        // the second-act Sartre room open.
+        var early = KierkegaardFaithState.CreateAt("KIERKEGAARD_FAITH:TEST:5", 1, "WESTERN_EDGE_158");
+        var earlyJourney = graph.Start(KierkegaardFaithState.SourceNodeId);
+        earlyJourney.CurrentNodeId = KierkegaardFaithState.AdoptedNodeId;
+        earlyJourney.LastFixedAct = 1;
+        earlyJourney.CompletedEdgeIds.Add("WESTERN_EDGE_158");
+        earlyJourney.SeenThinkerIds.Add("SOREN_KIERKEGAARD");
+        Check(KierkegaardFaithFlow.IsRouteConsistent(early, earlyJourney),
+            "The first-act 158 scene must be consistent on Kierkegaard's node.");
+        Check(KierkegaardFaithFlow.TryPrepare(early, KierkegaardFaithAction.KeepSocrates)
+            && KierkegaardFaithFlow.TryCommitPending(early, earlyJourney, graph),
+            "Keeping Socrates in the first-act scene must commit.");
+        Check(early.FixedDeclined && early.Stage == KierkegaardFaithStage.ResultKept
+            && !earlyJourney.DeclinedFixedActs.Contains(1)
+            && earlyJourney.CurrentNodeId == KierkegaardFaithState.AdoptedNodeId,
+            "Keeping Socrates must record the scene without spending a fixed slot.");
+
         var tampered = KierkegaardFaithState.Create("KIERKEGAARD_FAITH:TEST:3");
         tampered.Standard = KierkegaardFaithStandard.Ethical;
         Check(!tampered.IsUsable(), "A standard without its recorded action must be rejected.");

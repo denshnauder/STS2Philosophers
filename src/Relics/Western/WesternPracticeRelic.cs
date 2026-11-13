@@ -163,9 +163,22 @@ public abstract class WesternPracticeRelic : RelicModel
             _nodePractice = null;
             return;
         }
-        if (_nodePractice.NodeId == journey.CurrentNodeId) return;
-        var candidate = new WesternPracticeState();
-        _nodePractice = candidate.TryBindNode(journey.CurrentNodeId) ? candidate : null;
+        if (_nodePractice.NodeId != journey.CurrentNodeId)
+        {
+            var candidate = new WesternPracticeState();
+            _nodePractice = candidate.TryBindNode(journey.CurrentNodeId) ? candidate : null;
+            if (_nodePractice is null) return;
+        }
+        // A new combat (different identity) resets turn/dedup state; a same-combat
+        // restore keeps saved progress and any pending reward.
+        _nodePractice.BeginCombat(CombatIdentity());
+    }
+
+    private string CombatIdentity()
+    {
+        if (Owner?.RunState is RunState run && run.CurrentRoom is CombatRoom { Id: int roomId })
+            return $"{run.CurrentActIndex}:{run.ActFloor}:{roomId}";
+        return string.Empty;
     }
 
     public override Task BeforeSideTurnStart(
@@ -381,6 +394,22 @@ public abstract class WesternPracticeRelic : RelicModel
             or WesternEntryPracticeState.VirtueAndHappiness)
             await ResolveOpeningChoice(choiceContext, combatState);
 
+        // Pay the node reward for the just-closed turn now that native energy has
+        // reset and the draw step has run. TakeReward pays each close exactly once.
+        if (_nodePractice is { } node && node.Turn > 0)
+        {
+            WesternPracticeReward reward = node.TakeReward(node.Turn);
+            if (reward != default)
+            {
+                if (reward.Energy > 0) await PlayerCmd.GainEnergy(reward.Energy, Owner);
+                if (reward.Draw > 0) await CardPileCmd.Draw(choiceContext, reward.Draw, Owner);
+                if (reward.Block > 0)
+                    await CreatureCmd.GainBlock(Owner.Creature, reward.Block, ValueProp.Unpowered, cardPlay: null, fast: true);
+                Flash();
+                InvokeDisplayAmountChanged();
+            }
+        }
+
         if (ProblemId == WesternEntryPracticeState.SelfAndOther
             && Practice.OtherCombatId is uint otherCombatId)
         {
@@ -420,28 +449,24 @@ public abstract class WesternPracticeRelic : RelicModel
         return Task.CompletedTask;
     }
 
-    public override async Task AfterSideTurnEnd(
+    public override Task AfterSideTurnEnd(
         PlayerChoiceContext choiceContext,
         CombatSide side,
         IEnumerable<Creature> participants)
     {
-        if (side != CombatSide.Player || !participants.Contains(Owner.Creature)) return;
+        if (side != CombatSide.Player || !participants.Contains(Owner.Creature)) return Task.CompletedTask;
         bool closedEntry = Practice.CloseTurn();
+        // Node rewards are paid at the next player turn start, after native energy
+        // reset and draw, so the energy is actually usable. Closing only records.
         bool closedNode = _nodePractice?.CloseTurn(_nodePractice.Turn) == true;
-        if (closedNode)
-        {
-            WesternPracticeReward reward = _nodePractice!.ClaimReward();
-            if (reward.Energy > 0) await PlayerCmd.GainEnergy(reward.Energy, Owner);
-            if (reward.Draw > 0) await CardPileCmd.Draw(choiceContext, reward.Draw, Owner);
-            if (reward.Block > 0)
-                await CreatureCmd.GainBlock(Owner.Creature, reward.Block, ValueProp.Unpowered, cardPlay: null, fast: true);
-        }
         if (closedEntry || closedNode) InvokeDisplayAmountChanged();
+        return Task.CompletedTask;
     }
 
     public override Task AfterCombatEnd(CombatRoom room)
     {
         Practice.EndCombat();
+        _nodePractice?.EndCombatRun();
         ResetRuntimeTracking();
         InvokeDisplayAmountChanged();
         return Task.CompletedTask;

@@ -172,6 +172,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         // The third acts of the same lines, one room each. The boundary is
         // reached with the second act's slot recorded, so the host has to move
         // it on before asking.
+        ModelDb.Inject(typeof(FichteSelfPositing));
+        CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(FichteSelfPositing)], doctrine: false, position: 3, actIndex: 2,
+            route: "AUTONOMY_AND_HISTORY", required: ["WESTERN_EDGE_115"], checkRoom: true);
         ModelDb.Inject(typeof(HumeInduction));
         CheckBoundary(typeof(DescartesThinkingLens), "JOHN_LOCKE__SELF_AND_OTHER__CORE",
             [typeof(HumeInduction)], doctrine: true, position: 2, actIndex: 2,
@@ -697,8 +701,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object shared = query[1]!;
         object state = Get(shared, "SartreExistence");
         journey = Get(shared, "WesternJourney");
-        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_060",
-            "The early Sartre room uses 060 at act two.");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_163",
+            $"The early Sartre room uses the individual line's 163 at act two, got {Get(state, "ActIndex")}/{Get(state, "EdgeId")}.");
         typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
             [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
         query = [run, null];
@@ -711,8 +715,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
             && (bool)Call("SartreExistenceFlow", "TryCommitPending", state, journey,
                 Call("WesternRouteGraph", "LoadEmbedded")!),
             "The early Sartre room commits its existence standard.");
-        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_060"),
-            "The early Sartre choice reaches Sartre on 060.");
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_163"),
+            "The early Sartre choice reaches Sartre on the individual line's 163.");
     }
 
     private static void CheckEarlyPeirceContinuation()

@@ -186,7 +186,13 @@ internal sealed class WesternRouteGraph
     public IReadOnlyList<WesternGraphEdge> GetEligibleEdges(WesternJourneyState state, string slot)
     {
         if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3) return [];
-        return _edges.Values.Where(edge => IsEligible(state, edge, slot)).OrderBy(edge => edge.EdgeId, StringComparer.Ordinal).ToArray();
+        // A route's own handover is the answer for that route even when an older
+        // unscoped edge reaches the same figure. Ordering only by edge id let the
+        // legacy edge win and made the route-specific continuation unreachable.
+        return _edges.Values.Where(edge => IsEligible(state, edge, slot))
+            .OrderBy(edge => edge.RouteIds?.Contains(state.RouteId) == true ? 0 : 1)
+            .ThenBy(edge => edge.EdgeId, StringComparer.Ordinal)
+            .ToArray();
     }
 
     /// <summary>
@@ -297,6 +303,20 @@ internal sealed class WesternRouteGraph
         int act = ActualAct(state, expectedAct);
         return act is >= 1 and <= 3 && act <= state.LastFixedAct
             && state.ResolvedQuestionActs.Add(act);
+    }
+
+    /// <summary>
+    /// An inner batch can take this act's fixed slot without moving the figure:
+    /// the room is the act's fixed practice, not a handover edge. It still moves
+    /// the position so the next act's handover is reachable.
+    /// </summary>
+    public bool TryReserveFixed(WesternJourneyState state, int expectedAct)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding
+            || expectedAct != state.LastFixedAct + 1 || expectedAct is < 2 or > 3
+            || state.DeclinedFixedActs.Contains(expectedAct) || IsComplete(state)) return false;
+        state.LastFixedAct = expectedAct;
+        return true;
     }
 
     public bool TryCompleteReservedQuestion(WesternJourneyState state, string edgeId)
@@ -545,7 +565,7 @@ internal sealed class WesternRouteGraph
         && edge.Act <= (slot == "Fixed" ? state.LastFixedAct + 1 : state.LastFixedAct)
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
-        && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
+        && RequiredEdgesMet(state, edge)
         && RouteMatches(edge, state)
         && !(slot == "Fixed" && edge.RouteIds is not { Length: > 0 } && !string.IsNullOrEmpty(state.RouteId)
             && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
@@ -557,6 +577,19 @@ internal sealed class WesternRouteGraph
         // two event, and the act the run is in says so.
         && (slot != "Question" || !state.ResolvedQuestionActs.Contains(ActualAct(state, edge.Act)))
         && (slot != "Fixed" || edge.Confidence != "Low");
+
+    /// <summary>
+    /// Most edges have one predecessor set. Social critique's second-act handover
+    /// has two real first-act entries: the older fixed branch 083 and the actual
+    /// question turn 177. Both leave the run on Marx's early node; only the old
+    /// save path knew 083, so the question path must satisfy the same handover.
+    /// </summary>
+    private static bool RequiredEdgesMet(WesternJourneyState state, WesternGraphEdge edge)
+    {
+        if (edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)) return true;
+        return edge.EdgeId == "WESTERN_EDGE_178"
+            && state.CompletedEdgeIds.Contains("WESTERN_EDGE_177");
+    }
 
     private void Validate()
     {

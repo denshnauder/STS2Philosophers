@@ -120,9 +120,13 @@ internal static class KierkegaardFaithFlow
         KierkegaardFaithAction action = state.PendingAction;
         bool adopts = action is KierkegaardFaithAction.FaithLeap or KierkegaardFaithAction.EthicalUniversal;
         bool declines = action == KierkegaardFaithAction.KeepSocrates;
+        bool early158 = state.ActIndex == 1 && state.EdgeId == "WESTERN_EDGE_158";
         if (adopts && !journey.CompletedEdgeIds.Contains(state.EdgeId)
             && !graph.TryApply(journey, state.EdgeId)) return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(state.ActIndex)
+        // 158 is Kierkegaard's own first-act scene, not a fixed slot. Keeping
+        // Socrates records the refusal in the scene without spending a second
+        // fixed position or blocking the second act's Sartre room.
+        if (declines && !early158 && !journey.DeclinedFixedActs.Contains(state.ActIndex)
             && !graph.TryDecline(journey, "Fixed", state.ActIndex)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
@@ -135,8 +139,7 @@ internal static class KierkegaardFaithFlow
         // is his own first-act scene: it records the choice without spending a
         // second fixed slot, and leaves the second-act Sartre room untouched.
         if (state.ActIndex == 1 && state.EdgeId == "WESTERN_EDGE_158")
-            return !state.FixedDeclined
-                && (!state.Closed || state.EdgeCommitted)
+            return (!state.Closed || state.EdgeCommitted || state.FixedDeclined)
                 && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_158")
                 && journey.LastFixedAct == 1
                 && journey.CurrentNodeId == KierkegaardFaithState.AdoptedNodeId;

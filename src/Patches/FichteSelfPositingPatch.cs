@@ -39,19 +39,24 @@ internal static class FichteSelfPositingPatch
             && journey is not null
             && journey.CompletedEdgeIds.Contains(kant.EdgeId)
             && journey.CurrentNodeId == KantApperceptionState.AdoptedNodeId;
+        bool actThreeKant = !actTwo && journey is not null
+            && journey.CompletedEdgeIds.Contains(FichteSelfPositingState.ActThreeRequiredEdgeId)
+            && journey.CurrentNodeId == FichteSelfPositingState.SourceNodeId;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = actTwo
             ? journey is not null && !journey.ResolvedQuestionActs.Contains(2)
                 && journey.LastFixedAct >= 2
-            : journey is not null && WesternRouteGraph.LoadEmbedded()
-                .GetEligibleEdges(journey, "Question")
-                .Any(edge => edge.EdgeId == FichteSelfPositingState.CompletionEdgeId);
+            : actThreeKant
+                ? !journey!.ResolvedQuestionActs.Contains(3)
+                : journey is not null && WesternRouteGraph.LoadEmbedded()
+                    .GetEligibleEdges(journey, "Question")
+                    .Any(edge => edge.EdgeId == FichteSelfPositingState.CompletionEdgeId);
         FichteSelfPositingTriggerContext context = new(
             RunManager.Instance.IsInProgress,
             NativeQuestionNodeEvents.IsEntry(run),
             run.Players.Count == 1,
             run.CurrentActIndex,
-            actTwo
+            actTwo || actThreeKant
                 ? NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true)
                 : NativeQuestionNodeEvents.HasCompletedCombatAfter(run,
                     ModelDb.GetId<KantUniversalization>(), "KANT_UNIVERSALIZATION"),
@@ -59,7 +64,7 @@ internal static class FichteSelfPositingPatch
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,
             actTwo ? actTwoKant
-                : journey?.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId) == true,
+                : actThreeKant || journey?.CompletedEdgeIds.Contains(FichteSelfPositingState.RequiredEdgeId) == true,
             edgeEligible,
             saved is not null,
             saved?.IsUsable() == true,
@@ -72,7 +77,10 @@ internal static class FichteSelfPositingPatch
         FichteSelfPositingState candidate = saved ?? (actTwo
             ? FichteSelfPositingState.CreateAt(
                 $"FICHTE_SELF_POSITING:{run.Rng.Seed}:2", 2, kant!.EdgeId)
-            : FichteSelfPositingState.Create($"FICHTE_SELF_POSITING:{run.Rng.Seed}:3"));
+            : actThreeKant
+                ? FichteSelfPositingState.CreateAt(
+                    $"FICHTE_SELF_POSITING:{run.Rng.Seed}:3", 3, FichteSelfPositingState.ActThreeRequiredEdgeId)
+                : FichteSelfPositingState.Create($"FICHTE_SELF_POSITING:{run.Rng.Seed}:3"));
         if (journey is null || !FichteSelfPositingFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.FichteSelfPositing = candidate;
 

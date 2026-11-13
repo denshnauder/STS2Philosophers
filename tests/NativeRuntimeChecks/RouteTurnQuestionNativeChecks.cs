@@ -48,6 +48,8 @@ internal static class RouteTurnQuestionNativeChecks
     {
         ModelDb.Inject(T("RouteTurnQuestion"));
         CheckKnowledgeAnswerAndContinuation();
+        CheckRouteOnlyDirection();
+        CheckAdornoDirection();
         foreach (var item in Cases)
         {
             var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
@@ -199,6 +201,76 @@ internal static class RouteTurnQuestionNativeChecks
         EventModel james = run.Act.PullNextEvent(run);
         Check(james is JamesPragmatism,
             "The same real run selects James after Peirce, got " + james.GetType().Name + ".");
+    }
+
+    private static void CheckAdornoDirection()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 0])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is RouteTurnQuestion,
+            "The real Rousseau entry must ask the route fork, got " + selected.GetType().Name + ".");
+        EventModel local = selected.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
+            .Invoke(null, [journey, graph])!;
+        object adorno = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_ADORNO");
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, adorno])!;
+        task.GetAwaiter().GetResult();
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_083")
+            && (string)Get(journey, "RouteId") == "SOCIAL_CRITIQUE"
+            && (string)Get(journey, "CurrentNodeId") == "KARL_MARX__HISTORY_AND_POWER__EARLY"
+            && (int)Get(journey, "LastFixedAct") == 2,
+            "Choosing the social-critique fixed branch must apply 083, name the line, and stand on Marx.");
+    }
+
+    private static void CheckRouteOnlyDirection()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(AristotleCategoryTablet), 0])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is RouteTurnQuestion,
+            "The real Aristotle entry must ask the route fork, got " + selected.GetType().Name + ".");
+        EventModel local = selected.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
+            .Invoke(null, [journey, graph])!;
+        object ordinary = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_WITTGENSTEIN");
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, ordinary])!;
+        task.GetAwaiter().GetResult();
+        var completed = (HashSet<string>)Get(journey, "CompletedEdgeIds");
+        Check((string)Get(journey, "RouteId") == "ORDINARY_SPEECH"
+            && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1)
+            && !completed.Contains("WESTERN_EDGE_183") && !completed.Contains("WESTERN_EDGE_186")
+            && (int)Get(journey, "LastFixedAct") == 1
+            && (string)Get(journey, "CurrentNodeId") == "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+            "Choosing ordinary language must name the line and spend act one without moving or taking a fixed slot.");
     }
 
     private static string Snake(string name)

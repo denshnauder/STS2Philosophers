@@ -26,6 +26,7 @@ internal static class RouteTurnQuestionOptions
         ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
         ["MARY_WOLLSTONECRAFT"] = "TO_WOLLSTONECRAFT",
         ["FERDINAND_DE_SAUSSURE"] = "TO_SAUSSURE",
+        ["GOTTLOB_FREGE"] = "TO_FREGE",
         ["ADAM_SMITH"] = "TO_SMITH",
         ["SOREN_KIERKEGAARD"] = "TO_KIERKEGAARD",
         ["JEREMY_BENTHAM"] = "TO_BENTHAM",
@@ -52,6 +53,22 @@ internal static class RouteTurnQuestionOptions
         if (journey.EntryNodeId == "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_069"))
             choices.Add(new Choice("TO_PEIRCE", "WESTERN_EDGE_069", "FALLIBLE_INQUIRY"));
+        // Ordinary language and nature are real first-act directions even though
+        // their first fixed handover belongs to the next act. Naming the line
+        // spends the first-act question without adding a fixed slot or moving the
+        // player onto a figure early.
+        if (journey.EntryNodeId == "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"
+            && WesternRouteTable.Instance.Routes.Any(route => route.RouteId == "ORDINARY_SPEECH"))
+            choices.Add(new Choice("TO_WITTGENSTEIN", null, "ORDINARY_SPEECH"));
+        if (journey.EntryNodeId == "HERACLITUS__BEING_AND_CHANGE__CORE"
+            && WesternRouteTable.Instance.Routes.Any(route => route.RouteId == "NATURE_AND_BECOMING"))
+            choices.Add(new Choice("TO_SPINOZA", null, "NATURE_AND_BECOMING"));
+        // Social critique also has a real fixed first-act branch (083). Offering
+        // it here is what lets the player choose Adorno's handover instead of
+        // only inheriting it from an old save.
+        if (journey.EntryNodeId == "ROUSSEAU__HISTORY_AND_POWER__CORE"
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_083"))
+            choices.Add(new Choice("TO_ADORNO", "WESTERN_EDGE_083", "SOCIAL_CRITIQUE"));
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
         if (graph.GetEligibleEdges(journey, "Question")
@@ -68,9 +85,9 @@ internal static class RouteTurnQuestionOptions
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
     internal static readonly string[] AllKeys =
-        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
-            "TO_SAUSSURE", "TO_SMITH", "TO_PEIRCE", "TO_KIERKEGAARD", "TO_BENTHAM",
-            AppearanceKey, EmbodiedKey, StayKey];
+        ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_ADORNO", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
+            "TO_SAUSSURE", "TO_FREGE", "TO_WITTGENSTEIN", "TO_SPINOZA", "TO_SMITH", "TO_PEIRCE",
+            "TO_KIERKEGAARD", "TO_BENTHAM", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

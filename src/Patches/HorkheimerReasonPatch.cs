@@ -40,12 +40,17 @@ internal static class HorkheimerReasonPatch
         if (journey is not null && run.CurrentActIndex == 1
             && (journey.CompletedEdgeIds.Contains("WESTERN_EDGE_083")
                 || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_177"))) routeAct = 2;
-        string edgeId = routeAct >= 2
-            ? graph.GetEligibleEdges(journey!, "Fixed")
+        string edgeId = HorkheimerReasonState.CompletionEdgeId;
+        if (routeAct >= 2)
+        {
+            string[] order = journey!.CompletedEdgeIds.Contains("WESTERN_EDGE_083")
+                ? ["WESTERN_EDGE_178", "WESTERN_EDGE_084"]
+                : ["WESTERN_EDGE_084", "WESTERN_EDGE_178"];
+            edgeId = graph.GetEligibleEdges(journey, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == HorkheimerReasonState.AdoptedNodeId)
-                .Select(edge => edge.EdgeId).FirstOrDefault()
-                ?? HorkheimerReasonState.CompletionEdgeId
-            : HorkheimerReasonState.CompletionEdgeId;
+                .OrderBy(edge => Array.IndexOf(order, edge.EdgeId) is var index && index >= 0 ? index : order.Length)
+                .Select(edge => edge.EdgeId).FirstOrDefault() ?? HorkheimerReasonState.CompletionEdgeId;
+        }
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
         HorkheimerReasonTriggerContext context = new(
