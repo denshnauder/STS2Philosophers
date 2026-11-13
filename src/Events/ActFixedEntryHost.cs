@@ -146,8 +146,10 @@ internal static class ActFixedEntryHost
             || shared?.WesternJourney is not { TurnedAct: 1 } journey) return null;
         int act = run.CurrentActIndex + 1;
         if (journey.DeclinedFixedActs.Contains(act) || journey.LastFixedAct > act) return null;
-        bool carrier = journey.RouteId == "STRUCTURE_AND_EXCLUSION"
+        bool carrier = journey.RouteId is "STRUCTURE_AND_EXCLUSION" or "ORDINARY_SPEECH"
             ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
+            : journey.RouteId == "INDIVIDUAL_COMMITMENT"
+                ? run.Players[0].Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
             : journey.RouteId == "FALLIBLE_INQUIRY"
                 ? run.Players[0].Relics.OfType<SocratesQuestionCup>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE" or "GENEALOGY_AND_POWER"
@@ -162,6 +164,9 @@ internal static class ActFixedEntryHost
         {
             model = (journey.RouteId, act) switch
             {
+                ("ORDINARY_SPEECH", 2 or 3) => WittgensteinGamePatch.TrySelectNative(run),
+                ("INDIVIDUAL_COMMITMENT", 2) => SartreExistencePatch.TrySelectNative(run),
+                ("INDIVIDUAL_COMMITMENT", 3) => BeauvoirOtherPatch.TrySelectNative(run),
                 ("STRUCTURE_AND_EXCLUSION", 2) => LeviStraussMythPatch.TrySelectNative(run),
                 ("STRUCTURE_AND_EXCLUSION", 3) => DerridaDeconstructionPatch.TrySelectNative(run),
                 ("APPEARANCE_AND_INTERPRETATION", 2) => HeideggerDaseinPatch.TrySelectNative(run),
@@ -169,7 +174,8 @@ internal static class ActFixedEntryHost
                 ("UNCONSCIOUS_AND_NORM", 2) => LacanSignifierPatch.TrySelectNative(run),
                 ("UNCONSCIOUS_AND_NORM", 3) => ButlerAddressPatch.TrySelectNative(run),
                 ("SOCIAL_CRITIQUE", 2) => HorkheimerReasonPatch.TrySelectNative(run),
-                ("SOCIAL_CRITIQUE", 3) => HabermasCommunicationPatch.TrySelectNative(run),
+                ("SOCIAL_CRITIQUE", 3) => journey.CompletedEdgeIds.Contains("WESTERN_EDGE_178")
+                    ? AdornoNegativePatch.TrySelectNative(run) : HabermasCommunicationPatch.TrySelectNative(run),
                 ("SOCIAL_KNOWLEDGE", 2) => ComtePositivismPatch.TrySelectNative(run),
                 ("SOCIAL_KNOWLEDGE", 3) => KuhnParadigmPatch.TrySelectNative(run),
                 ("EMBODIED_PERCEPTION", 2) => MerleauPontyBodyPatch.TrySelectNative(run),

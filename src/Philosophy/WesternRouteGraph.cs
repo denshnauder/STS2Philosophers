@@ -186,7 +186,11 @@ internal sealed class WesternRouteGraph
     public IReadOnlyList<WesternGraphEdge> GetEligibleEdges(WesternJourneyState state, string slot)
     {
         if (!_nodes.ContainsKey(state.CurrentNodeId) || state.LastFixedAct is < 1 or > 3) return [];
-        return _edges.Values.Where(edge => IsEligible(state, edge, slot)).OrderBy(edge => edge.EdgeId, StringComparer.Ordinal).ToArray();
+        // Prefer the named route when an older edge reaches the same figure.
+        return _edges.Values.Where(edge => IsEligible(state, edge, slot))
+            .OrderBy(edge => edge.RouteIds?.Contains(state.RouteId) == true ? 0 : 1)
+            .ThenBy(edge => edge.EdgeId, StringComparer.Ordinal)
+            .ToArray();
     }
 
     /// <summary>

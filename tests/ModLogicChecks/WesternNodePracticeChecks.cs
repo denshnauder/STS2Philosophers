@@ -122,6 +122,10 @@ internal static class WesternNodePracticeChecks
         covered.Add(leibnizHarmony);
         foreach (string node in new[]
             { "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+                "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+                "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+                "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+                "THEODOR_ADORNO__HISTORY_AND_POWER__CORE",
                 "ARTHUR_SCHOPENHAUER__VIRTUE_AND_HAPPINESS__CORE",
                 "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
                 "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
@@ -148,7 +152,7 @@ internal static class WesternNodePracticeChecks
                     "This narrative route node must not invent a generic combat payout.");
             covered.Add(node);
         }
-        Check(covered.Count == 75 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
+        Check(covered.Count == 79 && covered.SetEquals(WesternRouteGraph.LoadEmbedded().Nodes.Select(node => node.NodeId)),
             "Every current graph node needs an explicit practice or no-reward case, with no fabricated node.");
         foreach (var c in cases.Where(c => (c.Problem, c.Thinker) is
             (self, "DESCARTES") or (virtue, "PLOTINUS") or (virtue, "DIOGENES_OF_SINOPE") or (virtue, "ZENO_OF_CITIUM")

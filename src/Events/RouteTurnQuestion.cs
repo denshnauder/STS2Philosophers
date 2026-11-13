@@ -77,9 +77,16 @@ public sealed class RouteTurnQuestion : EventModel
             if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
             if (!ReferenceEquals(shared.WesternJourney, journey)) return;
             WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+            bool routeOnly = choice.EdgeId is null && choice.RouteId is not null;
+            if (choice.EdgeId is not null || routeOnly) journey.RouteRules = true;
+            if (routeOnly && !graph.TryNameRoute(journey, choice.RouteId!))
+            {
+                Block($"RouteTurnQuestion could not name {choice.RouteId}.");
+                return;
+            }
+            if (routeOnly) journey.TurnedAct = 1;
             if (choice.EdgeId is { } edgeId)
             {
-                journey.RouteRules = true;
                 if (!graph.TryApply(journey, edgeId))
                 {
                     Block($"RouteTurnQuestion could not take {edgeId}.");
@@ -96,18 +103,23 @@ public sealed class RouteTurnQuestion : EventModel
             // act's question. Staying here means taking that inquiry, not
             // spending the question on a silent default; the local event resolves
             // it. Everywhere else staying spends the question and names the line.
-            bool delegateToLocalQuestion = choice.EdgeId is null
+            bool delegateToLocalQuestion = !routeOnly && choice.EdgeId is null
                 && (journey.CurrentNodeId == GorgiasSpeechInquiryState.RequiredNodeId
+                    || journey.CurrentNodeId == ParmenidesInquiryState.RequiredNodeId
                     || journey.CurrentNodeId == ZenoCivicChallengeState.SourceNodeId
-                    || journey.CurrentNodeId == SextusOpposedAppearancesState.RequiredNodeId)
+                    || journey.CurrentNodeId == SextusOpposedAppearancesState.RequiredNodeId
+                    || journey.CurrentNodeId == ProtagorasSharedDeliberationState.SourceNodeId)
                 && !journey.ResolvedQuestionActs.Contains(1);
+            // Peirce's line begins on Hume's fixed first-act handover rather than
+            // a Question edge. Answering the fork still spends the first-act
+            // question, or Sextus would silently take the answer's place.
             if (choice.EdgeId == "WESTERN_EDGE_069" && !journey.ResolvedQuestionActs.Contains(1))
                 journey.ResolvedQuestionActs.Add(1);
-            if (choice.EdgeId is null && !delegateToLocalQuestion)
+            if (choice.EdgeId is null && (routeOnly || !delegateToLocalQuestion))
             {
                 // Staying keeps the line the run was given, and it has to be named:
                 // an unnamed run cannot take a single edge from the second act on.
-                if (string.IsNullOrEmpty(journey.RouteId))
+                if (!routeOnly && string.IsNullOrEmpty(journey.RouteId))
                 {
                     WesternRouteDefinition? line = WesternRouteTable.Instance.ForEntry(journey.EntryNodeId);
                     if (line is not null) journey.RouteId = line.RouteId;

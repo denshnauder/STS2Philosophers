@@ -1,0 +1,85 @@
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Runs;
+
+namespace STS2Philosophers;
+
+internal static class AdornoNegativePatch
+{
+    internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
+
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run))
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        AdornoNegativeState? saved = shared.AdornoNegative;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (journey is null || !AdornoNegativeFlow.IsRouteConsistent(saved, journey)) return null;
+        AdornoNegative? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
+    internal static EventModel? TrySelectNative(RunState run)
+    {
+        bool fixedEntry = FixedEntryScope.Active;
+        if ((!fixedEntry && !NativeQuestionNodeEvents.IsEntry(run)) || run.Players.Count != 1) return null;
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        AdornoNegativeState? saved = shared.AdornoNegative;
+        AdornoNegative? canonical = TryGetCanonicalEvent();
+        if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        if (fixedEntry)
+        {
+            if (journey is null || run.CurrentActIndex != 2
+                || !journey.CompletedEdgeIds.Contains(AdornoNegativeState.FixedRequiredEdgeId)
+                || journey.LastFixedAct is < 2 or > 3) return null;
+            WesternRouteGraph fixedGraph = WesternRouteGraph.LoadEmbedded();
+            if (!fixedGraph.GetEligibleEdges(journey, "Fixed")
+                .Any(edge => edge.EdgeId == AdornoNegativeState.FixedCompletionEdgeId)) return null;
+            var fixedCandidate = saved ?? AdornoNegativeState.CreateAt(
+                $"ADORNO_NEGATIVE:{run.Rng.Seed}:3", 3,
+                AdornoNegativeState.FixedCompletionEdgeId, fixedMode: true);
+            if (saved is not null && !saved.EdgeCommitted && !saved.QuestionDeclined
+                && !saved.FixedDeclined && !saved.Closed)
+            {
+                fixedCandidate.FixedMode = true;
+                fixedCandidate.ActIndex = 3;
+                fixedCandidate.EdgeId = AdornoNegativeState.FixedCompletionEdgeId;
+            }
+            if (!AdornoNegativeFlow.IsRouteConsistent(fixedCandidate, journey)) return null;
+            shared.AdornoNegative = fixedCandidate;
+            Log.Info("[STS2Philosophers] Presenting Adorno's negative dialectics room.");
+            return canonical;
+        }
+        ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
+        bool edgeEligible = journey is not null && WesternRouteGraph.LoadEmbedded()
+            .GetEligibleEdges(journey, "Question")
+            .Any(edge => edge.EdgeId == AdornoNegativeState.CompletionEdgeId);
+        AdornoNegativeTriggerContext context = new(
+            RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
+            run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true),
+            NativeQuestionNodeEvents.CombatCount(behavior), journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
+            journey?.CompletedEdgeIds.Contains(AdornoNegativeState.RequiredEdgeId) == true, edgeEligible,
+            saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
+            saved is not null && journey is not null && AdornoNegativeFlow.IsRouteConsistent(saved, journey),
+            canonical is not null);
+        if (!AdornoNegativeTriggerPolicy.ShouldInsert(context)) return null;
+        var candidate = saved ?? AdornoNegativeState.Create($"ADORNO_NEGATIVE:{run.Rng.Seed}:3");
+        if (journey is null || !AdornoNegativeFlow.IsRouteConsistent(candidate, journey)) return null;
+        shared.AdornoNegative = candidate;
+        Log.Info("[STS2Philosophers] Presenting Marx's alienation question.");
+        return canonical;
+    }
+
+    private static AdornoNegative? TryGetCanonicalEvent()
+    {
+        try { return ModelDb.Event<AdornoNegative>(); }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] AdornoNegative is unavailable: {exception}");
+            return null;
+        }
+    }
+}

@@ -19,6 +19,7 @@ internal static class RouteTurnQuestionOptions
     /// </summary>
     private static readonly Dictionary<string, string> TurnKeys = new(StringComparer.Ordinal)
     {
+        ["SOREN_KIERKEGAARD"] = "TO_KIERKEGAARD",
         ["SIGMUND_FREUD"] = "TO_FREUD",
         ["FRIEDRICH_NIETZSCHE"] = "TO_NIETZSCHE",
         ["FRANCIS_BACON"] = "TO_BACON",
@@ -46,6 +47,11 @@ internal static class RouteTurnQuestionOptions
         if (journey.EntryNodeId == "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_069"))
             choices.Add(new Choice("TO_PEIRCE", "WESTERN_EDGE_069", "FALLIBLE_INQUIRY"));
+        if (journey.EntryNodeId == "ARISTOTLE__LANGUAGE_AND_MEANING__CORE")
+            choices.Add(new Choice("TO_WITTGENSTEIN", null, "ORDINARY_SPEECH"));
+        if (journey.EntryNodeId == "ROUSSEAU__HISTORY_AND_POWER__CORE"
+            && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == "WESTERN_EDGE_083"))
+            choices.Add(new Choice("TO_ADORNO", "WESTERN_EDGE_083", "SOCIAL_CRITIQUE"));
         // Husserl stands on two lines, so his question names neither by itself: it
         // asks which one, and the answer is what names the line.
         if (graph.GetEligibleEdges(journey, "Question")
@@ -61,7 +67,7 @@ internal static class RouteTurnQuestionOptions
     /// <summary>True when the question has something to ask beyond staying.</summary>
     internal static bool HasTurn(IReadOnlyList<Choice> choices) => choices.Count > 1;
 
-    internal static readonly string[] AllKeys = ["TO_FREUD", "TO_SAUSSURE", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_PEIRCE", AppearanceKey, EmbodiedKey, StayKey];
+    internal static readonly string[] AllKeys = ["TO_KIERKEGAARD", "TO_WITTGENSTEIN", "TO_ADORNO", "TO_FREUD", "TO_SAUSSURE", "TO_BACON", "TO_MARX", "TO_NIETZSCHE", "TO_PEIRCE", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

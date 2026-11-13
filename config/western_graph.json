@@ -601,6 +601,38 @@
       "stage_id": "CORE",
       "display_name": "孟德斯鸠",
       "terminal": false
+    },
+    {
+      "node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "thinker_id": "SOREN_KIERKEGAARD",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "克尔凯郭尔",
+      "terminal": false
+    },
+    {
+      "node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "thinker_id": "JEAN_PAUL_SARTRE",
+      "problem_id": "SELF_AND_OTHER",
+      "stage_id": "CORE",
+      "display_name": "萨特",
+      "terminal": false
+    },
+    {
+      "node_id": "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+      "thinker_id": "LUDWIG_WITTGENSTEIN",
+      "problem_id": "LANGUAGE_AND_MEANING",
+      "stage_id": "CORE",
+      "display_name": "维特根斯坦",
+      "terminal": false
+    },
+    {
+      "node_id": "THEODOR_ADORNO__HISTORY_AND_POWER__CORE",
+      "thinker_id": "THEODOR_ADORNO",
+      "problem_id": "HISTORY_AND_POWER",
+      "stage_id": "CORE",
+      "display_name": "阿多诺",
+      "terminal": true
     }
   ],
   "edges": [
@@ -3210,6 +3242,253 @@
       },
       "route_ids": [
         "CHECKS_AND_JUSTICE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_060",
+      "from_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "to_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题展开，高；从信仰的跳跃转入处境中的自由与选择",
+      "source": "00西哲当前路线.md:28",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "自由选择须保留处境的限制与他人的目光，不能写成任意。",
+        "interpretation_boundary": "表达同一问题的推进，不写成历史继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:28",
+          "00西哲当前路线.md:53"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_083",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "act": 1,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从社会不平等的起源转入劳动与异化",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "社会批判须保留被批判者的具体处境，不能把工具理性写成无主体的命运。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_152",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "LUDWIG_WITTGENSTEIN__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "ORDINARY_SPEECH"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_158",
+      "from_node_id": "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+      "to_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第一幕接受克尔凯郭尔后转入个体承担",
+      "source": "00西哲当前路线.md:23",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "VIRTUE_AND_HAPPINESS",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:23"
+        ]
+      },
+      "route_ids": []
+    },
+    {
+      "edge_id": "WESTERN_EDGE_163",
+      "from_node_id": "SOREN_KIERKEGAARD__SELF_AND_OTHER__CORE",
+      "to_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；接受克尔凯郭尔后第二幕固定承接萨特",
+      "source": "00西哲当前路线.md:23",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:23"
+        ]
+      },
+      "route_ids": [
+        "INDIVIDUAL_COMMITMENT"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_178",
+      "from_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "to_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；接受马克思后第二幕固定承接霍克海默",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_083"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_CRITIQUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_179",
+      "from_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "to_node_id": "THEODOR_ADORNO__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第三幕固定承接阿多诺",
+      "source": "00西哲当前路线.md:34",
+      "required_edge_ids": [
+        "WESTERN_EDGE_178"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:34"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_CRITIQUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_159",
+      "from_node_id": "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIMONE_DE_BEAUVOIR__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第三幕固定承接波伏瓦",
+      "source": "00西哲当前路线.md:23",
+      "required_edge_ids": [
+        "WESTERN_EDGE_163"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:23"
+        ]
+      },
+      "route_ids": [
+        "INDIVIDUAL_COMMITMENT"
       ]
     }
   ],

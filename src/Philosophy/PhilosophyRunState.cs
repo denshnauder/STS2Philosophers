@@ -79,6 +79,13 @@ internal sealed class PhilosophyRunState
     public MontesquieuBalanceState? MontesquieuBalance { get; set; }
     public KantUniversalizationState? KantUniversalization { get; set; }
     public VoltaireToleranceState? VoltairePublicCritique { get; set; }
+    public WittgensteinGameState? WittgensteinGame { get; set; }
+    public CarnapFrameworkChoiceState? CarnapFrameworkChoice { get; set; }
+    public AustinSpeechActState? AustinSpeechAct { get; set; }
+    public AdornoNegativeState? AdornoNegative { get; set; }
+    public SartreExistenceState? SartreExistence { get; set; }
+    public FichteSelfPositingState? FichteSelfPositing { get; set; }
+
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -169,6 +176,12 @@ internal sealed class PhilosophyRunState
         || CamusRevoltLimit is not null
         || MontesquieuBalance is not null
         || KantUniversalization is not null
+        || WittgensteinGame is not null
+        || CarnapFrameworkChoice is not null
+        || AustinSpeechAct is not null
+        || AdornoNegative is not null
+        || SartreExistence is not null
+        || FichteSelfPositing is not null
         || VoltairePublicCritique is not null
         || KantApperception is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
@@ -392,6 +405,12 @@ internal sealed class PhilosophyRunState
         CamusRevoltLimit?.NormalizeAfterLoad();
         MontesquieuBalance?.NormalizeAfterLoad();
         KantUniversalization?.NormalizeAfterLoad();
+        WittgensteinGame?.NormalizeAfterLoad();
+        CarnapFrameworkChoice?.NormalizeAfterLoad();
+        AustinSpeechAct?.NormalizeAfterLoad();
+        AdornoNegative?.NormalizeAfterLoad();
+        SartreExistence?.NormalizeAfterLoad();
+        FichteSelfPositing?.NormalizeAfterLoad();
         VoltairePublicCritique?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)

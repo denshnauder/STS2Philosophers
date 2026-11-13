@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/WittgensteinGameState.cs" Link="WittgensteinGameState.cs" />
+    <Compile Include="../../src/Philosophy/WittgensteinGameTriggerPolicy.cs" Link="WittgensteinGameTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/CarnapFrameworkChoiceState.cs" Link="CarnapFrameworkChoiceState.cs" />
+    <Compile Include="../../src/Philosophy/AustinSpeechActState.cs" Link="AustinSpeechActState.cs" />
+    <Compile Include="../../src/Philosophy/AdornoNegativeState.cs" Link="AdornoNegativeState.cs" />
+    <Compile Include="../../src/Philosophy/AdornoNegativeTriggerPolicy.cs" Link="AdornoNegativeTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/SartreExistenceState.cs" Link="SartreExistenceState.cs" />
+    <Compile Include="../../src/Philosophy/SartreExistenceTriggerPolicy.cs" Link="SartreExistenceTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/FichteSelfPositingState.cs" Link="FichteSelfPositingState.cs" />
+    <Compile Include="../../src/Philosophy/FichteSelfPositingTriggerPolicy.cs" Link="FichteSelfPositingTriggerPolicy.cs" />
+
     <Compile Include="../../src/Philosophy/MontesquieuBalanceState.cs" Link="MontesquieuBalanceState.cs" />
     <Compile Include="../../src/Philosophy/MontesquieuBalanceTriggerPolicy.cs" Link="MontesquieuBalanceTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/KantUniversalizationState.cs" Link="KantUniversalizationState.cs" />
