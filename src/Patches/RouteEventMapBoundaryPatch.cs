@@ -35,9 +35,17 @@ internal static class RouteEventMapBoundaryLoadedMapPatch
 [HarmonyPatch]
 internal static class RouteEventMapBoundaryRewardsProceedPatch
 {
-    private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(typeof(RunManager), nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes)
-        ?? throw new MissingMethodException(typeof(RunManager).FullName, "ProceedFromTerminalRewardsScreen()");
+    private static MethodBase TargetMethod()
+    {
+        // New native versions expose a void UI entry and a separate awaited body.
+        MethodInfo? method = AccessTools.DeclaredMethod(typeof(RunManager),
+            "ProceedFromTerminalRewardsScreenAsync", Type.EmptyTypes)
+            ?? AccessTools.DeclaredMethod(typeof(RunManager),
+                nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes);
+        return method is not null && typeof(Task).IsAssignableFrom(method.ReturnType)
+            ? method : throw new MissingMethodException(typeof(RunManager).FullName,
+                "Awaitable terminal rewards continuation");
+    }
 
     private static void Prefix(RunManager __instance, out RouteEventMapBoundaryScope? __state) =>
         __state = RouteEventMapBoundary.BeginRewardsProceed(__instance);

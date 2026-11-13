@@ -50,7 +50,7 @@ internal static class WesternNodePracticeNativeChecks
         Set(run, "Rng", new RunRngSet("123456789"));
         Set(run, "ActFloor", 8);
         Set(run, "ExtraFields", new ExtraRunFields());
-        Set(run, "Modifiers", Array.Empty<ModifierModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>());
         Set(run, "BadgeModels", Array.Empty<BadgeModel>());
         Set(f.Player, "_runState", run);
         Set(f.Combat, "RunState", run);

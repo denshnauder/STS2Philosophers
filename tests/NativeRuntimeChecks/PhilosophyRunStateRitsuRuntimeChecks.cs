@@ -243,7 +243,7 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
     private static void NativeLoaderPatchesObserveActualResult(string json)
     {
         var root = JsonNode.Parse(json)!.AsObject();
-        root["schema_version"] = 20;
+        root["schema_version"] = CurrentNativeSchemaVersion();
         var store = new InMemoryRunSaveStore(root.ToJsonString());
         var migration = new MigrationManager(store);
         var manager = new RunSaveManager(2, store, migration, false);
@@ -360,6 +360,12 @@ internal static class PhilosophyRunStateRitsuRuntimeChecks
             } },
         }.ToJsonString();
     }
+
+    // The locked game DLL owns the authoritative current save schema version.
+    // Read it from the same assembly that raises MigrationRequired so the
+    // fixture tracks real game updates instead of a hardcoded guess.
+    private static int CurrentNativeSchemaVersion() =>
+        new MigrationManager(new InMemoryRunSaveStore(null)).GetLatestVersion<SerializableRun>();
 
     private static JsonObject? Slot(JsonObject root) =>
         root["_ritsulib"]?["run_saved_data"]?["STS2Philosophers"]?["PHILOSOPHY_RUN_STATE"] as JsonObject;

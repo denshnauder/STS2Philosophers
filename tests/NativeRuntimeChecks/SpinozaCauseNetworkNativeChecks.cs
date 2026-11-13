@@ -110,7 +110,7 @@ internal static class SpinozaCauseNetworkNativeChecks
         Set(run, "_players", new List<Player> { f.Player }); Set(run, "_currentActIndex", 1);
         Set(run, "Rng", new RunRngSet("123456789")); Set(run, "ActFloor", 4);
         Set(run, "ExtraFields", new ExtraRunFields());
-        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
         Set(f.Player, "_runState", run); Set(f.Combat, "RunState", run); Set(f.Player, "Deck", new CardPile(PileType.Deck));
         var room = (CombatRoom)RuntimeHelpers.GetUninitializedObject(typeof(CombatRoom)); Set(room, "Id", 98);
         Set(run, "_currentRooms", new List<AbstractRoom> { room }); Set(RunManager.Instance, "State", run);

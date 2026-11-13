@@ -42,6 +42,10 @@ internal sealed class NativeRuntimeFixture
         Set(Player, "IsActiveForHooks", true);
         var creature = new Creature(Player, 50, 50) { CombatState = Combat };
         Set(Player, "Creature", creature);
+        // Current native constructors subscribe to a tracker and read character arrow slots.
+        Set(CombatManager.Instance, "StateTracker", new CombatStateTracker(CombatManager.Instance));
+        ModelDb.Inject(typeof(MegaCrit.Sts2.Core.Models.Characters.Ironclad));
+        Set(Player, "Character", ModelDb.Character<MegaCrit.Sts2.Core.Models.Characters.Ironclad>());
         PlayerState = new PlayerCombatState(Player);
         Set(Player, "PlayerCombatState", PlayerState);
         ((List<Creature>)Combat.Allies).Add(creature);
