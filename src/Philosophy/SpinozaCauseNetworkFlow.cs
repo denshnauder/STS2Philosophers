@@ -80,6 +80,24 @@ internal static class SpinozaCauseNetworkFlow
             || journey.DeclinedFixedActs is null || journey.CompletedEdgeIds is null) return false;
         if (!journey.SeenThinkerIds.Contains(state.SourceThinker)) return false;
         if (journey.RetainedEnding) return false;
+        // A first-act turn moves Spinoza onto his own node before the second
+        // act. The room still owns that act's fixed slot, but its handover goes
+        // forward from Spinoza to the line's third-act figure.
+        if (state.SourceNode == SpinozaCauseNetworkState.AdoptedNodeId
+            && state.AdoptEdge != SpinozaCauseNetworkState.CompletionEdgeId)
+        {
+            bool completed = journey.CompletedEdgeIds.Contains(state.AdoptEdge);
+            if (!state.FixedSlotResolved)
+                return journey.LastFixedAct == 2
+                    && journey.CurrentNodeId == SpinozaCauseNetworkState.AdoptedNodeId
+                    && journey.SeenThinkerIds.Contains("BARUCH_SPINOZA") && !completed;
+            if (state.EdgeCommitted)
+                return journey.LastFixedAct == 3 && completed
+                    && journey.CurrentNodeId == state.TargetNode;
+            return journey.LastFixedAct == 2
+                && journey.CurrentNodeId == SpinozaCauseNetworkState.AdoptedNodeId
+                && journey.DeclinedFixedActs.Contains(2);
+        }
         if (journey.ResolvedQuestionActs.Contains(2) || journey.ResolvedQuestionActs.Contains(3)) return false;
         if (journey.DeclinedFixedActs.Contains(3)) return false;
 

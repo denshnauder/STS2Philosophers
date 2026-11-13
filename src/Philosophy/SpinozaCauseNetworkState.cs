@@ -43,6 +43,9 @@ internal sealed class SpinozaCauseNetworkState : IJsonOnDeserialized
     public string SourceNode { get; set; } = SourceNodeId;
     public string AdoptEdge { get; set; } = CompletionEdgeId;
     public string SourceThinker { get; set; } = "DESCARTES";
+    // The room a turned second-act Spinoza hands over to. The default line
+    // hands over to Spinoza himself, so this stays at the adopted node there.
+    public string TargetNode { get; set; } = AdoptedNodeId;
 
     private bool? _closed;
 
@@ -84,6 +87,7 @@ internal sealed class SpinozaCauseNetworkState : IJsonOnDeserialized
         SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? SourceNodeId : SourceNode;
         AdoptEdge = string.IsNullOrWhiteSpace(AdoptEdge) ? CompletionEdgeId : AdoptEdge;
         SourceThinker = string.IsNullOrWhiteSpace(SourceThinker) ? "DESCARTES" : SourceThinker;
+        TargetNode = string.IsNullOrWhiteSpace(TargetNode) ? AdoptedNodeId : TargetNode;
         if (ConfirmedActions is null || _closed is null)
         {
             Version = 0;

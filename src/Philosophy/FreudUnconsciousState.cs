@@ -31,6 +31,12 @@ internal sealed class FreudUnconsciousState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
+    // The first-act direction can stand the figure on his or her own node
+    // before the second act. These two fields keep that turned handover
+    // explicit instead of pretending the default source is still current.
+    public string SourceNode { get; set; } = FreudUnconsciousState.SourceNodeId;
+    public string TargetNode { get; set; } = FreudUnconsciousState.AdoptedNodeId;
+
     public static FreudUnconsciousState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
     public static FreudUnconsciousState CreateAt(string instanceId, int actIndex, string edgeId) =>
@@ -40,6 +46,8 @@ internal sealed class FreudUnconsciousState : IJsonOnDeserialized
     {
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? FreudUnconsciousState.SourceNodeId : SourceNode;
+        TargetNode = string.IsNullOrWhiteSpace(TargetNode) ? FreudUnconsciousState.AdoptedNodeId : TargetNode;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
@@ -135,13 +143,13 @@ internal static class FreudUnconsciousFlow
         int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == FreudUnconsciousState.SourceNodeId;
+                && journey.CurrentNodeId == state.SourceNode;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
-                && journey.CurrentNodeId == FreudUnconsciousState.AdoptedNodeId;
+                && journey.CurrentNodeId == state.TargetNode;
         return !adopted && journey.LastFixedAct == state.ActIndex
             && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == FreudUnconsciousState.SourceNodeId;
+            && journey.CurrentNodeId == state.SourceNode;
     }
 
     public static string DescriptionKey(FreudUnconsciousState state) => UpperSnake(state.Stage.ToString());

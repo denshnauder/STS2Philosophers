@@ -39,6 +39,11 @@ internal sealed class LacanSignifierState : IJsonOnDeserialized
 
     public int ActIndex { get; set; } = 2;
     public string EdgeId { get; set; } = CompletionEdgeId;
+    // The room normally stands between Freud and Lacan. When Freud's own room
+    // already carried the run onto Lacan, the third act's room stands between
+    // Lacan and Butler instead.
+    public string SourceNode { get; set; } = SourceNodeId;
+    public string TargetNode { get; set; } = AdoptedNodeId;
     // The edge that has to be behind the run before the question opens.  A run the
     // first act's question turned onto Freud arrived by that question instead.
     public string RequiredEdge { get; set; } = RequiredEdgeId;
@@ -53,6 +58,8 @@ internal sealed class LacanSignifierState : IJsonOnDeserialized
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
         UnansweredRequests ??= [];
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? SourceNodeId : SourceNode;
+        TargetNode = string.IsNullOrWhiteSpace(TargetNode) ? AdoptedNodeId : TargetNode;
     }
 
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
@@ -168,16 +175,16 @@ internal static class LacanSignifierFlow
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted
                 && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == LacanSignifierState.SourceNodeId
+                && journey.CurrentNodeId == state.SourceNode
                 && journey.CompletedEdgeIds.Contains(string.IsNullOrWhiteSpace(state.RequiredEdge)
                     ? LacanSignifierState.RequiredEdgeId
                     : state.RequiredEdge);
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
-                && journey.CurrentNodeId == LacanSignifierState.AdoptedNodeId;
+                && journey.CurrentNodeId == state.TargetNode;
         return !adopted && journey.LastFixedAct == state.ActIndex
             && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == LacanSignifierState.SourceNodeId;
+            && journey.CurrentNodeId == state.SourceNode;
     }
 
     public static string DescriptionKey(LacanSignifierState state) => UpperSnake(state.Stage.ToString());

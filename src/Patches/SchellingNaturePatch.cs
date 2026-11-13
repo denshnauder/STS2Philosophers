@@ -32,11 +32,16 @@ internal static class SchellingNaturePatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes
+        // A first-act Spinoza turn skips his own room: the second act's fixed
+        // slot is Schelling on 162, and Deleuze closes the line on 157.
+        bool turnedSpinoza = run.CurrentActIndex == 1 && journey is not null
+            && journey.CurrentNodeId == SchellingNatureState.SourceNodeId
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_156");
+        int routeAct = saved?.ActIndex ?? (turnedSpinoza ? 2 : journey is null ? 0 : WesternRouteTable.Instance.Routes
             .Where(route => route.RouteId == journey.RouteId)
             .Select(route => route.ActTwoFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 2
                 : route.ActThreeFigure == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING" ? 3 : 0)
-            .DefaultIfEmpty(0).First();
+            .DefaultIfEmpty(0).First());
         if (saved is not null && saved.ActIndex != routeAct) return null;
         // A route-placed Schelling room owns a fixed slot; only the act
         // boundary may open it. The legacy unplaced act-two room remains a

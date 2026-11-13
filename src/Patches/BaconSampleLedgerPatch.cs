@@ -7,6 +7,19 @@ internal static class BaconSampleLedgerPatch
 {
     internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
 
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        BaconSampleLedgerState? saved = shared.BaconSampleLedger;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (saved is null || saved.Closed || !saved.IsUsable() || journey is null
+            || !BaconSampleLedgerFlow.IsRouteConsistent(saved, journey,
+                shared.OckhamNamesInquiry!, shared.GorgiasSpeechInquiry!)) return null;
+        BaconSampleLedger? canonical = TryGetCanonicalEvent();
+        return canonical is null || run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
@@ -31,13 +44,14 @@ internal static class BaconSampleLedgerPatch
             bool actTwoReady = journey is not null
                 && journey.RouteId == "SOCIAL_KNOWLEDGE"
                 && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
-                && journey.LastFixedAct == 1
+                && journey.LastFixedAct is 1 or 2
                 && !journey.ResolvedQuestionActs.Contains(2)
                 && !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_198")
                 && WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
                     .Any(edge => edge.EdgeId == "WESTERN_EDGE_198");
-            bool actTwoRelic = player?.GetRelicById(ModelDb.GetId<AristotleCategoryTablet>())
-                is AristotleCategoryTablet { CanOfferBacon: true };
+            bool actTwoRelic = journey?.RouteId == "SOCIAL_KNOWLEDGE"
+                ? player?.GetRelicById(ModelDb.GetId<RousseauUncarvedStone>()) is RousseauUncarvedStone { CanOfferBacon: true }
+                : player?.GetRelicById(ModelDb.GetId<AristotleCategoryTablet>()) is AristotleCategoryTablet { CanOfferBacon: true };
             if (!manager.IsInProgress || !actTwoReady || !actTwoRelic) return null;
             if (saved is not null && (!saved.IsUsable() || saved.Closed || !ActTwoConsistent(saved))) return null;
             var actTwo = saved ?? BaconSampleLedgerState.CreateAt(actTwoId, 2, "ACT_TWO_BACON");
@@ -65,5 +79,15 @@ internal static class BaconSampleLedgerPatch
         if (!Consistent(candidate)) return null;
         shared.BaconSampleLedger = candidate;
         return canonical;
+    }
+
+    private static BaconSampleLedger? TryGetCanonicalEvent()
+    {
+        try { return ModelDb.Event<BaconSampleLedger>(); }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] BaconSampleLedger is unavailable: {exception}");
+            return null;
+        }
     }
 }

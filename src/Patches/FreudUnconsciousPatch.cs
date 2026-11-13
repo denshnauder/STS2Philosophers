@@ -28,6 +28,27 @@ internal static class FreudUnconsciousPatch
         FreudUnconsciousState? saved = shared.FreudUnconscious;
         FreudUnconscious? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
+        // A first-act direction can stand Freud on the room's own node
+        // before the second act. The room then owns that act's fixed slot and
+        // hands over forward to the line's third-act figure.
+        if (run.CurrentActIndex == 1 && journey is not null
+            && journey.CurrentNodeId == FreudUnconsciousState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_189"))
+        {
+            WesternRouteGraph turnedGraph = WesternRouteGraph.LoadEmbedded();
+            WesternGraphEdge? forward = turnedGraph.GetEligibleEdges(journey, "Fixed")
+                .FirstOrDefault(edge => edge.Act == 2 && edge.FromNodeId == FreudUnconsciousState.AdoptedNodeId);
+            if (forward is null) return null;
+            string turnedId = $"FREUD_UNCONSCIOUS:{run.Rng.Seed}:2";
+            FreudUnconsciousState turned = saved ?? FreudUnconsciousState.CreateAt(turnedId, 2, forward.EdgeId);
+            turned.EdgeId = forward.EdgeId;
+            turned.ActIndex = 2;
+            turned.SourceNode = FreudUnconsciousState.AdoptedNodeId;
+            turned.TargetNode = forward.ToNodeId;
+            if (!FreudUnconsciousFlow.IsRouteConsistent(turned, journey)) return null;
+            shared.FreudUnconscious = turned;
+            return canonical;
+        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes

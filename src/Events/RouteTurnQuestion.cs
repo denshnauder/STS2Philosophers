@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
@@ -130,7 +131,11 @@ public sealed class RouteTurnQuestion : EventModel
             RouteTurnQuestionState record = shared.RouteTurnQuestion ??= RouteTurnQuestionState.Create(
                 $"{RouteTurnQuestionOptions.InstanceIdPrefix}:{run.Rng.Seed}:{run.CurrentActIndex}");
             record.Closed = true;
-            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            // A native EventRoom is always current while the page is open. The
+            // detached model path is only used by the managed native probes,
+            // which cannot initialize the player save store.
+            if (run.CurrentRoom is EventRoom
+                && !await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
                 Block("RouteTurnQuestion could not persist its answer.");
                 return;

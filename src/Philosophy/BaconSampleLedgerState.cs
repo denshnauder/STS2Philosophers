@@ -42,14 +42,14 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty; OckhamInstanceId ??= string.Empty;
-        if (ActIndex is < 2 or > 3) ActIndex = 3;
+        if (ActIndex is < 1 or > 3) ActIndex = 3;
         Diderot?.NormalizeAfterLoad();
         if (!_closed.HasValue) Version = 0;
     }
     void IJsonOnDeserialized.OnDeserialized() => NormalizeAfterLoad();
     public bool IsUsable()
     {
-        if (Version != 1 || ActIndex is < 2 or > 3
+        if (Version != 1 || ActIndex is < 1 or > 3
             || string.IsNullOrWhiteSpace(InstanceId) || string.IsNullOrWhiteSpace(OckhamInstanceId)
             || !_closed.HasValue || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction)
             || Inspecting && (Diderot is null || Diderot.Closed)
@@ -122,20 +122,32 @@ internal static class BaconSampleLedgerFlow
     public static bool IsRouteConsistent(BaconSampleLedgerState state, WesternJourneyState journey,
         OckhamNamesInquiryState ockham, GorgiasSpeechInquiryState gorgias)
     {
+        if (state.ActIndex == 1)
+        {
+            if (!state.IsUsable() || journey.RetainedEnding) return false;
+            if (!state.FixedSlotResolved)
+                return journey.LastFixedAct == 1
+                    && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                    && !journey.ResolvedQuestionActs.Contains(2);
+            return journey.LastFixedAct == 1
+                && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                && (state.EdgeCommitted || journey.DeclinedFixedActs.Contains(1));
+        }
         if (state.ActIndex == 2)
         {
             if (!state.IsUsable() || journey.RetainedEnding) return false;
             bool laterEdge = journey.CompletedEdgeIds.Contains("WESTERN_EDGE_198")
                 || journey.CompletedEdgeIds.Contains("WESTERN_EDGE_166");
             if (!state.FixedSlotResolved)
-                return !laterEdge && journey.LastFixedAct == 1
+                return !laterEdge && journey.LastFixedAct is 1 or 2
                     && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
                     && !journey.ResolvedQuestionActs.Contains(2);
+            // The second-act room reserves the slot and keeps Bacon on the node
+            // for Diderot's practice; both an adopted report and an explicit
+            // refusal settle that slot without moving the position.
             return journey.LastFixedAct == 2
                 && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
-                && (state.EdgeCommitted
-                    ? !journey.ResolvedQuestionActs.Contains(2)
-                    : journey.DeclinedFixedActs.Contains(2) && !state.EdgeCommitted);
+                && !journey.ResolvedQuestionActs.Contains(2);
         }
         if (!state.IsUsable() || !ockham.IsUsable() || !ockham.Closed || !ockham.QuestionReserved
             || !ockham.SecondFixedDeclined || state.OckhamInstanceId != ockham.InstanceId
@@ -166,11 +178,18 @@ internal static class BaconSampleLedgerFlow
         var action = state.PendingAction;
         bool adopts = action is BaconSampleLedgerAction.PublishLimited or BaconSampleLedgerAction.TakeControlSample;
         bool declines = action is BaconSampleLedgerAction.DeclineInvitation or BaconSampleLedgerAction.KeepPrediction;
+        if (state.ActIndex == 1)
+        {
+            if (declines && !graph.TryDecline(journey, "Fixed", 1)) return false;
+            Apply(state, action);
+            return IsRouteConsistent(state, journey, ockham, gorgias);
+        }
         if (state.ActIndex == 2)
         {
-            if (adopts && !graph.TryReserveFixed(journey, 2)
+            if (adopts && journey.LastFixedAct < 2 && !graph.TryReserveFixed(journey, 2)
                 || declines && !graph.TryDecline(journey, "Fixed", 2)) return false;
             Apply(state, action);
+            if (adopts) state.EdgeCommitted = true;
             return IsRouteConsistent(state, journey, ockham, gorgias);
         }
         if (adopts && !graph.TryApply(journey, BaconSampleLedgerState.CompletionEdgeId)

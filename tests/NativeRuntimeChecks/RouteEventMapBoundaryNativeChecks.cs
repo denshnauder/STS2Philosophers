@@ -55,7 +55,7 @@ internal static class RouteEventMapBoundaryNativeChecks
             typeof(ParmenidesInquiry), typeof(AnaximanderOriginInquiry),
             typeof(AnaximenesBreathInvitation), typeof(AristotleCivicInquiry), typeof(AugustinePromise),
             typeof(PlatoWholeArrangement), typeof(ProtagorasSharedDeliberation), typeof(EpicurusSharedMargin),
-            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(HobbesAuthorizedSovereignty), typeof(LockeCargoIdentity), typeof(HumeInduction), typeof(WollstonecraftAdmission), typeof(KantApperception), typeof(RousseauConsent), typeof(KantUniversalization), typeof(MillHarm), typeof(BeauvoirOther), typeof(LeibnizMonadComparison), typeof(HegelSubstanceSubject), typeof(FichteSelfPositing), typeof(LutherSignedCare), typeof(BaconSampleLedger), typeof(CopernicusShiftedCenter),
+            typeof(PlotinusCommonGround), typeof(AquinasBridgeNotice), typeof(OckhamNamesInquiry), typeof(MachiavelliFloodPreparation), typeof(HobbesAuthorizedSovereignty), typeof(LockeCargoIdentity), typeof(HumeInduction), typeof(WollstonecraftAdmission), typeof(KantApperception), typeof(RousseauConsent), typeof(KantUniversalization), typeof(MillHarm), typeof(BeauvoirOther), typeof(LeibnizMonadComparison), typeof(HegelSubstanceSubject), typeof(HegelRecognition), typeof(FichteSelfPositing), typeof(LutherSignedCare), typeof(BaconSampleLedger), typeof(CopernicusShiftedCenter),
             typeof(ZenoCivicChallenge),
             typeof(SextusOpposedAppearances), typeof(DescartesMethodicReconstruction), typeof(HanFeiPublicStandard)
         ];
@@ -169,7 +169,8 @@ internal static class RouteEventMapBoundaryNativeChecks
         Type flowType = ModType(eventType.Name + "Flow");
         MethodInfo? create = eventType == typeof(SenecaDailyReview) || eventType == typeof(EpictetusGuidePractice)
             || eventType == typeof(MarcusAureliusCampPractice) || eventType == typeof(PyrrhoReportedCrossing)
-            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) || eventType == typeof(BaconSampleLedger) || eventType == typeof(CopernicusShiftedCenter) ? null
+            || eventType == typeof(AnselmUnfinishedProof) || eventType == typeof(OckhamNamesInquiry) || eventType == typeof(LutherSignedCare) || eventType == typeof(BaconSampleLedger) || eventType == typeof(CopernicusShiftedCenter)
+            || eventType == typeof(HegelRecognition) ? null
             : RequiredMethod(stateType, "Create", [typeof(string)]);
         MethodInfo generate = RequiredMethod(eventType, "GenerateOptions", [stateType]);
         PropertyInfo instance = stateType.GetProperty("InstanceId")!;

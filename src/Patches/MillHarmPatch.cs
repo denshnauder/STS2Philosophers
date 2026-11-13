@@ -36,6 +36,11 @@ internal static class MillHarmPatch
             bool early = journey.RouteId == "CONSEQUENCE_AND_FREEDOM"
                 && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
                 && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_169");
+            // The sympathy line reaches Mill through Smith's 175; his third-act
+            // room is the real Mill scene that hands over to Arendt on 176.
+            early |= journey.RouteId == "SYMPATHY_AND_PUBLIC_ACTION"
+                && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
+                && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_175");
             bool source = journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
                 or MillHarmState.SmithSourceNodeId;
             if (!early && !source) return null;

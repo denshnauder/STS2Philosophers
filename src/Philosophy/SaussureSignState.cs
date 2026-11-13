@@ -32,6 +32,12 @@ internal sealed class SaussureSignState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
+    // The first-act direction can stand the figure on his or her own node
+    // before the second act. These two fields keep that turned handover
+    // explicit instead of pretending the default source is still current.
+    public string SourceNode { get; set; } = SaussureSignState.SourceNodeId;
+    public string TargetNode { get; set; } = SaussureSignState.AdoptedNodeId;
+
     public static SaussureSignState Create(string instanceId) => CreateAt(instanceId, 2, CompletionEdgeId);
 
     public static SaussureSignState CreateAt(string instanceId, int actIndex, string edgeId) =>
@@ -41,6 +47,8 @@ internal sealed class SaussureSignState : IJsonOnDeserialized
     {
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? SaussureSignState.SourceNodeId : SourceNode;
+        TargetNode = string.IsNullOrWhiteSpace(TargetNode) ? SaussureSignState.AdoptedNodeId : TargetNode;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
@@ -139,13 +147,13 @@ internal static class SaussureSignFlow
         bool adopted = journey.CompletedEdgeIds.Contains(state.EdgeId);
         if (!state.EdgeCommitted && !state.QuestionDeclined)
             return journey.LastFixedAct == act && !adopted && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
+                && journey.CurrentNodeId == state.SourceNode;
         if (state.EdgeCommitted)
             return !state.QuestionDeclined && adopted && journey.LastFixedAct == act + 1
-                && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId;
+                && journey.CurrentNodeId == state.TargetNode;
         return !adopted && journey.LastFixedAct == act
             && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == SaussureSignState.SourceNodeId;
+            && journey.CurrentNodeId == state.SourceNode;
     }
 
     public static string DescriptionKey(SaussureSignState state) => UpperSnake(state.Stage.ToString());

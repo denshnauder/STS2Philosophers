@@ -35,8 +35,18 @@ internal static class RawlsPositionPatch
         string? required = saved?.RequiredEdgeId
             ?? RequiredEdges.FirstOrDefault(edge => journey?.CompletedEdgeIds.Contains(edge) == true);
         if (required is null || journey is null) return null;
-        if (journey.CurrentNodeId != RawlsPositionFlow.SourceNodeIdOf(required)) return null;
         string completion = RawlsPositionFlow.CompletionEdgeIdOf(required);
+        bool arrived = journey.CurrentNodeId == RawlsPositionState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains(completion);
+        if (arrived)
+        {
+            var arrivedState = saved ?? RawlsPositionState.Create($"RAWLS_POSITION:{run.Rng.Seed}:3", required);
+            if (!RawlsPositionFlow.IsRouteConsistent(arrivedState, journey)) return null;
+            shared.RawlsPosition = arrivedState;
+            Log.Info("[STS2Philosophers] Presenting Rawls's original position after Mill's handover.");
+            return canonical;
+        }
+        if (journey.CurrentNodeId != RawlsPositionFlow.SourceNodeIdOf(required)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == completion);

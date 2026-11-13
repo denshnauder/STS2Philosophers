@@ -202,9 +202,15 @@ public sealed class BaconSampleLedger : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.BaconSampleLedger is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
-            && shared.OckhamNamesInquiry is { } ockham && shared.GorgiasSpeechInquiry is { } gorgias
-            && BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham, gorgias)) return state;
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2")
+            && (state.ActIndex == 2
+                || shared.OckhamNamesInquiry is { } && shared.GorgiasSpeechInquiry is { }))
+        {
+            OckhamNamesInquiryState? ockham = shared.OckhamNamesInquiry;
+            GorgiasSpeechInquiryState? gorgias = shared.GorgiasSpeechInquiry;
+            if (BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham!, gorgias!)) return state;
+        }
         return null;
     }
 

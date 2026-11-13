@@ -164,10 +164,12 @@ internal static class RawlsPositionFlow
         string completion = CompletionEdgeIdOf(state.RequiredEdgeId);
         bool adopts = action is RawlsPositionAction.Execute or RawlsPositionAction.AmendUniversally;
         bool declines = action == RawlsPositionAction.Withdraw;
+        bool arrived = journey.CurrentNodeId == RawlsPositionState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains(completion);
         if (adopts && !journey.CompletedEdgeIds.Contains(completion) && !graph.TryApply(journey, completion))
             return false;
-        if (declines && !journey.DeclinedFixedActs.Contains(3) && !graph.TryDecline(journey, "Fixed", 3))
-            return false;
+        if (declines && !arrived && !journey.DeclinedFixedActs.Contains(3)
+            && !graph.TryDecline(journey, "Fixed", 3)) return false;
         Apply(state, action);
         return IsRouteConsistent(state, journey);
     }
@@ -178,6 +180,9 @@ internal static class RawlsPositionFlow
             || !journey.CompletedEdgeIds.Contains(state.RequiredEdgeId)) return false;
         string completion = CompletionEdgeIdOf(state.RequiredEdgeId);
         string source = SourceNodeIdOf(state.RequiredEdgeId);
+        if (journey.CurrentNodeId == RawlsPositionState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains(completion))
+            return journey.LastFixedAct == 3;
         bool adopted = journey.CompletedEdgeIds.Contains(completion);
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct >= 2 && !adopted && !journey.DeclinedFixedActs.Contains(3)

@@ -155,6 +155,9 @@ internal static class ArendtBeginningFlow
             || !journey.CompletedEdgeIds.Contains(state.RequiredEdgeId)) return false;
         string completion = CompletionEdgeIdOf(state.RequiredEdgeId);
         string source = SourceNodeIdOf(state.RequiredEdgeId);
+        if (journey.CurrentNodeId == ArendtBeginningState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains(completion))
+            return journey.LastFixedAct == 3;
         bool adopted = journey.CompletedEdgeIds.Contains(completion);
         if (!state.EdgeCommitted)
             return journey.LastFixedAct >= 2 && !adopted

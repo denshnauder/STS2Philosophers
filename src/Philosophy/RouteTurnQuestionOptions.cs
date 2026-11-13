@@ -30,6 +30,7 @@ internal static class RouteTurnQuestionOptions
         ["ADAM_SMITH"] = "TO_SMITH",
         ["SOREN_KIERKEGAARD"] = "TO_KIERKEGAARD",
         ["JEREMY_BENTHAM"] = "TO_BENTHAM",
+        ["BARUCH_SPINOZA"] = "TO_SPINOZA",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -60,9 +61,6 @@ internal static class RouteTurnQuestionOptions
         if (journey.EntryNodeId == "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"
             && WesternRouteTable.Instance.Routes.Any(route => route.RouteId == "ORDINARY_SPEECH"))
             choices.Add(new Choice("TO_WITTGENSTEIN", null, "ORDINARY_SPEECH"));
-        if (journey.EntryNodeId == "HERACLITUS__BEING_AND_CHANGE__CORE"
-            && WesternRouteTable.Instance.Routes.Any(route => route.RouteId == "NATURE_AND_BECOMING"))
-            choices.Add(new Choice("TO_SPINOZA", null, "NATURE_AND_BECOMING"));
         // Social critique also has a real fixed first-act branch (083). Offering
         // it here is what lets the player choose Adorno's handover instead of
         // only inheriting it from an old save.
