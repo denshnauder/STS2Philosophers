@@ -32,6 +32,7 @@ internal static class WesternPracticeStateCodec
         {
             WesternPracticeState? state = JsonSerializer.Deserialize<WesternPracticeState>(payload);
             if (state is null || state.ProblemId != problemId || state.NodeId != nodeId || state.Plays is null || state.PreviousKinds is null
+                || state.CombatId is null
                 || state.Turn < 0 || state.PreviousCards < 0 || state.PendingTurn < 0
                 || state.LastClaimedTurn < 0 || state.LastClaimedTurn > state.Turn
                 || state.SuccessfulTurns < 0 || state.BrokenTurns < 0

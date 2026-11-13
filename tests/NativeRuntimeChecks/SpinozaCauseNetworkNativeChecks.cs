@@ -60,10 +60,51 @@ internal static class SpinozaCauseNetworkNativeChecks
         return Reload(shared);
     }
 
-    private static (NativeRuntimeFixture F, RunState Run) Fixture(object shared)
+    private static object NaturalShared()
+    {
+        object graph = Call("WesternRouteGraph", "LoadEmbedded");
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["HERACLITUS__BEING_AND_CHANGE__CORE"])!;
+        Put(journey, "RouteRules", true);
+        Check((bool)graph.GetType().GetMethod("TryNameRoute")!.Invoke(graph, [journey, "NATURE_AND_BECOMING"])!,
+            "The natural Spinoza line names nature.");
+        object state = Call("SpinozaCauseNetworkState", "Create",
+            $"SPINOZA_CAUSE_NETWORK:{new RunRngSet("123456789").Seed}:2");
+        Put(state, "SourceNode", "HERACLITUS__BEING_AND_CHANGE__CORE");
+        Put(state, "SourceThinker", "HERACLITUS");
+        Put(state, "AdoptEdge", "WESTERN_EDGE_110");
+        foreach (string action in new[] { "Accept", "TraceChains", "Continue", "Intervene", "Leave" })
+            Commit("SpinozaCauseNetworkFlow", "SpinozaCauseNetworkAction", state, action, journey, graph);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        object doctrine = Activator.CreateInstance(T("CurrentDoctrine"), nonPublic: true)!;
+        Put(doctrine, "ThinkerId", "HERACLITUS");
+        Put(doctrine, "DoctrineId", "HERACLITUS_LYRE");
+        Put(shared, "CurrentDoctrine", doctrine);
+        Put(shared, "WesternJourney", journey);
+        Put(shared, "SpinozaCauseNetwork", state);
+        return Reload(shared);
+    }
+
+    private static async Task NaturalPositive()
+    {
+        object shared = NaturalShared();
+        object journey = Get(shared, "WesternJourney");
+        Check(((IEnumerable<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_110")
+            && !((IEnumerable<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_023"),
+            "The natural path settles through 110, not the old Descartes 023.");
+        var (f, _) = Fixture(shared, typeof(HeraclitusLyre));
+        await Begin(f);
+        CardPlay attack = await Manual(f, true);
+        await f.Relic.AfterCardPlayed(new ThrowingPlayerChoiceContext(), attack);
+        Check(Weak(f) == 1m,
+            "Heraclitus' natural Spinoza disposition must pay its native Weak without 023.");
+    }
+
+    private static (NativeRuntimeFixture F, RunState Run) Fixture(object shared,
+        Type? relic = null)
     {
         Set(RunManager.Instance, "State", null);
-        var f = new NativeRuntimeFixture(typeof(DescartesThinkingLens));
+        var f = new NativeRuntimeFixture(relic ?? typeof(DescartesThinkingLens));
         f.AddEnemy(8);
         var run = (RunState)RuntimeHelpers.GetUninitializedObject(typeof(RunState));
         Set(run, "_players", new List<Player> { f.Player }); Set(run, "_currentActIndex", 1);
@@ -407,13 +448,14 @@ internal static class SpinozaCauseNetworkNativeChecks
         try
         {
             TestMode.IsOn = true;
-            foreach (Type type in new[] { typeof(DescartesThinkingLens), typeof(SpinozaCauseNetwork), typeof(StrikeSilent), typeof(DefendSilent), typeof(WeakPower) }) ModelDb.Inject(type);
+            foreach (Type type in new[] { typeof(DescartesThinkingLens), typeof(HeraclitusLyre), typeof(SpinozaCauseNetwork), typeof(StrikeSilent), typeof(DefendSilent), typeof(WeakPower) }) ModelDb.Inject(type);
             AssemblyInfo.Init();
             AssemblyInfo.ModMap![Mod] = new Mod { path = "isolated_test_fixture",
                 manifest = new ModManifest { id = "STS2Philosophers", affectsGameplay = true }, assemblies = [Mod] };
             ModelIdSerializationCache.ResetForTest(); ModelIdSerializationCache.Init(); InstallLoc();
             await CheckModelAndCallbacks();
             CheckFreshNativeSelection();
+            await NaturalPositive();
             foreach (string first in new[] { "BlameEnemy", "TraceChains" })
                 foreach (string outcome in new[] { "Intervene", "Reorder" }) await Positive(first, outcome);
             foreach (string failure in new[] { "priorAttack", "automatic", "dead", "open", "corrected", "declined", "malformed" }) await Negative(failure);

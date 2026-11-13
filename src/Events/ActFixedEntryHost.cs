@@ -90,11 +90,14 @@ internal static class ActFixedEntryHost
         { route = "FORMAL_LANGUAGE"; entry = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"; }
         else if (player.Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion))
         { route = "EDUCATION_AND_SITUATION"; entry = "ROUSSEAU__HISTORY_AND_POWER__CORE"; }
+        else if (player.Relics.OfType<PlatoCivicSeal>().Any(relic => relic.CanOfferNativeQuestion))
+        { route = "CHECKS_AND_JUSTICE"; entry = "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"; }
         else return null;
         string parent = route switch
         {
             "NATURE_AND_BECOMING" => SpinozaCauseNetworkState.AdoptedNodeId,
             "FORMAL_LANGUAGE" => FregeSenseState.AdoptedNodeId,
+            "CHECKS_AND_JUSTICE" => MontesquieuBalanceState.AdoptedNodeId,
             _ => WollstonecraftAdmissionState.AdoptedNodeId,
         };
         int act = run.CurrentActIndex + 1;
@@ -113,6 +116,8 @@ internal static class ActFixedEntryHost
         {
             selected = (route, act) switch
         {
+            ("CHECKS_AND_JUSTICE", 2) => MontesquieuBalancePatch.TrySelectNative(run),
+            ("CHECKS_AND_JUSTICE", 3) => KantUniversalizationPatch.TrySelectNative(run),
             ("NATURE_AND_BECOMING", 2) => SpinozaCauseNetworkPatch.TrySelectNative(run),
             ("NATURE_AND_BECOMING", 3) => SchellingNaturePatch.TrySelectNative(run),
             ("FORMAL_LANGUAGE", 2) => FregeSensePatch.TrySelectNative(run),

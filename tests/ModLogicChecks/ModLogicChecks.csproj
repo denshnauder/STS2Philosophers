@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/MontesquieuBalanceState.cs" Link="MontesquieuBalanceState.cs" />
+    <Compile Include="../../src/Philosophy/MontesquieuBalanceTriggerPolicy.cs" Link="MontesquieuBalanceTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/KantUniversalizationState.cs" Link="KantUniversalizationState.cs" />
+    <Compile Include="../../src/Philosophy/KantUniversalizationTriggerPolicy.cs" Link="KantUniversalizationTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/VoltaireToleranceState.cs" Link="VoltaireToleranceState.cs" />
+    <Compile Include="../../src/Philosophy/VoltairePublicCritiquePolicy.cs" Link="VoltairePublicCritiquePolicy.cs" />
+
     <Compile Include="..\..\src\Philosophy\BerkeleyPerceivedMarkState.cs" Link="BerkeleyPerceivedMarkState.cs" />
     <Compile Include="..\..\src\Philosophy\SchopenhauerWillDenialState.cs" Link="SchopenhauerWillDenialState.cs" />
     <Compile Include="..\..\src\Philosophy\NietzscheRevaluationState.cs" Link="NietzscheRevaluationState.cs" />

@@ -593,6 +593,14 @@
       "stage_id": "CORE",
       "display_name": "阿伦特",
       "terminal": false
+    },
+    {
+      "node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "thinker_id": "MONTESQUIEU",
+      "problem_id": "FREEDOM_AND_INSTITUTIONS",
+      "stage_id": "CORE",
+      "display_name": "孟德斯鸠",
+      "terminal": false
     }
   ],
   "edges": [
@@ -3141,6 +3149,68 @@
           "00西哲当前路线.md:38"
         ]
       }
+    },
+    {
+      "edge_id": "WESTERN_EDGE_114",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "CHECKS_AND_JUSTICE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_115",
+      "from_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "CHECKS_AND_JUSTICE"
+      ]
     }
   ],
   "samples": [

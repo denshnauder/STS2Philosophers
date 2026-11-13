@@ -7,6 +7,13 @@ internal static class WesternNodePracticePolicy
 
     public static string ProblemFor(string nodeId) => Nodes.TryGetValue(nodeId, out var node) ? node.ProblemId : string.Empty;
 
+    // Entry exercises are already owned by WesternEntryPracticeState. New carrier
+    // nodes bind their own practice at combat start; Harmony is a fixed ending.
+    public static bool ShouldBindNode(string nodeId) =>
+        Nodes.TryGetValue(nodeId, out WesternGraphNode? node)
+        && node.StageId != "HARMONY"
+        && !WesternRouteCatalog.IsEntryProblem(node.ThinkerId, node.ProblemId);
+
     public static WesternPracticeReward Evaluate(string nodeId, IReadOnlyList<WesternPracticePlay> plays,
         IReadOnlyList<WesternPracticeCardKind> previousKinds, int previousCards)
     {

@@ -10,6 +10,9 @@ internal sealed class WesternPracticeState
 {
     public string ProblemId { get; set; } = string.Empty;
     public string NodeId { get; set; } = string.Empty;
+    // Stable per-combat identity so a new combat resets turn/dedup state while a
+    // same-combat restore keeps saved progress. Empty on legacy saves.
+    public string CombatId { get; set; } = string.Empty;
     public int Turn { get; set; }
     public bool Closed { get; set; }
     public int PreviousCards { get; set; }
@@ -31,6 +34,24 @@ internal sealed class WesternPracticeState
         ProblemId = problemId;
         SuccessfulTurns = 0;
         BrokenTurns = 0;
+        return true;
+    }
+
+    // Called at combat start. A different combat identity starts fresh; the same
+    // identity keeps saved progress and pending reward. A legacy save with no
+    // identity keeps its saved progress until a new combat is positively proven.
+    public bool BeginCombat(string combatId)
+    {
+        if (string.IsNullOrEmpty(combatId)) return false;
+        if (CombatId == combatId) return false;
+        if (CombatId.Length == 0)
+        {
+            // Legacy payload: adopt the identity without discarding saved progress.
+            CombatId = combatId;
+            return false;
+        }
+        EndCombat();
+        CombatId = combatId;
         return true;
     }
 
@@ -76,6 +97,17 @@ internal sealed class WesternPracticeState
         return true;
     }
 
+    // A closed turn's reward is paid immediately by the carrier; the older
+    // TakeReward path waits for the next BeginTurn and is kept for old callers.
+    public WesternPracticeReward ClaimReward()
+    {
+        if (Turn <= 0 || PendingTurn != Turn + 1 || Turn <= LastClaimedTurn) return default;
+        WesternPracticeReward result = PendingReward;
+        LastClaimedTurn = Turn;
+        ClearPending();
+        return result;
+    }
+
     public WesternPracticeReward TakeReward(int turn)
     {
         if (turn != Turn || Closed || PendingTurn != turn || turn <= LastClaimedTurn) return default;
@@ -95,6 +127,13 @@ internal sealed class WesternPracticeState
         LastClaimedTurn = 0;
         ClearPending();
         // Aggregate practice history can inform later candidates; it is not a buff.
+    }
+
+    // Clears per-combat state at combat end while keeping the bound node identity.
+    public void EndCombatRun()
+    {
+        EndCombat();
+        CombatId = string.Empty;
     }
 
     internal WesternPracticeReward Evaluate()

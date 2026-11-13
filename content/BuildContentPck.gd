@@ -226,7 +226,7 @@ func _initialize() -> void:
 		"schelling_nature", "frege_sense", "russell_analysis", "wollstonecraft_admission", "beauvoir_other",
 		"levi_strauss_myth", "derrida_deconstruction", "heidegger_dasein", "gadamer_fusion", "lacan_signifier", "butler_address", "route_turn_question",
 		"horkheimer_reason", "habermas_communication", "comte_positivism", "kuhn_paradigm", "merleau_ponty_body",
-		"peirce_inquiry", "james_pragmatism", "dewey_public_experiment", "foucault_power", "benjamin_history", "arendt_beginning",
+		"montesquieu_balance", "kant_universalization", "voltaire_public_critique", "peirce_inquiry", "james_pragmatism", "dewey_public_experiment", "foucault_power", "benjamin_history", "arendt_beginning",
 		"berkeley_perceived_mark", "schopenhauer_will_denial", "nietzsche_revaluation", "camus_revolt_limit",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",

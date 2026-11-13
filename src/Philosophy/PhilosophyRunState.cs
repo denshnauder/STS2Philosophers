@@ -76,6 +76,9 @@ internal sealed class PhilosophyRunState
     public NietzscheRevaluationState? NietzscheRevaluation { get; set; }
     public CamusRevoltLimitState? CamusRevoltLimit { get; set; }
     public KantApperceptionState? KantApperception { get; set; }
+    public MontesquieuBalanceState? MontesquieuBalance { get; set; }
+    public KantUniversalizationState? KantUniversalization { get; set; }
+    public VoltaireToleranceState? VoltairePublicCritique { get; set; }
 
     [JsonIgnore]
     public ZenoRouteDecodeResult ZenoRoutePayload { get; private set; } = new(
@@ -164,6 +167,9 @@ internal sealed class PhilosophyRunState
         || SchopenhauerWillDenial is not null
         || NietzscheRevaluation is not null
         || CamusRevoltLimit is not null
+        || MontesquieuBalance is not null
+        || KantUniversalization is not null
+        || VoltairePublicCritique is not null
         || KantApperception is not null
         || ZenoRoutePayload.Classification != ZenoRoutePayloadClassification.PreFeatureLegacy
         || PreservedSaveMarkerEntries.Count > 0;
@@ -384,6 +390,9 @@ internal sealed class PhilosophyRunState
         SchopenhauerWillDenial?.NormalizeAfterLoad();
         NietzscheRevaluation?.NormalizeAfterLoad();
         CamusRevoltLimit?.NormalizeAfterLoad();
+        MontesquieuBalance?.NormalizeAfterLoad();
+        KantUniversalization?.NormalizeAfterLoad();
+        VoltairePublicCritique?.NormalizeAfterLoad();
         KantApperception?.NormalizeAfterLoad();
         foreach (ActBehaviorState behaviorState in ActBehaviorStates.Values)
         {

@@ -155,7 +155,10 @@ internal static class WesternQuestionNodePolicy
         && descartes.IsUsable();
 
     internal static bool HasOpenQuestion(PhilosophyRunState shared) =>
-        shared.ProtagorasSharedDeliberation is { Closed: false } || shared.ParmenidesInquiry is { Closed: false }
+        shared.MontesquieuBalance is { Closed: false }
+        || shared.KantUniversalization is { Closed: false }
+        || shared.VoltairePublicCritique is { Closed: false }
+        || shared.ProtagorasSharedDeliberation is { Closed: false } || shared.ParmenidesInquiry is { Closed: false }
         || shared.SextusOpposedAppearances is { Closed: false } || shared.GorgiasSpeechInquiry is { Closed: false }
         || shared.ZenoCivicChallenge is { Closed: false } || shared.AnaximanderOriginInquiry is { Closed: false }
         || shared.EmpedoclesRootsInquiry is { Closed: false } || shared.AnaxagorasMixtureInquiry is { Closed: false }
