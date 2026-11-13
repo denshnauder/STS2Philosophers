@@ -66,6 +66,7 @@ internal sealed class PhilosophyRunState
     public GadamerFusionState? GadamerFusion { get; set; }
     public LacanSignifierState? LacanSignifier { get; set; }
     public ButlerAddressState? ButlerAddress { get; set; }
+    public RousseauConsentState? RousseauConsent { get; set; }
     public RouteTurnQuestionState? RouteTurnQuestion { get; set; }
     public LeibnizHarmonyState? LeibnizHarmony { get; set; }
     public HobbesAuthorizedSovereigntyState? HobbesAuthorizedSovereignty { get; set; }
@@ -165,6 +166,7 @@ internal sealed class PhilosophyRunState
         || GadamerFusion is not null
         || LacanSignifier is not null
         || ButlerAddress is not null
+        || RousseauConsent is not null
         || RouteTurnQuestion is not null
         || LeibnizHarmony is not null
         || HobbesAuthorizedSovereignty is not null
@@ -394,6 +396,7 @@ internal sealed class PhilosophyRunState
         GadamerFusion?.NormalizeAfterLoad();
         LacanSignifier?.NormalizeAfterLoad();
         ButlerAddress?.NormalizeAfterLoad();
+        RousseauConsent?.NormalizeAfterLoad();
         RouteTurnQuestion?.NormalizeAfterLoad();
         LeibnizHarmony?.NormalizeAfterLoad();
         HobbesAuthorizedSovereignty?.NormalizeAfterLoad();

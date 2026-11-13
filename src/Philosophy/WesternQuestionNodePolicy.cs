@@ -155,6 +155,7 @@ internal static class WesternQuestionNodePolicy
         && descartes.IsUsable();
 
     internal static bool HasOpenQuestion(PhilosophyRunState shared) =>
+        shared.RousseauConsent is { Closed: false } ||
         shared.WittgensteinGame is { Closed: false }
         || shared.CarnapFrameworkChoice is { Closed: false }
         || shared.AustinSpeechAct is { Closed: false }

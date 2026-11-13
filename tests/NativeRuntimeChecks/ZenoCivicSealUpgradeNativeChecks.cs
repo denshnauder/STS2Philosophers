@@ -58,7 +58,7 @@ internal static class ZenoCivicSealUpgradeNativeChecks
         NativeRuntimeFixture fixture = new(typeof(PlatoCivicSeal));
         RunState run = (RunState)RuntimeHelpers.GetUninitializedObject(typeof(RunState));
         Set(run, "_players", new List<Player> { fixture.Player }); Set(run, "_currentActIndex", 0);
-        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
         Set(fixture.Player, "_runState", run); Set(fixture.Combat, "RunState", run);
         Set(fixture.Player, "Deck", new CardPile(PileType.Deck));
         CombatRoom room = (CombatRoom)RuntimeHelpers.GetUninitializedObject(typeof(CombatRoom));

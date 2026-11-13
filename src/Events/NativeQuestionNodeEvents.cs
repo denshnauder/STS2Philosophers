@@ -118,7 +118,8 @@ internal static class NativeQuestionNodeEvents
 
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
-        EventModel? existing = WittgensteinGamePatch.TrySelectExistingNative(run)
+        EventModel? existing = RousseauConsentPatch.TrySelectExistingNative(run)
+            ?? WittgensteinGamePatch.TrySelectExistingNative(run)
             ?? CarnapFrameworkChoicePatch.TrySelectExistingNative(run)
             ?? AustinSpeechActPatch.TrySelectExistingNative(run)
             ?? AdornoNegativePatch.TrySelectExistingNative(run)
@@ -172,7 +173,7 @@ internal static class NativeQuestionNodeEvents
         EventModel? reviewedTurn = RouteTurnQuestionPatch.TrySelectNative(run);
         if (reviewedTurn is not null) return reviewedTurn;
 
-        EventModel? reviewedExtra = CarnapFrameworkChoicePatch.TrySelectNative(run) ?? AustinSpeechActPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run) ?? VoltairePublicCritiquePatch.TrySelectNative(run) ?? JamesPragmatismPatch.TrySelectNative(run) ?? BenjaminHistoryPatch.TrySelectNative(run);
+        EventModel? reviewedExtra = RousseauConsentPatch.TrySelectNative(run) ?? CarnapFrameworkChoicePatch.TrySelectNative(run) ?? AustinSpeechActPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run) ?? VoltairePublicCritiquePatch.TrySelectNative(run) ?? JamesPragmatismPatch.TrySelectNative(run) ?? BenjaminHistoryPatch.TrySelectNative(run);
         if (reviewedExtra is not null) return reviewedExtra;
 
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;

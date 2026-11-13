@@ -14,7 +14,8 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         using (FixedEntryScope.Begin())
         {
-            EventModel? model = TrySelectReviewedTurns(run) ?? TrySelectReviewedDefaults(run);
+            EventModel? model = AugustinePromisePatch.TrySelectNative(run)
+                ?? TrySelectReviewedTurns(run) ?? TrySelectReviewedDefaults(run);
             model ??= run.CurrentActIndex == 1
                 ? LockeCargoIdentityPatch.TrySelectNative(run)
                 : HumeInductionPatch.TrySelectNative(run);

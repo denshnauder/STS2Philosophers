@@ -8,7 +8,6 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
-using MegaCrit.Sts2.Core.Models.Singleton;
 using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Rooms;
@@ -224,8 +223,9 @@ internal static class NativeQuestionNodeChecks
         Set(run, "_players", new List<Player> { fixture.Player }); Set(run, "_currentActIndex", actIndex);
         Set(run, "Rng", new RunRngSet("123456789")); Set(run, "ActFloor", 1);
         Set(run, "_currentRooms", new List<AbstractRoom>()); Set(run, "_allCards", new List<CardModel>());
-        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
-        ModelDb.Inject(typeof(MultiplayerScalingModel)); Set(run, "MultiplayerScalingModel", ModelDb.Singleton<MultiplayerScalingModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
+        // Current native RunState no longer stores a separate scaling model.
+        ModelDb.Inject(typeof(MultiplayerScalingModel));
         Set(fixture.Player, "Deck", new CardPile(PileType.Deck)); Set(fixture.Player, "_runState", run);
         Set(fixture.Combat, "RunState", run);
         QuestionMap map = new(); Set(run, "Map", map); Set(run, "_visitedMapCoords", new List<MapCoord> { map.Point.coord });

@@ -25,7 +25,7 @@ internal static class RouteEventMapBoundary
     private static readonly ConditionalWeakTable<RunState, BoundaryRuntime> Runtimes = new();
 
     internal static bool IsRegisteredEvent(EventModel? model) => model is
-        WittgensteinGame or CarnapFrameworkChoice or AustinSpeechAct or AdornoNegative or SartreExistence or FichteSelfPositing or MontesquieuBalance or KantUniversalization or VoltairePublicCritique or PhilosophersGaze or ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
+        WittgensteinGame or CarnapFrameworkChoice or AustinSpeechAct or AdornoNegative or SartreExistence or FichteSelfPositing or MontesquieuBalance or KantUniversalization or VoltairePublicCritique or RousseauConsent or PhilosophersGaze or ProtagorasSharedDeliberation or PlatoWholeArrangement or EpicurusSharedMargin or PlotinusCommonGround
         or ZenoCivicChallenge or AugustinePromise or AnselmUnfinishedProof or NewtonTwoSites or SpinozaCauseNetwork
         or SextusOpposedAppearances or DescartesMethodicReconstruction or HanFeiPublicStandard
         or ParmenidesInquiry or AnaximanderOriginInquiry or AnaximenesBreathInvitation

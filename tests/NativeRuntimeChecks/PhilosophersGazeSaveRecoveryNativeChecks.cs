@@ -56,7 +56,7 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
         Set(run, "_visitedMapCoords", new List<MapCoord> { new(0, 0) });
         Set(run, "_visitedEventIds", new HashSet<ModelId>());
         Set(run, "_currentRooms", new List<AbstractRoom>());
-        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
         Set(native.Player, "_runState", run); Set(native.Combat, "RunState", run);
         MapPointHistoryEntry history = new()
         {
@@ -429,8 +429,12 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
         // EventOption eagerly formats native character details. Only fixture labels
         // are needed; do not initialize the game asset/settings localization loader.
         ModelDb.Inject(typeof(Ironclad)); CharacterModel character = ModelDb.Character<Ironclad>();
-        var strings = new[] { "Title", "TitleObject", "PossessiveAdjective", "PronounObject", "PronounPossessive", "PronounSubject" }
-            .Select(name => (LocString)typeof(CharacterModel).GetProperty(name, Methods)!.GetValue(character)!).ToArray();
+        var strings = new[] { "ShortTitle", "Title", "TitleObject" }
+            .Select(name => (LocString)typeof(CharacterModel).GetProperty(name, Methods)!.GetValue(character)!).ToList();
+        MethodInfo pronoun = typeof(CharacterModel).GetMethod("GetPronoun", Methods)!;
+        object guess = Activator.CreateInstance(pronoun.GetParameters()[1].ParameterType)!;
+        foreach (string name in new[] { "possessiveAdjective", "pronounObject", "pronounPossessive", "pronounSubject" })
+            strings.Add((LocString)pronoun.Invoke(character, [name, guess])!);
         var tables = (Dictionary<string, LocTable>)typeof(LocManager).GetField("_tables", Methods)!.GetValue(LocManager.Instance)!;
         foreach (var group in strings.GroupBy(loc => loc.LocTable))
         {

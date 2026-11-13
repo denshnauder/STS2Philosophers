@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Models.Relics;
-using MegaCrit.Sts2.Core.Models.Singleton;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Rooms;
@@ -68,9 +67,9 @@ internal static class CopernicusShiftedCenterNativeChecks
             RunState run = (RunState)RuntimeHelpers.GetUninitializedObject(typeof(RunState));
             Set(run, "_players", new List<Player> { fixture.Player }); Set(run, "_currentActIndex", 1);
             Set(run, "Rng", new RunRngSet("123456789")); Set(run, "ActFloor", 1);
-            Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
+            Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>()); Set(run, "BadgeModels", Array.Empty<BadgeModel>());
             ModelDb.Inject(typeof(MultiplayerScalingModel));
-            Set(run, "MultiplayerScalingModel", ModelDb.Singleton<MultiplayerScalingModel>());
+            // Current native RunState no longer stores a separate scaling model.
             Set(fixture.Player, "Deck", new CardPile(PileType.Deck)); Set(fixture.Player, "_runState", run);
             Set(fixture.Combat, "RunState", run);
             ModelDb.Inject(typeof(AxebotsNormal)); Set(fixture.Combat, "_encounter", ModelDb.Encounter<AxebotsNormal>().ToMutable());

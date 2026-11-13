@@ -90,7 +90,7 @@ internal static class RouteEventMapBoundaryNativeChecks
         CheckNativeOverlayCleanup();
         CheckPatchTarget("RouteEventMapBoundaryPatch", typeof(NMapScreen), nameof(NMapScreen.Open), [typeof(bool)]);
         CheckPatchTarget("RouteEventMapBoundaryRewardsProceedPatch", typeof(RunManager),
-            nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes);
+            NativeRewardsProceedName(), Type.EmptyTypes);
         Console.WriteLine($"Native map boundary checks passed: {eventTypes.Length} registered events, locked initial choices, stale callbacks and blocked pending recovery, native awaited start hook, exact native room round-trips and checkpoint rejection, explicit/no-run save prefix boundaries, rewards mounting/skip gates, current DLL rewards-to-map calls, and both shared patch targets; no rendered UI or actual run save.");
     }
 
@@ -341,11 +341,22 @@ internal static class RouteEventMapBoundaryNativeChecks
         }
     }
 
+    private static string NativeRewardsProceedName() =>
+        typeof(RunManager).GetMethod("ProceedFromTerminalRewardsScreenAsync",
+            StaticMethods | BindingFlags.Instance, null, Type.EmptyTypes, null) is not null
+            ? "ProceedFromTerminalRewardsScreenAsync" : nameof(RunManager.ProceedFromTerminalRewardsScreen);
+
     private static void CheckNativeReturnChain()
     {
-        MethodInfo proceed = RequiredMethod(typeof(RunManager), nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes);
+        MethodInfo proceed = RequiredMethod(typeof(RunManager), NativeRewardsProceedName(), Type.EmptyTypes);
         MethodInfo open = RequiredMethod(typeof(NMapScreen), nameof(NMapScreen.Open), [typeof(bool)]);
-        var proceedReferences = ReferencesIncludingAsyncBody(proceed).ToArray();
+        Check(typeof(Task).IsAssignableFrom(proceed.ReturnType),
+            "The rewards observer must await the native completion, not wrap a void UI entry.");
+        var directReferences = ReferencesIncludingAsyncBody(proceed).ToArray();
+        var proceedReferences = directReferences.Concat(directReferences
+            .Where(reference => reference.Target.DeclaringType == typeof(RunManager)
+                && reference.Target.Name == "Proceed" && reference.Target is MethodInfo)
+            .SelectMany(reference => ReferencesIncludingAsyncBody((MethodInfo)reference.Target))).ToArray();
         Check(proceedReferences.Any(reference => reference.Target.DeclaringType == typeof(NMapScreen)
                 && reference.Target.Name == nameof(NMapScreen.Open)),
             "ENC123: the current native terminal rewards continuation opens the map screen.");

@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/RousseauConsentState.cs" Link="RousseauConsentState.cs" />
+    <Compile Include="../../src/Philosophy/RousseauConsentTriggerPolicy.cs" Link="RousseauConsentTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/WittgensteinGameState.cs" Link="WittgensteinGameState.cs" />
     <Compile Include="../../src/Philosophy/WittgensteinGameTriggerPolicy.cs" Link="WittgensteinGameTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/CarnapFrameworkChoiceState.cs" Link="CarnapFrameworkChoiceState.cs" />
