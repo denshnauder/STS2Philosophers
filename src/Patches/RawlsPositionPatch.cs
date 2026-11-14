@@ -10,7 +10,8 @@ internal static class RawlsPositionPatch
     // institutions (172 -> 173) and after Mill's freedom (169 -> 170). The line
     // the run already walked names the edge, so the room never guesses.
     private static readonly string[] RequiredEdges =
-        [RawlsPositionState.KantRequiredEdgeId, RawlsPositionState.MillRequiredEdgeId];
+        [RawlsPositionState.KantRequiredEdgeId, RawlsPositionState.MillRequiredEdgeId,
+            RawlsPositionState.EarlyMillRequiredEdgeId];
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
@@ -50,9 +51,11 @@ internal static class RawlsPositionPatch
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == completion);
-        ModelId predecessor = required == RawlsPositionState.MillRequiredEdgeId
+        bool afterMill = required is RawlsPositionState.MillRequiredEdgeId
+            or RawlsPositionState.EarlyMillRequiredEdgeId;
+        ModelId predecessor = afterMill
             ? ModelDb.GetId<MillHarm>() : ModelDb.GetId<KantUniversalization>();
-        string predecessorRoot = required == RawlsPositionState.MillRequiredEdgeId ? "MILL_HARM" : "KANT_UNIVERSALIZATION";
+        string predecessorRoot = afterMill ? "MILL_HARM" : "KANT_UNIVERSALIZATION";
         RawlsPositionTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombatAfter(run, predecessor, predecessorRoot),

@@ -32,7 +32,38 @@ internal static class MillHarmPatch
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         if (fixedEntry)
         {
-            if (journey is null || run.CurrentActIndex != 2 || journey.LastFixedAct != 3) return null;
+            if (journey is null) return null;
+            // The early first-act turn already stands on Smith or Bentham. It
+            // reaches Mill in act two on 055/066, not through a second Smith or
+            // Bentham room; Mill then hands to Rawls/Arendt in act three.
+            bool earlyTurn = run.CurrentActIndex == 1 && journey.TurnedAct == 1
+                && journey.LastFixedAct == 2
+                && journey.CurrentNodeId is MillHarmState.SmithSourceNodeId or MillHarmState.BenthamSourceNodeId
+                && ((journey.RouteId == "SYMPATHY_AND_PUBLIC_ACTION"
+                        && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_174"))
+                    || (journey.RouteId == "CONSEQUENCE_AND_FREEDOM"
+                        && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_168")));
+            if (earlyTurn)
+            {
+                string earlyEdge = journey.RouteId == "SYMPATHY_AND_PUBLIC_ACTION"
+                    ? MillHarmState.EarlySmithSourceEdgeId : MillHarmState.EarlyBenthamSourceEdgeId;
+                var earlyCandidate = saved is { FixedMode: true, ActIndex: 2 } ? saved : MillHarmState.CreateAt(
+                    $"MILL_HARM:{run.Rng.Seed}:2", 2, earlyEdge, fixedMode: true,
+                    "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE", journey.CurrentNodeId);
+                if (!earlyCandidate.EdgeCommitted && !earlyCandidate.FixedDeclined && !earlyCandidate.Closed)
+                {
+                    earlyCandidate.ActIndex = 2;
+                    earlyCandidate.EdgeId = earlyEdge;
+                    earlyCandidate.TargetNodeId = "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
+                    earlyCandidate.RoomSourceNodeId = journey.CurrentNodeId;
+                    earlyCandidate.FixedMode = true;
+                }
+                if (!MillHarmFlow.IsRouteConsistent(earlyCandidate, journey)) return null;
+                shared.MillHarm = earlyCandidate;
+                Log.Info("[STS2Philosophers] Presenting Mill's harm room on the early fixed line.");
+                return canonical;
+            }
+            if (run.CurrentActIndex != 2 || journey.LastFixedAct != 3) return null;
             bool early = journey.RouteId == "CONSEQUENCE_AND_FREEDOM"
                 && journey.CurrentNodeId == "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
                 && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_169");

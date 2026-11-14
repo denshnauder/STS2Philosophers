@@ -36,6 +36,8 @@ internal sealed class NativeRuntimeFixture
         ModelDb.Inject(relicType);
         ModelDb.Inject(typeof(DampCultist));
         Player = (Player)RuntimeHelpers.GetUninitializedObject(typeof(Player));
+        ModelDb.Inject(typeof(MegaCrit.Sts2.Core.Models.Characters.Ironclad));
+        Set(Player, "Character", ModelDb.Character<MegaCrit.Sts2.Core.Models.Characters.Ironclad>());
         Set(Player, "_relics", new List<RelicModel>());
         Set(Player, "_potionSlots", new List<PotionModel>());
         Set(Player, "_runPiles", Array.Empty<CardPile>());

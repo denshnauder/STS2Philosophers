@@ -14,6 +14,8 @@ internal sealed class MillHarmState : IJsonOnDeserialized
     public const string SmithSourceNodeId = "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE";
     public const string RequiredEdgeId = "WESTERN_EDGE_040";
     public const string CompletionEdgeId = "WESTERN_EDGE_041";
+    public const string EarlySmithSourceEdgeId = "WESTERN_EDGE_055";
+    public const string EarlyBenthamSourceEdgeId = "WESTERN_EDGE_066";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -144,12 +146,15 @@ internal static class MillHarmFlow
                 : journey.CurrentNodeId is MillHarmState.BenthamSourceNodeId
                     or MillHarmState.SmithSourceNodeId;
             bool declined = journey.DeclinedFixedActs.Contains(state.ActIndex);
+            // The act-two early room is a real fixed edge: applying it moves the
+            // slot to act three even though the room records act two.
+            int advanced = Math.Min(3, state.ActIndex + 1);
             if (!state.EdgeCommitted && !declined)
                 return journey.LastFixedAct == state.ActIndex && !adopted && source;
             if (state.EdgeCommitted)
-                return adopted && journey.LastFixedAct == state.ActIndex
+                return adopted && journey.LastFixedAct == advanced
                     && journey.CurrentNodeId == state.TargetNodeId;
-            return !adopted && declined && journey.LastFixedAct == state.ActIndex && source;
+            return !adopted && declined && journey.LastFixedAct == advanced && source;
         }
         if (!journey.CompletedEdgeIds.Contains(MillHarmState.RequiredEdgeId)) return false;
         if (!state.EdgeCommitted && !state.QuestionDeclined)

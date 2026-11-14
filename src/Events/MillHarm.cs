@@ -20,7 +20,7 @@ public sealed class MillHarm : EventModel
         new[]
         {
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.APPLY_HARM_TEST"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_WOLLSTONECRAFT"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{KeepKey(TryRestoreState())}"),
         };
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
@@ -134,7 +134,7 @@ public sealed class MillHarm : EventModel
         return MillHarmFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{MillHarmFlow.StageKey(stage)}.options.{MillHarmFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{MillHarmFlow.StageKey(stage)}.options.{OptionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
@@ -161,5 +161,35 @@ public sealed class MillHarm : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(MillHarmState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{MillHarmFlow.DescriptionKey(state)}.description");
+        L10NLookup($"{LocalizationRoot}.pages.{PageKey(state)}.description");
+
+    private static bool IsBenthamFixed(MillHarmState? state) =>
+        state is { FixedMode: true, RoomSourceNodeId: MillHarmState.BenthamSourceNodeId };
+
+    private static bool IsSmithFixed(MillHarmState? state) =>
+        state is { FixedMode: true, RoomSourceNodeId: MillHarmState.SmithSourceNodeId };
+
+    private static string KeepKey(MillHarmState? state) =>
+        IsBenthamFixed(state) ? "KEEP_BENTHAM"
+        : IsSmithFixed(state) ? "KEEP_SMITH"
+        : "KEEP_WOLLSTONECRAFT";
+
+    private static string OptionKey(MillHarmState state, MillHarmAction action) =>
+        action == MillHarmAction.KeepWollstonecraft
+            ? KeepKey(state)
+            : MillHarmFlow.ActionKey(action);
+
+    private static string PageKey(MillHarmState state)
+    {
+        if (!state.FixedMode) return MillHarmFlow.DescriptionKey(state);
+        return state.Stage switch
+        {
+            MillHarmStage.Invitation => IsBenthamFixed(state) ? "FIXED_BENTHAM" : "FIXED_SMITH",
+            MillHarmStage.Test => "FIXED_TEST",
+            MillHarmStage.ResultConduct => "FIXED_RESULT_CONDUCT",
+            MillHarmStage.ResultOffense => "FIXED_RESULT_OFFENSE",
+            MillHarmStage.ResultKept => "FIXED_RESULT_KEPT",
+            _ => "FIXED_SMITH",
+        };
+    }
 }

@@ -155,10 +155,11 @@ internal static class KantUniversalizationFlow
             return journey.LastFixedAct >= (onRoute ? act : 2) && !adopted
                 && !journey.DeclinedFixedActs.Contains(act)
                 && (onRoute || atSource);
+        int advanced = Math.Min(3, act + 1);
         if (state.EdgeCommitted)
-            return !state.FixedDeclined && adopted && journey.LastFixedAct == act
+            return !state.FixedDeclined && adopted && journey.LastFixedAct == advanced
                 && (onRoute || journey.CurrentNodeId == KantUniversalizationState.AdoptedNodeId);
-        return !adopted && journey.LastFixedAct == act
+        return !adopted && journey.LastFixedAct == advanced
             && (onRoute || atSource)
             && journey.DeclinedFixedActs.Contains(act);
     }

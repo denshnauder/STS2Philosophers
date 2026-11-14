@@ -75,8 +75,17 @@ public sealed class RouteTurnQuestion : EventModel
         try
         {
             if (Owner?.RunState is not RunState run) return;
+            // Only the page that is actually open may answer. A delayed callback
+            // from an old page must not move a run after its room is gone.
+            if (run.CurrentRoom is not EventRoom room || room.CanonicalEvent.Id != Id)
+            {
+                Block("RouteTurnQuestion is no longer the open room.");
+                return;
+            }
             if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
             if (!ReferenceEquals(shared.WesternJourney, journey)) return;
+            JourneySnapshot before = JourneySnapshot.Take(journey);
+            RouteTurnQuestionState? previousRecord = shared.RouteTurnQuestion;
             WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
             bool routeOnly = choice.EdgeId is null && choice.RouteId is not null;
             if (routeOnly && !graph.TryNameRoute(journey, choice.RouteId!))
@@ -134,9 +143,10 @@ public sealed class RouteTurnQuestion : EventModel
             // A native EventRoom is always current while the page is open. The
             // detached model path is only used by the managed native probes,
             // which cannot initialize the player save store.
-            if (run.CurrentRoom is EventRoom
-                && !await RouteEventMapBoundary.PersistEventAsync(run, shared))
+            if (!await RouteEventMapBoundary.PersistEventAsync(run, shared))
             {
+                JourneySnapshot.Restore(journey, before);
+                shared.RouteTurnQuestion = previousRecord;
                 Block("RouteTurnQuestion could not persist its answer.");
                 return;
             }
@@ -149,6 +159,55 @@ public sealed class RouteTurnQuestion : EventModel
         finally
         {
             Volatile.Write(ref _resolving, 0);
+        }
+    }
+
+    private sealed class JourneySnapshot
+    {
+        private string _currentNodeId = string.Empty;
+        private int _lastFixedAct, _turnedAct, _act;
+        private HashSet<string> _seen = new(StringComparer.Ordinal);
+        private HashSet<string> _completed = new(StringComparer.Ordinal);
+        private HashSet<int> _resolved = [];
+        private Dictionary<string, List<string>> _windows = new(StringComparer.Ordinal);
+        private HashSet<int> _declined = [];
+        private bool _retained;
+        private string _routeId = string.Empty, _entryNodeId = string.Empty;
+        private bool _rules;
+
+        internal static JourneySnapshot Take(WesternJourneyState state) => new()
+        {
+            _currentNodeId = state.CurrentNodeId,
+            _lastFixedAct = state.LastFixedAct,
+            _turnedAct = state.TurnedAct,
+            _act = state.Act,
+            _seen = [.. state.SeenThinkerIds],
+            _completed = [.. state.CompletedEdgeIds],
+            _resolved = [.. state.ResolvedQuestionActs],
+            _windows = state.CandidateWindows.ToDictionary(pair => pair.Key,
+                pair => new List<string>(pair.Value), StringComparer.Ordinal),
+            _declined = [.. state.DeclinedFixedActs],
+            _retained = state.RetainedEnding,
+            _routeId = state.RouteId,
+            _entryNodeId = state.EntryNodeId,
+            _rules = state.RouteRules,
+        };
+
+        internal static void Restore(WesternJourneyState state, JourneySnapshot snapshot)
+        {
+            state.CurrentNodeId = snapshot._currentNodeId;
+            state.LastFixedAct = snapshot._lastFixedAct;
+            state.TurnedAct = snapshot._turnedAct;
+            state.Act = snapshot._act;
+            state.SeenThinkerIds = snapshot._seen;
+            state.CompletedEdgeIds = snapshot._completed;
+            state.ResolvedQuestionActs = snapshot._resolved;
+            state.CandidateWindows = snapshot._windows;
+            state.DeclinedFixedActs = snapshot._declined;
+            state.RetainedEnding = snapshot._retained;
+            state.RouteId = snapshot._routeId;
+            state.EntryNodeId = snapshot._entryNodeId;
+            state.RouteRules = snapshot._rules;
         }
     }
 

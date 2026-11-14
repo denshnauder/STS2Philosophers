@@ -31,6 +31,7 @@ internal static class RouteTurnQuestionOptions
         ["SOREN_KIERKEGAARD"] = "TO_KIERKEGAARD",
         ["JEREMY_BENTHAM"] = "TO_BENTHAM",
         ["BARUCH_SPINOZA"] = "TO_SPINOZA",
+        ["MONTESQUIEU"] = "TO_MONTESQUIEU",
     };
 
     internal sealed record Choice(string Key, string? EdgeId, string? RouteId);
@@ -47,7 +48,12 @@ internal static class RouteTurnQuestionOptions
             string thinker = graph.GetNode(edge.ToNodeId).ThinkerId;
             if (TurnKeys.TryGetValue(thinker, out string? key))
                 choices.Add(new Choice(key, edge.EdgeId,
-                    thinker == "ADAM_SMITH" ? "SYMPATHY_AND_PUBLIC_ACTION" : null));
+                    thinker switch
+                    {
+                        "ADAM_SMITH" => "SYMPATHY_AND_PUBLIC_ACTION",
+                        "MONTESQUIEU" => "CHECKS_AND_JUSTICE",
+                        _ => null,
+                    }));
         }
         // The fallible-inquiry line begins with Hume's fixed handover rather than
         // a question edge, so the graph cannot derive this turn from slot alone.
@@ -85,7 +91,7 @@ internal static class RouteTurnQuestionOptions
     internal static readonly string[] AllKeys =
         ["TO_KANT", "TO_FREUD", "TO_BACON", "TO_MARX", "TO_ADORNO", "TO_NIETZSCHE", "TO_WOLLSTONECRAFT",
             "TO_SAUSSURE", "TO_FREGE", "TO_WITTGENSTEIN", "TO_SPINOZA", "TO_SMITH", "TO_PEIRCE",
-            "TO_KIERKEGAARD", "TO_BENTHAM", AppearanceKey, EmbodiedKey, StayKey];
+            "TO_KIERKEGAARD", "TO_BENTHAM", "TO_MONTESQUIEU", AppearanceKey, EmbodiedKey, StayKey];
 
     internal static string OptionKey(Choice choice) => $"{LocalizationRoot}.pages.INVITATION.options.{choice.Key}";
 }

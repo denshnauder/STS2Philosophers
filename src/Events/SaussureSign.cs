@@ -21,7 +21,7 @@ public sealed class SaussureSign : EventModel
         {
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.LANGUAGE_PAROLE"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.SIGN_ARBITRARY"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_ARISTOTLE"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{KeepKey(TryRestoreState())}"),
         };
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
@@ -136,7 +136,7 @@ public sealed class SaussureSign : EventModel
         return SaussureSignFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{SaussureSignFlow.StageKey(stage)}.options.{SaussureSignFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{SaussureSignFlow.StageKey(stage)}.options.{OptionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
@@ -163,5 +163,21 @@ public sealed class SaussureSign : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(SaussureSignState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{SaussureSignFlow.DescriptionKey(state)}.description");
+        L10NLookup($"{LocalizationRoot}.pages.{PageKey(state)}.description");
+
+    private static bool IsFixedSource(SaussureSignState? state) =>
+        state is { ActIndex: 2, SourceNode: SaussureSignState.AdoptedNodeId };
+
+    private static string KeepKey(SaussureSignState? state) =>
+        IsFixedSource(state) ? "KEEP_SAUSSURE" : "KEEP_ARISTOTLE";
+
+    private static string OptionKey(SaussureSignState state, SaussureSignAction action) =>
+        action == SaussureSignAction.KeepAristotle
+            ? KeepKey(state)
+            : SaussureSignFlow.ActionKey(action);
+
+    private static string PageKey(SaussureSignState state) =>
+        IsFixedSource(state) && state.Stage == SaussureSignStage.ResultKept
+            ? "RESULT_KEPT_FIXED"
+            : SaussureSignFlow.DescriptionKey(state);
 }

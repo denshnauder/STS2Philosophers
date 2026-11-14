@@ -587,6 +587,11 @@ internal sealed class WesternRouteGraph
     private static bool RequiredEdgesMet(WesternJourneyState state, WesternGraphEdge edge)
     {
         if (edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)) return true;
+        // The early Bentham turn reaches Mill in act two on 066. That is the same
+        // handover 169 names for the ordinary third-act Mill room, so 170 is legal
+        // from either Mill entry.
+        if (edge.EdgeId == "WESTERN_EDGE_170"
+            && state.CompletedEdgeIds.Contains("WESTERN_EDGE_066")) return true;
         return edge.EdgeId == "WESTERN_EDGE_178"
             && state.CompletedEdgeIds.Contains("WESTERN_EDGE_177");
     }

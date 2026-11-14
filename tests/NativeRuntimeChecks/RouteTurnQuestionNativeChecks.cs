@@ -48,6 +48,7 @@ internal static class RouteTurnQuestionNativeChecks
     {
         ModelDb.Inject(T("RouteTurnQuestion"));
         CheckKnowledgeAnswerAndContinuation();
+        CheckDetachedPageCannotAnswer();
         CheckRouteOnlyDirection();
         CheckAdornoDirection();
         foreach (var item in Cases)
@@ -144,6 +145,38 @@ internal static class RouteTurnQuestionNativeChecks
         return Task.CompletedTask;
     }
 
+    private static void CheckDetachedPageCannotAnswer()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        EventModel local = selected.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", fixture.Player);
+        using var saves = new NativeEventMemorySaveFixture(fixture, run);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+        object choice = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(candidate => (string)candidate.GetType().GetProperty("Key")!.GetValue(candidate)! == "TO_PEIRCE");
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, choice])!;
+        task.GetAwaiter().GetResult();
+        Check(!((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_069")
+            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1)
+            && saves.SaveAttempts == 0,
+            "A delayed callback from a closed route page must not take the edge or write a save.");
+    }
+
     private static void CheckKnowledgeAnswerAndContinuation()
     {
         ModelDb.Inject(typeof(PeirceInquiry));
@@ -151,6 +184,7 @@ internal static class RouteTurnQuestionNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
         var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
             ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
@@ -166,14 +200,7 @@ internal static class RouteTurnQuestionNativeChecks
             "The real knowledge entry must ask the route fork before Sextus, got " + selected.GetType().Name + ".");
         Check(!run.VisitedEventIds.Contains(ModelDb.GetId<SextusOpposedAppearances>()),
             "The route fork must not pre-visit the local Sextus question.");
-        EventModel local = selected.ToMutable();
-        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
-        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
-        object peirce = ((System.Collections.IEnumerable)choices).Cast<object>()
-            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_PEIRCE");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, peirce])!;
-        task.GetAwaiter().GetResult();
+        ChooseThroughRealPage(run, fixture, selected, journey, graph, "TO_PEIRCE");
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_069")
             && (string)Get(journey, "RouteId") == "FALLIBLE_INQUIRY"
             && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1),
@@ -208,6 +235,7 @@ internal static class RouteTurnQuestionNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(RousseauUncarvedStone), 0])!;
         var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
             ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
@@ -221,15 +249,7 @@ internal static class RouteTurnQuestionNativeChecks
         EventModel selected = run.Act.PullNextEvent(run);
         Check(selected is RouteTurnQuestion,
             "The real Rousseau entry must ask the route fork, got " + selected.GetType().Name + ".");
-        EventModel local = selected.ToMutable();
-        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
-        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
-            .Invoke(null, [journey, graph])!;
-        object adorno = ((System.Collections.IEnumerable)choices).Cast<object>()
-            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_ADORNO");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, adorno])!;
-        task.GetAwaiter().GetResult();
+        ChooseThroughRealPage(run, fixture, selected, journey, graph, "TO_ADORNO");
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_083")
             && (string)Get(journey, "RouteId") == "SOCIAL_CRITIQUE"
             && (string)Get(journey, "CurrentNodeId") == "KARL_MARX__HISTORY_AND_POWER__EARLY"
@@ -242,6 +262,7 @@ internal static class RouteTurnQuestionNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(AristotleCategoryTablet), 0])!;
         var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
             ["ARISTOTLE__LANGUAGE_AND_MEANING__CORE"])!;
@@ -255,15 +276,7 @@ internal static class RouteTurnQuestionNativeChecks
         EventModel selected = run.Act.PullNextEvent(run);
         Check(selected is RouteTurnQuestion,
             "The real Aristotle entry must ask the route fork, got " + selected.GetType().Name + ".");
-        EventModel local = selected.ToMutable();
-        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
-        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
-            .Invoke(null, [journey, graph])!;
-        object ordinary = ((System.Collections.IEnumerable)choices).Cast<object>()
-            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_WITTGENSTEIN");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, ordinary])!;
-        task.GetAwaiter().GetResult();
+        ChooseThroughRealPage(run, fixture, selected, journey, graph, "TO_WITTGENSTEIN");
         var completed = (HashSet<string>)Get(journey, "CompletedEdgeIds");
         Check((string)Get(journey, "RouteId") == "ORDINARY_SPEECH"
             && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1)
@@ -271,6 +284,26 @@ internal static class RouteTurnQuestionNativeChecks
             && (int)Get(journey, "LastFixedAct") == 1
             && (string)Get(journey, "CurrentNodeId") == "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
             "Choosing ordinary language must name the line and spend act one without moving or taking a fixed slot.");
+    }
+
+    private static void ChooseThroughRealPage(RunState run, NativeRuntimeFixture fixture,
+        EventModel selected, object journey, object graph, string key)
+    {
+        var room = new EventRoom(selected);
+        EventModel local = room.CanonicalEvent.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", fixture.Player);
+        Set(run, "_currentRooms", new List<AbstractRoom> { room });
+        object? acts = Get(run, "Acts");
+        using var saves = new NativeEventMemorySaveFixture(fixture, run);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+        object choice = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(candidate => (string)candidate.GetType().GetProperty("Key")!.GetValue(candidate)! == key);
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, choice])!;
+        task.GetAwaiter().GetResult();
+        Check(saves.SaveAttempts > 0, "The real route page must persist its answer.");
+        Put(run, "Acts", acts);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
     }
 
     private static string Snake(string name)

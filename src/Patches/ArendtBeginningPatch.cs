@@ -9,7 +9,8 @@ internal static class ArendtBeginningPatch
     // Arendt closes two lines: the sympathy-and-public-action line after Mill
     // (175 -> 176) and the genealogy line after Foucault (181 -> 182).
     private static readonly string[] RequiredEdges =
-        [ArendtBeginningState.MillRequiredEdgeId, ArendtBeginningState.FoucaultRequiredEdgeId];
+        [ArendtBeginningState.MillRequiredEdgeId, ArendtBeginningState.FoucaultRequiredEdgeId,
+            ArendtBeginningState.EarlyMillRequiredEdgeId];
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
@@ -49,9 +50,10 @@ internal static class ArendtBeginningPatch
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
             .Any(edge => edge.EdgeId == completion);
-        ModelId predecessor = required == ArendtBeginningState.FoucaultRequiredEdgeId
+        bool afterFoucault = required == ArendtBeginningState.FoucaultRequiredEdgeId;
+        ModelId predecessor = afterFoucault
             ? ModelDb.GetId<FoucaultPower>() : ModelDb.GetId<MillHarm>();
-        string predecessorRoot = required == ArendtBeginningState.FoucaultRequiredEdgeId ? "FOUCAULT_POWER" : "MILL_HARM";
+        string predecessorRoot = afterFoucault ? "FOUCAULT_POWER" : "MILL_HARM";
         ArendtBeginningTriggerContext context = new(
             RunManager.Instance.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1,
             run.CurrentActIndex, NativeQuestionNodeEvents.HasCompletedCombatAfter(run, predecessor, predecessorRoot),

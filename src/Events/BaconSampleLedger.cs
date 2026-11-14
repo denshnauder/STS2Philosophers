@@ -150,7 +150,13 @@ public sealed class BaconSampleLedger : EventModel
         && shared.OckhamNamesInquiry is { } ockham && shared.GorgiasSpeechInquiry is { } gorgias
         && BaconSampleLedgerFlow.TryCommitPending(state, journey, ockham, gorgias, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.BaconSampleLedger is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(BaconSampleLedgerState state)
     {

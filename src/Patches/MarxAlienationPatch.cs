@@ -35,6 +35,18 @@ internal static class MarxAlienationPatch
             .Select(route => route.ActTwoFigure == "KARL_MARX" ? 2
                 : route.ActThreeFigure == "KARL_MARX" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // A line can reach Marx through a handover its route table does not
+        // name: the early Kant/Hegel line ends on Hegel, and 155 is the actual
+        // third-act fixed edge to Marx. The graph, not the route's figure
+        // column, is the authority for a fixed handover that is already legal.
+        if (journey is not null)
+        {
+            int currentAct = run.CurrentActIndex + 1;
+            int handoverAct = graph.GetEligibleEdges(journey, "Fixed")
+                .Where(edge => edge.Act == currentAct && edge.ToNodeId == MarxAlienationState.AdoptedNodeId)
+                .Select(edge => edge.Act).DefaultIfEmpty(0).First();
+            if (handoverAct > routeAct) routeAct = handoverAct;
+        }
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == MarxAlienationState.AdoptedNodeId)

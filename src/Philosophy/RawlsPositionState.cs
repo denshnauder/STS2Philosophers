@@ -29,6 +29,9 @@ internal sealed class RawlsPositionState : IJsonOnDeserialized, IEventGoldCostSt
     public const string KantCompletionEdgeId = "WESTERN_EDGE_173";
     public const string MillRequiredEdgeId = "WESTERN_EDGE_169";
     public const string MillCompletionEdgeId = "WESTERN_EDGE_170";
+    // The early Bentham turn reaches Mill in act two on 066 and Rawls on 067.
+    public const string EarlyMillRequiredEdgeId = "WESTERN_EDGE_066";
+    public const string EarlyMillCompletionEdgeId = "WESTERN_EDGE_170";
 
     public int Version { get; set; } = CurrentVersion;
     public string InstanceId { get; set; } = string.Empty;
@@ -57,14 +60,15 @@ internal sealed class RawlsPositionState : IJsonOnDeserialized, IEventGoldCostSt
     public static RawlsPositionState Create(string instanceId, string requiredEdgeId) => new()
     {
         InstanceId = instanceId,
-        RequiredEdgeId = requiredEdgeId is KantRequiredEdgeId or MillRequiredEdgeId ? requiredEdgeId : KantRequiredEdgeId,
+        RequiredEdgeId = requiredEdgeId is KantRequiredEdgeId or MillRequiredEdgeId or EarlyMillRequiredEdgeId
+            ? requiredEdgeId : KantRequiredEdgeId,
     };
 
     public void NormalizeAfterLoad()
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
-        if (RequiredEdgeId is not (KantRequiredEdgeId or MillRequiredEdgeId)) RequiredEdgeId = KantRequiredEdgeId;
+        if (RequiredEdgeId is not (KantRequiredEdgeId or MillRequiredEdgeId or EarlyMillRequiredEdgeId)) RequiredEdgeId = KantRequiredEdgeId;
         if (ActIndex is < 1 or > 3) ActIndex = 3;
     }
 
@@ -74,7 +78,7 @@ internal sealed class RawlsPositionState : IJsonOnDeserialized, IEventGoldCostSt
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
             || ActIndex is < 1 or > 3
-            || RequiredEdgeId is not (KantRequiredEdgeId or MillRequiredEdgeId)
+            || RequiredEdgeId is not (KantRequiredEdgeId or MillRequiredEdgeId or EarlyMillRequiredEdgeId)
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Rule)
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
@@ -95,12 +99,14 @@ internal sealed class RawlsPositionState : IJsonOnDeserialized, IEventGoldCostSt
 
 internal static class RawlsPositionFlow
 {
-    public static string SourceNodeIdOf(string requiredEdgeId) => requiredEdgeId == RawlsPositionState.MillRequiredEdgeId
+    public static string SourceNodeIdOf(string requiredEdgeId) => requiredEdgeId is RawlsPositionState.MillRequiredEdgeId or RawlsPositionState.EarlyMillRequiredEdgeId
         ? "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
         : "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE";
 
-    public static string CompletionEdgeIdOf(string requiredEdgeId) => requiredEdgeId == RawlsPositionState.MillRequiredEdgeId
-        ? RawlsPositionState.MillCompletionEdgeId : RawlsPositionState.KantCompletionEdgeId;
+    public static string CompletionEdgeIdOf(string requiredEdgeId) => requiredEdgeId == RawlsPositionState.EarlyMillRequiredEdgeId
+        ? RawlsPositionState.EarlyMillCompletionEdgeId
+        : requiredEdgeId == RawlsPositionState.MillRequiredEdgeId
+            ? RawlsPositionState.MillCompletionEdgeId : RawlsPositionState.KantCompletionEdgeId;
 
     // The standing is a stable function of the instance id the run fixed when the
     // room opened. The rule is published first, so the player drafts it without
