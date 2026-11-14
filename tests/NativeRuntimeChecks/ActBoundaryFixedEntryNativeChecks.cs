@@ -409,7 +409,10 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static EventModel ChooseVirtueDirection(RunState run, string node, string key)
+    private static EventModel ChooseVirtueDirection(RunState run, string node, string key) =>
+        ChooseDirection(run, node, key);
+
+    private static EventModel ChooseDirection(RunState run, string node, string key)
     {
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
@@ -822,24 +825,20 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SmithSympathy));
         ModelDb.Inject(typeof(ArendtBeginning));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-            .Invoke(null, [typeof(PlatoCivicSeal), 1])!;
+            .Invoke(null, [typeof(PlatoCivicSeal), 0])!;
         var run = (RunState)tuple[1]!;
         var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseDirection(run, "PLATO__FREEDOM_AND_INSTITUTIONS__CORE", "TO_SMITH");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        object shared = live[1]!;
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
-            ["PLATO__FREEDOM_AND_INSTITUTIONS__CORE"])!;
-        Put(journey, "RouteRules", true);
-        Put(journey, "LastFixedAct", 1);
-        Put(journey, "Act", 1);
-        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph,
-            [journey, "WESTERN_EDGE_174"])!, "The real first-act Smith turn applies.");
-        Check((bool)graph.GetType().GetMethod("TryNameRoute")!.Invoke(graph,
-            [journey, "SYMPATHY_AND_PUBLIC_ACTION"])!, "The Smith turn names its line.");
-        Put(journey, "TurnedAct", 1);
-        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
-        Put(shared, "WesternJourney", journey);
-        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
-        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_174")
+            && (string)Get(journey, "RouteId") == "SYMPATHY_AND_PUBLIC_ACTION",
+            "The real Smith direction takes 174 and names the sympathy line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
         object?[] prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
             && prepare[1] is EventRoom { CanonicalEvent: SmithSympathy },
