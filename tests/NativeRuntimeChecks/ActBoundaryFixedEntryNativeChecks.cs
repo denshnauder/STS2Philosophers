@@ -1849,6 +1849,48 @@ internal static class ActBoundaryFixedEntryNativeChecks
             }
         }
         Set(run, "_currentRooms", new List<AbstractRoom>());
+
+        // 0.5.32/0.5.33 wrote the same Diderot room under the old Voltaire
+        // prefix. A save made by those releases must still reopen and finish
+        // this room, not be mistaken for a foreign event.
+        object legacy = Call("DiderotPracticeState", "Create",
+            $"VOLTAIRE_PUBLIC_CRITIQUE:{run.Rng.Seed}:2")!;
+        Put(shared, "DiderotPublicPractice", legacy);
+        EventRoom legacyRoom = new(ModelDb.Event<DiderotPublicPractice>());
+        Set(run, "_currentRooms", new List<AbstractRoom> { legacyRoom });
+        using (var legacySaves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = legacyRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(legacyRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Diderot's legacy Voltaire-prefixed instance must reopen ready, ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "COLLECT_INTO_SYSTEM", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Diderot's legacy instance still exposes " + action + "; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Diderot's legacy " + action + " must not freeze the room.");
+            }
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
     }
 
     private static void CheckEarlyNietzscheContinuation()
