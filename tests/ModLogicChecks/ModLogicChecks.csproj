@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/DiderotPublicPracticePolicy.cs" Link="DiderotPublicPracticePolicy.cs" />
+    <Compile Include="../../src/Philosophy/DiderotPracticeState.cs" Link="DiderotPracticeState.cs" />
+    <Compile Include="../../src/Philosophy/MachiavelliFortuneAfterState.cs" Link="MachiavelliFortuneAfterState.cs" />
+    <Compile Include="../../src/Philosophy/SaussureSignTriggerPolicy.cs" Link="SaussureSignTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/SaussureSignState.cs" Link="SaussureSignState.cs" />
+    <Compile Include="../../src/Philosophy/HusserlEpocheTriggerPolicy.cs" Link="HusserlEpocheTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/HusserlEpocheState.cs" Link="HusserlEpocheState.cs" />
+    <Compile Include="../../src/Philosophy/FreudUnconsciousTriggerPolicy.cs" Link="FreudUnconsciousTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/FreudUnconsciousState.cs" Link="FreudUnconsciousState.cs" />
     <Compile Include="../../src/Philosophy/NietzscheRevaluationTriggerPolicy.cs" Link="NietzscheRevaluationTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/SmithSympathyState.cs" Link="SmithSympathyState.cs" />
     <Compile Include="../../src/Philosophy/SmithSympathyTriggerPolicy.cs" Link="SmithSympathyTriggerPolicy.cs" />

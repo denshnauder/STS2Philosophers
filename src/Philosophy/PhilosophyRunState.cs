@@ -52,6 +52,11 @@ internal sealed class PhilosophyRunState
     public PopperFalsificationState? PopperFalsification { get; set; }
     public RawlsPositionState? RawlsPosition { get; set; }
     public MillHarmState? MillHarm { get; set; }
+    public DiderotPracticeState? DiderotPublicPractice { get; set; }
+    public FreudUnconsciousState? FreudUnconscious { get; set; }
+    public HusserlEpocheState? HusserlEpoche { get; set; }
+    public SaussureSignState? SaussureSign { get; set; }
+    public MachiavelliFortuneAfterState? MachiavelliFortuneAfter { get; set; }
     public SchellingNatureState? SchellingNature { get; set; }
     public FregeSenseState? FregeSense { get; set; }
     public RussellAnalysisState? RussellAnalysis { get; set; }
@@ -161,6 +166,11 @@ internal sealed class PhilosophyRunState
         || PopperFalsification is not null
         || RawlsPosition is not null
         || MillHarm is not null
+        || DiderotPublicPractice is not null
+        || FreudUnconscious is not null
+        || HusserlEpoche is not null
+        || SaussureSign is not null
+        || MachiavelliFortuneAfter is not null
         || SchellingNature is not null
         || FregeSense is not null
         || RussellAnalysis is not null
@@ -400,6 +410,11 @@ internal sealed class PhilosophyRunState
         PopperFalsification?.NormalizeAfterLoad();
         RawlsPosition?.NormalizeAfterLoad();
         MillHarm?.NormalizeAfterLoad();
+        DiderotPublicPractice?.NormalizeAfterLoad();
+        FreudUnconscious?.NormalizeAfterLoad();
+        HusserlEpoche?.NormalizeAfterLoad();
+        SaussureSign?.NormalizeAfterLoad();
+        MachiavelliFortuneAfter?.NormalizeAfterLoad();
         SchellingNature?.NormalizeAfterLoad();
         FregeSense?.NormalizeAfterLoad();
         RussellAnalysis?.NormalizeAfterLoad();

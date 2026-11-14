@@ -11,6 +11,12 @@ public sealed partial class PhilosophersGaze
 {
     private static readonly HashSet<string> ReviewedOpeningRoutes =
     [
+        "STRUCTURE_AND_EXCLUSION",
+        "APPEARANCE_AND_INTERPRETATION",
+        "EMBODIED_PERCEPTION",
+        "UNCONSCIOUS_AND_NORM",
+        "SOCIAL_CRITIQUE",
+        "FORTUNE_AND_VIRTUE",
         "EXPERIENCE_AND_SELF",
         "NATURE_AND_BECOMING",
         "WILL_AND_VALUE",

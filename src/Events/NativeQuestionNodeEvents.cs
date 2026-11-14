@@ -118,7 +118,12 @@ internal static class NativeQuestionNodeEvents
 
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
-        EventModel? existing = NietzscheRevaluationPatch.TrySelectExistingNative(run)
+        EventModel? existing = DiderotPublicPracticePatch.TrySelectExistingNative(run)
+            ?? FreudUnconsciousPatch.TrySelectExistingNative(run)
+            ?? HusserlEpochePatch.TrySelectExistingNative(run)
+            ?? SaussureSignPatch.TrySelectExistingNative(run)
+            ?? MachiavelliFortuneAfterPatch.TrySelectExistingNative(run)
+            ?? NietzscheRevaluationPatch.TrySelectExistingNative(run)
             ?? MillHarmPatch.TrySelectExistingNative(run)
             ?? SmithSympathyPatch.TrySelectExistingNative(run)
             ?? KierkegaardFaithPatch.TrySelectExistingNative(run)
@@ -183,7 +188,7 @@ internal static class NativeQuestionNodeEvents
         EventModel? reviewedTurn = RouteTurnQuestionPatch.TrySelectNative(run);
         if (reviewedTurn is not null) return reviewedTurn;
 
-        EventModel? reviewedExtra = PopperFalsificationPatch.TrySelectNative(run) ?? RousseauConsentPatch.TrySelectNative(run) ?? CarnapFrameworkChoicePatch.TrySelectNative(run) ?? AustinSpeechActPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run) ?? VoltairePublicCritiquePatch.TrySelectNative(run) ?? JamesPragmatismPatch.TrySelectNative(run) ?? BenjaminHistoryPatch.TrySelectNative(run);
+        EventModel? reviewedExtra = DiderotPublicPracticePatch.TrySelectNative(run) ?? PopperFalsificationPatch.TrySelectNative(run) ?? RousseauConsentPatch.TrySelectNative(run) ?? CarnapFrameworkChoicePatch.TrySelectNative(run) ?? AustinSpeechActPatch.TrySelectNative(run) ?? FichteSelfPositingPatch.TrySelectNative(run) ?? VoltairePublicCritiquePatch.TrySelectNative(run) ?? JamesPragmatismPatch.TrySelectNative(run) ?? BenjaminHistoryPatch.TrySelectNative(run);
         if (reviewedExtra is not null) return reviewedExtra;
 
         bool fork = MapTravel.GetTravelablePointsFrom(run, run.CurrentMapPoint!).Take(2).Count() == 2;

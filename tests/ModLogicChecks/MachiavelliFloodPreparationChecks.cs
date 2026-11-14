@@ -6,11 +6,17 @@ internal static class MachiavelliFloodPreparationChecks
 {
     private static void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
     private static PhilosophyRunState Reload(PhilosophyRunState shared) => PhilosophyRunStateCodec.Decode(PhilosophyRunStateCodec.Encode(shared));
-    private static PhilosophyRunState Fixture(WesternRouteGraph graph) => new()
+    private static PhilosophyRunState Fixture(WesternRouteGraph graph)
     {
-        WesternJourney = graph.Start(MachiavelliFloodPreparationState.SourceNodeId),
-        MachiavelliFloodPreparation = MachiavelliFloodPreparationState.Create("MACHIAVELLI:TEST:2"),
-    };
+        WesternJourneyState journey = graph.Start(MachiavelliFloodPreparationState.SourceNodeId);
+        journey.RouteRules = true;
+        journey.RouteId = "FORTUNE_AND_VIRTUE";
+        return new()
+        {
+            WesternJourney = journey,
+            MachiavelliFloodPreparation = MachiavelliFloodPreparationState.Create("MACHIAVELLI:TEST:2"),
+        };
+    }
     private static PhilosophyRunState Commit(PhilosophyRunState shared, WesternRouteGraph graph, MachiavelliFloodPreparationAction action)
     {
         Check(MachiavelliFloodPreparationFlow.TryPrepare(shared.MachiavelliFloodPreparation!, action), $"Prepare {action}.");
@@ -44,14 +50,56 @@ internal static class MachiavelliFloodPreparationChecks
                 && (!adopts || !graph.GetEligibleEdges(shared.WesternJourney, "Fixed").Any(e => e.EdgeId == "WESTERN_EDGE_040")),
                 "Actual Fixed2 is consumed without a fabricated 017 question or later 040.");
             WesternJourneyState journey = shared.WesternJourney!;
+            if (adopts && journey.RouteId == "FORTUNE_AND_VIRTUE")
+            {
+                // The fortune line's third act is Machiavelli's own closing room.
+                // It spends the act-three fixed slot without a handover edge, so
+                // it cannot become a fourth fixed room or a new figure.
+                var closing = MachiavelliFortuneAfterState.Create("MACHIAVELLI_FORTUNE_AFTER:TEST:3");
+                Check(MachiavelliFortuneAfterFlow.IsRouteConsistent(closing, journey),
+                    "Machiavelli's third-act closing opens after his act-two practice.");
+                Check(MachiavelliFortuneAfterFlow.TryPrepare(closing, MachiavelliFortuneAfterAction.KeepPractice)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(closing, journey, graph),
+                    "The third-act practice can be confirmed in place.");
+                Check(journey.LastFixedAct == 3 && !journey.DeclinedFixedActs.Contains(3)
+                    && journey.CurrentNodeId == MachiavelliFortuneAfterState.SourceNodeId
+                    && closing.Confirmed && closing.FixedSlotResolved,
+                    "Confirming keeps Machiavelli's node and spends only fixed slot 3.");
+                Check(MachiavelliFortuneAfterFlow.TryPrepare(closing, MachiavelliFortuneAfterAction.Leave)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(closing, journey, graph)
+                    && closing.Closed,
+                    "The confirmed closing can be left without a fourth act.");
+                Check(MachiavelliFloodPreparationFlow.IsRouteConsistent(
+                    shared.MachiavelliFloodPreparation, journey),
+                    "The act-two preparation remains consistent after the third-act closing.");
+
+                WesternJourneyState refusalJourney = graph.Start(MachiavelliFloodPreparationState.SourceNodeId);
+                refusalJourney.RouteRules = true;
+                refusalJourney.RouteId = "FORTUNE_AND_VIRTUE";
+                Check(graph.TryApply(refusalJourney, "WESTERN_EDGE_046")
+                    && refusalJourney.LastFixedAct == 2,
+                    "The fortune line reaches Machiavelli through 046 before its third-act refusal.");
+                var refusal = MachiavelliFortuneAfterState.Create("MACHIAVELLI_FORTUNE_AFTER:TEST:3");
+                Check(MachiavelliFortuneAfterFlow.IsRouteConsistent(refusal, refusalJourney)
+                    && MachiavelliFortuneAfterFlow.TryPrepare(refusal, MachiavelliFortuneAfterAction.LetFortuneChange)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(refusal, refusalJourney, graph),
+                    "The third-act refusal must commit instead of freezing.");
+                Check(refusalJourney.LastFixedAct == 3 && refusalJourney.DeclinedFixedActs.Contains(3)
+                    && refusalJourney.CurrentNodeId == MachiavelliFortuneAfterState.SourceNodeId
+                    && !refusal.Confirmed && refusal.FixedSlotResolved,
+                    "Refusing the practice spends slot 3 in place and keeps Machiavelli's node.");
+                continue;
+            }
             Check(graph.CanFinish(journey) && graph.TryDecline(journey, "Fixed", 3)
                 && graph.TryRetainEnding(journey) && graph.IsComplete(journey)
                 && MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation, journey),
                 "The current branch has a legal third-act retained ending, with no fourth act or invented successor.");
         }
         shared = Fixture(graph);
-        Check(graph.TryApply(shared.WesternJourney!, "WESTERN_EDGE_040")
-            && !MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation!, shared.WesternJourney!),
+        shared.WesternJourney!.RouteRules = false;
+        shared.WesternJourney.RouteId = string.Empty;
+        Check(graph.TryApply(shared.WesternJourney, "WESTERN_EDGE_040")
+            && !MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation!, shared.WesternJourney),
             "Wollstonecraft's fixed adoption excludes the parallel candidate.");
         shared = Fixture(graph); shared.WesternJourney = graph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
         Check(graph.TryApply(shared.WesternJourney, "WESTERN_EDGE_016")
@@ -71,7 +119,7 @@ internal static class MachiavelliFloodPreparationChecks
         Check(MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(eligible), "Real history fixed is reachable.");
         foreach (var blocked in new[] { eligible with { AtSafeMapBoundary = false }, eligible with { IsSingleplayer = false },
             eligible with { CurrentActIndex = 0 }, eligible with { CurrentActIndex = 2 }, eligible with { SourceIsCompletedNonBossCombat = false },
-            eligible with { LastFixedAct = 2 }, eligible with { CompletionEdgeEligible = false }, eligible with { HasRequiredRelic = false },
+            eligible with { LastFixedAct = 3 }, eligible with { CompletionEdgeEligible = false }, eligible with { HasRequiredRelic = false },
             eligible with { HasSavedInstance = true }, eligible with { ModelAvailable = false } })
             Check(!MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(blocked), "A missing native or route fact blocks insertion.");
         Check(MachiavelliFloodPreparationTriggerPolicy.ShouldInsert(eligible with { HasSavedInstance = true,

@@ -54,7 +54,7 @@ internal static class KantUniversalizationPatch
             routeAct >= 2
                 ? NativeQuestionNodeEvents.HasCompletedCombat(run, normalOnly: true)
                 : NativeQuestionNodeEvents.HasCompletedCombatAfterAcrossActs(run,
-                    new ModelId(ModelDb.GetId<KantUniversalization>().Category, "ROUSSEAU_CONSENT"), "ROUSSEAU_CONSENT"),
+                    ModelDb.GetId<RousseauConsent>(), "ROUSSEAU_CONSENT"),
             NativeQuestionNodeEvents.CombatCount(behavior),
             journey?.CurrentNodeId,
             journey?.LastFixedAct ?? 0,

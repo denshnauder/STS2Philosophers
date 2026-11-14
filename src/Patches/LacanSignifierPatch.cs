@@ -39,13 +39,28 @@ internal static class LacanSignifierPatch
             .DefaultIfEmpty(0).First();
         // A run the first act's question turned onto Freud already met the figure the
         // route places in this act, so the edge into Lacan is the one an act earlier.
-        bool turned = journey is not null && journey.TurnedAct == 1;
+        // Freud's own room consumes the turned handover in act two; only a
+        // turn that never produced that room still places Lacan an act early.
+        bool turned = journey is not null && journey.TurnedAct == 1
+            && shared.FreudUnconscious is null;
         int actForEdge = turned && routeAct >= 2 ? routeAct - 1 : routeAct;
+        string sourceNode = LacanSignifierState.SourceNodeId;
+        string targetNode = LacanSignifierState.AdoptedNodeId;
+        string requiredEdge = LacanSignifierState.RequiredEdgeId;
+        bool afterFreud = routeAct == 3 && journey is not null
+            && journey.CurrentNodeId == LacanSignifierState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_190");
+        if (afterFreud)
+        {
+            sourceNode = LacanSignifierState.AdoptedNodeId;
+            targetNode = "JUDITH_BUTLER__SELF_AND_OTHER__CORE";
+            requiredEdge = "WESTERN_EDGE_190";
+        }
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
-                .Where(edge => edge.Act == actForEdge && edge.ToNodeId == LacanSignifierState.AdoptedNodeId)
+                .Where(edge => edge.Act == actForEdge && edge.ToNodeId == targetNode)
                 .Select(edge => edge.EdgeId).FirstOrDefault()
-                ?? LacanSignifierState.CompletionEdgeId
+                ?? (afterFreud ? "WESTERN_EDGE_191" : LacanSignifierState.CompletionEdgeId)
             : LacanSignifierState.CompletionEdgeId;
         bool edgeEligible = journey is not null
             && graph.GetEligibleEdges(journey, "Fixed").Any(edge => edge.EdgeId == edgeId);
@@ -76,7 +91,14 @@ internal static class LacanSignifierPatch
             else
                 candidate = LacanSignifierState.Create($"LACAN_SIGNIFIER:{run.Rng.Seed}:2");
         }
-        if (journey is null || !LacanSignifierFlow.IsRouteConsistent(candidate, journey)) return null;
+        if (candidate is not null && afterFreud)
+        {
+            candidate.SourceNode = sourceNode;
+            candidate.TargetNode = targetNode;
+            candidate.RequiredEdge = requiredEdge;
+        }
+        if (candidate is null || journey is null
+            || !LacanSignifierFlow.IsRouteConsistent(candidate, journey)) return null;
         shared.LacanSignifier = candidate;
         Log.Info("[STS2Philosophers] Presenting Lacan's signifier room.");
         return canonical;

@@ -182,6 +182,11 @@ internal static class WesternQuestionNodePolicy
         || shared.PopperFalsification is { Closed: false }
         || shared.RawlsPosition is { Closed: false }
         || shared.MillHarm is { Closed: false }
+        || shared.DiderotPublicPractice is { Closed: false }
+        || shared.FreudUnconscious is { Closed: false }
+        || shared.HusserlEpoche is { Closed: false }
+        || shared.SaussureSign is { Closed: false }
+        || shared.MachiavelliFortuneAfter is { Closed: false }
         || shared.SchellingNature is { Closed: false }
         || shared.FregeSense is { Closed: false }
         || shared.RussellAnalysis is { Closed: false }

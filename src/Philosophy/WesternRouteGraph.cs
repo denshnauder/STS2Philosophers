@@ -303,6 +303,32 @@ internal sealed class WesternRouteGraph
             && state.ResolvedQuestionActs.Add(act);
     }
 
+    public bool TryConfirmFixedSlot(WesternJourneyState state, int expectedAct)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding
+            || expectedAct is < 2 or > 3
+            || state.DeclinedFixedActs.Contains(expectedAct)
+            || state.LastFixedAct != expectedAct && state.LastFixedAct + 1 != expectedAct) return false;
+        state.LastFixedAct = expectedAct;
+        return true;
+    }
+
+    /// <summary>
+    /// An inner batch can take this act's fixed slot without moving the figure:
+    /// the room is the act's fixed practice, not a handover edge. It still moves
+    /// the position so the next act's handover is reachable.
+    /// </summary>
+
+    public bool TryReserveFixed(WesternJourneyState state, int expectedAct)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding
+            || expectedAct != state.LastFixedAct + 1 || expectedAct is < 2 or > 3
+            || state.DeclinedFixedActs.Contains(expectedAct) || IsComplete(state)) return false;
+        state.LastFixedAct = expectedAct;
+        return true;
+    }
+
+
     public bool TryCompleteReservedQuestion(WesternJourneyState state, string edgeId)
     {
         if (!_edges.TryGetValue(edgeId, out WesternGraphEdge? edge)

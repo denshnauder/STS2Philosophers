@@ -4398,6 +4398,412 @@
       "route_ids": [
         "SYMPATHY_AND_PUBLIC_ACTION"
       ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_087",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从清楚分明的我思转入无意识",
+      "source": "00西哲当前路线.md:29",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "无意识须保留主体的不透明性，不能把分析写成对他人内心的全知。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:29"
+        ]
+      },
+      "route_ids": [
+        "UNCONSCIOUS_AND_NORM"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_088",
+      "from_node_id": "SIGMUND_FREUD__SELF_AND_OTHER__CORE",
+      "to_node_id": "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；从无意识结构转入能指链与他者",
+      "source": "00西哲当前路线.md:29",
+      "required_edge_ids": [
+        "WESTERN_EDGE_087"
+      ],
+      "enabled": true,
+      "retirement_reason": null,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "能指与欲望须保留请求被关系重新定位的过程，不能写成读心或成功治疗分数。",
+        "interpretation_boundary": "问题展开，不伪造直接师承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:29"
+        ]
+      },
+      "route_ids": [
+        "UNCONSCIOUS_AND_NORM"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_100",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "APPEARANCE_AND_INTERPRETATION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_101",
+      "from_node_id": "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+      "to_node_id": "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "APPEARANCE_AND_INTERPRETATION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_102",
+      "from_node_id": "DESCARTES__SELF_AND_OTHER__CORE",
+      "to_node_id": "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "EMBODIED_PERCEPTION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_103",
+      "from_node_id": "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+      "to_node_id": "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "SELF_AND_OTHER",
+        "to_problem_id": "SELF_AND_OTHER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "EMBODIED_PERCEPTION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_106",
+      "from_node_id": "ARISTOTLE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "STRUCTURE_AND_EXCLUSION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_107",
+      "from_node_id": "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+      "to_node_id": "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "LANGUAGE_AND_MEANING",
+        "to_problem_id": "LANGUAGE_AND_MEANING",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "STRUCTURE_AND_EXCLUSION"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_118",
+      "from_node_id": "ROUSSEAU__HISTORY_AND_POWER__CORE",
+      "to_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_CRITIQUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_119",
+      "from_node_id": "KARL_MARX__HISTORY_AND_POWER__EARLY",
+      "to_node_id": "MAX_HORKHEIMER__HISTORY_AND_POWER__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问题重开，高；按路线表的固定承接推进",
+      "source": "00西哲当前路线.md:19",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "HISTORY_AND_POWER",
+        "to_problem_id": "HISTORY_AND_POWER",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:19"
+        ]
+      },
+      "route_ids": [
+        "SOCIAL_CRITIQUE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_171",
+      "from_node_id": "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 1,
+      "slot": "Question",
+      "outcome": "Switch",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第一幕接受孟德斯鸠后转入制衡与公正",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31"
+        ]
+      },
+      "route_ids": []
+    },
+    {
+      "edge_id": "WESTERN_EDGE_172",
+      "from_node_id": "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 2,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；接受孟德斯鸠后第二幕固定承接康德〔制度〕",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31"
+        ]
+      },
+      "route_ids": [
+        "CHECKS_AND_JUSTICE"
+      ]
+    },
+    {
+      "edge_id": "WESTERN_EDGE_173",
+      "from_node_id": "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
+      "to_node_id": "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
+      "act": 3,
+      "slot": "Fixed",
+      "outcome": "Adopt",
+      "confidence": "High",
+      "relation_summary": "问号转线，高；第三幕固定承接罗尔斯",
+      "source": "00西哲当前路线.md:31",
+      "required_edge_ids": [
+        "WESTERN_EDGE_172"
+      ],
+      "enabled": true,
+      "context": {
+        "from_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "to_problem_id": "FREEDOM_AND_INSTITUTIONS",
+        "relation_types": [
+          "ProblemShift"
+        ],
+        "compressed_mediators": "",
+        "behavior_requirement": "NoAdditionalGate",
+        "ethical_boundary": "当前选择仅表达这一问题面的游戏实践，不代表人物全部主张。",
+        "interpretation_boundary": "关系名及置信度沿用既有路径规划，不把问题转译写成机制强度或无条件继承。",
+        "evidence_status": "LocalPlanning",
+        "evidence_sources": [
+          "00西哲当前路线.md:31"
+        ]
+      },
+      "route_ids": [
+        "CHECKS_AND_JUSTICE"
+      ]
     }
   ],
   "samples": [

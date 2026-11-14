@@ -89,6 +89,8 @@ internal static class ActFixedEntryHost
         { if (route.Length == 0) route = "NATURE_AND_BECOMING"; entry = "HERACLITUS__BEING_AND_CHANGE__CORE"; }
         else if (player.Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion))
         { if (route.Length == 0) route = "FORMAL_LANGUAGE"; entry = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"; }
+        else if (player.Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion))
+        { entry = "DESCARTES__SELF_AND_OTHER__CORE"; }
         else if (player.Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion))
         { if (route.Length == 0) route = "EDUCATION_AND_SITUATION"; entry = "ROUSSEAU__HISTORY_AND_POWER__CORE"; }
         else if (player.Relics.OfType<PlatoCivicSeal>().Any(relic => relic.CanOfferNativeQuestion))
@@ -100,6 +102,11 @@ internal static class ActFixedEntryHost
         if (!WesternRouteTable.Instance.Routes.Any(line => line.RouteId == route && line.EntryNodeId == entry)) return null;
         string parent = route switch
         {
+            "STRUCTURE_AND_EXCLUSION" => SaussureSignState.AdoptedNodeId,
+            "APPEARANCE_AND_INTERPRETATION" or "EMBODIED_PERCEPTION" => HusserlEpocheState.AdoptedNodeId,
+            "UNCONSCIOUS_AND_NORM" => FreudUnconsciousState.AdoptedNodeId,
+            "SOCIAL_CRITIQUE" => MarxAlienationState.AdoptedNodeId,
+            "FORTUNE_AND_VIRTUE" => MachiavelliFortuneAfterState.SourceNodeId,
             "INDIVIDUAL_COMMITMENT" => KierkegaardFaithState.AdoptedNodeId,
             "CONSEQUENCE_AND_FREEDOM" => BenthamUtilityState.AdoptedNodeId,
             "SYMPATHY_AND_PUBLIC_ACTION" => SmithSympathyState.AdoptedNodeId,
@@ -125,6 +132,17 @@ internal static class ActFixedEntryHost
         {
             selected = (route, act) switch
         {
+            ("STRUCTURE_AND_EXCLUSION", 2) => SaussureSignPatch.TrySelectNative(run),
+            ("STRUCTURE_AND_EXCLUSION", 3) => LeviStraussMythPatch.TrySelectNative(run),
+            ("APPEARANCE_AND_INTERPRETATION" or "EMBODIED_PERCEPTION", 2) => HusserlEpochePatch.TrySelectNative(run),
+            ("APPEARANCE_AND_INTERPRETATION", 3) => HeideggerDaseinPatch.TrySelectNative(run),
+            ("EMBODIED_PERCEPTION", 3) => MerleauPontyBodyPatch.TrySelectNative(run),
+            ("UNCONSCIOUS_AND_NORM", 2) => FreudUnconsciousPatch.TrySelectNative(run),
+            ("UNCONSCIOUS_AND_NORM", 3) => LacanSignifierPatch.TrySelectNative(run),
+            ("SOCIAL_CRITIQUE", 2) => MarxAlienationPatch.TrySelectNative(run),
+            ("SOCIAL_CRITIQUE", 3) => HorkheimerReasonPatch.TrySelectNative(run),
+            ("FORTUNE_AND_VIRTUE", 2) => MachiavelliFloodPreparationPatch.TrySelectNative(run),
+            ("FORTUNE_AND_VIRTUE", 3) => MachiavelliFortuneAfterPatch.TrySelectNative(run),
             ("INDIVIDUAL_COMMITMENT", 2) => KierkegaardFaithPatch.TrySelectNative(run),
             ("INDIVIDUAL_COMMITMENT", 3) => SartreExistencePatch.TrySelectNative(run),
             ("CONSEQUENCE_AND_FREEDOM", 2) => BenthamUtilityPatch.TrySelectNative(run),
@@ -173,7 +191,7 @@ internal static class ActFixedEntryHost
                 ? run.Players[0].Relics.OfType<SocratesQuestionCup>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE" or "GENEALOGY_AND_POWER"
                 ? run.Players[0].Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion)
-                : journey.RouteId == "SYMPATHY_AND_PUBLIC_ACTION"
+                : journey.RouteId is "SYMPATHY_AND_PUBLIC_ACTION" or "CHECKS_AND_JUSTICE"
                     ? run.Players[0].Relics.OfType<PlatoCivicSeal>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION" or "AUTONOMY_AND_HISTORY"
                     && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
@@ -185,6 +203,10 @@ internal static class ActFixedEntryHost
         {
             model = (journey.RouteId, act) switch
             {
+                ("CHECKS_AND_JUSTICE", 2) => KantUniversalizationPatch.TrySelectNative(run),
+                ("CHECKS_AND_JUSTICE", 3) => RawlsPositionPatch.TrySelectNative(run),
+                ("SOCIAL_KNOWLEDGE", 2) when journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
+                    && !journey.CompletedEdgeIds.Contains("WESTERN_EDGE_198") => BaconSampleLedgerPatch.TrySelectNative(run),
                 ("SCIENTIFIC_MODEL", 2) => NewtonTwoSitesPatch.TrySelectNative(run),
                 ("SCIENTIFIC_MODEL", 3) => KuhnParadigmPatch.TrySelectNative(run),
                 ("SYMPATHY_AND_PUBLIC_ACTION", 2) => MillHarmPatch.TrySelectNative(run),

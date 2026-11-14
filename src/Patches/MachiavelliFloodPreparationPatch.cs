@@ -7,12 +7,42 @@ internal static class MachiavelliFloodPreparationPatch
 {
     internal static Task InsertAtBoundaryAsync() => Task.CompletedTask;
 
+    internal static EventModel? TrySelectExistingNative(RunState run)
+    {
+        if (!NativeQuestionNodeEvents.IsEntry(run)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        MachiavelliFloodPreparationState? saved = shared.MachiavelliFloodPreparation;
+        if (saved is null || saved.Closed || !saved.IsUsable()) return null;
+        WesternJourneyState? journey = shared.WesternJourney;
+        if (journey is null || !MachiavelliFloodPreparationFlow.IsRouteConsistent(saved, journey)) return null;
+        MachiavelliFloodPreparation? canonical;
+        try { canonical = ModelDb.Event<MachiavelliFloodPreparation>(); }
+        catch (Exception exception)
+        {
+            Log.Error($"[STS2Philosophers] Machiavelli event unavailable while resuming: {exception}");
+            return null;
+        }
+        return run.VisitedEventIds.Contains(canonical.Id) ? null : canonical;
+    }
+
     internal static EventModel? TrySelectNative(RunState run)
     {
         RunManager manager = RunManager.Instance;
         if (!NativeQuestionNodeEvents.IsEntry(run)
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         var journey = shared.WesternJourney;
+        // At an act boundary the slot belongs to the figure the line names for that
+        // act. Rousseau's unrestricted act-two edge to Machiavelli otherwise takes
+        // the education line's slot from Wollstonecraft.
+        if (FixedEntryScope.Active && journey is not null)
+        {
+            string? namedFigure = WesternRouteTable.Instance.Routes
+                .Where(route => route.RouteId == journey.RouteId)
+                .Select(route => run.CurrentActIndex == 1 ? route.ActTwoFigure
+                    : run.CurrentActIndex == 2 ? route.ActThreeFigure : null)
+                .DefaultIfEmpty(null).First();
+            if (!string.IsNullOrEmpty(namedFigure) && namedFigure != "NICCOLO_MACHIAVELLI") return null;
+        }
         var saved = shared.MachiavelliFloodPreparation;
         MachiavelliFloodPreparation? canonical;
         try { canonical = ModelDb.Event<MachiavelliFloodPreparation>(); }
@@ -22,7 +52,7 @@ internal static class MachiavelliFloodPreparationPatch
         var context = new MachiavelliFloodPreparationTriggerContext(
             manager.IsInProgress, NativeQuestionNodeEvents.IsEntry(run), run.Players.Count == 1, run.CurrentActIndex,
             NativeQuestionNodeEvents.HasCompletedCombat(run),
-            shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)?.CompletedCombatCount ?? 0,
+            NativeQuestionNodeEvents.CombatCount(shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex)),
             journey?.CurrentNodeId, journey?.LastFixedAct ?? 0,
             journey is not null && WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")
                 .Any(edge => edge.EdgeId == MachiavelliFloodPreparationState.CompletionEdgeId),
