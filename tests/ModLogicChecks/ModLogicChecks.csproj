@@ -7,6 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/NietzscheRevaluationTriggerPolicy.cs" Link="NietzscheRevaluationTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/SmithSympathyState.cs" Link="SmithSympathyState.cs" />
+    <Compile Include="../../src/Philosophy/SmithSympathyTriggerPolicy.cs" Link="SmithSympathyTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/KierkegaardFaithState.cs" Link="KierkegaardFaithState.cs" />
+    <Compile Include="../../src/Philosophy/KierkegaardFaithTriggerPolicy.cs" Link="KierkegaardFaithTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/BenthamUtilityState.cs" Link="BenthamUtilityState.cs" />
+    <Compile Include="../../src/Philosophy/BenthamUtilityTriggerPolicy.cs" Link="BenthamUtilityTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/PopperFalsificationState.cs" Link="PopperFalsificationState.cs" />
+    <Compile Include="../../src/Philosophy/RawlsPositionState.cs" Link="RawlsPositionState.cs" />
+    <Compile Include="../../src/Philosophy/RawlsPositionTriggerPolicy.cs" Link="RawlsPositionTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/MillHarmState.cs" Link="MillHarmState.cs" />
+    <Compile Include="../../src/Philosophy/MillHarmTriggerPolicy.cs" Link="MillHarmTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
     <Compile Include="../../src/Philosophy/HegelRecognitionState.cs" Link="HegelRecognitionState.cs" />
     <Compile Include="../../src/Philosophy/HegelRecognitionTriggerPolicy.cs" Link="HegelRecognitionTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/MarxAlienationState.cs" Link="MarxAlienationState.cs" />
@@ -39,7 +52,6 @@
     <Compile Include="..\..\src\Philosophy\CamusRevoltLimitState.cs" Link="CamusRevoltLimitState.cs" />
     <Compile Include="..\..\src\Philosophy\KantApperceptionState.cs" Link="KantApperceptionState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesTriggerPolicy.cs" Link="NewtonTwoSitesTriggerPolicy.cs" />
-    <Compile Include="..\..\src\Philosophy\NewtonTwoSitesState.cs" Link="NewtonTwoSitesState.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonTwoSitesFlow.cs" Link="NewtonTwoSitesFlow.cs" />
     <Compile Include="..\..\src\Philosophy\NewtonCalibrationPracticeState.cs" Link="NewtonCalibrationPracticeState.cs" />
     <Compile Include="..\..\src\Philosophy\SpinozaCauseNetworkState.cs" Link="SpinozaCauseNetworkState.cs" />

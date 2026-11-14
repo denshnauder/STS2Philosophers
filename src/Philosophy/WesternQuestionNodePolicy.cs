@@ -176,6 +176,12 @@ internal static class WesternQuestionNodePolicy
         || shared.HegelRecognition is { Closed: false }
         || shared.MarxAlienation is { Closed: false }
         || shared.DeleuzeDifference is { Closed: false }
+        || shared.SmithSympathy is { Closed: false }
+        || shared.KierkegaardFaith is { Closed: false }
+        || shared.BenthamUtility is { Closed: false }
+        || shared.PopperFalsification is { Closed: false }
+        || shared.RawlsPosition is { Closed: false }
+        || shared.MillHarm is { Closed: false }
         || shared.SchellingNature is { Closed: false }
         || shared.FregeSense is { Closed: false }
         || shared.RussellAnalysis is { Closed: false }

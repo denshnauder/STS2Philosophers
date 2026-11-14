@@ -175,10 +175,12 @@ internal static class NewtonTwoSitesFlow
     public static bool IsRouteConsistent(
         NewtonTwoSitesState state,
         WesternJourneyState journey,
-        SextusOpposedAppearancesState sextus,
-        DescartesMethodicReconstructionState descartes)
+        SextusOpposedAppearancesState? sextus,
+        DescartesMethodicReconstructionState? descartes)
     {
-        if (state is null || journey is null || sextus is null || descartes is null) return false;
+        if (state is null || journey is null) return false;
+        if (state.EarlyBacon) return IsEarlyRouteConsistent(state, journey);
+        if (sextus is null || descartes is null) return false;
         if (!state.IsUsable()) return false;
         if (string.IsNullOrWhiteSpace(state.SextusInstanceId) || string.IsNullOrWhiteSpace(state.DescartesInstanceId)) return false;
         if (state.SextusInstanceId != sextus.InstanceId) return false;
@@ -216,7 +218,7 @@ internal static class NewtonTwoSitesFlow
         bool edge = journey.CompletedEdgeIds.Contains(NewtonTwoSitesState.CompletionEdgeId);
         bool seen = journey.SeenThinkerIds.Contains("ISAAC_NEWTON");
         if (!state.FixedSlotResolved)
-            return journey.CurrentNodeId == NewtonTwoSitesState.SourceNodeId && journey.LastFixedAct == 2
+            return journey.CurrentNodeId == NewtonTwoSitesState.SourceNodeId && journey.LastFixedAct >= 2
                 && !journey.DeclinedFixedActs.Contains(3) && !journey.RetainedEnding && !edge && !seen;
         if (journey.LastFixedAct != 3) return false;
         return state.EdgeCommitted
@@ -226,20 +228,57 @@ internal static class NewtonTwoSitesFlow
                 && journey.DeclinedFixedActs.Contains(3) && journey.RetainedEnding;
     }
 
+    private static bool IsEarlyRouteConsistent(NewtonTwoSitesState state, WesternJourneyState journey)
+    {
+        if (!state.IsUsable() || journey.RetainedEnding || journey.RouteId != "SCIENTIFIC_MODEL") return false;
+        bool edge = journey.CompletedEdgeIds.Contains(NewtonTwoSitesState.EarlyCompletionEdgeId);
+        if (!state.FixedSlotResolved)
+            return !edge && journey.LastFixedAct == 2
+                && journey.CurrentNodeId == NewtonTwoSitesState.EarlySourceNodeId
+                && !journey.DeclinedFixedActs.Contains(2)
+                && !journey.SeenThinkerIds.Contains("ISAAC_NEWTON");
+        if (state.EdgeCommitted)
+            return edge && journey.LastFixedAct is 2 or 3
+                && journey.CurrentNodeId == NewtonTwoSitesState.AdoptedNodeId
+                && journey.SeenThinkerIds.Contains("ISAAC_NEWTON")
+                && !journey.DeclinedFixedActs.Contains(2);
+        return !edge && journey.LastFixedAct == 2
+            && journey.CurrentNodeId == NewtonTwoSitesState.EarlySourceNodeId
+            && journey.DeclinedFixedActs.Contains(2);
+    }
+
     public static bool TryCommitPending(
         NewtonTwoSitesState state,
         WesternJourneyState journey,
-        SextusOpposedAppearancesState sextus,
-        DescartesMethodicReconstructionState descartes,
+        SextusOpposedAppearancesState? sextus,
+        DescartesMethodicReconstructionState? descartes,
         WesternRouteGraph graph)
     {
-        if (state is null || journey is null || sextus is null || descartes is null || graph is null) return false;
+        if (state is null || journey is null || graph is null) return false;
+        if (!state.EarlyBacon && (sextus is null || descartes is null)) return false;
         if (!state.IsUsable()) return false;
         if (state.Closed) return false;
         var action = state.PendingAction;
         if (action == NewtonTwoSitesAction.None) return false;
         if (!Options(state.Stage).Contains(action)) return false;
         if (!IsRouteConsistent(state, journey, sextus, descartes)) return false;
+
+        if (state.EarlyBacon)
+        {
+            switch (action)
+            {
+                case NewtonTwoSitesAction.ConditionRelation:
+                case NewtonTwoSitesAction.RecheckOtherSite:
+                    if (!graph.TryApply(journey, NewtonTwoSitesState.EarlyCompletionEdgeId)) return false;
+                    break;
+                case NewtonTwoSitesAction.Decline:
+                case NewtonTwoSitesAction.KeepLocal:
+                    if (!graph.TryDecline(journey, "Fixed", 2)) return false;
+                    break;
+            }
+            Apply(state, action);
+            return IsRouteConsistent(state, journey, null, null);
+        }
 
         switch (action)
         {

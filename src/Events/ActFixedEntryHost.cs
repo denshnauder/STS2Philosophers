@@ -84,18 +84,26 @@ internal static class ActFixedEntryHost
             || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             || shared?.WesternJourney is not { } journey || journey.RetainedEnding) return null;
         var player = run.Players[0];
-        string route, entry;
+        string route = journey.RouteId, entry;
         if (player.Relics.OfType<HeraclitusLyre>().Any(relic => relic.CanOfferNativeQuestion))
-        { route = "NATURE_AND_BECOMING"; entry = "HERACLITUS__BEING_AND_CHANGE__CORE"; }
+        { if (route.Length == 0) route = "NATURE_AND_BECOMING"; entry = "HERACLITUS__BEING_AND_CHANGE__CORE"; }
         else if (player.Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion))
-        { route = "FORMAL_LANGUAGE"; entry = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"; }
+        { if (route.Length == 0) route = "FORMAL_LANGUAGE"; entry = "ARISTOTLE__LANGUAGE_AND_MEANING__CORE"; }
         else if (player.Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion))
-        { route = "EDUCATION_AND_SITUATION"; entry = "ROUSSEAU__HISTORY_AND_POWER__CORE"; }
+        { if (route.Length == 0) route = "EDUCATION_AND_SITUATION"; entry = "ROUSSEAU__HISTORY_AND_POWER__CORE"; }
         else if (player.Relics.OfType<PlatoCivicSeal>().Any(relic => relic.CanOfferNativeQuestion))
-        { route = "CHECKS_AND_JUSTICE"; entry = "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"; }
+        { if (route.Length == 0) route = "CHECKS_AND_JUSTICE"; entry = "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"; }
+        else if (player.Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
+            && route is "INDIVIDUAL_COMMITMENT" or "CONSEQUENCE_AND_FREEDOM")
+        { entry = "SOCRATES__VIRTUE_AND_HAPPINESS__CORE"; }
         else return null;
+        if (!WesternRouteTable.Instance.Routes.Any(line => line.RouteId == route && line.EntryNodeId == entry)) return null;
         string parent = route switch
         {
+            "INDIVIDUAL_COMMITMENT" => KierkegaardFaithState.AdoptedNodeId,
+            "CONSEQUENCE_AND_FREEDOM" => BenthamUtilityState.AdoptedNodeId,
+            "SYMPATHY_AND_PUBLIC_ACTION" => SmithSympathyState.AdoptedNodeId,
+            "GENEALOGY_AND_POWER" => "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             "NATURE_AND_BECOMING" => SpinozaCauseNetworkState.AdoptedNodeId,
             "FORMAL_LANGUAGE" => FregeSenseState.AdoptedNodeId,
             "CHECKS_AND_JUSTICE" => MontesquieuBalanceState.AdoptedNodeId,
@@ -117,6 +125,14 @@ internal static class ActFixedEntryHost
         {
             selected = (route, act) switch
         {
+            ("INDIVIDUAL_COMMITMENT", 2) => KierkegaardFaithPatch.TrySelectNative(run),
+            ("INDIVIDUAL_COMMITMENT", 3) => SartreExistencePatch.TrySelectNative(run),
+            ("CONSEQUENCE_AND_FREEDOM", 2) => BenthamUtilityPatch.TrySelectNative(run),
+            ("CONSEQUENCE_AND_FREEDOM", 3) => MillHarmPatch.TrySelectNative(run),
+            ("SYMPATHY_AND_PUBLIC_ACTION", 2) => SmithSympathyPatch.TrySelectNative(run),
+            ("SYMPATHY_AND_PUBLIC_ACTION", 3) => MillHarmPatch.TrySelectNative(run),
+            ("GENEALOGY_AND_POWER", 2) => NietzscheRevaluationPatch.TrySelectNative(run),
+            ("GENEALOGY_AND_POWER", 3) => FoucaultPowerPatch.TrySelectNative(run),
             ("CHECKS_AND_JUSTICE", 2) => MontesquieuBalancePatch.TrySelectNative(run),
             ("CHECKS_AND_JUSTICE", 3) => KantUniversalizationPatch.TrySelectNative(run),
             ("NATURE_AND_BECOMING", 2) => SpinozaCauseNetworkPatch.TrySelectNative(run),
@@ -151,12 +167,14 @@ internal static class ActFixedEntryHost
             ? run.Players[0].Relics.OfType<HeraclitusLyre>().Any(relic => relic.CanOfferNativeQuestion)
             : journey.RouteId is "STRUCTURE_AND_EXCLUSION" or "ORDINARY_SPEECH"
             ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
-            : journey.RouteId == "INDIVIDUAL_COMMITMENT"
+            : journey.RouteId is "INDIVIDUAL_COMMITMENT" or "CONSEQUENCE_AND_FREEDOM"
                 ? run.Players[0].Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
-            : journey.RouteId == "FALLIBLE_INQUIRY"
+            : journey.RouteId is "FALLIBLE_INQUIRY" or "SCIENTIFIC_MODEL"
                 ? run.Players[0].Relics.OfType<SocratesQuestionCup>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE" or "GENEALOGY_AND_POWER"
                 ? run.Players[0].Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion)
+                : journey.RouteId == "SYMPATHY_AND_PUBLIC_ACTION"
+                    ? run.Players[0].Relics.OfType<PlatoCivicSeal>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION" or "AUTONOMY_AND_HISTORY"
                     && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
         if (!carrier) return null;
@@ -167,6 +185,16 @@ internal static class ActFixedEntryHost
         {
             model = (journey.RouteId, act) switch
             {
+                ("SCIENTIFIC_MODEL", 2) => NewtonTwoSitesPatch.TrySelectNative(run),
+                ("SCIENTIFIC_MODEL", 3) => KuhnParadigmPatch.TrySelectNative(run),
+                ("SYMPATHY_AND_PUBLIC_ACTION", 2) => MillHarmPatch.TrySelectNative(run),
+                ("SYMPATHY_AND_PUBLIC_ACTION", 3) => journey.CompletedEdgeIds.Contains("WESTERN_EDGE_175")
+                    && shared.MillHarm is not { Closed: true }
+                    ? MillHarmPatch.TrySelectNative(run) : ArendtBeginningPatch.TrySelectNative(run),
+                ("CONSEQUENCE_AND_FREEDOM", 2) => MillHarmPatch.TrySelectNative(run),
+                ("CONSEQUENCE_AND_FREEDOM", 3) => journey.CompletedEdgeIds.Contains("WESTERN_EDGE_169")
+                    && shared.MillHarm is not { Closed: true }
+                    ? MillHarmPatch.TrySelectNative(run) : RawlsPositionPatch.TrySelectNative(run),
                 ("AUTONOMY_AND_HISTORY", 2) => HegelRecognitionPatch.TrySelectNative(run),
                 ("AUTONOMY_AND_HISTORY", 3) => MarxAlienationPatch.TrySelectNative(run),
                 ("NATURE_AND_BECOMING", 2) => SchellingNaturePatch.TrySelectNative(run),

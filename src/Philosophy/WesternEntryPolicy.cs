@@ -21,11 +21,14 @@ internal static class WesternEntryPolicy
 
     // Only call after verifying the selected relic was actually obtained.
     public static bool RecordObtained(PhilosophyRunState state, GeneratedCandidates candidates,
-        string thinkerId, string problemId, string relicId)
+        string thinkerId, string problemId, string relicId, string? routeId = null)
     {
         if (!CanChoose(state, candidates, thinkerId, problemId, 0, false, false)
             || string.IsNullOrWhiteSpace(relicId) || relicId != RelicIdFor(problemId)) return false;
-        WesternJourneyState journey = WesternRouteGraph.LoadEmbedded().Start($"{thinkerId}__{problemId}__CORE");
+        WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
+        WesternJourneyState journey = graph.Start($"{thinkerId}__{problemId}__CORE");
+        journey.RouteRules = true;
+        if (routeId is not null && !graph.TryNameRoute(journey, routeId)) return false;
         state.RecordCurrentDoctrine(thinkerId, relicId, ["WESTERN", problemId]);
         state.WesternJourney = journey;
         return true;

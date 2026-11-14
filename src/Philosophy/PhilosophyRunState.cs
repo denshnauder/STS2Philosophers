@@ -46,6 +46,12 @@ internal sealed class PhilosophyRunState
     public HegelRecognitionState? HegelRecognition { get; set; }
     public MarxAlienationState? MarxAlienation { get; set; }
     public DeleuzeDifferenceState? DeleuzeDifference { get; set; }
+    public SmithSympathyState? SmithSympathy { get; set; }
+    public KierkegaardFaithState? KierkegaardFaith { get; set; }
+    public BenthamUtilityState? BenthamUtility { get; set; }
+    public PopperFalsificationState? PopperFalsification { get; set; }
+    public RawlsPositionState? RawlsPosition { get; set; }
+    public MillHarmState? MillHarm { get; set; }
     public SchellingNatureState? SchellingNature { get; set; }
     public FregeSenseState? FregeSense { get; set; }
     public RussellAnalysisState? RussellAnalysis { get; set; }
@@ -149,6 +155,12 @@ internal sealed class PhilosophyRunState
         || HegelRecognition is not null
         || MarxAlienation is not null
         || DeleuzeDifference is not null
+        || SmithSympathy is not null
+        || KierkegaardFaith is not null
+        || BenthamUtility is not null
+        || PopperFalsification is not null
+        || RawlsPosition is not null
+        || MillHarm is not null
         || SchellingNature is not null
         || FregeSense is not null
         || RussellAnalysis is not null
@@ -382,6 +394,12 @@ internal sealed class PhilosophyRunState
         HegelRecognition?.NormalizeAfterLoad();
         MarxAlienation?.NormalizeAfterLoad();
         DeleuzeDifference?.NormalizeAfterLoad();
+        SmithSympathy?.NormalizeAfterLoad();
+        KierkegaardFaith?.NormalizeAfterLoad();
+        BenthamUtility?.NormalizeAfterLoad();
+        PopperFalsification?.NormalizeAfterLoad();
+        RawlsPosition?.NormalizeAfterLoad();
+        MillHarm?.NormalizeAfterLoad();
         SchellingNature?.NormalizeAfterLoad();
         FregeSense?.NormalizeAfterLoad();
         RussellAnalysis?.NormalizeAfterLoad();

@@ -9,6 +9,20 @@ namespace STS2Philosophers;
 
 public sealed partial class PhilosophersGaze
 {
+    private static readonly HashSet<string> ReviewedOpeningRoutes =
+    [
+        "EXPERIENCE_AND_SELF",
+        "NATURE_AND_BECOMING",
+        "WILL_AND_VALUE",
+        "INDIVIDUAL_COMMITMENT",
+        "FORMAL_LANGUAGE",
+        "EDUCATION_AND_SITUATION",
+        "CHECKS_AND_JUSTICE",
+        "CONSEQUENCE_AND_FREEDOM",
+        "SYMPATHY_AND_PUBLIC_ACTION",
+        "GENEALOGY_AND_POWER",
+    ];
+
     private EventOption WesternOption(Func<Task> action, string key, IEnumerable<IHoverTip>? tips = null) =>
         new(this, action, $"{LocalizationPrefix}.WESTERN.options.{key}", tips ?? Array.Empty<IHoverTip>());
 
@@ -31,8 +45,25 @@ public sealed partial class PhilosophersGaze
         foreach (WesternProblem problem in WesternRouteCatalog.Problems.Where(p => p.EntryThinkerId == thinkerId))
         {
             RelicModel relic = WesternEntryRelic(problem.ProblemId);
-            options.Add(WesternOption(() => ObtainWesternEntry(thinkerId, problem.ProblemId),
-                problem.ProblemId, relic.HoverTips));
+            string entryNode = $"{thinkerId}__{problem.ProblemId}__CORE";
+            WesternRouteDefinition[] routes = WesternRouteTable.Instance.Routes
+                .Where(route => route.EntryNodeId == entryNode && ReviewedOpeningRoutes.Contains(route.RouteId))
+                .ToArray();
+            if (routes.Length <= 1)
+            {
+                options.Add(WesternOption(() => ObtainWesternEntry(thinkerId, problem.ProblemId,
+                    routes.FirstOrDefault()?.RouteId), problem.ProblemId, relic.HoverTips));
+                continue;
+            }
+            // Several lines share this entry. The player chooses the default
+            // mainline here, before the first act, so a run that never sees an
+            // extra question still has a playable line; this spends no fixed
+            // event and no question point.
+            foreach (WesternRouteDefinition route in routes)
+            {
+                options.Add(WesternOption(() => ObtainWesternEntry(thinkerId, problem.ProblemId, route.RouteId),
+                    $"{problem.ProblemId}.{route.RouteId}", relic.HoverTips));
+            }
         }
         options.Add(WesternOption(ReturnToUnifiedInvitations, "BACK_UNIFIED"));
         options.Add(WesternOption(ConfirmActOneDecline, "DECLINE"));
@@ -40,7 +71,7 @@ public sealed partial class PhilosophersGaze
         return Task.CompletedTask;
     }
 
-    private async Task ObtainWesternEntry(string thinkerId, string problemId)
+    private async Task ObtainWesternEntry(string thinkerId, string problemId, string? routeId = null)
     {
         if (!TryBeginResolution()) return;
         try
@@ -54,7 +85,7 @@ public sealed partial class PhilosophersGaze
             await ObtainWesternRelic(problemId, owner);
             RelicModel relic = WesternEntryRelic(problemId);
             if (owner.GetRelicById(relic.Id) is null) return;
-            if (!WesternEntryPolicy.RecordObtained(state, candidates, thinkerId, problemId, relic.Id.Entry)) return;
+            if (!WesternEntryPolicy.RecordObtained(state, candidates, thinkerId, problemId, relic.Id.Entry, routeId)) return;
             SetEventFinished(L10NLookup($"{LocalizationPrefix}.WESTERN_{problemId}.result"));
             await SaveRunAfterResolution();
         }

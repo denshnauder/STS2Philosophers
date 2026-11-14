@@ -544,7 +544,8 @@ internal sealed class WesternRouteGraph
         && edge.Act <= (slot == "Fixed" ? state.LastFixedAct + 1 : state.LastFixedAct)
         && edge.Act <= 3 && !state.CompletedEdgeIds.Contains(edge.EdgeId)
         && !state.SeenThinkerIds.Contains(_nodes[edge.ToNodeId].ThinkerId)
-        && edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
+        && (edge.RequiredEdgeIds.All(state.CompletedEdgeIds.Contains)
+            || edge.EdgeId == "WESTERN_EDGE_170" && state.CompletedEdgeIds.Contains("WESTERN_EDGE_066"))
         && RouteMatches(edge, state)
         && !(slot == "Fixed" && edge.RouteIds is not { Length: > 0 } && !string.IsNullOrEmpty(state.RouteId)
             && _edges.Values.Any(other => other.Enabled && other.Slot == "Fixed"
