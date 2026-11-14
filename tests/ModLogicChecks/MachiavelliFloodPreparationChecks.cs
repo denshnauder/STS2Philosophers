@@ -6,11 +6,17 @@ internal static class MachiavelliFloodPreparationChecks
 {
     private static void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
     private static PhilosophyRunState Reload(PhilosophyRunState shared) => PhilosophyRunStateCodec.Decode(PhilosophyRunStateCodec.Encode(shared));
-    private static PhilosophyRunState Fixture(WesternRouteGraph graph) => new()
+    private static PhilosophyRunState Fixture(WesternRouteGraph graph)
     {
-        WesternJourney = graph.Start(MachiavelliFloodPreparationState.SourceNodeId),
-        MachiavelliFloodPreparation = MachiavelliFloodPreparationState.Create("MACHIAVELLI:TEST:2"),
-    };
+        WesternJourneyState journey = graph.Start(MachiavelliFloodPreparationState.SourceNodeId);
+        journey.RouteRules = true;
+        journey.RouteId = "FORTUNE_AND_VIRTUE";
+        return new()
+        {
+            WesternJourney = journey,
+            MachiavelliFloodPreparation = MachiavelliFloodPreparationState.Create("MACHIAVELLI:TEST:2"),
+        };
+    }
     private static PhilosophyRunState Commit(PhilosophyRunState shared, WesternRouteGraph graph, MachiavelliFloodPreparationAction action)
     {
         Check(MachiavelliFloodPreparationFlow.TryPrepare(shared.MachiavelliFloodPreparation!, action), $"Prepare {action}.");
@@ -44,14 +50,28 @@ internal static class MachiavelliFloodPreparationChecks
                 && (!adopts || !graph.GetEligibleEdges(shared.WesternJourney, "Fixed").Any(e => e.EdgeId == "WESTERN_EDGE_040")),
                 "Actual Fixed2 is consumed without a fabricated 017 question or later 040.");
             WesternJourneyState journey = shared.WesternJourney!;
+            if (adopts && journey.RouteId == "FORTUNE_AND_VIRTUE")
+            {
+                // The fortune line has no third-act figure: the act-three slot is
+                // empty, and completing it must not invent a fourth act.
+                bool declined = graph.TryDecline(journey, "Fixed", 3);
+                bool complete = graph.IsComplete(journey);
+                bool consistent = MachiavelliFloodPreparationFlow.IsRouteConsistent(
+                    shared.MachiavelliFloodPreparation, journey);
+                Check(declined && complete && consistent,
+                    $"The fortune line ends after its act-two practice without a fourth act (declined={declined}, complete={complete}, consistent={consistent}, last={journey.LastFixedAct}, node={journey.CurrentNodeId}).");
+                continue;
+            }
             Check(graph.CanFinish(journey) && graph.TryDecline(journey, "Fixed", 3)
                 && graph.TryRetainEnding(journey) && graph.IsComplete(journey)
                 && MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation, journey),
                 "The current branch has a legal third-act retained ending, with no fourth act or invented successor.");
         }
         shared = Fixture(graph);
-        Check(graph.TryApply(shared.WesternJourney!, "WESTERN_EDGE_040")
-            && !MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation!, shared.WesternJourney!),
+        shared.WesternJourney!.RouteRules = false;
+        shared.WesternJourney.RouteId = string.Empty;
+        Check(graph.TryApply(shared.WesternJourney, "WESTERN_EDGE_040")
+            && !MachiavelliFloodPreparationFlow.IsRouteConsistent(shared.MachiavelliFloodPreparation!, shared.WesternJourney),
             "Wollstonecraft's fixed adoption excludes the parallel candidate.");
         shared = Fixture(graph); shared.WesternJourney = graph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
         Check(graph.TryApply(shared.WesternJourney, "WESTERN_EDGE_016")

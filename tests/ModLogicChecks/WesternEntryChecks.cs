@@ -42,6 +42,28 @@ internal static class WesternEntryChecks
         }
         Check(!PhilosophersGazeRelicGrantPolicy.CanGrant(new(false, false, false, false, HasWesternPractice: true)),
             "Western ownership must reject a second eastern relic.");
+        // An entry shared by several lines must let the player choose the default
+        // mainline before act one; that choice spends neither a question nor a
+        // fixed slot.
+        WesternRouteDefinition sharedRoute = WesternRouteTable.Instance.Routes
+            .First(route => route.EntryNodeId == "PLATO__FREEDOM_AND_INSTITUTIONS__CORE"
+                && route.RouteId == "SYMPATHY_AND_PUBLIC_ACTION");
+        PhilosophyRunState sharedEntry = new();
+        GeneratedCandidates sharedCandidates = new()
+        {
+            GenerationKey = PhilosophersGazeActOneCandidatePolicy.GenerationKey,
+            CandidateIds = new[] { "PLATO" }.Concat(
+                PhilosophersGazeActOneCandidatePolicy.RegisteredThinkerIds
+                    .Where(id => id != "PLATO").Take(2)).ToList(),
+        };
+        Check(WesternEntryPolicy.RecordObtained(sharedEntry, sharedCandidates, "PLATO",
+                "FREEDOM_AND_INSTITUTIONS", WesternEntryPolicy.RelicIdFor("FREEDOM_AND_INSTITUTIONS"),
+                sharedRoute.RouteId)
+            && sharedEntry.WesternJourney?.RouteId == sharedRoute.RouteId,
+            "The entry's default-line choice is saved before act one.");
+        Check(sharedEntry.WesternJourney is { LastFixedAct: 1, RouteRules: true }
+            && sharedEntry.WesternJourney.ResolvedQuestionActs.Count == 0,
+            "Choosing a default line spends no fixed event or question point.");
         foreach (string language in new[] { "zhs", "eng" })
         {
             using JsonDocument document = JsonDocument.Parse(File.ReadAllText($"content/STS2Philosophers/localization/{language}/events.json"));
@@ -51,6 +73,9 @@ internal static class WesternEntryChecks
             {
                 foreach (string suffix in new[] { $"WESTERN_{problem.EntryThinkerId}.description", $"WESTERN_{problem.ProblemId}.result", $"WESTERN.options.{problem.ProblemId}.title", $"WESTERN.options.{problem.ProblemId}.description" })
                     Check(document.RootElement.TryGetProperty($"PHILOSOPHERS_GAZE.pages.{suffix}", out var text) && !string.IsNullOrWhiteSpace(text.GetString()), "Every entry needs localized question, effect and result text.");
+                foreach (WesternRouteDefinition route in WesternRouteTable.Instance.Routes.Where(route => route.EntryNodeId == $"{problem.EntryThinkerId}__{problem.ProblemId}__CORE"))
+                foreach (string suffix in new[] { "title", "description" })
+                    Check(document.RootElement.TryGetProperty($"PHILOSOPHERS_GAZE.pages.WESTERN.options.{problem.ProblemId}.{route.RouteId}.{suffix}", out var routeText) && !string.IsNullOrWhiteSpace(routeText.GetString()), "Every default line needs localized choice text.");
             }
         }
         Console.WriteLine("Western entry checks passed: seven problems, single doctrine, save/repeat guards and bilingual pages.");

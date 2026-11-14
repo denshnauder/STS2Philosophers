@@ -26,6 +26,17 @@ internal static class WollstonecraftAdmissionPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
 
         WesternJourneyState? journey = shared.WesternJourney;
+        // A line that names a different act-two figure owns its own fixed slot.
+        // The fortune line names Machiavelli, so the parallel Wollstonecraft
+        // candidate must not take it even when the seed puts her first.
+        if (journey is not null && !string.IsNullOrEmpty(journey.RouteId))
+        {
+            string? namedFigure = WesternRouteTable.Instance.Routes
+                .Where(route => route.RouteId == journey.RouteId)
+                .Select(route => run.CurrentActIndex == 1 ? route.ActTwoFigure : null)
+                .DefaultIfEmpty(null).First();
+            if (!string.IsNullOrEmpty(namedFigure) && namedFigure != "MARY_WOLLSTONECRAFT") return null;
+        }
         WollstonecraftAdmissionState? saved = shared.WollstonecraftAdmission;
         WollstonecraftAdmission? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;

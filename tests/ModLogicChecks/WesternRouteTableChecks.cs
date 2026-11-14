@@ -39,6 +39,7 @@ internal static class WesternRouteTableChecks
         "SCIENTIFIC_MODEL",
         "SOCIAL_KNOWLEDGE",
         "FALLIBLE_INQUIRY",
+        "FORTUNE_AND_VIRTUE",
     ];
 
     // Lines whose second-act figure no first-act step reaches: the branch that
@@ -52,6 +53,7 @@ internal static class WesternRouteTableChecks
     [
         "ORDINARY_SPEECH",
         "FALLIBLE_INQUIRY",
+        "FORTUNE_AND_VIRTUE",
     ];
 
     // A run that follows the default line never takes a question node, so its
@@ -82,8 +84,8 @@ internal static class WesternRouteTableChecks
     {
         WesternRouteTable table = WesternRouteTable.Instance;
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
-        Check(table.Routes.Count == 20, "The design's table has twenty default mainlines.");
-        Check(table.Routes.Select(route => route.RouteId).Distinct().Count() == 20,
+        Check(table.Routes.Count == 21, "The design's table has twenty default mainlines plus the fortune line.");
+        Check(table.Routes.Select(route => route.RouteId).Distinct().Count() == 21,
             "Every route has its own identity.");
         Check(table.Routes.Select(route => route.EntryNodeId).Distinct().Count() == 7,
             "Twenty routes share seven entries, which is why the entry alone cannot pick a route.");
@@ -252,6 +254,9 @@ internal static class WesternRouteTableChecks
         {
             foreach (var (act, figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
             {
+                // The fortune line ends on its act-two practice; there is no
+                // separate third-act handover to reach.
+                if (route.RouteId == "FORTUNE_AND_VIRTUE" && act == 3) continue;
                 bool any = graph.Edges.Any(edge => edge.Act == act && edge.Slot == "Fixed"
                     && graph.GetNode(edge.ToNodeId).ThinkerId == figure);
                 if (!any) gaps.Add($"{route.RouteId} act {(act == 2 ? "two" : "three")} {figure}");

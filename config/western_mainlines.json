@@ -202,6 +202,16 @@
    "act_two_figure": "CHARLES_SANDERS_PEIRCE",
    "act_three_figure": "JOHN_DEWEY",
    "closing_figure": "JOHN_DEWEY"
+  },
+  {
+   "route_id": "FORTUNE_AND_VIRTUE",
+   "display_name": "运势与德性",
+   "entry_thinker": "ROUSSEAU",
+   "entry_problem": "HISTORY_AND_POWER",
+   "act_one_figure": "ROUSSEAU",
+   "act_two_figure": "NICCOLO_MACHIAVELLI",
+   "act_three_figure": "NICCOLO_MACHIAVELLI",
+   "closing_figure": "NICCOLO_MACHIAVELLI"
   }
  ]
 }

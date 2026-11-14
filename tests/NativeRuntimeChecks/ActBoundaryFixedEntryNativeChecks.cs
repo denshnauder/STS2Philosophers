@@ -104,7 +104,28 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
             [typeof(DeleuzeDifference)], doctrine: false, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_162"], checkRoom: true);
+        ModelDb.Inject(typeof(BenthamUtility));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(BenthamUtility)], doctrine: false, position: 1, actIndex: 1,
+            route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object bentham = Get(shared, "BenthamUtility");
+                Check((int)Get(bentham, "ActIndex") == 2
+                    && (string)Get(bentham, "EdgeId") == "WESTERN_EDGE_130",
+                    "The consequence line's default second-act Bentham room uses 130.");
+            });
         ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(SocratesBalanceWeight), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_130"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((int)Get(mill, "ActIndex") == 3
+                    && (string)Get(mill, "EdgeId") == "WESTERN_EDGE_131",
+                    "The consequence line's third-act Mill room uses 131, not the early 066.");
+            });
         CheckBoundary(typeof(DescartesThinkingLens), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
             route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
@@ -117,7 +138,17 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "EDUCATION_AND_SITUATION", checkRoom: true);
         CheckBoundary(typeof(DescartesThinkingLens), "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
-            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_163"], checkRoom: true);
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_163"], checkRoom: true,
+            afterSelect: (run, shared, ev) =>
+            {
+                var beauvoir = (BeauvoirOther)ev.ToMutable();
+                typeof(EventModel).GetProperty("Owner")!.SetValue(beauvoir, run.Players[0]);
+                typeof(BeauvoirOther).GetMethod("SetInitialEventState",
+                    BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(beauvoir, [false]);
+                string key = beauvoir.Description.LocEntryKey;
+                Check(key.EndsWith("BEAUVOIR_OTHER.pages.INVITATION_SARTRE.description", StringComparison.Ordinal),
+                    "The Sartre source must not tell the player she is keeping Wollstonecraft: " + key);
+            });
         CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
@@ -151,6 +182,30 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(BaconSampleLedger)], doctrine: false, position: 2, actIndex: 1,
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_197"], checkRoom: true);
+        ModelDb.Inject(typeof(NewtonTwoSites));
+        CheckBoundary(typeof(SocratesQuestionCup), "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(NewtonTwoSites)], doctrine: false, position: 1, actIndex: 1,
+            route: "SCIENTIFIC_MODEL", required: ["WESTERN_EDGE_165"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object newton = Get(shared, "NewtonTwoSites");
+                Check((bool)Get(newton, "EarlyBacon") && (int)Get(newton, "ActIndex") == 2
+                    && ((string)Get(newton, "InstanceId")).EndsWith(":2", StringComparison.Ordinal),
+                    "The early Bacon turn creates the act-two Newton record with 166, not the old 049 path.");
+                object journey = Get(shared, "WesternJourney");
+                object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+                foreach (string name in new[] { "Accept", "MeasureDrop", "RecordError", "RevealOther", "ConditionRelation", "Leave" })
+                {
+                    object action = Enum.Parse(T("NewtonTwoSitesAction"), name);
+                    Check((bool)Call("NewtonTwoSitesFlow", "TryPrepare", newton, action)!
+                        && (bool)Call("NewtonTwoSitesFlow", "TryCommitPending", newton, journey, null!, null!, graph)!,
+                        "The early Newton event commits " + name + ".");
+                }
+                Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_166")
+                    && (string)Get(journey, "CurrentNodeId") == "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE"
+                    && (int)Get(journey, "LastFixedAct") == 3,
+                    "The early Newton event commits the act-two 166 edge and lands on Newton.");
+            });
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
@@ -190,6 +245,16 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"], checkRoom: true);
         ModelDb.Inject(typeof(KierkegaardFaith));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(KierkegaardFaith)], doctrine: false, position: 1, actIndex: 1,
+            route: "INDIVIDUAL_COMMITMENT", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object kierkegaard = Get(shared, "KierkegaardFaith");
+                Check((int)Get(kierkegaard, "ActIndex") == 2
+                    && (string)Get(kierkegaard, "EdgeId") == "WESTERN_EDGE_112",
+                    "The individual line's default second-act Kierkegaard room uses 112.");
+            });
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(KierkegaardFaith)], doctrine: false, position: 2, actIndex: 1,
             route: "INDIVIDUAL_COMMITMENT", checkRoom: true);
@@ -246,6 +311,18 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(KuhnParadigm)], doctrine: false, position: 3, actIndex: 2,
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_198"], checkRoom: true);
+        ModelDb.Inject(typeof(NietzscheRevaluation));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 1, actIndex: 1,
+            route: "GENEALOGY_AND_POWER", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object nietzsche = Get(shared, "NietzscheRevaluation");
+                Check((int)Get(nietzsche, "ActIndex") == 2
+                    && (string)Get(nietzsche, "EdgeId") == "WESTERN_EDGE_120"
+                    && (string)Get(nietzsche, "RouteSourceNodeId") == "ROUSSEAU__HISTORY_AND_POWER__CORE",
+                    "The genealogy line's own second-act Nietzsche room uses 120 from Rousseau.");
+            });
         ModelDb.Inject(typeof(FoucaultPower));
         CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,
@@ -284,6 +361,11 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(WollstonecraftAdmission));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 2, seed: "123456789");
+        // The fortune-and-virtue line is the reachable Machiavelli entry. Its
+        // own act-two fixed edge is 046; the education line still keeps 040.
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 1, actIndex: 1,
+            route: "FORTUNE_AND_VIRTUE", routeRules: true, checkRoom: true);
         // An even seed asks Wollstonecraft first; the pair is accepted here because
         // her own room may still decline a slot Machiavelli can take. What the odd
         // seed above pins is the half that used to regress: 046 itself.
@@ -318,7 +400,25 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SmithSympathy));
         CheckBoundary(typeof(PlatoCivicSeal), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(SmithSympathy)], doctrine: false, position: 1, actIndex: 1,
-            route: "SYMPATHY_AND_PUBLIC_ACTION");
+            route: "SYMPATHY_AND_PUBLIC_ACTION", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object smith = Get(shared, "SmithSympathy");
+                Check((int)Get(smith, "ActIndex") == 2
+                    && (string)Get(smith, "EdgeId") == "WESTERN_EDGE_116",
+                    "The sympathy line's default second-act Smith room uses 116.");
+            });
+        ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(PlatoCivicSeal), "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "SYMPATHY_AND_PUBLIC_ACTION", required: ["WESTERN_EDGE_116"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((int)Get(mill, "ActIndex") == 3
+                    && (string)Get(mill, "EdgeId") == "WESTERN_EDGE_117",
+                    "The sympathy line's third-act Mill room uses 117, not the early 055.");
+            });
         ModelDb.Inject(typeof(RawlsPosition));
         CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
