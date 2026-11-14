@@ -226,6 +226,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlyBenthamContinuation();
         CheckDefaultMillDoesNotCreateRawls();
         await CheckMachiavelliThirdActBody();
+        await CheckMarxRousseauBody();
         await CheckKantEarlyDecline();
         await CheckMontesquieuKantRawls();
         CheckEarlyKierkegaardScene();
@@ -917,6 +918,89 @@ internal static class ActBoundaryFixedEntryNativeChecks
                 && (bool)Get(closing, "Closed") && (int)Get(updated, "LastFixedAct") == 3
                 && (string)Get(updated, "CurrentNodeId") == "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
                 "Machiavelli's third-act closing must spend slot 3 on his own node and close.");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+    }
+
+    private static async Task CheckMarxRousseauBody()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(MarxAlienation));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 1])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteId", "SOCIAL_CRITIQUE");
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 1);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MarxAlienation },
+            "The default social-critique line must open Marx at the act-two boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        EventRoom marxRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { marxRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = marxRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(marxRoom);
+            configure?.Invoke(local);
+            // The real EventRoom calls this before AfterEventStarted; this
+            // in-memory fixture has no EnterInternal, so invoke the same initializer.
+            if (local.Description is null)
+                typeof(MarxAlienation).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked")
+                && local.Description is { } description
+                && description.LocEntryKey.EndsWith(".pages.INVITATION_ROUSSEAU.description", StringComparison.Ordinal),
+                "Marx's default Rousseau room must restore the Rousseau page, got "
+                + (local.Description?.LocEntryKey ?? "<none>") + ".");
+            string options = string.Join(",", local.CurrentOptions.Select(candidate =>
+                candidate.HistoryName?.LocEntryKey ?? "<null>"));
+            Check(options.Contains(".options.KEEP_ROUSSEAU.title", StringComparison.Ordinal)
+                && !options.Contains(".options.KEEP_HEGEL.title", StringComparison.Ordinal),
+                "The default Rousseau room must show KeepRousseau, not KeepHegel; options=" + options + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_ROUSSEAU", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Marx's real Rousseau button " + action + " is visible and live; options=" + options + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Marx's real Rousseau button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            object marx = Get(query[1]!, "MarxAlienation");
+            object updated = Get(query[1]!, "WesternJourney");
+            Check((bool)Get(marx, "Closed") && (string)Get(marx, "RouteSourceNodeId")
+                == "ROUSSEAU__HISTORY_AND_POWER__CORE"
+                && (int)Get(updated, "LastFixedAct") == 2
+                && ((HashSet<int>)Get(updated, "DeclinedFixedActs")).Contains(2)
+                && !((HashSet<string>)Get(updated, "CompletedEdgeIds")).Contains("WESTERN_EDGE_118"),
+                "Marx's Rousseau refusal must spend slot 2 in place and keep Rousseau's ending.");
         }
         Set(run, "_currentRooms", new List<AbstractRoom>());
     }

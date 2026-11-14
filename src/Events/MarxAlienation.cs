@@ -16,13 +16,21 @@ public sealed class MarxAlienation : EventModel
     public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
         L10NLookup($"{LocalizationRoot}.pages.INVITATION.description");
 
-    public override IEnumerable<MegaCrit.Sts2.Core.Localization.LocString> GameInfoOptions =>
-        new[]
+    public override IEnumerable<MegaCrit.Sts2.Core.Localization.LocString> GameInfoOptions
+    {
+        get
         {
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.ALIENATED_LABOR"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.HISTORICAL_PROGRESS"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_HEGEL"),
-        };
+            string page = TryRestoreState()?.IsRousseauSource == true
+                ? "INVITATION_ROUSSEAU" : "INVITATION";
+            string keep = page == "INVITATION_ROUSSEAU" ? "KEEP_ROUSSEAU" : "KEEP_HEGEL";
+            return
+            [
+                L10NLookup($"{LocalizationRoot}.pages.{page}.options.ALIENATED_LABOR"),
+                L10NLookup($"{LocalizationRoot}.pages.{page}.options.HISTORICAL_PROGRESS"),
+                L10NLookup($"{LocalizationRoot}.pages.{page}.options.{keep}"),
+            ];
+        }
+    }
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
 
@@ -136,7 +144,7 @@ public sealed class MarxAlienation : EventModel
         return MarxAlienationFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{MarxAlienationFlow.StageKey(stage)}.options.{MarxAlienationFlow.ActionKey(state, action)}",
+                $"{LocalizationRoot}.pages.{MarxAlienationFlow.PageKey(state)}.options.{MarxAlienationFlow.ActionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }

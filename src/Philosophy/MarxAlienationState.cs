@@ -189,6 +189,14 @@ internal static class MarxAlienationFlow
         _ => "INVITATION",
     };
 
+    /// <summary>The page whose option keys belong to this saved source and stage.</summary>
+    public static string PageKey(MarxAlienationState state) => state.Stage switch
+    {
+        MarxAlienationStage.Invitation => state.IsRousseauSource ? "INVITATION_ROUSSEAU" : "INVITATION",
+        MarxAlienationStage.ResultKept => state.IsRousseauSource ? "RESULT_KEPT_ROUSSEAU" : "RESULT_KEPT",
+        _ => StageKey(state.Stage),
+    };
+
     public static string StageKey(MarxAlienationStage stage) => UpperSnake(stage.ToString());
     public static string ActionKey(MarxAlienationState state, MarxAlienationAction action) =>
         action == MarxAlienationAction.KeepHegel && state.IsRousseauSource

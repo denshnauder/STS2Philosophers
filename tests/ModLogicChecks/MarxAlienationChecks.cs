@@ -60,6 +60,7 @@ internal static class MarxAlienationChecks
         Check(MarxAlienationFlow.IsRouteConsistent(fixedAdopt, fixedJourney),
             "Marx opens in the second-act fixed slot after Rousseau.");
         Check(MarxAlienationFlow.DescriptionKey(fixedAdopt) == "INVITATION_ROUSSEAU"
+            && MarxAlienationFlow.PageKey(fixedAdopt) == "INVITATION_ROUSSEAU"
             && MarxAlienationFlow.ActionKey(fixedAdopt, MarxAlienationAction.KeepHegel) == "KEEP_ROUSSEAU",
             "The default Rousseau source must use Rousseau's invitation and refusal, not Hegel's.");
         Check(MarxAlienationFlow.TryPrepare(fixedAdopt, MarxAlienationAction.AlienatedLabor),
@@ -87,7 +88,8 @@ internal static class MarxAlienationChecks
             && !declinedFixedJourney.ResolvedQuestionActs.Contains(2)
             && declinedFixedJourney.LastFixedAct == 2,
             "Fixed decline records the slot and leaves the question open.");
-        Check(MarxAlienationFlow.DescriptionKey(fixedDecline) == "RESULT_KEPT_ROUSSEAU",
+        Check(MarxAlienationFlow.DescriptionKey(fixedDecline) == "RESULT_KEPT_ROUSSEAU"
+            && MarxAlienationFlow.PageKey(fixedDecline) == "RESULT_KEPT_ROUSSEAU",
             "The default Rousseau refusal must not claim Hegel was kept.");
 
         var tampered = MarxAlienationState.Create("MARX_ALIENATION:TEST:3");
