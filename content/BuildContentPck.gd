@@ -226,6 +226,10 @@ func _initialize() -> void:
 		"schopenhauer_will_denial", "james_forced_bridge", "camus_revolt_limit", "carnap_framework_choice", "austin_speech_act", "popper_falsification",
 
 		"montesquieu_balance", "kant_universalization", "voltaire_public_critique", "peirce_inquiry", "james_pragmatism", "dewey_public_experiment", "foucault_power", "benjamin_history", "arendt_beginning", "horkheimer_reason", "habermas_communication", "comte_positivism", "kuhn_paradigm", "merleau_ponty_body", "schelling_nature", "frege_sense", "russell_analysis", "levi_strauss_myth", "derrida_deconstruction", "heidegger_dasein", "gadamer_fusion", "lacan_signifier", "butler_address", "route_turn_question", "berkeley_perceived_mark", "nietzsche_revaluation",
+		"rawls_position", "marx_alienation", "diderot_public_practice", "machiavelli_fortune_after",
+		"adorno_negative", "bentham_utility", "deleuze_difference", "freud_unconscious",
+		"hegel_recognition", "husserl_epoche", "kant_knowledge_synthesis", "kierkegaard_faith",
+		"sartre_existence", "saussure_sign", "smith_sympathy", "wittgenstein_game",
 	]:
 		error = add_portrait_alias(packer, "res://images/events/" + name + ".png",
 			"res://images/events/philosophers_gaze.png")

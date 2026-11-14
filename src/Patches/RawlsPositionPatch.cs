@@ -36,6 +36,10 @@ internal static class RawlsPositionPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         RawlsPositionState? saved = shared.RawlsPosition;
+        // A closed Rawls record belongs to the room that already happened. A later
+        // handover on the other line may arrive at the same adopted node, but it must
+        // not reopen the published scheme as a second fixed room.
+        if (saved is { Closed: true }) return null;
         RawlsPosition? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         string? required = saved?.RequiredEdgeId
