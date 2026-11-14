@@ -36,6 +36,7 @@ internal static class RawlsPositionPatch
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
         WesternJourneyState? journey = shared.WesternJourney;
         RawlsPositionState? saved = shared.RawlsPosition;
+        if (saved is { Closed: true }) return null;
         RawlsPosition? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
         string? required = saved?.RequiredEdgeId
