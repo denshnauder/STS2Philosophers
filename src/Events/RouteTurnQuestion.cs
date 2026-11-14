@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace STS2Philosophers;
@@ -73,7 +74,8 @@ public sealed class RouteTurnQuestion : EventModel
         if (_blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
         try
         {
-            if (Owner?.RunState is not RunState run) return;
+            if (Owner?.RunState is not RunState run
+                || !RouteEventMapBoundary.IsActiveEvent(run, this, 0)) return;
             if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
             if (!ReferenceEquals(shared.WesternJourney, journey)) return;
             WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();

@@ -157,6 +157,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
+        CheckStaleDirectionCallback();
+        CheckEarlyHegelToMarxContinuation();
         CheckEarlySaussureContinuation();
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
@@ -401,7 +403,59 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static EventModel ChooseVirtueDirection(RunState run, string node, string key)
+    private static void CheckStaleDirectionCallback()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(AristotleCategoryTablet), 0])!;
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, (RunState)tuple[1]!,
+            "ARISTOTLE__LANGUAGE_AND_MEANING__CORE", "TO_SAUSSURE", leaveBeforeChoice: true);
+    }
+
+    private static void CheckEarlyHegelToMarxContinuation()
+    {
+        ModelDb.Inject(typeof(HegelRecognition)); ModelDb.Inject(typeof(MarxAlienation));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
+        var run = (RunState)tuple[1]!;
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run,
+            "DESCARTES__SELF_AND_OTHER__CORE", "TO_KANT");
+        Set(run, "_currentActIndex", 1); Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: HegelRecognition },
+            "The saved Kant turn opens recognition at the second-act boundary.");
+        object?[] query = [run, null]; Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!, journey = Get(shared, "WesternJourney");
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object hegel = Get(shared, "HegelRecognition");
+        foreach (string name in new[] { "Renegotiate", "Leave" })
+        {
+            object action = Enum.Parse(T("HegelRecognitionAction"), name);
+            Check((bool)Call("HegelRecognitionFlow", "TryPrepare", hegel, action)!
+                && (bool)Call("HegelRecognitionFlow", "TryCommitPending", hegel, journey, graph)!,
+                "Recognition completes its real handover before Marx is selected.");
+        }
+        Set(run, "_currentActIndex", 2); Set(run, "_currentRooms", new List<AbstractRoom>());
+        prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MarxAlienation },
+            "The third-act boundary must select Marx after the real completed recognition room.");
+        query = [run, null]; Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!; journey = Get(shared, "WesternJourney");
+        object marx = Get(shared, "MarxAlienation");
+        Check((int)Get(marx, "ActIndex") == 3 && (string)Get(marx, "EdgeId") == "WESTERN_EDGE_155"
+            && (bool)Get(marx, "FixedMode"), "The advanced Marx room owns third-act fixed edge 155.");
+        foreach (string name in new[] { "AlienatedLabor", "Leave" })
+        {
+            object action = Enum.Parse(T("MarxAlienationAction"), name);
+            Check((bool)Call("MarxAlienationFlow", "TryPrepare", marx, action)!
+                && (bool)Call("MarxAlienationFlow", "TryCommitPending", marx, journey, graph)!,
+                "The selected third-act Marx room must complete its own choices.");
+        }
+    }
+
+    private static EventModel ChooseVirtueDirection(NativeRuntimeFixture fixture,
+        RunState run, string node, string key, bool leaveBeforeChoice = false)
     {
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
@@ -414,15 +468,46 @@ internal static class ActBoundaryFixedEntryNativeChecks
         run.CurrentMapPoint!.PointType = MapPointType.Unknown;
         EventModel selected = run.Act.PullNextEvent(run);
         Check(selected is RouteTurnQuestion,
-            "The real virtue entry must ask the route fork first, got " + selected.GetType().Name + ".");
+            "The actual native entry must ask its route fork first.");
         EventModel local = selected.ToMutable();
-        NativeRuntimeFixture.Set(local, "Owner", run.Players[0]);
-        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
-        object direction = ((System.Collections.IEnumerable)choices).Cast<object>()
-            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == key);
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, direction])!;
-        task.GetAwaiter().GetResult();
+        Set(local, "Owner", run.Players[0]);
+        var acts = run.Acts;
+        try
+        {
+            using var memory = new NativeEventMemorySaveFixture(fixture, run);
+            object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager)
+                .GetProperty("EventSynchronizer")!.PropertyType);
+            Set(sync, "_events", new List<EventModel> { local });
+            Set(sync, "_playerCollection", run);
+            Set(sync, "_localPlayerId", run.Players[0].NetId);
+            Set(sync, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", sync);
+            Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(selected) });
+            typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
+                .Invoke(null, [journey, graph])!;
+            object direction = ((System.Collections.IEnumerable)choices).Cast<object>()
+                .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == key);
+            string before = (string)Call("PhilosophyRunStateCodec", "Encode", shared)!;
+            int writes = memory.SaveAttempts;
+            if (leaveBeforeChoice) Set(run, "_currentRooms", new List<AbstractRoom>());
+            ((Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+                .Invoke(local, [journey, direction])!).GetAwaiter().GetResult();
+            if (leaveBeforeChoice)
+                Check(!local.IsFinished && memory.SaveAttempts == writes
+                    && (string)Call("PhilosophyRunStateCodec", "Encode", shared)! == before,
+                    "A departed page callback must not change or save the route or pretend completion.");
+            else
+                Check(local.IsFinished && memory.SaveAttempts > writes
+                    && memory.Json.Contains("ROUTE_TURN_QUESTION", StringComparison.Ordinal)
+                    && !(bool)typeof(RouteTurnQuestion).GetField("_blocked", Methods)!.GetValue(local)!,
+                    "A real direction must finish only after its native memory checkpoint is confirmed.");
+        }
+        finally
+        {
+            Set(run, "Acts", acts);
+            Set(run, "_currentRooms", new List<AbstractRoom>());
+        }
         return selected;
     }
 
@@ -433,7 +518,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection(run, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_EMBODIED");
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_EMBODIED");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -479,7 +564,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection(run, "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", "TO_PEIRCE");
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", "TO_PEIRCE");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -553,7 +638,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_BENTHAM");
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_BENTHAM");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -642,7 +727,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
         object? direct = Call("KierkegaardFaithPatch", "TrySelectNative", run);
         EventModel selected = run.Act.PullNextEvent(run);
         Check(selected is KierkegaardFaith,
@@ -682,7 +767,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection(run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");

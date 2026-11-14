@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
-using MegaCrit.Sts2.Core.Models.Singleton;
 using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -45,10 +44,10 @@ internal static class SlyFullDiscardNativeChecks
         Set(run, "Rng", new RunRngSet("198CHECK"));
         Set(run, "ActFloor", 1);
         Set(run, "_allCards", new List<CardModel>());
-        Set(run, "Modifiers", Array.Empty<ModifierModel>());
+        Set(run, "Modifiers", Array.Empty<ModifierModel>()); Set(run, "RunModels", Array.Empty<RunModel>());
         Set(run, "BadgeModels", Array.Empty<BadgeModel>());
         ModelDb.Inject(typeof(MultiplayerScalingModel));
-        Set(run, "MultiplayerScalingModel", ModelDb.Singleton<MultiplayerScalingModel>());
+        // Current RunState has RunModels instead of a separate scaling field.
         Set(fixture.Player, "Deck", new CardPile(PileType.Deck));
         Set(fixture.Player, "_runState", run);
         Set(fixture.Combat, "RunState", run);

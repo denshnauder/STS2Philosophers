@@ -210,6 +210,7 @@ internal static class WesternQuestionNodePolicy
             || Open(shared.SmithSympathy?.Closed ?? true, shared.SmithSympathy?.IsUsable() ?? false)
             || Open(shared.SchellingNature?.Closed ?? true, shared.SchellingNature?.IsUsable() ?? false)
             || Open(shared.KierkegaardFaith?.Closed ?? true, shared.KierkegaardFaith?.IsUsable() ?? false)
+            || Open(shared.HegelRecognition?.Closed ?? true, shared.HegelRecognition?.IsUsable() ?? false)
             || Open(shared.MarxAlienation?.Closed ?? true, shared.MarxAlienation?.IsUsable() ?? false)
             || Open(shared.NietzscheRevaluation?.Closed ?? true, shared.NietzscheRevaluation?.IsUsable() ?? false)
             || Open(shared.BenthamUtility?.Closed ?? true, shared.BenthamUtility?.IsUsable() ?? false)

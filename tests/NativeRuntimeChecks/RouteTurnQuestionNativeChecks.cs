@@ -144,6 +144,34 @@ internal static class RouteTurnQuestionNativeChecks
         return Task.CompletedTask;
     }
 
+    private static void ChooseAndSave(NativeRuntimeFixture fixture, RunState run,
+        EventModel canonical, EventModel local, object journey, object direction)
+    {
+        var acts = run.Acts;
+        try
+        {
+            using var memory = new NativeEventMemorySaveFixture(fixture, run);
+            object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager)
+                .GetProperty("EventSynchronizer")!.PropertyType);
+            NativeRuntimeFixture.Set(sync, "_events", new List<EventModel> { local });
+            NativeRuntimeFixture.Set(sync, "_playerCollection", run); NativeRuntimeFixture.Set(sync, "_localPlayerId", run.Players[0].NetId);
+            NativeRuntimeFixture.Set(sync, "_pendingOptionTasks", new List<Task>());
+            NativeRuntimeFixture.Set(RunManager.Instance, "EventSynchronizer", sync);
+            NativeRuntimeFixture.Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(canonical) });
+            typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            ((Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+                .Invoke(local, [journey, direction])!).GetAwaiter().GetResult();
+            Check(local.IsFinished && memory.SaveAttempts > 0
+                && memory.Json.Contains("ROUTE_TURN_QUESTION", StringComparison.Ordinal)
+                && !(bool)typeof(RouteTurnQuestion).GetField("_blocked", Methods)!.GetValue(local)!,
+                "The real route page completes only after a native memory checkpoint.");
+        }
+        finally
+        {
+            NativeRuntimeFixture.Set(run, "Acts", acts); NativeRuntimeFixture.Set(run, "_currentRooms", new List<AbstractRoom>());
+        }
+    }
+
     private static void CheckKnowledgeAnswerAndContinuation()
     {
         ModelDb.Inject(typeof(PeirceInquiry));
@@ -171,9 +199,7 @@ internal static class RouteTurnQuestionNativeChecks
         object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
         object peirce = ((System.Collections.IEnumerable)choices).Cast<object>()
             .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_PEIRCE");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, peirce])!;
-        task.GetAwaiter().GetResult();
+        ChooseAndSave((NativeRuntimeFixture)tuple[0]!, run, selected, local, journey, peirce);
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_069")
             && (string)Get(journey, "RouteId") == "FALLIBLE_INQUIRY"
             && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1),
@@ -227,9 +253,7 @@ internal static class RouteTurnQuestionNativeChecks
             .Invoke(null, [journey, graph])!;
         object adorno = ((System.Collections.IEnumerable)choices).Cast<object>()
             .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_ADORNO");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, adorno])!;
-        task.GetAwaiter().GetResult();
+        ChooseAndSave((NativeRuntimeFixture)tuple[0]!, run, selected, local, journey, adorno);
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_083")
             && (string)Get(journey, "RouteId") == "SOCIAL_CRITIQUE"
             && (string)Get(journey, "CurrentNodeId") == "KARL_MARX__HISTORY_AND_POWER__EARLY"
@@ -261,9 +285,7 @@ internal static class RouteTurnQuestionNativeChecks
             .Invoke(null, [journey, graph])!;
         object ordinary = ((System.Collections.IEnumerable)choices).Cast<object>()
             .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == "TO_WITTGENSTEIN");
-        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-            .Invoke(local, [journey, ordinary])!;
-        task.GetAwaiter().GetResult();
+        ChooseAndSave((NativeRuntimeFixture)tuple[0]!, run, selected, local, journey, ordinary);
         var completed = (HashSet<string>)Get(journey, "CompletedEdgeIds");
         Check((string)Get(journey, "RouteId") == "ORDINARY_SPEECH"
             && ((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(1)

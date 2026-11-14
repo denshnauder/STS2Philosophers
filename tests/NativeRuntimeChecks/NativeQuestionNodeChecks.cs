@@ -264,6 +264,12 @@ internal static class NativeQuestionNodeChecks
         using (var memory = new NativeEventMemorySaveFixture(fixture, run))
         {
             var local = canonical.ToMutable(); Set(local, "Owner", fixture.Player);
+            object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager)
+                .GetProperty("EventSynchronizer")!.PropertyType);
+            Set(sync, "_events", new List<EventModel> { local });
+            Set(sync, "_playerCollection", run); Set(sync, "_localPlayerId", fixture.Player.NetId);
+            Set(sync, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", sync);
             Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(canonical) });
             typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
             object shared = CurrentShared(run), journey = Get(shared, "WesternJourney");

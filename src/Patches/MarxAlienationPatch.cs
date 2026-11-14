@@ -35,6 +35,10 @@ internal static class MarxAlienationPatch
             .Select(route => route.ActTwoFigure == "KARL_MARX" ? 2
                 : route.ActThreeFigure == "KARL_MARX" ? 3 : 0)
             .DefaultIfEmpty(0).First();
+        // The first-act Kant turn advances recognition to act two and Marx to act three.
+        if (journey is not null && run.CurrentActIndex == 2
+            && journey.RouteId == "AUTONOMY_AND_HISTORY"
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_154")) routeAct = 3;
         string edgeId = routeAct >= 2
             ? graph.GetEligibleEdges(journey!, "Fixed")
                 .Where(edge => edge.Act == routeAct && edge.ToNodeId == MarxAlienationState.AdoptedNodeId)
