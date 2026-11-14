@@ -64,6 +64,19 @@ internal static class WesternEntryChecks
         Check(sharedEntry.WesternJourney is { LastFixedAct: 1, RouteRules: true }
             && sharedEntry.WesternJourney.ResolvedQuestionActs.Count == 0,
             "Choosing a default line spends no fixed event or question point.");
+        PhilosophyRunState socialEntry = new();
+        GeneratedCandidates socialCandidates = new()
+        {
+            GenerationKey = PhilosophersGazeActOneCandidatePolicy.GenerationKey,
+            CandidateIds = new[] { "ROUSSEAU" }.Concat(
+                PhilosophersGazeActOneCandidatePolicy.RegisteredThinkerIds
+                    .Where(id => id != "ROUSSEAU").Take(2)).ToList(),
+        };
+        Check(WesternEntryPolicy.RecordObtained(socialEntry, socialCandidates, "ROUSSEAU",
+                "HISTORY_AND_POWER", WesternEntryPolicy.RelicIdFor("HISTORY_AND_POWER"),
+                "SOCIAL_CRITIQUE")
+            && socialEntry.WesternJourney is { RouteId: "SOCIAL_CRITIQUE", LastFixedAct: 1, RouteRules: true },
+            "Rousseau's entry must save SOCIAL_CRITIQUE as the no-question default line.");
         foreach (string language in new[] { "zhs", "eng" })
         {
             using JsonDocument document = JsonDocument.Parse(File.ReadAllText($"content/STS2Philosophers/localization/{language}/events.json"));
