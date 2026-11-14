@@ -36,8 +36,12 @@ internal static class RouteEventMapBoundaryLoadedMapPatch
 internal static class RouteEventMapBoundaryRewardsProceedPatch
 {
     private static MethodBase TargetMethod() =>
-        AccessTools.DeclaredMethod(typeof(RunManager), nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes)
-        ?? throw new MissingMethodException(typeof(RunManager).FullName, "ProceedFromTerminalRewardsScreen()");
+        // 0.113.0 split the old Task-returning method into a void entry point plus
+        // ProceedFromTerminalRewardsScreenAsync. Keep one Postfix shape (Task result)
+        // by preferring the async method and falling back to the old Task method.
+        AccessTools.DeclaredMethod(typeof(RunManager), "ProceedFromTerminalRewardsScreenAsync", Type.EmptyTypes)
+        ?? AccessTools.DeclaredMethod(typeof(RunManager), nameof(RunManager.ProceedFromTerminalRewardsScreen), Type.EmptyTypes)
+        ?? throw new MissingMethodException(typeof(RunManager).FullName, "ProceedFromTerminalRewardsScreen[Async]()");
 
     private static void Prefix(RunManager __instance, out RouteEventMapBoundaryScope? __state) =>
         __state = RouteEventMapBoundary.BeginRewardsProceed(__instance);
