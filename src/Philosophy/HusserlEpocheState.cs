@@ -31,6 +31,12 @@ internal sealed class HusserlEpocheState : IJsonOnDeserialized
     public int ActIndex { get; set; } = 1;
     public string EdgeId { get; set; } = CompletionEdgeId;
 
+    // The first-act direction can stand the figure on his or her own node
+    // before the second act. These two fields keep that turned handover
+    // explicit instead of pretending the default source is still current.
+    public string SourceNode { get; set; } = HusserlEpocheState.SourceNodeId;
+    public string TargetNode { get; set; } = HusserlEpocheState.AdoptedNodeId;
+
     // The room opens at the first act's question node, standing on Descartes:
     // the fixed link it commits is the first act's, so its position is one.
     public static HusserlEpocheState Create(string instanceId) => CreateAt(instanceId, 1, CompletionEdgeId);
@@ -42,6 +48,8 @@ internal sealed class HusserlEpocheState : IJsonOnDeserialized
     {
         InstanceId ??= string.Empty;
         EdgeId ??= CompletionEdgeId;
+        SourceNode = string.IsNullOrWhiteSpace(SourceNode) ? HusserlEpocheState.SourceNodeId : SourceNode;
+        TargetNode = string.IsNullOrWhiteSpace(TargetNode) ? HusserlEpocheState.AdoptedNodeId : TargetNode;
         if (ActIndex is < 1 or > 3) ActIndex = 1;
         ConfirmedActions ??= [];
     }
@@ -149,12 +157,12 @@ internal static class HusserlEpocheFlow
         int declined = state.ActIndex;
         if (!state.EdgeCommitted && !state.FixedDeclined)
             return journey.LastFixedAct == state.ActIndex && !adopted && !journey.DeclinedFixedActs.Contains(declined)
-                && journey.CurrentNodeId == HusserlEpocheState.SourceNodeId;
+                && journey.CurrentNodeId == state.SourceNode;
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == Math.Min(3, state.ActIndex + 1)
-                && journey.CurrentNodeId == HusserlEpocheState.AdoptedNodeId;
+                && journey.CurrentNodeId == state.TargetNode;
         return !adopted && journey.LastFixedAct == state.ActIndex && journey.DeclinedFixedActs.Contains(declined)
-            && journey.CurrentNodeId == HusserlEpocheState.SourceNodeId;
+            && journey.CurrentNodeId == state.SourceNode;
     }
 
     public static string DescriptionKey(HusserlEpocheState state) => UpperSnake(state.Stage.ToString());

@@ -6,12 +6,17 @@ namespace STS2Philosophers;
 
 internal static class RawlsPositionPatch
 {
-    // Two lines close on Rawls: the act-three fixed room after Kant's
-    // institutions (172 -> 173) and after Mill's freedom (169 -> 170). The line
-    // the run already walked names the edge, so the room never guesses.
+    // Rawls is the act-three fixed room on two lines: after Kant's institutions
+    // (172 -> 173) and after the early Bentham turn's act-two Mill (066 -> 170).
+    // The default Mill line ends at Mill itself (169 -> 170); 169 is kept only to
+    // restore saves written before that line stopped creating a fourth fixed room.
     private static readonly string[] RequiredEdges =
-        [RawlsPositionState.KantRequiredEdgeId, RawlsPositionState.MillRequiredEdgeId,
-            RawlsPositionState.EarlyMillRequiredEdgeId];
+        [RawlsPositionState.KantRequiredEdgeId, RawlsPositionState.EarlyMillRequiredEdgeId,
+            RawlsPositionState.MillRequiredEdgeId];
+
+    private static bool CanCreateOn(string requiredEdgeId) =>
+        requiredEdgeId is RawlsPositionState.KantRequiredEdgeId
+            or RawlsPositionState.EarlyMillRequiredEdgeId;
 
     internal static EventModel? TrySelectExistingNative(RunState run)
     {
@@ -41,12 +46,14 @@ internal static class RawlsPositionPatch
             && journey.CompletedEdgeIds.Contains(completion);
         if (arrived)
         {
+            if (saved is null && !CanCreateOn(required)) return null;
             var arrivedState = saved ?? RawlsPositionState.Create($"RAWLS_POSITION:{run.Rng.Seed}:3", required);
             if (!RawlsPositionFlow.IsRouteConsistent(arrivedState, journey)) return null;
             shared.RawlsPosition = arrivedState;
             Log.Info("[STS2Philosophers] Presenting Rawls's original position after Mill's handover.");
             return canonical;
         }
+        if (saved is null && !CanCreateOn(required)) return null;
         if (journey.CurrentNodeId != RawlsPositionFlow.SourceNodeIdOf(required)) return null;
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         bool edgeEligible = WesternRouteGraph.LoadEmbedded().GetEligibleEdges(journey, "Fixed")

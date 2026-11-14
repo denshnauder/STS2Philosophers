@@ -101,6 +101,8 @@ internal static class RouteFixedRoomNativeChecks
                     : "JACQUES_LACAN__SELF_AND_OTHER__CORE";
                 if (routeId == "AUTONOMY_AND_HISTORY" && !rooms.ContainsKey(turnNode))
                     rooms[turnNode] = rooms.Values.First(room => room.Name == "HegelSubstanceSubject");
+                if (routeId == "UNCONSCIOUS_AND_NORM" && !rooms.ContainsKey(turnNode))
+                    rooms[turnNode] = typeof(LacanSignifier);
                 var turnedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
                     .Invoke(null, [relic, 1])!;
                 var turnedRun = (RunState)turnedTuple[1]!;

@@ -83,6 +83,7 @@
     <Compile Include="..\..\src\Philosophy\BaconSampleLedgerState.cs" Link="BaconSampleLedgerState.cs" />
     <Compile Include="..\..\src\Philosophy\BaconCombatComparisonState.cs" Link="BaconCombatComparisonState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationState.cs" Link="MachiavelliFloodPreparationState.cs" />
+    <Compile Include="..\..\src\Philosophy\MachiavelliFortuneAfterState.cs" Link="MachiavelliFortuneAfterState.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliFloodPreparationTriggerPolicy.cs" Link="MachiavelliFloodPreparationTriggerPolicy.cs" />
     <Compile Include="..\..\src\Philosophy\MachiavelliCombatPreparationState.cs" Link="MachiavelliCombatPreparationState.cs" />
     <Compile Include="..\..\src\Philosophy\LutherSignedCareTriggerPolicy.cs" Link="LutherSignedCareTriggerPolicy.cs" />

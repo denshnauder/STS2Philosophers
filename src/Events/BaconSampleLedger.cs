@@ -147,10 +147,16 @@ public sealed class BaconSampleLedger : EventModel
 
     private static bool CommitPending(PhilosophyRunState shared, BaconSampleLedgerState state) =>
         ReferenceEquals(shared.BaconSampleLedger, state) && shared.WesternJourney is { } journey
-        && shared.OckhamNamesInquiry is { } ockham && shared.GorgiasSpeechInquiry is { } gorgias
-        && BaconSampleLedgerFlow.TryCommitPending(state, journey, ockham, gorgias, WesternRouteGraph.LoadEmbedded());
+        && BaconSampleLedgerFlow.TryCommitPending(state, journey, shared.OckhamNamesInquiry,
+            shared.GorgiasSpeechInquiry, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (Owner?.RunState != run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.BaconSampleLedger is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(BaconSampleLedgerState state)
     {
@@ -202,9 +208,15 @@ public sealed class BaconSampleLedger : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.BaconSampleLedger is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
-            && shared.OckhamNamesInquiry is { } ockham && shared.GorgiasSpeechInquiry is { } gorgias
-            && BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham, gorgias)) return state;
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+                || state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2")
+            && (state.ActIndex == 2
+                || shared.OckhamNamesInquiry is { } && shared.GorgiasSpeechInquiry is { }))
+        {
+            OckhamNamesInquiryState? ockham = shared.OckhamNamesInquiry;
+            GorgiasSpeechInquiryState? gorgias = shared.GorgiasSpeechInquiry;
+            if (BaconSampleLedgerFlow.IsRouteConsistent(state, journey, ockham!, gorgias!)) return state;
+        }
         return null;
     }
 

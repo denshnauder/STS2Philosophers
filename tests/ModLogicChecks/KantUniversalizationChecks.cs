@@ -64,6 +64,28 @@ internal static class KantUniversalizationChecks
             "Declining Kant spends only the act-three fixed slot.");
         shared = Commit(shared, graph, KantUniversalizationAction.Leave);
 
+        // The act-two Kant room refuses in place. TryDecline(Fixed, 2) leaves
+        // LastFixedAct at 2; requiring act + 1 froze the visible KeepRousseau
+        // button, so this path is pinned separately from the act-three refusal.
+        WesternJourneyState actTwoJourney = graph.Start("PLATO__FREEDOM_AND_INSTITUTIONS__CORE");
+        Check(graph.TryApply(actTwoJourney, "WESTERN_EDGE_171"),
+            "The checks line's first-act turn must reach Montesquieu.");
+        actTwoJourney.LastFixedAct = 2;
+        var actTwoKant = KantUniversalizationState.CreateAt(
+            "KANT_UNIVERSALIZATION:TEST:2", 2, "WESTERN_EDGE_172");
+        actTwoKant.RoutePlaced = true;
+        actTwoKant.RouteSourceNodeId = "MONTESQUIEU__FREEDOM_AND_INSTITUTIONS__CORE";
+        Check(KantUniversalizationFlow.IsRouteConsistent(actTwoKant, actTwoJourney),
+            "Kant opens on the checks line's act-two 172 handover.");
+        Check(KantUniversalizationFlow.TryPrepare(actTwoKant, KantUniversalizationAction.KeepRousseau)
+            && KantUniversalizationFlow.TryCommitPending(actTwoKant, actTwoJourney, graph),
+            "Kant's act-two KeepRousseau must commit, not freeze on a forced act-three position.");
+        Check(actTwoKant.FixedDeclined && actTwoKant.Stage == KantUniversalizationStage.ResultKept
+            && actTwoJourney.LastFixedAct == 2
+            && actTwoJourney.DeclinedFixedActs.Contains(2)
+            && !actTwoJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_172"),
+            "The act-two refusal spends slot 2 in place and leaves 172 uncommitted.");
+
         shared = Fixture(graph);
         shared.WesternJourney!.CompletedEdgeIds.Remove(KantUniversalizationState.RequiredEdgeId);
         Check(!KantUniversalizationFlow.IsRouteConsistent(shared.KantUniversalization!, shared.WesternJourney!),

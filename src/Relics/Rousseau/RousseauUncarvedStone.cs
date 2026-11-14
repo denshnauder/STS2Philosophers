@@ -16,6 +16,7 @@ public sealed class RousseauUncarvedStone : WesternPracticeRelic
     protected override string ProblemId => "HISTORY_AND_POWER";
     protected override string ResourceName => "rousseau_uncarved_stone";
     internal bool CanOfferMachiavelli => IsMutable && Owner is not null && IsSoleDoctrine;
+    internal bool CanOfferBacon => IsMutable && Owner is not null && IsSoleDoctrine;
     private MachiavelliCombatPreparationState? _preparation;
     private string? _invalidPreparationPayload;
     private MachiavelliCombatPreparationState Preparation => _preparation ??= MachiavelliCombatPreparationState.Create();

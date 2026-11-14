@@ -45,6 +45,8 @@ internal static class MachiavelliFloodPreparationNativeChecks
         Set(RunManager.Instance, "State", run);
         object graph = Call("WesternRouteGraph", "LoadEmbedded");
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        journey.GetType().GetProperty("RouteRules")!.SetValue(journey, true);
+        journey.GetType().GetProperty("RouteId")!.SetValue(journey, "FORTUNE_AND_VIRTUE");
         object state = Call("MachiavelliFloodPreparationState", "Create", "MACHIAVELLI:NATIVE:2");
         foreach (string action in new[] { "AcceptInvitation", bank ? "ReinforceBank" : "CoordinateEvacuation", "AdoptPrepared", "Leave" })
             Check((bool)Call("MachiavelliFloodPreparationFlow", "TryPrepare", state, Enum.Parse(TypeOf("MachiavelliFloodPreparationAction"), action))

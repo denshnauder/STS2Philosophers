@@ -22,7 +22,7 @@ public sealed class HusserlEpoche : EventModel
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DESCRIBE_APPEARANCE"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.SUSPEND_THESIS"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.TURN_EMBODIED"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_DESCARTES"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{KeepKey(TryRestoreState())}"),
         };
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
@@ -138,7 +138,7 @@ public sealed class HusserlEpoche : EventModel
         return HusserlEpocheFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{HusserlEpocheFlow.StageKey(stage)}.options.{HusserlEpocheFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{HusserlEpocheFlow.StageKey(stage)}.options.{OptionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
@@ -166,6 +166,22 @@ public sealed class HusserlEpoche : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(HusserlEpocheState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{HusserlEpocheFlow.DescriptionKey(state)}.description");
+        L10NLookup($"{LocalizationRoot}.pages.{PageKey(state)}.description");
+
+    private static bool IsFixedSource(HusserlEpocheState? state) =>
+        state is { SourceNode: HusserlEpocheState.AdoptedNodeId };
+
+    private static string KeepKey(HusserlEpocheState? state) =>
+        IsFixedSource(state) ? "KEEP_HUSSERL" : "KEEP_DESCARTES";
+
+    private static string OptionKey(HusserlEpocheState state, HusserlEpocheAction action) =>
+        action == HusserlEpocheAction.KeepDescartes
+            ? KeepKey(state)
+            : HusserlEpocheFlow.ActionKey(action);
+
+    private static string PageKey(HusserlEpocheState state) =>
+        IsFixedSource(state) && state.Stage == HusserlEpocheStage.ResultKept
+            ? "RESULT_KEPT_FIXED"
+            : HusserlEpocheFlow.DescriptionKey(state);
 
 }

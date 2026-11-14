@@ -28,7 +28,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         if (!value) throw new InvalidOperationException(message);
     }
 
-    public static Task Run()
+    public static async Task Run()
     {
         ModelDb.Inject(typeof(SpinozaCauseNetwork));
         CheckBoundary(typeof(DescartesThinkingLens), "DESCARTES__SELF_AND_OTHER__CORE", [typeof(SpinozaCauseNetwork)], doctrine: true, position: 2);
@@ -104,7 +104,28 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(DescartesThinkingLens), "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
             [typeof(DeleuzeDifference)], doctrine: false, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_162"], checkRoom: true);
+        ModelDb.Inject(typeof(BenthamUtility));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(BenthamUtility)], doctrine: false, position: 1, actIndex: 1,
+            route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object bentham = Get(shared, "BenthamUtility");
+                Check((int)Get(bentham, "ActIndex") == 2
+                    && (string)Get(bentham, "EdgeId") == "WESTERN_EDGE_130",
+                    "The consequence line's default second-act Bentham room uses 130.");
+            });
         ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(SocratesBalanceWeight), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_130"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((int)Get(mill, "ActIndex") == 3
+                    && (string)Get(mill, "EdgeId") == "WESTERN_EDGE_131",
+                    "The consequence line's third-act Mill room uses 131, not the early 066.");
+            });
         CheckBoundary(typeof(DescartesThinkingLens), "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
             route: "CONSEQUENCE_AND_FREEDOM", checkRoom: true);
@@ -117,7 +138,17 @@ internal static class ActBoundaryFixedEntryNativeChecks
             route: "EDUCATION_AND_SITUATION", checkRoom: true);
         CheckBoundary(typeof(DescartesThinkingLens), "JEAN_PAUL_SARTRE__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
-            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_163"], checkRoom: true);
+            route: "INDIVIDUAL_COMMITMENT", required: ["WESTERN_EDGE_163"], checkRoom: true,
+            afterSelect: (run, shared, ev) =>
+            {
+                var beauvoir = (BeauvoirOther)ev.ToMutable();
+                typeof(EventModel).GetProperty("Owner")!.SetValue(beauvoir, run.Players[0]);
+                typeof(BeauvoirOther).GetMethod("SetInitialEventState",
+                    BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(beauvoir, [false]);
+                string key = beauvoir.Description.LocEntryKey;
+                Check(key.EndsWith("BEAUVOIR_OTHER.pages.INVITATION_SARTRE.description", StringComparison.Ordinal),
+                    "The Sartre source must not tell the player she is keeping Wollstonecraft: " + key);
+            });
         CheckBoundary(typeof(DescartesThinkingLens), "MAURICE_MERLEAU_PONTY__SELF_AND_OTHER__CORE",
             [typeof(BeauvoirOther)], doctrine: false, position: 2, actIndex: 2,
             route: "EMBODIED_PERCEPTION", required: ["WESTERN_EDGE_195"], checkRoom: true);
@@ -147,25 +178,63 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(ComtePositivism)], doctrine: false, position: 3, actIndex: 2,
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_140"], checkRoom: true);
-        // Early first-act Bacon turn: Comte moves to the second act.
+        // Early first-act Bacon turn: Bacon's own room opens in the second act.
         CheckBoundary(typeof(RousseauUncarvedStone), "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
-            [typeof(ComtePositivism)], doctrine: false, position: 2, actIndex: 1,
+            [typeof(BaconSampleLedger)], doctrine: false, position: 2, actIndex: 1,
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_197"], checkRoom: true);
+        ModelDb.Inject(typeof(NewtonTwoSites));
+        CheckBoundary(typeof(SocratesQuestionCup), "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+            [typeof(NewtonTwoSites)], doctrine: false, position: 1, actIndex: 1,
+            route: "SCIENTIFIC_MODEL", required: ["WESTERN_EDGE_165"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object newton = Get(shared, "NewtonTwoSites");
+                Check((bool)Get(newton, "EarlyBacon") && (int)Get(newton, "ActIndex") == 2
+                    && ((string)Get(newton, "InstanceId")).EndsWith(":2", StringComparison.Ordinal),
+                    "The early Bacon turn creates the act-two Newton record with 166, not the old 049 path.");
+                object journey = Get(shared, "WesternJourney");
+                object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+                foreach (string name in new[] { "Accept", "MeasureDrop", "RecordError", "RevealOther", "ConditionRelation", "Leave" })
+                {
+                    object action = Enum.Parse(T("NewtonTwoSitesAction"), name);
+                    Check((bool)Call("NewtonTwoSitesFlow", "TryPrepare", newton, action)!
+                        && (bool)Call("NewtonTwoSitesFlow", "TryCommitPending", newton, journey, null!, null!, graph)!,
+                        "The early Newton event commits " + name + ".");
+                }
+                Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_166")
+                    && (string)Get(journey, "CurrentNodeId") == "ISAAC_NEWTON__KNOWLEDGE_AND_DOUBT__CORE"
+                    && (int)Get(journey, "LastFixedAct") == 3,
+                    "The early Newton event commits the act-two 166 edge and lands on Newton.");
+            });
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
-            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
+            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object marx = Get(shared, "MarxAlienation");
+                object keepHegel = Enum.Parse(T("MarxAlienationAction"), "KeepHegel");
+                Check((string)Call("MarxAlienationFlow", "DescriptionKey", marx)! == "INVITATION_ROUSSEAU"
+                    && (string)Call("MarxAlienationFlow", "ActionKey", marx, keepHegel)! == "KEEP_ROUSSEAU",
+                    "The default Rousseau Marx room must not use Hegel's keep/result text.");
+            });
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
-        CheckStaleDirectionCallback();
-        CheckEarlyHegelToMarxContinuation();
         CheckEarlySaussureContinuation();
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
+        CheckDefaultMillDoesNotCreateRawls();
+        await CheckMachiavelliThirdActBody();
+        await CheckMarxRousseauBody();
+        await CheckKantEarlyDecline();
+        await CheckMontesquieuKantRawls();
         CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
         CheckEarlyMerleauContinuation();
+        await CheckFirstActTurnScenes();
+        await CheckHegelEntryPersistence();
+        CheckMarxAfterEarlyHegel();
         CheckEarlyDeweyContinuation();
         CheckEarlyNietzscheContinuation();
         CheckEarlyHabermasContinuation();
@@ -188,6 +257,16 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(SchellingNature)], doctrine: true, position: 2, actIndex: 2,
             route: "NATURE_AND_BECOMING", required: ["WESTERN_EDGE_023"], checkRoom: true);
         ModelDb.Inject(typeof(KierkegaardFaith));
+        CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
+            [typeof(KierkegaardFaith)], doctrine: false, position: 1, actIndex: 1,
+            route: "INDIVIDUAL_COMMITMENT", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object kierkegaard = Get(shared, "KierkegaardFaith");
+                Check((int)Get(kierkegaard, "ActIndex") == 2
+                    && (string)Get(kierkegaard, "EdgeId") == "WESTERN_EDGE_112",
+                    "The individual line's default second-act Kierkegaard room uses 112.");
+            });
         CheckBoundary(typeof(SocratesBalanceWeight), "SOCRATES__VIRTUE_AND_HAPPINESS__CORE",
             [typeof(KierkegaardFaith)], doctrine: false, position: 2, actIndex: 1,
             route: "INDIVIDUAL_COMMITMENT", checkRoom: true);
@@ -244,6 +323,18 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "COMTE__KNOWLEDGE_AND_DOUBT__CORE",
             [typeof(KuhnParadigm)], doctrine: false, position: 3, actIndex: 2,
             route: "SOCIAL_KNOWLEDGE", required: ["WESTERN_EDGE_198"], checkRoom: true);
+        ModelDb.Inject(typeof(NietzscheRevaluation));
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(NietzscheRevaluation)], doctrine: false, position: 1, actIndex: 1,
+            route: "GENEALOGY_AND_POWER", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object nietzsche = Get(shared, "NietzscheRevaluation");
+                Check((int)Get(nietzsche, "ActIndex") == 2
+                    && (string)Get(nietzsche, "EdgeId") == "WESTERN_EDGE_120"
+                    && (string)Get(nietzsche, "RouteSourceNodeId") == "ROUSSEAU__HISTORY_AND_POWER__CORE",
+                    "The genealogy line's own second-act Nietzsche room uses 120 from Rousseau.");
+            });
         ModelDb.Inject(typeof(FoucaultPower));
         CheckBoundary(typeof(RousseauUncarvedStone), "FRIEDRICH_NIETZSCHE__HISTORY_AND_POWER__CORE",
             [typeof(FoucaultPower)], doctrine: false, position: 2, actIndex: 2,
@@ -282,6 +373,17 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(WollstonecraftAdmission));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 2, seed: "123456789");
+        // The fortune-and-virtue line is the reachable Machiavelli entry. Its
+        // own act-two fixed edge is 046; the education line still keeps 040.
+        CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
+            [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 1, actIndex: 1,
+            route: "FORTUNE_AND_VIRTUE", routeRules: true, checkRoom: true);
+        // Machiavelli's own third act is a real fixed room. It spends slot 3 on
+        // the figure the line already reached and takes no new handover edge.
+        ModelDb.Inject(typeof(MachiavelliFortuneAfter));
+        CheckBoundary(typeof(RousseauUncarvedStone), "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+            [typeof(MachiavelliFortuneAfter)], doctrine: false, position: 3, actIndex: 2,
+            route: "FORTUNE_AND_VIRTUE", required: ["WESTERN_EDGE_046"], checkRoom: true);
         // An even seed asks Wollstonecraft first; the pair is accepted here because
         // her own room may still decline a slot Machiavelli can take. What the odd
         // seed above pins is the half that used to regress: 046 itself.
@@ -316,27 +418,33 @@ internal static class ActBoundaryFixedEntryNativeChecks
         ModelDb.Inject(typeof(SmithSympathy));
         CheckBoundary(typeof(PlatoCivicSeal), "PLATO__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(SmithSympathy)], doctrine: false, position: 1, actIndex: 1,
-            route: "SYMPATHY_AND_PUBLIC_ACTION");
+            route: "SYMPATHY_AND_PUBLIC_ACTION", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object smith = Get(shared, "SmithSympathy");
+                Check((int)Get(smith, "ActIndex") == 2
+                    && (string)Get(smith, "EdgeId") == "WESTERN_EDGE_116",
+                    "The sympathy line's default second-act Smith room uses 116.");
+            });
+        ModelDb.Inject(typeof(MillHarm));
+        CheckBoundary(typeof(PlatoCivicSeal), "ADAM_SMITH__FREEDOM_AND_INSTITUTIONS__CORE",
+            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
+            route: "SYMPATHY_AND_PUBLIC_ACTION", required: ["WESTERN_EDGE_116"], checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object mill = Get(shared, "MillHarm");
+                Check((int)Get(mill, "ActIndex") == 3
+                    && (string)Get(mill, "EdgeId") == "WESTERN_EDGE_117",
+                    "The sympathy line's third-act Mill room uses 117, not the early 055.");
+            });
         ModelDb.Inject(typeof(RawlsPosition));
         CheckBoundary(typeof(DescartesThinkingLens), "IMMANUEL_KANT__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
             route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_172"],
             priorEvent: ModelDb.GetId<KantUniversalization>());
-        CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
-            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
-            route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_169"],
-            priorEvent: ModelDb.GetId<MillHarm>(), afterSelect: (_, shared, _) =>
-            {
-                object mill = Get(shared, "MillHarm");
-                Check((string)Get(mill, "EdgeId") == "WESTERN_EDGE_170"
-                    && (string)Get(mill, "TargetNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
-                    "The early Mill room takes 170 and targets Rawls.");
-            });
         // Arendt also closes two lines: after Mill's sympathy (175 -> 176) and
         // after Foucault's genealogy (181 -> 182).
-        // A legacy 175 checkpoint still opens its original third-act Mill room.
-        // The corrected 055 path reaches Arendt directly in CheckEarlySmithContinuation.
-        CheckBoundary(typeof(PlatoCivicSeal), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
+        CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
             [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
             route: "SYMPATHY_AND_PUBLIC_ACTION", required: ["WESTERN_EDGE_175"],
             priorEvent: ModelDb.GetId<MillHarm>(), afterSelect: (_, shared, _) =>
@@ -344,7 +452,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
                 object mill = Get(shared, "MillHarm");
                 Check((string)Get(mill, "EdgeId") == "WESTERN_EDGE_176"
                     && (string)Get(mill, "TargetNodeId") == "HANNAH_ARENDT__FREEDOM_AND_INSTITUTIONS__CORE",
-                    "The legacy Mill room takes 176 and targets Arendt.");
+                    "The sympathy Mill room takes 176 and targets Arendt.");
             });
         CheckBoundary(typeof(RousseauUncarvedStone), "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE",
             [typeof(ArendtBeginning)], doctrine: false, position: 2, actIndex: 2,
@@ -368,7 +476,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(WollstonecraftAdmission)], doctrine: false, position: 1, actIndex: 1,
             route: "EDUCATION_AND_SITUATION", seed: "101");
-        return Task.CompletedTask;
+        return;
     }
 
     private static void CheckQuestionPageWaitsForItsNode()
@@ -411,55 +519,47 @@ internal static class ActBoundaryFixedEntryNativeChecks
         table.GetType().GetMethod("Remove")!.Invoke(table, [run]);
     }
 
-    private static void CheckStaleDirectionCallback()
-    {
-        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-            .Invoke(null, [typeof(AristotleCategoryTablet), 0])!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, (RunState)tuple[1]!,
-            "ARISTOTLE__LANGUAGE_AND_MEANING__CORE", "TO_SAUSSURE", leaveBeforeChoice: true);
-    }
+    private static EventModel ChooseVirtueDirection(RunState run, NativeRuntimeFixture fixture,
+        string node, string key) => ChooseDirection(run, fixture, node, key);
 
-    private static void CheckEarlyHegelToMarxContinuation()
+    private static EventModel ChooseDirection(RunState run, NativeRuntimeFixture fixture,
+        string node, string key)
     {
-        ModelDb.Inject(typeof(HegelRecognition)); ModelDb.Inject(typeof(MarxAlienation));
-        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
-            .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
-        var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run,
-            "DESCARTES__SELF_AND_OTHER__CORE", "TO_KANT");
-        Set(run, "_currentActIndex", 1); Set(run, "_currentRooms", new List<AbstractRoom>());
-        object?[] prepare = [run, null];
-        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
-            && prepare[1] is EventRoom { CanonicalEvent: HegelRecognition },
-            "The saved Kant turn opens recognition at the second-act boundary.");
-        object?[] query = [run, null]; Call("PhilosophyRunStateService", "TryGet", query);
-        object shared = query[1]!, journey = Get(shared, "WesternJourney");
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object hegel = Get(shared, "HegelRecognition");
-        foreach (string name in new[] { "Renegotiate", "Leave" })
-        {
-            object action = Enum.Parse(T("HegelRecognitionAction"), name);
-            Check((bool)Call("HegelRecognitionFlow", "TryPrepare", hegel, action)!
-                && (bool)Call("HegelRecognitionFlow", "TryCommitPending", hegel, journey, graph)!,
-                "Recognition completes its real handover before Marx is selected.");
-        }
-        Set(run, "_currentActIndex", 2); Set(run, "_currentRooms", new List<AbstractRoom>());
-        prepare = [run, null];
-        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
-            && prepare[1] is EventRoom { CanonicalEvent: MarxAlienation },
-            "The third-act boundary must select Marx after the real completed recognition room.");
-        query = [run, null]; Call("PhilosophyRunStateService", "TryGet", query);
-        shared = query[1]!; journey = Get(shared, "WesternJourney");
-        object marx = Get(shared, "MarxAlienation");
-        Check((int)Get(marx, "ActIndex") == 3 && (string)Get(marx, "EdgeId") == "WESTERN_EDGE_155"
-            && (bool)Get(marx, "FixedMode"), "The advanced Marx room owns third-act fixed edge 155.");
-        foreach (string name in new[] { "AlienatedLabor", "Leave" })
-        {
-            object action = Enum.Parse(T("MarxAlienationAction"), name);
-            Check((bool)Call("MarxAlienationFlow", "TryPrepare", marx, action)!
-                && (bool)Call("MarxAlienationFlow", "TryCommitPending", marx, journey, graph)!,
-                "The selected third-act Marx room must complete its own choices.");
-        }
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
+        Put(journey, "RouteRules", true);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
+        EventModel selected = run.Act.PullNextEvent(run);
+        Check(selected is RouteTurnQuestion,
+            "The real virtue entry must ask the route fork first, got " + selected.GetType().Name + ".");
+        var room = new EventRoom(selected);
+        EventModel local = room.CanonicalEvent.ToMutable();
+        NativeRuntimeFixture.Set(local, "Owner", fixture.Player);
+        Set(run, "_currentRooms", new List<AbstractRoom> { room });
+        object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+        NativeRuntimeFixture.Set(sync, "_events", new List<EventModel> { local });
+        NativeRuntimeFixture.Set(sync, "_playerCollection", run);
+        NativeRuntimeFixture.Set(sync, "_localPlayerId", fixture.Player.NetId);
+        NativeRuntimeFixture.Set(sync, "_pendingOptionTasks", new List<Task>());
+        NativeRuntimeFixture.Set(RunManager.Instance, "EventSynchronizer", sync);
+        object? originalActs = Get(run, "Acts");
+        using var saves = new NativeEventMemorySaveFixture(fixture, run);
+        object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!.Invoke(null, [journey, graph])!;
+        object direction = ((System.Collections.IEnumerable)choices).Cast<object>()
+            .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == key);
+        Task task = (Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
+            .Invoke(local, [journey, direction])!;
+        task.GetAwaiter().GetResult();
+        Check(saves.SaveAttempts > 0,
+            "Answering the real route page must persist through the native save store.");
+        Set(run, "Acts", originalActs);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        return selected;
     }
 
     private static void ChooseDirectionDirect(RunState run, NativeRuntimeFixture fixture,
@@ -504,69 +604,6 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Set(run, "_currentRooms", new List<AbstractRoom>());
     }
 
-    private static EventModel ChooseDirection(RunState run, NativeRuntimeFixture fixture,
-        string node, string key) => ChooseVirtueDirection(fixture, run, node, key);
-
-    private static EventModel ChooseVirtueDirection(RunState run, NativeRuntimeFixture fixture,
-        string node, string key) => ChooseVirtueDirection(fixture, run, node, key);
-
-    private static EventModel ChooseVirtueDirection(NativeRuntimeFixture fixture,
-        RunState run, string node, string key, bool leaveBeforeChoice = false)
-    {
-        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
-        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph, [node])!;
-        Put(journey, "RouteRules", true);
-        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
-        Put(shared, "WesternJourney", journey);
-        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
-        Call("PhilosophyRunStateService", "MarkResolved", run);
-        Set(run, "_currentRooms", new List<AbstractRoom>());
-        run.CurrentMapPoint!.PointType = MapPointType.Unknown;
-        EventModel selected = run.Act.PullNextEvent(run);
-        Check(selected is RouteTurnQuestion,
-            "The actual native entry must ask its route fork first.");
-        EventModel local = selected.ToMutable();
-        Set(local, "Owner", run.Players[0]);
-        var acts = run.Acts;
-        try
-        {
-            using var memory = new NativeEventMemorySaveFixture(fixture, run);
-            object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager)
-                .GetProperty("EventSynchronizer")!.PropertyType);
-            Set(sync, "_events", new List<EventModel> { local });
-            Set(sync, "_playerCollection", run);
-            Set(sync, "_localPlayerId", run.Players[0].NetId);
-            Set(sync, "_pendingOptionTasks", new List<Task>());
-            Set(RunManager.Instance, "EventSynchronizer", sync);
-            Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(selected) });
-            typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
-            object choices = T("RouteTurnQuestionOptions").GetMethod("For", Methods)!
-                .Invoke(null, [journey, graph])!;
-            object direction = ((System.Collections.IEnumerable)choices).Cast<object>()
-                .Single(choice => (string)choice.GetType().GetProperty("Key")!.GetValue(choice)! == key);
-            string before = (string)Call("PhilosophyRunStateCodec", "Encode", shared)!;
-            int writes = memory.SaveAttempts;
-            if (leaveBeforeChoice) Set(run, "_currentRooms", new List<AbstractRoom>());
-            ((Task)typeof(RouteTurnQuestion).GetMethod("Choose", Methods)!
-                .Invoke(local, [journey, direction])!).GetAwaiter().GetResult();
-            if (leaveBeforeChoice)
-                Check(!local.IsFinished && memory.SaveAttempts == writes
-                    && (string)Call("PhilosophyRunStateCodec", "Encode", shared)! == before,
-                    "A departed page callback must not change or save the route or pretend completion.");
-            else
-                Check(local.IsFinished && memory.SaveAttempts > writes
-                    && memory.Json.Contains("ROUTE_TURN_QUESTION", StringComparison.Ordinal)
-                    && !(bool)typeof(RouteTurnQuestion).GetField("_blocked", Methods)!.GetValue(local)!,
-                    "A real direction must finish only after its native memory checkpoint is confirmed.");
-        }
-        finally
-        {
-            Set(run, "Acts", acts);
-            Set(run, "_currentRooms", new List<AbstractRoom>());
-        }
-        return selected;
-    }
-
     private static void CheckEarlyMerleauContinuation()
     {
         typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
@@ -574,7 +611,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_EMBODIED");
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_EMBODIED");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -620,7 +658,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesQuestionCup), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", "TO_PEIRCE");
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "SOCRATES__KNOWLEDGE_AND_DOUBT__CORE", "TO_PEIRCE");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -783,6 +822,377 @@ internal static class ActBoundaryFixedEntryNativeChecks
         }
     }
 
+    private static void CheckDefaultMillDoesNotCreateRawls()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(MillHarm));
+        ModelDb.Inject(typeof(RawlsPosition));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 2])!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey;
+        try
+        {
+            journey = graph.GetType().GetMethod("Start")!
+                .Invoke(graph, ["JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"])!;
+        }
+        catch (TargetInvocationException)
+        {
+            journey = graph.GetType().GetMethod("Start")!
+                .Invoke(graph, ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+            Put(journey, "CurrentNodeId", "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE");
+        }
+        Put(journey, "RouteId", "CONSEQUENCE_AND_FREEDOM");
+        Put(journey, "RouteRules", true);
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_169");
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_170");
+        Put(journey, "CurrentNodeId", "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE");
+        Put(journey, "LastFixedAct", 2);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
+        Check(!selected || prepare[1] is not EventRoom { CanonicalEvent: RawlsPosition },
+            "The default Mill line must end at Mill; 169 must not create a fourth Rawls room.");
+    }
+
+    private static async Task CheckMachiavelliThirdActBody()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(MachiavelliFloodPreparation));
+        ModelDb.Inject(typeof(MachiavelliFortuneAfter));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 2])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteId", "FORTUNE_AND_VIRTUE");
+        Put(journey, "RouteRules", true);
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, "WESTERN_EDGE_046"])!,
+            "The fortune line reaches Machiavelli through the real act-two 046 handover.");
+        Put(journey, "Act", 2);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MachiavelliFortuneAfter },
+            "Machiavelli's real third-act boundary must open his closing room, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        EventRoom closingRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { closingRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = closingRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(closingRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Machiavelli's third-act body must restore and become ready; ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_PRACTICE", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Machiavelli's real third-act button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Machiavelli's real third-act button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            object closing = Get(query[1]!, "MachiavelliFortuneAfter");
+            object updated = Get(query[1]!, "WesternJourney");
+            Check((bool)Get(closing, "Confirmed") && (bool)Get(closing, "FixedSlotResolved")
+                && (bool)Get(closing, "Closed") && (int)Get(updated, "LastFixedAct") == 3
+                && (string)Get(updated, "CurrentNodeId") == "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+                "Machiavelli's third-act closing must spend slot 3 on his own node and close.");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+    }
+
+    private static async Task CheckMarxRousseauBody()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(MarxAlienation));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 1])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteId", "SOCIAL_CRITIQUE");
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 1);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MarxAlienation },
+            "The default social-critique line must open Marx at the act-two boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        EventRoom marxRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { marxRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = marxRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(marxRoom);
+            configure?.Invoke(local);
+            // The real EventRoom calls this before AfterEventStarted; this
+            // in-memory fixture has no EnterInternal, so invoke the same initializer.
+            if (local.Description is null)
+                typeof(MarxAlienation).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked")
+                && local.Description is { } description
+                && description.LocEntryKey.EndsWith(".pages.INVITATION_ROUSSEAU.description", StringComparison.Ordinal),
+                "Marx's default Rousseau room must restore the Rousseau page, got "
+                + (local.Description?.LocEntryKey ?? "<none>") + ".");
+            string options = string.Join(",", local.CurrentOptions.Select(candidate =>
+                candidate.HistoryName?.LocEntryKey ?? "<null>"));
+            Check(options.Contains(".options.KEEP_ROUSSEAU.title", StringComparison.Ordinal)
+                && !options.Contains(".options.KEEP_HEGEL.title", StringComparison.Ordinal),
+                "The default Rousseau room must show KeepRousseau, not KeepHegel; options=" + options + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_ROUSSEAU", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Marx's real Rousseau button " + action + " is visible and live; options=" + options + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Marx's real Rousseau button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            object marx = Get(query[1]!, "MarxAlienation");
+            object updated = Get(query[1]!, "WesternJourney");
+            Check((bool)Get(marx, "Closed") && (string)Get(marx, "RouteSourceNodeId")
+                == "ROUSSEAU__HISTORY_AND_POWER__CORE"
+                && (int)Get(updated, "LastFixedAct") == 2
+                && ((HashSet<int>)Get(updated, "DeclinedFixedActs")).Contains(2)
+                && !((HashSet<string>)Get(updated, "CompletedEdgeIds")).Contains("WESTERN_EDGE_118"),
+                "Marx's Rousseau refusal must spend slot 2 in place and keep Rousseau's ending.");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+    }
+
+    private static async Task CheckKantEarlyDecline()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(KantUniversalization));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(PlatoCivicSeal), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseDirectionDirect(run, fixture, "PLATO__FREEDOM_AND_INSTITUTIONS__CORE", "TO_MONTESQUIEU");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: KantUniversalization },
+            "The second-act Kant decline probe must open the real room.");
+        EventRoom kantRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { kantRoom });
+        object shared;
+        object kant;
+        object journey;
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = kantRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(kantRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_ROUSSEAU_EARLY", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Kant's real second-act button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Kant's real second-act button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            shared = query[1]!;
+            kant = Get(shared, "KantUniversalization");
+            journey = Get(shared, "WesternJourney");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        Check((bool)Get(kant, "FixedDeclined")
+            && (int)Get(journey, "LastFixedAct") == 2
+            && ((HashSet<int>)Get(journey, "DeclinedFixedActs")).Contains(2)
+            && !((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_172"),
+            "Kant's act-two KeepRousseau must spend fixed slot 2 in place, not advance to 3.");
+    }
+
+    private static async Task CheckMontesquieuKantRawls()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(KantUniversalization));
+        ModelDb.Inject(typeof(RawlsPosition));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(PlatoCivicSeal), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseDirectionDirect(run, fixture, "PLATO__FREEDOM_AND_INSTITUTIONS__CORE", "TO_MONTESQUIEU");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object journey = Get(live[1]!, "WesternJourney");
+        object shared = live[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_171")
+            && (string)Get(journey, "RouteId") == "CHECKS_AND_JUSTICE",
+            "The real Montesquieu direction takes 171 and names the checks-and-justice line.");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: KantUniversalization },
+            "Montesquieu's turn opens Kant on 172 at the real second-act boundary, got "
+            + (prepare[1] is EventRoom er ? er.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object kant = Get(shared, "KantUniversalization");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(kant, "ActIndex") == 2 && (string)Get(kant, "EdgeId") == "WESTERN_EDGE_172",
+            "The real checks line opens Kant on its act-two edge 172.");
+        EventRoom kantRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { kantRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = kantRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(kantRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check(ReferenceEquals(kantRoom.LocalMutableEvent, local),
+                "Kant's local event is the room's mutable event.");
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Kant's real second-act AfterEventStarted must become ready; ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Check(local.Description.LocEntryKey.EndsWith(
+                    "KANT_UNIVERSALIZATION.pages.INVITATION_EARLY.description", StringComparison.Ordinal)
+                && local.CurrentOptions.Any(option => option.HistoryName?.LocEntryKey?.EndsWith(
+                    ".options.KEEP_ROUSSEAU_EARLY.title", StringComparison.Ordinal) == true),
+                "Kant's early page and decline button must name the act-two handover, not act three; options="
+                + string.Join(",", local.CurrentOptions.Select(option => option.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "STATE_MAXIM", "UNIVERSAL_RULE", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Kant's real button " + action + " is visible and live.");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Kant's real button " + action + " must not freeze the room.");
+            }
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        var history = new List<List<MapPointHistoryEntry>>();
+        for (int act = 0; act <= 2; act++)
+        {
+            var points = new List<MapPointHistoryEntry>();
+            if (act == 1)
+            {
+                points.Add(new() { MapPointType = MapPointType.Unknown,
+                    Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<KantUniversalization>() }] });
+                points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+            }
+            else if (act == 2)
+                points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+            history.Add(points);
+        }
+        Set(run, "_mapPointHistory", history);
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: RawlsPosition },
+            "Kant's real 173 handover opens Rawls in the third act, got "
+            + (prepare[1] is EventRoom rawlsRoom ? rawlsRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object rawls = Get(shared, "RawlsPosition");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(rawls, "ActIndex") == 3 && (string)Get(rawls, "RequiredEdgeId") == "WESTERN_EDGE_172",
+            "Rawls's real closing record follows Kant's 172 handover.");
+        foreach (string name in new[] { "DraftMinimum", "Execute", "Leave" })
+        {
+            object value = Enum.Parse(T("RawlsPositionAction"), name);
+            Check((bool)Call("RawlsPositionFlow", "TryPrepare", rawls, value)!
+                && (bool)Call("RawlsPositionFlow", "TryCommitPending", rawls, journey, graph)!,
+                "Rawls's closing scene commits " + name + ".");
+        }
+    }
+
     private static void CheckEarlyKierkegaardScene()
     {
         typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
@@ -790,7 +1200,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
         object? direct = Call("KierkegaardFaithPatch", "TrySelectNative", run);
         EventModel selected = run.Act.PullNextEvent(run);
         Check(selected is KierkegaardFaith,
@@ -830,7 +1241,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesBalanceWeight), 0])!;
         var run = (RunState)tuple[1]!;
-        ChooseVirtueDirection((NativeRuntimeFixture)tuple[0]!, run, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "SOCRATES__VIRTUE_AND_HAPPINESS__CORE", "TO_KIERKEGAARD");
         object?[] live = [run, null];
         Call("PhilosophyRunStateService", "TryGet", live);
         object journey = Get(live[1]!, "WesternJourney");
@@ -874,6 +1286,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
             .Invoke(null, [typeof(SocratesQuestionCup), 1])!;
         var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
         object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
         object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
             ["SOCRATES__KNOWLEDGE_AND_DOUBT__CORE"])!;
@@ -1011,6 +1424,487 @@ internal static class ActBoundaryFixedEntryNativeChecks
     // A route-turn question moves the protagonist onto the question node in act
     // one. That figure's own room must open on the next native pull before the
     // successor line starts, otherwise the turn is only a renamed default.
+    private static async Task CheckFirstActTurnScenes()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        CheckFirstActSpinoza();
+        CheckFirstActFreud();
+        CheckFirstActHusserl();
+        await CheckBaconDiderotContinuation();
+    }
+
+    private static void CheckMarxAfterEarlyHegel()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(MarxAlienation));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["DESCARTES__SELF_AND_OTHER__CORE"])!;
+        Put(journey, "CurrentNodeId", "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE");
+        Put(journey, "RouteId", "AUTONOMY_AND_HISTORY");
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 2);
+        Put(journey, "Act", 3);
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_153");
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_154");
+        var history = new List<List<MapPointHistoryEntry>>();
+        for (int act = 0; act <= 2; act++)
+        {
+            var points = new List<MapPointHistoryEntry>();
+            if (act == 1)
+            {
+                points.Add(new() { MapPointType = MapPointType.Unknown,
+                    Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<HegelRecognition>() }] });
+                points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+            }
+            else if (act == 2)
+                points.Add(new() { MapPointType = MapPointType.Monster, Rooms = [new() { RoomType = RoomType.Monster }] });
+            history.Add(points);
+        }
+        Set(run, "_mapPointHistory", history);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MarxAlienation },
+            "The early Kant/Hegel line must open Marx on 155 at the third-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] live = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", live);
+        object state = Get(live[1]!, "MarxAlienation")!;
+        Check((int)Get(state, "ActIndex") == 3 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_155"
+            && (string)Get(state, "RouteSourceNodeId") == "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE",
+            "Marx's early handover must record act three, edge 155, and Hegel as its real source.");
+    }
+
+    private static async Task CheckHegelEntryPersistence()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(HegelRecognition));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 2])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        var run = (RunState)tuple[1]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["DESCARTES__SELF_AND_OTHER__CORE"])!;
+        Put(journey, "CurrentNodeId", "IMMANUEL_KANT__SELF_AND_OTHER__CORE");
+        Put(journey, "RouteId", "AUTONOMY_AND_HISTORY");
+        Put(journey, "RouteRules", true);
+        Put(journey, "LastFixedAct", 2);
+        Put(journey, "Act", 3);
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_153");
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: HegelRecognition },
+            "The real Hegel boundary prepares its own room, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        EventRoom hegelRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { hegelRoom });
+        using var saves = new NativeEventMemorySaveFixture(fixture, run);
+        EventModel local = hegelRoom.CanonicalEvent.ToMutable();
+        Set(local, "Owner", fixture.Player);
+        object synchronizer = System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(
+            typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+        Set(synchronizer, "_events", new List<EventModel> { local });
+        Set(synchronizer, "_playerCollection", run);
+        Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+        Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+        Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+        var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(hegelRoom);
+        configure?.Invoke(local);
+        await local.AfterEventStarted();
+        Check(!(bool)GetField(local, "_blocked"),
+            "HegelRecognition's real AfterEventStarted does not freeze on a registered room save.");
+        var loaded = saves.Manager.LoadRunSave();
+        Check(loaded.Success && loaded.SaveData!.PreFinishedRoom is { } saved
+            && Equals(saved.EventId, ModelDb.GetId<HegelRecognition>()),
+            "HegelRecognition's real entry save is readable as its exact pre-finished room.");
+    }
+
+    private static void CheckFirstActSpinoza()
+    {
+        ModelDb.Inject(typeof(SpinozaCauseNetwork));
+        ModelDb.Inject(typeof(SchellingNature));
+        ModelDb.Inject(typeof(DeleuzeDifference));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(HeraclitusLyre), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "HERACLITUS__BEING_AND_CHANGE__CORE", "TO_SPINOZA");
+        // The first-act turn skips Spinoza's own room: the second-act fixed
+        // slot is Schelling on 162, and Deleuze closes on 157 in act three.
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: SchellingNature },
+            "The turned Spinoza line opens Schelling at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "SchellingNature");
+        object journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2
+            && (string)Get(state, "EdgeId") == "WESTERN_EDGE_162"
+            && (string)Get(state, "RouteSourceNodeId") == "BARUCH_SPINOZA__BEING_AND_CHANGE__CORE"
+            && (int)Get(journey, "LastFixedAct") == 2,
+            "The turned nature line places Schelling's own room on 162, got act="
+            + Get(state, "ActIndex") + " edge=" + Get(state, "EdgeId")
+            + " source=" + Get(state, "RouteSourceNodeId") + ".");
+        foreach (string action in new[] { "NatureAsSpirit", "Leave" })
+        {
+            object value = Enum.Parse(T("SchellingNatureAction"), action);
+            Check((bool)Call("SchellingNatureFlow", "TryPrepare", state, value)!
+                && (bool)Call("SchellingNatureFlow", "TryCommitPending", state, journey,
+                    Call("WesternRouteGraph", "LoadEmbedded")!),
+                "The turned Schelling room commits " + action + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_162")
+            && (string)Get(journey, "CurrentNodeId") == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE"
+            && (int)Get(journey, "LastFixedAct") == 3,
+            "The turned Schelling answer reaches Schelling on 162.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] third = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", third)!
+            && third[1] is EventRoom { CanonicalEvent: DeleuzeDifference },
+            "The turned nature line opens Deleuze at the third-act boundary, got "
+            + (third[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object deleuze = Get(shared, "DeleuzeDifference");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(deleuze, "ActIndex") == 3
+            && (string)Get(deleuze, "EdgeId") == "WESTERN_EDGE_157"
+            && (string)Get(journey, "CurrentNodeId") == "FRIEDRICH_WILHELM_JOSEPH_SCHELLING__BEING_AND_CHANGE__CORE",
+            "The turned nature line gives Deleuze its 157 resolution after Schelling.");
+        foreach (string action in new[] { "DifferenceRepetition", "Leave" })
+        {
+            object value = Enum.Parse(T("DeleuzeDifferenceAction"), action);
+            Check((bool)Call("DeleuzeDifferenceFlow", "TryPrepare", deleuze, value)!
+                && (bool)Call("DeleuzeDifferenceFlow", "TryCommitPending", deleuze, journey,
+                    Call("WesternRouteGraph", "LoadEmbedded")!),
+                "The turned Deleuze room commits " + action + ".");
+        }
+    }
+
+    private static void CheckFirstActFreud()
+    {
+        ModelDb.Inject(typeof(FreudUnconscious));
+        ModelDb.Inject(typeof(LacanSignifier));
+        ModelDb.Inject(typeof(ButlerAddress));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "DESCARTES__SELF_AND_OTHER__CORE", "TO_FREUD");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: LacanSignifier },
+            "The real Freud direction must open Lacan, not Freud's own room, at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "LacanSignifier");
+        object journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2
+            && (string)Get(state, "EdgeId") == "WESTERN_EDGE_190"
+            && (string)Get(state, "RequiredEdge") == "WESTERN_EDGE_189"
+            && (string)Get(state, "TargetNode") == "JACQUES_LACAN__SELF_AND_OTHER__CORE",
+            "The turned unconscious line opens Lacan on 190, got act="
+            + Get(state, "ActIndex") + " edge=" + Get(state, "EdgeId")
+            + " required=" + Get(state, "RequiredEdge") + ".");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "LacanSignifier");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "BindKeeper", "Clarify", "Leave" })
+        {
+            object action = Enum.Parse(T("LacanSignifierAction"), name);
+            Check((bool)Call("LacanSignifierFlow", "TryPrepare", state, action)!
+                && (bool)Call("LacanSignifierFlow", "TryCommitPending", state, journey,
+                    Call("WesternRouteGraph", "LoadEmbedded")!),
+                "The turned Lacan room commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_190")
+            && (string)Get(journey, "CurrentNodeId") == "JACQUES_LACAN__SELF_AND_OTHER__CORE"
+            && (int)Get(journey, "LastFixedAct") == 3,
+            "The turned Freud answer reaches Lacan on 190.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        // Butler opens after Lacan's closed room and a later fight, not merely
+        // because the route is named.
+        var behaviors = (System.Collections.IDictionary)Get(shared, "ActBehaviorStates")!;
+        if (!behaviors.Contains(2)) behaviors[2] = Activator.CreateInstance(T("ActBehaviorState"), nonPublic: true)!;
+        Put(behaviors[2]!, "ActIndex", 2); Put(behaviors[2]!, "CompletedCombatCount", 1);
+        var acts = (System.Collections.IList)Get(run, "MapPointHistory")!;
+        while (acts.Count <= 2) acts.Add(new List<MapPointHistoryEntry>());
+        var actHistory = (System.Collections.IList)acts[2]!;
+        actHistory.Add(new MapPointHistoryEntry
+        {
+            MapPointType = MapPointType.Unknown,
+            Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<LacanSignifier>() }],
+            PlayerStats = [new() { PlayerId = run.Players[0].NetId }],
+        });
+        actHistory.Add(new MapPointHistoryEntry
+        {
+            MapPointType = MapPointType.Monster,
+            Rooms = [new() { RoomType = RoomType.Monster }],
+            PlayerStats = [new() { PlayerId = run.Players[0].NetId }],
+        });
+        object?[] third = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", third)!
+            && third[1] is EventRoom { CanonicalEvent: ButlerAddress },
+            "The turned unconscious line opens Butler at the third-act boundary, got "
+            + (third[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object butler = Get(shared, "ButlerAddress");
+        Check((int)Get(butler, "ActIndex") == 3,
+            "Butler's turned room records the third act.");
+    }
+
+    private static void CheckFirstActHusserl()
+    {
+        ModelDb.Inject(typeof(HusserlEpoche));
+        ModelDb.Inject(typeof(HeideggerDasein));
+        ModelDb.Inject(typeof(GadamerFusion));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(DescartesThinkingLens), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "DESCARTES__SELF_AND_OTHER__CORE", "TO_HUSSERL_APPEARANCE");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: HeideggerDasein },
+            "The turned appearance line must open Heidegger, not Husserl's own room, at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "HeideggerDasein");
+        object journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_164"
+            && (string)Get(state, "RouteSourceNodeId") == "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+            "The turned Husserl line opens Heidegger on 164.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "HeideggerDasein");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "BeingInSituation", "Leave" })
+        {
+            object action = Enum.Parse(T("HeideggerDaseinAction"), name);
+            Check((bool)Call("HeideggerDaseinFlow", "TryPrepare", state, action)!
+                && (bool)Call("HeideggerDaseinFlow", "TryCommitPending", state, journey,
+                    Call("WesternRouteGraph", "LoadEmbedded")!),
+                "The turned Heidegger room commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_164")
+            && (string)Get(journey, "CurrentNodeId") == "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE"
+            && (int)Get(journey, "LastFixedAct") == 3,
+            "The turned Husserl answer reaches Heidegger on 164.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] third = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", third)!
+            && third[1] is EventRoom { CanonicalEvent: GadamerFusion },
+            "The turned appearance line opens Gadamer at the third-act boundary, got "
+            + (third[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object gadamer = Get(shared, "GadamerFusion");
+        Check((int)Get(gadamer, "ActIndex") == 3,
+            "Gadamer's turned room records the third act.");
+    }
+
+    private static async Task CheckBaconDiderotContinuation()
+    {
+        ModelDb.Inject(typeof(BaconSampleLedger));
+        ModelDb.Inject(typeof(DiderotPublicPractice));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseVirtueDirection(run, fixture, "ROUSSEAU__HISTORY_AND_POWER__CORE", "TO_BACON");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: BaconSampleLedger },
+            "The real Bacon turn opens Bacon at the second-act boundary, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        object?[] query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        object shared = query[1]!;
+        object state = Get(shared, "BaconSampleLedger");
+        object journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (int)Get(journey, "LastFixedAct") == 2,
+            "The Bacon room owns the second-act fixed slot.");
+        // The actual second-act room must accept its own activity identity and
+        // complete the awaited entry save before any button is usable.
+        EventRoom baconRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { baconRoom });
+        object? originalActs = Get(run, "Acts");
+        object? originalOdds = Get(run, "Odds");
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = baconRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(baconRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked")
+                && saves.SaveAttempts > 0,
+                "Bacon's real second-act AfterEventStarted must accept its room and persist before ready.");
+            var loaded = saves.Manager.LoadRunSave();
+            Check(loaded.Success && loaded.SaveData!.PreFinishedRoom is { } savedRoom
+                && Equals(savedRoom.EventId, ModelDb.GetId<BaconSampleLedger>()),
+                "Bacon's real second-act entry save is readable as its exact pre-finished room.");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "ACCEPT_INVITATION", "CHECK_TRIBE", "TAKE_COUNTER_SAMPLE", "PUBLISH_LIMITED", "LEAVE" })
+            {
+                string available = string.Join(",", local.CurrentOptions.Select(candidate =>
+                    candidate.HistoryName.LocEntryKey));
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null, "Bacon's real button " + action + " is visible; options=" + available);
+                Check(Callback(option) is not null, "Bacon's real button " + action + " has a callback.");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Bacon's real button " + action + " must not freeze the room.");
+            }
+        }
+        Put(run, "Acts", originalActs);
+        Put(run, "Odds", originalOdds);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        Check((bool)Get(state, "EdgeCommitted") && (int)Get(journey, "LastFixedAct") == 2
+            && (string)Get(journey, "CurrentNodeId") == "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
+            "Bacon's completed report keeps him on the social-knowledge node for Diderot.");
+        EventModel practice = run.Act.PullNextEvent(run);
+        Check(practice is DiderotPublicPractice,
+            "The completed Bacon room opens Diderot's public practice, got " + practice.GetType().Name + ".");
+        object?[] diderotQuery = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", diderotQuery);
+        object diderot = Get(diderotQuery[1]!, "DiderotPublicPractice");
+        Check(((string)Get(diderot, "InstanceId")).StartsWith("DIDEROT_PUBLIC_PRACTICE:", StringComparison.Ordinal)
+            && ((string)Get(diderot, "InstanceId")).EndsWith(":2", StringComparison.Ordinal),
+            "Diderot's created record must use the room's own restore identity, got "
+            + Get(diderot, "InstanceId") + ".");
+        EventRoom diderotRoom = new(practice);
+        Set(run, "_currentRooms", new List<AbstractRoom> { diderotRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = diderotRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(diderotRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Diderot's actual body must restore its saved record, ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "COLLECT_INTO_SYSTEM", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Diderot's real button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Diderot's real button " + action + " must not freeze the room.");
+            }
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+
+        // 0.5.32/0.5.33 wrote the same Diderot room under the old Voltaire
+        // prefix. A save made by those releases must still reopen and finish
+        // this room, not be mistaken for a foreign event.
+        object legacy = Call("DiderotPracticeState", "Create",
+            $"VOLTAIRE_PUBLIC_CRITIQUE:{run.Rng.Seed}:2")!;
+        Put(shared, "DiderotPublicPractice", legacy);
+        EventRoom legacyRoom = new(ModelDb.Event<DiderotPublicPractice>());
+        Set(run, "_currentRooms", new List<AbstractRoom> { legacyRoom });
+        using (var legacySaves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = legacyRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(legacyRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Diderot's legacy Voltaire-prefixed instance must reopen ready, ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "COLLECT_INTO_SYSTEM", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Diderot's legacy instance still exposes " + action + "; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Diderot's legacy " + action + " must not freeze the room.");
+            }
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+    }
+
     private static void CheckEarlyNietzscheContinuation()
     {
         ModelDb.Inject(typeof(FoucaultPower));
@@ -1156,6 +2050,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
 
     private static void CheckEarlySaussureContinuation()
     {
+        ModelDb.Inject(typeof(SaussureSign));
         ModelDb.Inject(typeof(LeviStraussMyth));
         ModelDb.Inject(typeof(DerridaDeconstruction));
         var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
@@ -1178,36 +2073,51 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object?[] prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
             && prepare[1] is EventRoom { CanonicalEvent: LeviStraussMyth },
-            "The Saussure turn opens Levi-Strauss at the real second-act boundary.");
+            "The Saussure turn must open Levi-Strauss, not Saussure's own room, at the real second-act boundary; got "
+            + (prepare[1] is EventRoom secondRoom ? secondRoom.CanonicalEvent.GetType().Name : "none") + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         shared = query[1]!;
         object state = Get(shared, "LeviStraussMyth");
         journey = Get(shared, "WesternJourney");
-        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_187",
-            "The early continuation uses its actual second-act edge and identity.");
-        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
-            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
-        query = [run, null];
-        Call("PhilosophyRunStateService", "TryGet", query);
-        shared = query[1]!;
-        state = Get(shared, "LeviStraussMyth");
-        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_187"
+            && (string)Get(state, "RouteSourceNodeId") == "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+            "The turned structure line opens Levi-Strauss on its actual second-act edge 187.");
         foreach (string name in new[] { "StructuralReading", "Leave" })
         {
             object action = Enum.Parse(T("LeviStraussMythAction"), name);
             Check((bool)Call("LeviStraussMythFlow", "TryPrepare", state, action)!
                 && (bool)Call("LeviStraussMythFlow", "TryCommitPending", state, journey, graph)!,
-                "The early continuation commits " + name + ".");
+                "The turned Levi-Strauss room commits " + name + ".");
         }
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_187")
-            && !((HashSet<int>)Get(journey, "ResolvedQuestionActs")).Contains(2),
-            "The continuation completes 187 without consuming a second-act question.");
+            && (string)Get(journey, "CurrentNodeId") == "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE"
+            && (int)Get(journey, "LastFixedAct") == 3,
+            "The turned Saussure answer reaches Levi-Strauss on 187.");
         Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
         prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
             && prepare[1] is EventRoom { CanonicalEvent: DerridaDeconstruction },
-            "The same turned run continues to Derrida at the third-act boundary.");
+            "The turned structure line opens Derrida at the third-act boundary, got "
+            + (prepare[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "DerridaDeconstruction");
+        journey = Get(shared, "WesternJourney");
+        Check((int)Get(state, "ActIndex") == 3 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_188",
+            "The third-act Derrida room uses 188.");
+        foreach (string name in new[] { "Differance", "Leave" })
+        {
+            object action = Enum.Parse(T("DerridaDeconstructionAction"), name);
+            Check((bool)Call("DerridaDeconstructionFlow", "TryPrepare", state, action)!
+                && (bool)Call("DerridaDeconstructionFlow", "TryCommitPending", state, journey, graph)!,
+                "The third-act Derrida room commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_188")
+            && (string)Get(journey, "CurrentNodeId") == "JACQUES_DERRIDA__LANGUAGE_AND_MEANING__CORE",
+            "The third-act Derrida answer reaches Derrida on 188.");
     }
 
     private static void CheckBenjaminIndependentQuestion()

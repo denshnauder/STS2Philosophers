@@ -21,7 +21,7 @@ public sealed class FreudUnconscious : EventModel
         {
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.UNCONSCIOUS"),
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.DREAM_WORK"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_DESCARTES"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{KeepKey(TryRestoreState())}"),
         };
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
@@ -137,7 +137,7 @@ public sealed class FreudUnconscious : EventModel
         return FreudUnconsciousFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{FreudUnconsciousFlow.StageKey(stage)}.options.{FreudUnconsciousFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{FreudUnconsciousFlow.StageKey(stage)}.options.{OptionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
@@ -165,6 +165,22 @@ public sealed class FreudUnconscious : EventModel
     }
 
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(FreudUnconsciousState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{FreudUnconsciousFlow.DescriptionKey(state)}.description");
+        L10NLookup($"{LocalizationRoot}.pages.{PageKey(state)}.description");
+
+    private static bool IsFixedSource(FreudUnconsciousState? state) =>
+        state is { SourceNode: FreudUnconsciousState.AdoptedNodeId };
+
+    private static string KeepKey(FreudUnconsciousState? state) =>
+        IsFixedSource(state) ? "KEEP_FREUD" : "KEEP_DESCARTES";
+
+    private static string OptionKey(FreudUnconsciousState state, FreudUnconsciousAction action) =>
+        action == FreudUnconsciousAction.KeepDescartes
+            ? KeepKey(state)
+            : FreudUnconsciousFlow.ActionKey(action);
+
+    private static string PageKey(FreudUnconsciousState state) =>
+        IsFixedSource(state) && state.Stage == FreudUnconsciousStage.ResultKept
+            ? "RESULT_KEPT_FIXED"
+            : FreudUnconsciousFlow.DescriptionKey(state);
 
 }

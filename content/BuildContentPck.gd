@@ -220,6 +220,7 @@ func _initialize() -> void:
 		"anaximenes_breath_invitation", "anselm_unfinished_proof", "aquinas_bridge_notice",
 		"augustine_promise", "diogenes_stay_switch", "luther_signed_care",
 		"bacon_sample_ledger", "copernicus_shifted_center", "galileo_measured_practice",
+		"diderot_public_practice", "freud_unconscious", "husserl_epoche", "kant_knowledge_synthesis", "machiavelli_fortune_after", "saussure_sign",
 		"machiavelli_flood_preparation", "newton_two_sites", "spinoza_cause_network", "ockham_names_inquiry",
 		"plotinus_common_ground", "zeno_civic_challenge", "leibniz_monad_comparison", "hegel_substance_subject", "fichte_self_positing", "leibniz_independent_clocks",
 		"machiavelli_realist_challenge", "hobbes_authorized_sovereignty", "locke_cargo_identity", "hume_induction", "wollstonecraft_admission", "kant_apperception", "hegel_recognition", "marx_alienation", "deleuze_difference", "smith_sympathy", "kierkegaard_faith", "bentham_utility", "rawls_position", "rousseau_consent", "kant_universalization", "mill_harm", "beauvoir_other",
