@@ -43,6 +43,9 @@ internal sealed class PhilosophyRunState
     public AnselmUnfinishedProofState? AnselmUnfinishedProof { get; set; }
     public NewtonTwoSitesState? NewtonTwoSites { get; set; }
     public SpinozaCauseNetworkState? SpinozaCauseNetwork { get; set; }
+    public HegelRecognitionState? HegelRecognition { get; set; }
+    public MarxAlienationState? MarxAlienation { get; set; }
+    public DeleuzeDifferenceState? DeleuzeDifference { get; set; }
     public SchellingNatureState? SchellingNature { get; set; }
     public FregeSenseState? FregeSense { get; set; }
     public RussellAnalysisState? RussellAnalysis { get; set; }
@@ -143,6 +146,9 @@ internal sealed class PhilosophyRunState
         || AnselmUnfinishedProof is not null
         || NewtonTwoSites is not null
         || SpinozaCauseNetwork is not null
+        || HegelRecognition is not null
+        || MarxAlienation is not null
+        || DeleuzeDifference is not null
         || SchellingNature is not null
         || FregeSense is not null
         || RussellAnalysis is not null
@@ -373,6 +379,9 @@ internal sealed class PhilosophyRunState
         AnselmUnfinishedProof?.NormalizeAfterLoad();
         NewtonTwoSites?.NormalizeAfterLoad();
         SpinozaCauseNetwork?.NormalizeAfterLoad();
+        HegelRecognition?.NormalizeAfterLoad();
+        MarxAlienation?.NormalizeAfterLoad();
+        DeleuzeDifference?.NormalizeAfterLoad();
         SchellingNature?.NormalizeAfterLoad();
         FregeSense?.NormalizeAfterLoad();
         RussellAnalysis?.NormalizeAfterLoad();

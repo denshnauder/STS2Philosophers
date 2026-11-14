@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="../../src/Philosophy/HegelRecognitionState.cs" Link="HegelRecognitionState.cs" />
+    <Compile Include="../../src/Philosophy/HegelRecognitionTriggerPolicy.cs" Link="HegelRecognitionTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/MarxAlienationState.cs" Link="MarxAlienationState.cs" />
+    <Compile Include="../../src/Philosophy/MarxAlienationTriggerPolicy.cs" Link="MarxAlienationTriggerPolicy.cs" />
+    <Compile Include="../../src/Philosophy/DeleuzeDifferenceState.cs" Link="DeleuzeDifferenceState.cs" />
+    <Compile Include="../../src/Philosophy/DeleuzeDifferenceTriggerPolicy.cs" Link="DeleuzeDifferenceTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/RousseauConsentState.cs" Link="RousseauConsentState.cs" />
     <Compile Include="../../src/Philosophy/RousseauConsentTriggerPolicy.cs" Link="RousseauConsentTriggerPolicy.cs" />
     <Compile Include="../../src/Philosophy/WittgensteinGameState.cs" Link="WittgensteinGameState.cs" />

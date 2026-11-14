@@ -147,7 +147,9 @@ internal static class ActFixedEntryHost
             || shared?.WesternJourney is not { TurnedAct: 1 } journey) return null;
         int act = run.CurrentActIndex + 1;
         if (journey.DeclinedFixedActs.Contains(act) || journey.LastFixedAct > act) return null;
-        bool carrier = journey.RouteId is "STRUCTURE_AND_EXCLUSION" or "ORDINARY_SPEECH"
+        bool carrier = journey.RouteId == "NATURE_AND_BECOMING"
+            ? run.Players[0].Relics.OfType<HeraclitusLyre>().Any(relic => relic.CanOfferNativeQuestion)
+            : journey.RouteId is "STRUCTURE_AND_EXCLUSION" or "ORDINARY_SPEECH"
             ? run.Players[0].Relics.OfType<AristotleCategoryTablet>().Any(relic => relic.CanOfferNativeQuestion)
             : journey.RouteId == "INDIVIDUAL_COMMITMENT"
                 ? run.Players[0].Relics.OfType<SocratesBalanceWeight>().Any(relic => relic.CanOfferNativeQuestion)
@@ -155,7 +157,7 @@ internal static class ActFixedEntryHost
                 ? run.Players[0].Relics.OfType<SocratesQuestionCup>().Any(relic => relic.CanOfferNativeQuestion)
                 : journey.RouteId is "SOCIAL_CRITIQUE" or "SOCIAL_KNOWLEDGE" or "GENEALOGY_AND_POWER"
                 ? run.Players[0].Relics.OfType<RousseauUncarvedStone>().Any(relic => relic.CanOfferNativeQuestion)
-                : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION"
+                : journey.RouteId is "APPEARANCE_AND_INTERPRETATION" or "UNCONSCIOUS_AND_NORM" or "EMBODIED_PERCEPTION" or "AUTONOMY_AND_HISTORY"
                     && run.Players[0].Relics.OfType<DescartesThinkingLens>().Any(relic => relic.CanOfferNativeQuestion);
         if (!carrier) return null;
         int prior = journey.LastFixedAct, priorAct = journey.Act;
@@ -165,6 +167,10 @@ internal static class ActFixedEntryHost
         {
             model = (journey.RouteId, act) switch
             {
+                ("AUTONOMY_AND_HISTORY", 2) => HegelRecognitionPatch.TrySelectNative(run),
+                ("AUTONOMY_AND_HISTORY", 3) => MarxAlienationPatch.TrySelectNative(run),
+                ("NATURE_AND_BECOMING", 2) => SchellingNaturePatch.TrySelectNative(run),
+                ("NATURE_AND_BECOMING", 3) => DeleuzeDifferencePatch.TrySelectNative(run),
                 ("ORDINARY_SPEECH", 2 or 3) => WittgensteinGamePatch.TrySelectNative(run),
                 ("INDIVIDUAL_COMMITMENT", 2) => SartreExistencePatch.TrySelectNative(run),
                 ("INDIVIDUAL_COMMITMENT", 3) => BeauvoirOtherPatch.TrySelectNative(run),

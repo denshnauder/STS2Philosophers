@@ -173,6 +173,9 @@ internal static class WesternQuestionNodePolicy
         || shared.LutherSignedCare is { Closed: false } || shared.AnselmUnfinishedProof is { Closed: false }
         || shared.BerkeleyPerceivedMark is { Closed: false } || shared.CamusRevoltLimit is { Closed: false }
         || shared.SpinozaCauseNetwork is { Closed: false }
+        || shared.HegelRecognition is { Closed: false }
+        || shared.MarxAlienation is { Closed: false }
+        || shared.DeleuzeDifference is { Closed: false }
         || shared.SchellingNature is { Closed: false }
         || shared.FregeSense is { Closed: false }
         || shared.RussellAnalysis is { Closed: false }

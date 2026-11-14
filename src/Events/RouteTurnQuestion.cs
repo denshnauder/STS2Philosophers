@@ -73,7 +73,8 @@ public sealed class RouteTurnQuestion : EventModel
         if (_blocked || Interlocked.Exchange(ref _resolving, 1) != 0) return;
         try
         {
-            if (Owner?.RunState is not RunState run) return;
+            if (Owner?.RunState is not RunState run
+                || !RouteEventMapBoundary.IsActiveEvent(run, this, 0)) return;
             if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return;
             if (!ReferenceEquals(shared.WesternJourney, journey)) return;
             WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();

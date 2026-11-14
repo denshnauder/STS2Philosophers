@@ -118,7 +118,10 @@ internal static class NativeQuestionNodeEvents
 
         // A legacy business checkpoint may predate its room. Resume the exact
         // open question on a legal node without a factory, reroll, or new budget.
-        EventModel? existing = RousseauConsentPatch.TrySelectExistingNative(run)
+        EventModel? existing = HegelRecognitionPatch.TrySelectExistingNative(run)
+            ?? MarxAlienationPatch.TrySelectExistingNative(run)
+            ?? DeleuzeDifferencePatch.TrySelectExistingNative(run)
+            ?? RousseauConsentPatch.TrySelectExistingNative(run)
             ?? WittgensteinGamePatch.TrySelectExistingNative(run)
             ?? CarnapFrameworkChoicePatch.TrySelectExistingNative(run)
             ?? AustinSpeechActPatch.TrySelectExistingNative(run)

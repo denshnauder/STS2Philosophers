@@ -90,7 +90,7 @@ internal static class NativeQuestionNodeChecks
                 string rng = JsonSerializer.Serialize(run.Rng.ToSerializable());
                 int originalQueueIndex = (int)typeof(RoomSet).GetField("eventsVisited")!.GetValue(pool)!;
                 EventModel chosen = run.Act.PullNextEvent(run); // The actual native hook/visited pipeline.
-                if (item.Kind is "Protagoras" or "Gorgias" or "Zeno" or "Sextus" && chosen is RouteTurnQuestion)
+                if (item.Kind is "Parmenides" or "Protagoras" or "Gorgias" or "Zeno" or "Sextus" && chosen is RouteTurnQuestion)
                 {
                     EventModel turn = chosen;
                     chosen = await ChooseReviewedStay(fixture, run, turn);
@@ -197,6 +197,12 @@ internal static class NativeQuestionNodeChecks
         using (var memory = new NativeEventMemorySaveFixture(fixture, run))
         {
             var local = canonical.ToMutable(); Set(local, "Owner", fixture.Player);
+            object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager)
+                .GetProperty("EventSynchronizer")!.PropertyType);
+            Set(sync, "_events", new List<EventModel> { local });
+            Set(sync, "_playerCollection", run); Set(sync, "_localPlayerId", fixture.Player.NetId);
+            Set(sync, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", sync);
             Set(run, "_currentRooms", new List<AbstractRoom> { new EventRoom(canonical) });
             typeof(RouteTurnQuestion).GetMethod("SetInitialEventState", Methods)!.Invoke(local, [false]);
             object shared = CurrentShared(run), journey = Get(shared, "WesternJourney");
