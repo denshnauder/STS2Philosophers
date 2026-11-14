@@ -154,7 +154,7 @@ internal static class MillHarmFlow
             if (state.EdgeCommitted)
                 return adopted && journey.LastFixedAct == advanced
                     && journey.CurrentNodeId == state.TargetNodeId;
-            return !adopted && declined && journey.LastFixedAct == advanced && source;
+            return !adopted && declined && journey.LastFixedAct == state.ActIndex && source;
         }
         if (!journey.CompletedEdgeIds.Contains(MillHarmState.RequiredEdgeId)) return false;
         if (!state.EdgeCommitted && !state.QuestionDeclined)

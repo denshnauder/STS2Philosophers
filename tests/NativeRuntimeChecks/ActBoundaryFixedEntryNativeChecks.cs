@@ -216,7 +216,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
-        CheckMontesquieuKantRawls();
+        await CheckMontesquieuKantRawls();
         CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
         CheckEarlyMerleauContinuation();
@@ -739,6 +739,21 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_066"
             && (string)Get(state, "RoomSourceNodeId") == "BENTHAM__FREEDOM_AND_INSTITUTIONS__CORE",
             "The early Bentham continuation uses Mill's actual act-two edge 066.");
+        EventRoom millRoom = (EventRoom)prepare[1]!;
+        var millLocal = (MillHarm)millRoom.CanonicalEvent.ToMutable();
+        typeof(EventModel).GetProperty("Owner")!.SetValue(millLocal, fixture.Player);
+        typeof(MillHarm).GetMethod("SetInitialEventState",
+            BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(millLocal, [false]);
+        typeof(MillHarm).GetMethod("ShowConfirmedState",
+            BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(millLocal, [state]);
+        Check(millLocal.Description.LocEntryKey.EndsWith(
+                "MILL_HARM.pages.EARLY_BENTHAM.description", StringComparison.Ordinal),
+            "Mill's early page must name the act-two handover, got " + millLocal.Description.LocEntryKey
+            + " and state " + (Get(shared, "MillHarm") is null ? "missing" : "present") + ".");
+        Check(millLocal.CurrentOptions.Any(option => option.HistoryName.LocEntryKey.EndsWith(
+                ".options.KEEP_BENTHAM_EARLY.title", StringComparison.Ordinal)),
+            "Mill's early keep button must name the act-two handover, got "
+            + string.Join(",", millLocal.CurrentOptions.Select(option => option.HistoryName.LocEntryKey)) + ".");
         foreach (string name in new[] { "ApplyHarmTest", "ProtectConduct", "Leave" })
         {
             object action = Enum.Parse(T("MillHarmAction"), name);
@@ -787,7 +802,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         }
     }
 
-    private static void CheckMontesquieuKantRawls()
+    private static async Task CheckMontesquieuKantRawls()
     {
         typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
         ModelDb.Inject(typeof(RouteTurnQuestion));
@@ -820,13 +835,48 @@ internal static class ActBoundaryFixedEntryNativeChecks
         journey = Get(shared, "WesternJourney");
         Check((int)Get(kant, "ActIndex") == 2 && (string)Get(kant, "EdgeId") == "WESTERN_EDGE_172",
             "The real checks line opens Kant on its act-two edge 172.");
-        foreach (string name in new[] { "StateMaxim", "UniversalRule", "Leave" })
+        EventRoom kantRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { kantRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
         {
-            object action = Enum.Parse(T("KantUniversalizationAction"), name);
-            Check((bool)Call("KantUniversalizationFlow", "TryPrepare", kant, action)!
-                && (bool)Call("KantUniversalizationFlow", "TryCommitPending", kant, journey, graph)!,
-                "The checks line commits Kant's " + name + ".");
+            EventModel local = kantRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(kantRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check(ReferenceEquals(kantRoom.LocalMutableEvent, local),
+                "Kant's local event is the room's mutable event.");
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Kant's real second-act AfterEventStarted must become ready; ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Check(local.Description.LocEntryKey.EndsWith(
+                    "KANT_UNIVERSALIZATION.pages.INVITATION_EARLY.description", StringComparison.Ordinal)
+                && local.CurrentOptions.Any(option => option.HistoryName?.LocEntryKey?.EndsWith(
+                    ".options.KEEP_ROUSSEAU_EARLY.title", StringComparison.Ordinal) == true),
+                "Kant's early page and decline button must name the act-two handover, not act three; options="
+                + string.Join(",", local.CurrentOptions.Select(option => option.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "STATE_MAXIM", "UNIVERSAL_RULE", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Kant's real button " + action + " is visible and live.");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Kant's real button " + action + " must not freeze the room.");
+            }
         }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
         var history = new List<List<MapPointHistoryEntry>>();
         for (int act = 0; act <= 2; act++)
         {
@@ -1415,19 +1465,25 @@ internal static class ActBoundaryFixedEntryNativeChecks
             Check(loaded.Success && loaded.SaveData!.PreFinishedRoom is { } savedRoom
                 && Equals(savedRoom.EventId, ModelDb.GetId<BaconSampleLedger>()),
                 "Bacon's real second-act entry save is readable as its exact pre-finished room.");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "ACCEPT_INVITATION", "CHECK_TRIBE", "TAKE_COUNTER_SAMPLE", "PUBLISH_LIMITED", "LEAVE" })
+            {
+                string available = string.Join(",", local.CurrentOptions.Select(candidate =>
+                    candidate.HistoryName.LocEntryKey));
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null, "Bacon's real button " + action + " is visible; options=" + available);
+                Check(Callback(option) is not null, "Bacon's real button " + action + " has a callback.");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Bacon's real button " + action + " must not freeze the room.");
+            }
         }
         Put(run, "Acts", originalActs);
         Put(run, "Odds", originalOdds);
         Set(run, "_currentRooms", new List<AbstractRoom>());
-        foreach (string action in new[] { "AcceptInvitation", "CheckTribe", "TakeCounterSample", "PublishLimited", "Leave" })
-        {
-            object value = Enum.Parse(T("BaconSampleLedgerAction"), action);
-            Check((bool)Call("BaconSampleLedgerFlow", "TryPrepare", state, value)!
-                && (bool)Call("BaconSampleLedgerFlow", "TryCommitPending", state, journey,
-                    Get(shared, "OckhamNamesInquiry"), Get(shared, "GorgiasSpeechInquiry"),
-                    Call("WesternRouteGraph", "LoadEmbedded")!),
-                "The second-act Bacon room commits " + action + ".");
-        }
         Check((bool)Get(state, "EdgeCommitted") && (int)Get(journey, "LastFixedAct") == 2
             && (string)Get(journey, "CurrentNodeId") == "FRANCIS_BACON__KNOWLEDGE_AND_DOUBT__CORE",
             "Bacon's completed report keeps him on the social-knowledge node for Diderot.");

@@ -120,7 +120,7 @@ internal static class BaconSampleLedgerFlow
         DeclinedFixedActs = journey.DeclinedFixedActs.Where(act => act != 3).ToHashSet(),
     };
     public static bool IsRouteConsistent(BaconSampleLedgerState state, WesternJourneyState journey,
-        OckhamNamesInquiryState ockham, GorgiasSpeechInquiryState gorgias)
+        OckhamNamesInquiryState? ockham, GorgiasSpeechInquiryState? gorgias)
     {
         if (state.ActIndex == 1)
         {
@@ -149,7 +149,8 @@ internal static class BaconSampleLedgerFlow
                 && journey.CurrentNodeId == BaconSampleLedgerState.AdoptedNodeId
                 && !journey.ResolvedQuestionActs.Contains(2);
         }
-        if (!state.IsUsable() || !ockham.IsUsable() || !ockham.Closed || !ockham.QuestionReserved
+        if (ockham is null || gorgias is null
+            || !state.IsUsable() || !ockham.IsUsable() || !ockham.Closed || !ockham.QuestionReserved
             || !ockham.SecondFixedDeclined || state.OckhamInstanceId != ockham.InstanceId
             || ockham.Disposition is not (OckhamNamesDisposition.Annotated or OckhamNamesDisposition.Named or OckhamNamesDisposition.Kept)
             || !OckhamNamesInquiryFlow.IsRouteConsistent(ockham, OckhamHistoryJourney(journey), gorgias)
@@ -172,7 +173,7 @@ internal static class BaconSampleLedgerFlow
         state.PendingAction = action; return true;
     }
     public static bool TryCommitPending(BaconSampleLedgerState state, WesternJourneyState journey,
-        OckhamNamesInquiryState ockham, GorgiasSpeechInquiryState gorgias, WesternRouteGraph graph)
+        OckhamNamesInquiryState? ockham, GorgiasSpeechInquiryState? gorgias, WesternRouteGraph graph)
     {
         if (!IsRouteConsistent(state, journey, ockham, gorgias) || state.Closed || state.PendingAction == BaconSampleLedgerAction.None) return false;
         var action = state.PendingAction;

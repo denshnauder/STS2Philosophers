@@ -20,7 +20,7 @@ public sealed class KantUniversalization : EventModel
         new[]
         {
             L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.STATE_MAXIM"),
-            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.KEEP_ROUSSEAU"),
+            L10NLookup($"{LocalizationRoot}.pages.INVITATION.options.{KeepKey(TryRestoreState())}"),
         };
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions() => LockedOptions();
@@ -130,7 +130,12 @@ public sealed class KantUniversalization : EventModel
         ReferenceEquals(shared.KantUniversalization, state) && shared.WesternJourney is { } journey
         && KantUniversalizationFlow.TryCommitPending(state, journey, WesternRouteGraph.LoadEmbedded());
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run)
+    {
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared?.KantUniversalization is not { } state) return false;
+        return RouteEventMapBoundary.IsActiveEvent(run, this, state.ActIndex - 1);
+    }
 
     private void ShowConfirmedState(KantUniversalizationState state)
     {
@@ -150,7 +155,7 @@ public sealed class KantUniversalization : EventModel
         return KantUniversalizationFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{KantUniversalizationFlow.StageKey(stage)}.options.{KantUniversalizationFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{KantUniversalizationFlow.StageKey(stage)}.options.{OptionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
@@ -161,7 +166,7 @@ public sealed class KantUniversalization : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.KantUniversalization is { } state
             && shared.WesternJourney is { } journey
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && KantUniversalizationFlow.IsRouteConsistent(state, journey)) return state;
         return null;
     }
@@ -178,6 +183,20 @@ public sealed class KantUniversalization : EventModel
         else Log.Error($"[STS2Philosophers] {reason}");
     }
 
+    private static string KeepKey(KantUniversalizationState? state) =>
+        state is { ActIndex: 2 } ? "KEEP_ROUSSEAU_EARLY" : "KEEP_ROUSSEAU";
+
+    private static string OptionKey(KantUniversalizationState state, KantUniversalizationAction action) =>
+        action == KantUniversalizationAction.KeepRousseau
+            ? KeepKey(state)
+            : KantUniversalizationFlow.ActionKey(action);
+
+    private static string PageKey(KantUniversalizationState state)
+    {
+        string key = KantUniversalizationFlow.DescriptionKey(state);
+        return state.ActIndex == 2 && key is "INVITATION" or "RESULT_KEPT" ? key + "_EARLY" : key;
+    }
+
     private MegaCrit.Sts2.Core.Localization.LocString PageDescription(KantUniversalizationState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{KantUniversalizationFlow.DescriptionKey(state)}.description");
+        L10NLookup($"{LocalizationRoot}.pages.{PageKey(state)}.description");
 }

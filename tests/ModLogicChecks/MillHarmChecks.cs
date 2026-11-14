@@ -81,6 +81,25 @@ internal static class MillHarmChecks
             && fixedJourney.ResolvedQuestionActs.Count == 0,
             "Mill's fixed room adopts 131 without spending a question slot.");
 
+        var earlyJourney = new WesternJourneyState
+        {
+            CurrentNodeId = MillHarmState.BenthamSourceNodeId,
+            RouteId = "CONSEQUENCE_AND_FREEDOM",
+            LastFixedAct = 2,
+        };
+        var earlyDecline = MillHarmState.CreateAt(
+            "MILL_HARM:TEST:EARLY-DECLINE", 2, "WESTERN_EDGE_066", fixedMode: true);
+        Check(MillHarmFlow.IsRouteConsistent(earlyDecline, earlyJourney),
+            "Mill's early room opens at act two before a decline.");
+        Check(MillHarmFlow.TryPrepare(earlyDecline, MillHarmAction.KeepWollstonecraft)
+            && MillHarmFlow.TryCommitPending(earlyDecline, earlyJourney, graph),
+            "Mill's early decline must not be treated as an act-three advance.");
+        Check(earlyJourney.LastFixedAct == 2
+            && earlyJourney.DeclinedFixedActs.Contains(2)
+            && !earlyJourney.CompletedEdgeIds.Contains("WESTERN_EDGE_066")
+            && MillHarmFlow.IsRouteConsistent(earlyDecline, earlyJourney),
+            "Declining Mill at act two spends only that fixed slot and keeps 066 incomplete.");
+
         MillHarmTriggerContext context = new(true, true, true, 1, true, 1,
             MillHarmState.SourceNodeId, 2, true, true, false, false, false, false, true);
         Check(MillHarmTriggerPolicy.ShouldInsert(context), "Mill is offered after a real act-two combat.");

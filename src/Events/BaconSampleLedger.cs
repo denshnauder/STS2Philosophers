@@ -147,8 +147,8 @@ public sealed class BaconSampleLedger : EventModel
 
     private static bool CommitPending(PhilosophyRunState shared, BaconSampleLedgerState state) =>
         ReferenceEquals(shared.BaconSampleLedger, state) && shared.WesternJourney is { } journey
-        && shared.OckhamNamesInquiry is { } ockham && shared.GorgiasSpeechInquiry is { } gorgias
-        && BaconSampleLedgerFlow.TryCommitPending(state, journey, ockham, gorgias, WesternRouteGraph.LoadEmbedded());
+        && BaconSampleLedgerFlow.TryCommitPending(state, journey, shared.OckhamNamesInquiry,
+            shared.GorgiasSpeechInquiry, WesternRouteGraph.LoadEmbedded());
 
     private bool IsActiveRoom(RunState run)
     {
