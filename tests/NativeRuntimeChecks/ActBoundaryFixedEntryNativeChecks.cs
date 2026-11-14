@@ -820,6 +820,20 @@ internal static class ActBoundaryFixedEntryNativeChecks
                 && (bool)Call("RawlsPositionFlow", "TryCommitPending", rawls, journey, graph)!,
                 "Rawls's closing scene commits " + name + ".");
         }
+
+        // A later handover on the other line reaches the same adopted node. The
+        // already-closed room must not be offered a second time as a fourth fixed
+        // event; only an unvisited, still-open record may reopen.
+        Check((bool)Get(rawls, "Closed"), "Rawls is closed after its closing scene.");
+        Check((bool)Call("NativeQuestionNodeEvents", "IsEntry", run)!,
+            "Rawls re-entry fixture must be at a real entry boundary.");
+        ((HashSet<ModelId>)GetField(run, "_visitedEventIds")).Remove(ModelDb.GetId<RawlsPosition>());
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_170");
+        Set(journey, "CurrentNodeId", "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE");
+        object? reopened = Call("RawlsPositionPatch", "TrySelectNative", run);
+        Check(reopened is null,
+            "A closed Rawls record must not reopen on a second arrival; got "
+            + (reopened is EventModel model ? model.GetType().Name : "none") + ".");
     }
 
     private static void CheckDefaultMillDoesNotCreateRawls()
@@ -1191,6 +1205,20 @@ internal static class ActBoundaryFixedEntryNativeChecks
                 && (bool)Call("RawlsPositionFlow", "TryCommitPending", rawls, journey, graph)!,
                 "Rawls's closing scene commits " + name + ".");
         }
+
+        // A later handover on the other line reaches the same adopted node. The
+        // already-closed room must not be offered a second time as a fourth fixed
+        // event; only an unvisited, still-open record may reopen.
+        Check((bool)Get(rawls, "Closed"), "Rawls is closed after its closing scene.");
+        Check((bool)Call("NativeQuestionNodeEvents", "IsEntry", run)!,
+            "Rawls re-entry fixture must be at a real entry boundary.");
+        ((HashSet<ModelId>)GetField(run, "_visitedEventIds")).Remove(ModelDb.GetId<RawlsPosition>());
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_170");
+        Set(journey, "CurrentNodeId", "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE");
+        object? reopened = Call("RawlsPositionPatch", "TrySelectNative", run);
+        Check(reopened is null,
+            "A closed Rawls record must not reopen on a second arrival; got "
+            + (reopened is EventModel model ? model.GetType().Name : "none") + ".");
     }
 
     private static void CheckEarlyKierkegaardScene()
