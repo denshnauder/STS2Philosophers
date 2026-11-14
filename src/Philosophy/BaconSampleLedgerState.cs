@@ -37,7 +37,7 @@ internal sealed class BaconSampleLedgerState : IJsonOnDeserialized
         Version = 1, ActIndex = actIndex, InstanceId = instanceId, OckhamInstanceId = ockhamInstanceId,
         Stage = BaconSampleLedgerStage.Invitation, PendingAction = BaconSampleLedgerAction.None,
         ConfirmedActions = [], Samples = [BaconObservedSample.WarmRich, BaconObservedSample.ColdPoor], Closed = false,
-        Diderot = DiderotPracticeState.Create($"{instanceId}:DIDEROT"),
+        Diderot = actIndex == 3 ? DiderotPracticeState.Create($"{instanceId}:DIDEROT") : null,
     };
     public void NormalizeAfterLoad()
     {

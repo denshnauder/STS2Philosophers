@@ -203,7 +203,7 @@ internal static class RawlsPositionFlow
     public static string DescriptionKey(RawlsPositionState state) => state.Stage switch
     {
         RawlsPositionStage.Invitation => "INVITATION",
-        RawlsPositionStage.RuleFrozen => "RULE_FROZEN_" + RuleKey(state.Rule),
+        RawlsPositionStage.RuleFrozen => "RULE_FROZEN_" + RuleKey(state.Rule) + "_" + state.Standing.ToString().ToUpperInvariant(),
         RawlsPositionStage.ResultExecuted => "RESULT_EXECUTED_" + RuleKey(state.Rule) + "_" + state.Standing.ToString().ToUpperInvariant(),
         RawlsPositionStage.ResultAmended => "RESULT_AMENDED_" + state.Standing.ToString().ToUpperInvariant(),
         RawlsPositionStage.ResultWithdrawn => "RESULT_WITHDRAWN",
