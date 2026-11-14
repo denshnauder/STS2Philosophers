@@ -668,7 +668,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
             && prepare[1] is EventRoom { CanonicalEvent: RawlsPosition },
-            "Mill's early handover opens Rawls on 067 in the third act, got "
+            "Mill's early handover opens Rawls on 170 in the third act, got "
             + (prepare[1] is EventRoom rawlsRoom ? rawlsRoom.CanonicalEvent.GetType().Name : "none") + ".");
         query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
