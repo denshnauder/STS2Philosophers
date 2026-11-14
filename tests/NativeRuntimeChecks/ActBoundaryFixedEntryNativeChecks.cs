@@ -165,7 +165,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
         CheckEarlyMerleauContinuation();
-        CheckFirstActTurnScenes();
+        await CheckFirstActTurnScenes();
         await CheckHegelEntryPersistence();
         CheckMarxAfterEarlyHegel();
         CheckEarlyDeweyContinuation();
@@ -996,13 +996,13 @@ internal static class ActBoundaryFixedEntryNativeChecks
     // A route-turn question moves the protagonist onto the question node in act
     // one. That figure's own room must open on the next native pull before the
     // successor line starts, otherwise the turn is only a renamed default.
-    private static void CheckFirstActTurnScenes()
+    private static async Task CheckFirstActTurnScenes()
     {
         typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
         CheckFirstActSpinoza();
         CheckFirstActFreud();
         CheckFirstActHusserl();
-        CheckBaconDiderotContinuation();
+        await CheckBaconDiderotContinuation();
     }
 
     private static void CheckMarxAfterEarlyHegel()
@@ -1265,7 +1265,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
             "The turned Husserl answer reaches Heidegger on 164.");
     }
 
-    private static void CheckBaconDiderotContinuation()
+    private static async Task CheckBaconDiderotContinuation()
     {
         ModelDb.Inject(typeof(BaconSampleLedger));
         ModelDb.Inject(typeof(DiderotPublicPractice));
@@ -1288,6 +1288,37 @@ internal static class ActBoundaryFixedEntryNativeChecks
         object journey = Get(shared, "WesternJourney");
         Check((int)Get(state, "ActIndex") == 2 && (int)Get(journey, "LastFixedAct") == 2,
             "The Bacon room owns the second-act fixed slot.");
+        // The actual second-act room must accept its own activity identity and
+        // complete the awaited entry save before any button is usable.
+        EventRoom baconRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { baconRoom });
+        object? originalActs = Get(run, "Acts");
+        object? originalOdds = Get(run, "Odds");
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = baconRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(baconRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked")
+                && saves.SaveAttempts > 0,
+                "Bacon's real second-act AfterEventStarted must accept its room and persist before ready.");
+            var loaded = saves.Manager.LoadRunSave();
+            Check(loaded.Success && loaded.SaveData!.PreFinishedRoom is { } savedRoom
+                && Equals(savedRoom.EventId, ModelDb.GetId<BaconSampleLedger>()),
+                "Bacon's real second-act entry save is readable as its exact pre-finished room.");
+        }
+        Put(run, "Acts", originalActs);
+        Put(run, "Odds", originalOdds);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
         foreach (string action in new[] { "AcceptInvitation", "CheckTribe", "TakeCounterSample", "PublishLimited", "Leave" })
         {
             object value = Enum.Parse(T("BaconSampleLedgerAction"), action);
