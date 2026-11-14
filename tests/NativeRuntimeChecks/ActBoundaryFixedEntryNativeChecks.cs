@@ -216,6 +216,7 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlySmithContinuation();
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
+        CheckDefaultMillDoesNotCreateRawls();
         await CheckMontesquieuKantRawls();
         CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
@@ -424,16 +425,6 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(RawlsPosition)], doctrine: false, position: 2, actIndex: 2,
             route: "CHECKS_AND_JUSTICE", required: ["WESTERN_EDGE_172"],
             priorEvent: ModelDb.GetId<KantUniversalization>());
-        CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
-            [typeof(MillHarm)], doctrine: false, position: 2, actIndex: 2,
-            route: "CONSEQUENCE_AND_FREEDOM", required: ["WESTERN_EDGE_169"],
-            priorEvent: ModelDb.GetId<MillHarm>(), afterSelect: (_, shared, _) =>
-            {
-                object mill = Get(shared, "MillHarm");
-                Check((string)Get(mill, "EdgeId") == "WESTERN_EDGE_170"
-                    && (string)Get(mill, "TargetNodeId") == "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE",
-                    "The early Mill room takes 170 and targets Rawls.");
-            });
         // Arendt also closes two lines: after Mill's sympathy (175 -> 176) and
         // after Foucault's genealogy (181 -> 182).
         CheckBoundary(typeof(SocratesBalanceWeight), "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE",
@@ -800,6 +791,44 @@ internal static class ActBoundaryFixedEntryNativeChecks
                 && (bool)Call("RawlsPositionFlow", "TryCommitPending", rawls, journey, graph)!,
                 "Rawls's closing scene commits " + name + ".");
         }
+    }
+
+    private static void CheckDefaultMillDoesNotCreateRawls()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(MillHarm));
+        ModelDb.Inject(typeof(RawlsPosition));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(SocratesBalanceWeight), 2])!;
+        var run = (RunState)tuple[1]!;
+        Set(CombatManager.Instance, "_turnState", null);
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey;
+        try
+        {
+            journey = graph.GetType().GetMethod("Start")!
+                .Invoke(graph, ["JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"])!;
+        }
+        catch (TargetInvocationException)
+        {
+            journey = graph.GetType().GetMethod("Start")!
+                .Invoke(graph, ["SOCRATES__VIRTUE_AND_HAPPINESS__CORE"])!;
+            Put(journey, "CurrentNodeId", "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE");
+        }
+        Put(journey, "RouteId", "CONSEQUENCE_AND_FREEDOM");
+        Put(journey, "RouteRules", true);
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_169");
+        ((HashSet<string>)Get(journey, "CompletedEdgeIds")).Add("WESTERN_EDGE_170");
+        Put(journey, "CurrentNodeId", "RAWLS__FREEDOM_AND_INSTITUTIONS__CORE");
+        Put(journey, "LastFixedAct", 2);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        object?[] prepare = [run, null];
+        bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
+        Check(!selected || prepare[1] is not EventRoom { CanonicalEvent: RawlsPosition },
+            "The default Mill line must end at Mill; 169 must not create a fourth Rawls room.");
     }
 
     private static async Task CheckMontesquieuKantRawls()
