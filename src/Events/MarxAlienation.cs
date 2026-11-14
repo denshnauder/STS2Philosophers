@@ -136,7 +136,7 @@ public sealed class MarxAlienation : EventModel
         return MarxAlienationFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{MarxAlienationFlow.StageKey(stage)}.options.{MarxAlienationFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{MarxAlienationFlow.StageKey(stage)}.options.{MarxAlienationFlow.ActionKey(state, action)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }

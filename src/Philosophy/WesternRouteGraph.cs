@@ -306,6 +306,22 @@ internal sealed class WesternRouteGraph
     }
 
     /// <summary>
+    /// A closing room can own this act's fixed slot without taking a handover
+    /// edge: the line keeps the figure it already reached. The boundary has
+    /// usually moved the position onto this act already, so equal is accepted
+    /// as well as the one-step-ahead form used by an inner batch.
+    /// </summary>
+    public bool TryConfirmFixedSlot(WesternJourneyState state, int expectedAct)
+    {
+        if (!_nodes.ContainsKey(state.CurrentNodeId) || state.RetainedEnding
+            || expectedAct is < 2 or > 3
+            || state.DeclinedFixedActs.Contains(expectedAct)
+            || state.LastFixedAct != expectedAct && state.LastFixedAct + 1 != expectedAct) return false;
+        state.LastFixedAct = expectedAct;
+        return true;
+    }
+
+    /// <summary>
     /// An inner batch can take this act's fixed slot without moving the figure:
     /// the room is the act's fixed practice, not a handover edge. It still moves
     /// the position so the next act's handover is reachable.

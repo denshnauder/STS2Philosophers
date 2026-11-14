@@ -33,7 +33,9 @@ internal static class DiderotPublicPracticePatch
             saved is not null, saved?.IsUsable() == true, saved?.Closed == true,
             canonical is not null);
         if (!DiderotPublicPracticePolicy.ShouldInsert(context)) return null;
-        var candidate = saved ?? DiderotPracticeState.Create($"VOLTAIRE_PUBLIC_CRITIQUE:{run.Rng.Seed}:2");
+        // The Diderot room restores only DIDEROT_PUBLIC_PRACTICE:<seed>:2. Reusing
+        // Voltaire's prefix created a state the room could never restore.
+        var candidate = saved ?? DiderotPracticeState.Create($"DIDEROT_PUBLIC_PRACTICE:{run.Rng.Seed}:2");
         shared.DiderotPublicPractice = candidate;
         Log.Info("[STS2Philosophers] Presenting Diderot's public practice at the act-two question node.");
         return canonical;

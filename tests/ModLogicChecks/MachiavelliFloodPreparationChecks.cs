@@ -52,14 +52,42 @@ internal static class MachiavelliFloodPreparationChecks
             WesternJourneyState journey = shared.WesternJourney!;
             if (adopts && journey.RouteId == "FORTUNE_AND_VIRTUE")
             {
-                // The fortune line has no third-act figure: the act-three slot is
-                // empty, and completing it must not invent a fourth act.
-                bool declined = graph.TryDecline(journey, "Fixed", 3);
-                bool complete = graph.IsComplete(journey);
-                bool consistent = MachiavelliFloodPreparationFlow.IsRouteConsistent(
-                    shared.MachiavelliFloodPreparation, journey);
-                Check(declined && complete && consistent,
-                    $"The fortune line ends after its act-two practice without a fourth act (declined={declined}, complete={complete}, consistent={consistent}, last={journey.LastFixedAct}, node={journey.CurrentNodeId}).");
+                // The fortune line's third act is Machiavelli's own closing room.
+                // It spends the act-three fixed slot without a handover edge, so
+                // it cannot become a fourth fixed room or a new figure.
+                var closing = MachiavelliFortuneAfterState.Create("MACHIAVELLI_FORTUNE_AFTER:TEST:3");
+                Check(MachiavelliFortuneAfterFlow.IsRouteConsistent(closing, journey),
+                    "Machiavelli's third-act closing opens after his act-two practice.");
+                Check(MachiavelliFortuneAfterFlow.TryPrepare(closing, MachiavelliFortuneAfterAction.KeepPractice)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(closing, journey, graph),
+                    "The third-act practice can be confirmed in place.");
+                Check(journey.LastFixedAct == 3 && !journey.DeclinedFixedActs.Contains(3)
+                    && journey.CurrentNodeId == MachiavelliFortuneAfterState.SourceNodeId
+                    && closing.Confirmed && closing.FixedSlotResolved,
+                    "Confirming keeps Machiavelli's node and spends only fixed slot 3.");
+                Check(MachiavelliFortuneAfterFlow.TryPrepare(closing, MachiavelliFortuneAfterAction.Leave)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(closing, journey, graph)
+                    && closing.Closed,
+                    "The confirmed closing can be left without a fourth act.");
+                Check(MachiavelliFloodPreparationFlow.IsRouteConsistent(
+                    shared.MachiavelliFloodPreparation, journey),
+                    "The act-two preparation remains consistent after the third-act closing.");
+
+                WesternJourneyState refusalJourney = graph.Start(MachiavelliFloodPreparationState.SourceNodeId);
+                refusalJourney.RouteRules = true;
+                refusalJourney.RouteId = "FORTUNE_AND_VIRTUE";
+                Check(graph.TryApply(refusalJourney, "WESTERN_EDGE_046")
+                    && refusalJourney.LastFixedAct == 2,
+                    "The fortune line reaches Machiavelli through 046 before its third-act refusal.");
+                var refusal = MachiavelliFortuneAfterState.Create("MACHIAVELLI_FORTUNE_AFTER:TEST:3");
+                Check(MachiavelliFortuneAfterFlow.IsRouteConsistent(refusal, refusalJourney)
+                    && MachiavelliFortuneAfterFlow.TryPrepare(refusal, MachiavelliFortuneAfterAction.LetFortuneChange)
+                    && MachiavelliFortuneAfterFlow.TryCommitPending(refusal, refusalJourney, graph),
+                    "The third-act refusal must commit instead of freezing.");
+                Check(refusalJourney.LastFixedAct == 3 && refusalJourney.DeclinedFixedActs.Contains(3)
+                    && refusalJourney.CurrentNodeId == MachiavelliFortuneAfterState.SourceNodeId
+                    && !refusal.Confirmed && refusal.FixedSlotResolved,
+                    "Refusing the practice spends slot 3 in place and keeps Machiavelli's node.");
                 continue;
             }
             Check(graph.CanFinish(journey) && graph.TryDecline(journey, "Fixed", 3)

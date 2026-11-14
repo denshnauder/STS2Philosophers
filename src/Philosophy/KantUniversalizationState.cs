@@ -159,7 +159,11 @@ internal static class KantUniversalizationFlow
         if (state.EdgeCommitted)
             return !state.FixedDeclined && adopted && journey.LastFixedAct == advanced
                 && (onRoute || journey.CurrentNodeId == KantUniversalizationState.AdoptedNodeId);
-        return !adopted && journey.LastFixedAct == advanced
+        // A refusal ends this act's event in place: the fixed position stays on
+        // the refused act. Only adoption advances to act + 1 (and act three stays
+        // at three). Requiring `advanced` here froze the visible KeepRousseau
+        // button in act two, because TryDecline(Fixed, 2) leaves LastFixedAct 2.
+        return !adopted && journey.LastFixedAct == act
             && (onRoute || atSource)
             && journey.DeclinedFixedActs.Contains(act);
     }

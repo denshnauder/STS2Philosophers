@@ -155,7 +155,10 @@ public sealed class DiderotPublicPractice : EventModel
         if (Owner?.RunState is RunState run
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.DiderotPublicPractice is { } state
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2") return state;
+            && (state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:2"
+                // Keep the Voltaire-prefixed instance written by 0.5.32/0.5.33;
+                // the room identity is Diderot's even though the old prefix was wrong.
+                || state.InstanceId == $"VOLTAIRE_PUBLIC_CRITIQUE:{run.Rng.Seed}:2")) return state;
         return null;
     }
 

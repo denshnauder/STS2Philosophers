@@ -208,7 +208,15 @@ internal static class ActBoundaryFixedEntryNativeChecks
             });
         ModelDb.Inject(typeof(MarxAlienation));
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
-            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true);
+            [typeof(MarxAlienation)], doctrine: false, position: 2, route: "SOCIAL_CRITIQUE", checkRoom: true,
+            afterSelect: (_, shared, _) =>
+            {
+                object marx = Get(shared, "MarxAlienation");
+                object keepHegel = Enum.Parse(T("MarxAlienationAction"), "KeepHegel");
+                Check((string)Call("MarxAlienationFlow", "DescriptionKey", marx)! == "INVITATION_ROUSSEAU"
+                    && (string)Call("MarxAlienationFlow", "ActionKey", marx, keepHegel)! == "KEEP_ROUSSEAU",
+                    "The default Rousseau Marx room must not use Hegel's keep/result text.");
+            });
         CheckWittgensteinTwoActs();
         CheckJamesIndependentQuestion();
         CheckBerkeleyIndependentQuestion();
@@ -217,6 +225,8 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckEarlyPeirceContinuation();
         CheckEarlyBenthamContinuation();
         CheckDefaultMillDoesNotCreateRawls();
+        await CheckMachiavelliThirdActBody();
+        await CheckKantEarlyDecline();
         await CheckMontesquieuKantRawls();
         CheckEarlyKierkegaardScene();
         CheckEarlySartreContinuation();
@@ -367,6 +377,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
         CheckBoundary(typeof(RousseauUncarvedStone), "ROUSSEAU__HISTORY_AND_POWER__CORE",
             [typeof(MachiavelliFloodPreparation)], doctrine: false, position: 1, actIndex: 1,
             route: "FORTUNE_AND_VIRTUE", routeRules: true, checkRoom: true);
+        // Machiavelli's own third act is a real fixed room. It spends slot 3 on
+        // the figure the line already reached and takes no new handover edge.
+        ModelDb.Inject(typeof(MachiavelliFortuneAfter));
+        CheckBoundary(typeof(RousseauUncarvedStone), "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+            [typeof(MachiavelliFortuneAfter)], doctrine: false, position: 3, actIndex: 2,
+            route: "FORTUNE_AND_VIRTUE", required: ["WESTERN_EDGE_046"], checkRoom: true);
         // An even seed asks Wollstonecraft first; the pair is accepted here because
         // her own room may still decline a slot Machiavelli can take. What the odd
         // seed above pins is the half that used to regress: 046 itself.
@@ -829,6 +845,143 @@ internal static class ActBoundaryFixedEntryNativeChecks
         bool selected = (bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!;
         Check(!selected || prepare[1] is not EventRoom { CanonicalEvent: RawlsPosition },
             "The default Mill line must end at Mill; 169 must not create a fourth Rawls room.");
+    }
+
+    private static async Task CheckMachiavelliThirdActBody()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(MachiavelliFloodPreparation));
+        ModelDb.Inject(typeof(MachiavelliFortuneAfter));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(RousseauUncarvedStone), 2])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        object graph = Call("WesternRouteGraph", "LoadEmbedded")!;
+        object journey = graph.GetType().GetMethod("Start")!.Invoke(graph,
+            ["ROUSSEAU__HISTORY_AND_POWER__CORE"])!;
+        Put(journey, "RouteId", "FORTUNE_AND_VIRTUE");
+        Put(journey, "RouteRules", true);
+        Check((bool)graph.GetType().GetMethod("TryApply")!.Invoke(graph, [journey, "WESTERN_EDGE_046"])!,
+            "The fortune line reaches Machiavelli through the real act-two 046 handover.");
+        Put(journey, "Act", 2);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), nonPublic: true)!;
+        Put(shared, "WesternJourney", journey);
+        Call("PhilosophyRunStateService", "ReplaceState", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: MachiavelliFortuneAfter },
+            "Machiavelli's real third-act boundary must open his closing room, got "
+            + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
+        EventRoom closingRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { closingRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = closingRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(closingRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Machiavelli's third-act body must restore and become ready; ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_PRACTICE", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Machiavelli's real third-act button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Machiavelli's real third-act button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            object closing = Get(query[1]!, "MachiavelliFortuneAfter");
+            object updated = Get(query[1]!, "WesternJourney");
+            Check((bool)Get(closing, "Confirmed") && (bool)Get(closing, "FixedSlotResolved")
+                && (bool)Get(closing, "Closed") && (int)Get(updated, "LastFixedAct") == 3
+                && (string)Get(updated, "CurrentNodeId") == "NICCOLO_MACHIAVELLI__HISTORY_AND_POWER__CORE",
+                "Machiavelli's third-act closing must spend slot 3 on his own node and close.");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+    }
+
+    private static async Task CheckKantEarlyDecline()
+    {
+        typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
+        ModelDb.Inject(typeof(RouteTurnQuestion));
+        ModelDb.Inject(typeof(KantUniversalization));
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
+            .Invoke(null, [typeof(PlatoCivicSeal), 0])!;
+        var run = (RunState)tuple[1]!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ChooseDirectionDirect(run, fixture, "PLATO__FREEDOM_AND_INSTITUTIONS__CORE", "TO_MONTESQUIEU");
+        Set(run, "_currentActIndex", 1);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] prepare = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
+            && prepare[1] is EventRoom { CanonicalEvent: KantUniversalization },
+            "The second-act Kant decline probe must open the real room.");
+        EventRoom kantRoom = (EventRoom)prepare[1]!;
+        Set(run, "_currentRooms", new List<AbstractRoom> { kantRoom });
+        object shared;
+        object kant;
+        object journey;
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = kantRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(kantRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "KEEP_ROUSSEAU_EARLY", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Kant's real second-act button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Kant's real second-act button " + action + " must not freeze the room.");
+            }
+            object?[] query = [run, null];
+            Call("PhilosophyRunStateService", "TryGet", query);
+            shared = query[1]!;
+            kant = Get(shared, "KantUniversalization");
+            journey = Get(shared, "WesternJourney");
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        Check((bool)Get(kant, "FixedDeclined")
+            && (int)Get(journey, "LastFixedAct") == 2
+            && ((HashSet<int>)Get(journey, "DeclinedFixedActs")).Contains(2)
+            && !((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_172"),
+            "Kant's act-two KeepRousseau must spend fixed slot 2 in place, not advance to 3.");
     }
 
     private static async Task CheckMontesquieuKantRawls()
@@ -1570,6 +1723,48 @@ internal static class ActBoundaryFixedEntryNativeChecks
         EventModel practice = run.Act.PullNextEvent(run);
         Check(practice is DiderotPublicPractice,
             "The completed Bacon room opens Diderot's public practice, got " + practice.GetType().Name + ".");
+        object?[] diderotQuery = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", diderotQuery);
+        object diderot = Get(diderotQuery[1]!, "DiderotPublicPractice");
+        Check(((string)Get(diderot, "InstanceId")).StartsWith("DIDEROT_PUBLIC_PRACTICE:", StringComparison.Ordinal)
+            && ((string)Get(diderot, "InstanceId")).EndsWith(":2", StringComparison.Ordinal),
+            "Diderot's created record must use the room's own restore identity, got "
+            + Get(diderot, "InstanceId") + ".");
+        EventRoom diderotRoom = new(practice);
+        Set(run, "_currentRooms", new List<AbstractRoom> { diderotRoom });
+        using (var saves = new NativeEventMemorySaveFixture(fixture, run))
+        {
+            EventModel local = diderotRoom.CanonicalEvent.ToMutable();
+            Set(local, "Owner", fixture.Player);
+            object synchronizer = RuntimeHelpers.GetUninitializedObject(
+                typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+            Set(synchronizer, "_events", new List<EventModel> { local });
+            Set(synchronizer, "_playerCollection", run);
+            Set(synchronizer, "_localPlayerId", fixture.Player.NetId);
+            Set(synchronizer, "_pendingOptionTasks", new List<Task>());
+            Set(RunManager.Instance, "EventSynchronizer", synchronizer);
+            var configure = (Action<EventModel>?)typeof(EventRoom).GetProperty("OnStart", Methods)!.GetValue(diderotRoom);
+            configure?.Invoke(local);
+            await local.AfterEventStarted();
+            Check((bool)GetField(local, "_ready") && !(bool)GetField(local, "_blocked"),
+                "Diderot's actual body must restore its saved record, ready="
+                + GetField(local, "_ready") + " blocked=" + GetField(local, "_blocked") + ".");
+            Func<Task>? Callback(EventOption option) => (Func<Task>?)typeof(EventOption)
+                .GetProperty("OnChosen", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!
+                .GetValue(option);
+            foreach (string action in new[] { "COLLECT_INTO_SYSTEM", "LEAVE" })
+            {
+                EventOption? option = local.CurrentOptions.SingleOrDefault(candidate =>
+                    candidate.HistoryName.LocEntryKey.EndsWith(".options." + action + ".title", StringComparison.Ordinal));
+                Check(option is not null && Callback(option) is not null,
+                    "Diderot's real button " + action + " is visible and live; options="
+                    + string.Join(",", local.CurrentOptions.Select(candidate => candidate.HistoryName?.LocEntryKey ?? "<null>")) + ".");
+                await Callback(option)!();
+                Check(!(bool)GetField(local, "_blocked"),
+                    "Diderot's real button " + action + " must not freeze the room.");
+            }
+        }
+        Set(run, "_currentRooms", new List<AbstractRoom>());
     }
 
     private static void CheckEarlyNietzscheContinuation()

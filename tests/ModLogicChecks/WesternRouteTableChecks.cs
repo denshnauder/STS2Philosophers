@@ -254,8 +254,8 @@ internal static class WesternRouteTableChecks
         {
             foreach (var (act, figure) in new[] { (2, route.ActTwoFigure), (3, route.ActThreeFigure) })
             {
-                // The fortune line ends on its act-two practice; there is no
-                // separate third-act handover to reach.
+                // The fortune line's third act is a closing room on the figure
+                // it already reached, not a separate handover edge.
                 if (route.RouteId == "FORTUNE_AND_VIRTUE" && act == 3) continue;
                 bool any = graph.Edges.Any(edge => edge.Act == act && edge.Slot == "Fixed"
                     && graph.GetNode(edge.ToNodeId).ThinkerId == figure);

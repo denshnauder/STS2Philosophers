@@ -15,6 +15,7 @@ internal sealed class MarxAlienationState : IJsonOnDeserialized
 {
     public const int CurrentVersion = 1;
     public const string SourceNodeId = "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE";
+    public const string RousseauSourceNodeId = "ROUSSEAU__HISTORY_AND_POWER__CORE";
     public const string AdoptedNodeId = "KARL_MARX__HISTORY_AND_POWER__EARLY";
     public const string RequiredEdgeId = "WESTERN_EDGE_038";
     public const string CompletionEdgeId = "WESTERN_EDGE_039";
@@ -40,6 +41,8 @@ internal sealed class MarxAlienationState : IJsonOnDeserialized
 
     public int ActIndex { get; set; } = 3;
     public string EdgeId { get; set; } = CompletionEdgeId;
+
+    public bool IsRousseauSource => RouteSourceNodeId == RousseauSourceNodeId;
 
     public static MarxAlienationState Create(string instanceId) => CreateAt(instanceId, 3, CompletionEdgeId);
 
@@ -179,15 +182,17 @@ internal static class MarxAlienationFlow
 
     public static string DescriptionKey(MarxAlienationState state) => state.Stage switch
     {
-        MarxAlienationStage.Invitation => "INVITATION",
+        MarxAlienationStage.Invitation => state.IsRousseauSource ? "INVITATION_ROUSSEAU" : "INVITATION",
         MarxAlienationStage.ResultAlienation => "RESULT_ALIENATION",
         MarxAlienationStage.ResultProgress => "RESULT_PROGRESS",
-        MarxAlienationStage.ResultKept => "RESULT_KEPT",
+        MarxAlienationStage.ResultKept => state.IsRousseauSource ? "RESULT_KEPT_ROUSSEAU" : "RESULT_KEPT",
         _ => "INVITATION",
     };
 
     public static string StageKey(MarxAlienationStage stage) => UpperSnake(stage.ToString());
-    public static string ActionKey(MarxAlienationAction action) => UpperSnake(action.ToString());
+    public static string ActionKey(MarxAlienationState state, MarxAlienationAction action) =>
+        action == MarxAlienationAction.KeepHegel && state.IsRousseauSource
+            ? "KEEP_ROUSSEAU" : UpperSnake(action.ToString());
     private static string UpperSnake(string value) => string.Concat(value.SelectMany((c, i) =>
         i > 0 && char.IsUpper(c) ? new[] { '_', c } : new[] { char.ToUpperInvariant(c) }));
 }
