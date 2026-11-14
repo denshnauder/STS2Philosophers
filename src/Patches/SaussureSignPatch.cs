@@ -28,27 +28,6 @@ internal static class SaussureSignPatch
         SaussureSignState? saved = shared.SaussureSign;
         SaussureSign? canonical = TryGetCanonicalEvent();
         if (canonical is null || run.VisitedEventIds.Contains(canonical.Id)) return null;
-        // A first-act direction can stand Saussure on the room's own node
-        // before the second act. The room then owns that act's fixed slot and
-        // hands over forward to the line's third-act figure.
-        if (run.CurrentActIndex == 1 && journey is not null
-            && journey.CurrentNodeId == SaussureSignState.AdoptedNodeId
-            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_186"))
-        {
-            WesternRouteGraph turnedGraph = WesternRouteGraph.LoadEmbedded();
-            WesternGraphEdge? forward = turnedGraph.GetEligibleEdges(journey, "Fixed")
-                .FirstOrDefault(edge => edge.Act == 2 && edge.FromNodeId == SaussureSignState.AdoptedNodeId);
-            if (forward is null) return null;
-            string turnedId = $"SAUSSURE_SIGN:{run.Rng.Seed}:2";
-            SaussureSignState turned = saved ?? SaussureSignState.CreateAt(turnedId, 2, forward.EdgeId);
-            turned.EdgeId = forward.EdgeId;
-            turned.ActIndex = 2;
-            turned.SourceNode = SaussureSignState.AdoptedNodeId;
-            turned.TargetNode = forward.ToNodeId;
-            if (!SaussureSignFlow.IsRouteConsistent(turned, journey)) return null;
-            shared.SaussureSign = turned;
-            return canonical;
-        }
         ActBehaviorState? behavior = shared.ActBehaviorStates.GetValueOrDefault(run.CurrentActIndex);
         WesternRouteGraph graph = WesternRouteGraph.LoadEmbedded();
         int routeAct = journey is null ? 0 : WesternRouteTable.Instance.Routes

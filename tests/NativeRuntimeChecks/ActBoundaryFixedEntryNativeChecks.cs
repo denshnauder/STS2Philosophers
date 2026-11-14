@@ -286,12 +286,12 @@ internal static class ActBoundaryFixedEntryNativeChecks
             [typeof(HeideggerDasein)], doctrine: true, position: 3, actIndex: 2,
             route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_100"], checkRoom: true);
         CheckBoundary(typeof(DescartesThinkingLens), "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
-            [typeof(HusserlEpoche)], doctrine: true, position: 2, actIndex: 1,
+            [typeof(HeideggerDasein)], doctrine: true, position: 2, actIndex: 1,
             route: "APPEARANCE_AND_INTERPRETATION", required: ["WESTERN_EDGE_160"], checkRoom: true,
             afterSelect: (_, shared, _) =>
             {
-                object husserl = Get(shared, "HusserlEpoche");
-                Check((string)Get(husserl, "EdgeId") == "WESTERN_EDGE_164",
+                object heidegger = Get(shared, "HeideggerDasein");
+                Check((string)Get(heidegger, "EdgeId") == "WESTERN_EDGE_164",
                     "The appearance route must take 164, not the legacy 073.");
             });
         ModelDb.Inject(typeof(MerleauPontyBody));
@@ -1338,45 +1338,73 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Set(run, "_currentRooms", new List<AbstractRoom>());
         object?[] prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
-            && prepare[1] is EventRoom { CanonicalEvent: FreudUnconscious },
-            "The real Freud direction opens Freud at the second-act boundary, got "
+            && prepare[1] is EventRoom { CanonicalEvent: LacanSignifier },
+            "The real Freud direction must open Lacan, not Freud's own room, at the second-act boundary, got "
             + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         object shared = query[1]!;
-        object state = Get(shared, "FreudUnconscious");
+        object state = Get(shared, "LacanSignifier");
         object journey = Get(shared, "WesternJourney");
         Check((int)Get(state, "ActIndex") == 2
             && (string)Get(state, "EdgeId") == "WESTERN_EDGE_190"
+            && (string)Get(state, "RequiredEdge") == "WESTERN_EDGE_189"
             && (string)Get(state, "TargetNode") == "JACQUES_LACAN__SELF_AND_OTHER__CORE",
-            "The Freud room takes 190 and hands over to Lacan, got act="
+            "The turned unconscious line opens Lacan on 190, got act="
             + Get(state, "ActIndex") + " edge=" + Get(state, "EdgeId")
-            + " target=" + Get(state, "TargetNode") + ".");
+            + " required=" + Get(state, "RequiredEdge") + ".");
         typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
             [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
         query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         shared = query[1]!;
-        state = Get(shared, "FreudUnconscious");
+        state = Get(shared, "LacanSignifier");
         journey = Get(shared, "WesternJourney");
-        foreach (string name in new[] { "Unconscious", "Leave" })
+        foreach (string name in new[] { "BindKeeper", "Clarify", "Leave" })
         {
-            object action = Enum.Parse(T("FreudUnconsciousAction"), name);
-            Check((bool)Call("FreudUnconsciousFlow", "TryPrepare", state, action)!
-                && (bool)Call("FreudUnconsciousFlow", "TryCommitPending", state, journey,
+            object action = Enum.Parse(T("LacanSignifierAction"), name);
+            Check((bool)Call("LacanSignifierFlow", "TryPrepare", state, action)!
+                && (bool)Call("LacanSignifierFlow", "TryCommitPending", state, journey,
                     Call("WesternRouteGraph", "LoadEmbedded")!),
-                "The Freud room commits " + name + ".");
+                "The turned Lacan room commits " + name + ".");
         }
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_190")
-            && (string)Get(journey, "CurrentNodeId") == "JACQUES_LACAN__SELF_AND_OTHER__CORE",
-            "Freud's own answer reaches Lacan on 190.");
+            && (string)Get(journey, "CurrentNodeId") == "JACQUES_LACAN__SELF_AND_OTHER__CORE"
+            && (int)Get(journey, "LastFixedAct") == 3,
+            "The turned Freud answer reaches Lacan on 190.");
         Set(run, "_currentActIndex", 2);
         Set(run, "_currentRooms", new List<AbstractRoom>());
+        // Butler opens after Lacan's closed room and a later fight, not merely
+        // because the route is named.
+        var behaviors = (System.Collections.IDictionary)Get(shared, "ActBehaviorStates")!;
+        if (!behaviors.Contains(2)) behaviors[2] = Activator.CreateInstance(T("ActBehaviorState"), nonPublic: true)!;
+        Put(behaviors[2]!, "ActIndex", 2); Put(behaviors[2]!, "CompletedCombatCount", 1);
+        var acts = (System.Collections.IList)Get(run, "MapPointHistory")!;
+        while (acts.Count <= 2) acts.Add(new List<MapPointHistoryEntry>());
+        var actHistory = (System.Collections.IList)acts[2]!;
+        actHistory.Add(new MapPointHistoryEntry
+        {
+            MapPointType = MapPointType.Unknown,
+            Rooms = [new() { RoomType = RoomType.Event, ModelId = ModelDb.GetId<LacanSignifier>() }],
+            PlayerStats = [new() { PlayerId = run.Players[0].NetId }],
+        });
+        actHistory.Add(new MapPointHistoryEntry
+        {
+            MapPointType = MapPointType.Monster,
+            Rooms = [new() { RoomType = RoomType.Monster }],
+            PlayerStats = [new() { PlayerId = run.Players[0].NetId }],
+        });
         object?[] third = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", third)!
-            && third[1] is EventRoom { CanonicalEvent: LacanSignifier },
-            "The Freud line opens Lacan at the third-act boundary, got "
+            && third[1] is EventRoom { CanonicalEvent: ButlerAddress },
+            "The turned unconscious line opens Butler at the third-act boundary, got "
             + (third[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object butler = Get(shared, "ButlerAddress");
+        Check((int)Get(butler, "ActIndex") == 3,
+            "Butler's turned room records the third act.");
     }
 
     private static void CheckFirstActHusserl()
@@ -1393,26 +1421,49 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Set(run, "_currentRooms", new List<AbstractRoom>());
         object?[] prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
-            && prepare[1] is EventRoom { CanonicalEvent: HusserlEpoche },
-            "The turned appearance line opens Husserl at the second-act boundary, got "
+            && prepare[1] is EventRoom { CanonicalEvent: HeideggerDasein },
+            "The turned appearance line must open Heidegger, not Husserl's own room, at the second-act boundary, got "
             + (prepare[1] is EventRoom room ? room.CanonicalEvent.GetType().Name : "none") + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         object shared = query[1]!;
-        object state = Get(shared, "HusserlEpoche");
+        object state = Get(shared, "HeideggerDasein");
         object journey = Get(shared, "WesternJourney");
         Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_164"
-            && (string)Get(state, "TargetNode") == "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE",
-            "The turned Husserl room hands over forward on 164.");
-        object action = Enum.Parse(T("HusserlEpocheAction"), "DescribeAppearance");
-        Check((bool)Call("HusserlEpocheFlow", "TryPrepare", state, action)!
-            && (bool)Call("HusserlEpocheFlow", "TryCommitPending", state, journey,
-                Call("WesternRouteGraph", "LoadEmbedded")!),
-            "The turned Husserl room commits its appearance standard.");
-        Check((bool)Get(state, "EdgeCommitted")
+            && (string)Get(state, "RouteSourceNodeId") == "EDMUND_HUSSERL__SELF_AND_OTHER__CORE",
+            "The turned Husserl line opens Heidegger on 164.");
+        typeof(NativeQuestionNodeChecks).GetMethod("CheckRoomRecovery", Methods)!.Invoke(null,
+            [run, run.Players[0], ((EventRoom)prepare[1]!).CanonicalEvent, shared, 1]);
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        state = Get(shared, "HeideggerDasein");
+        journey = Get(shared, "WesternJourney");
+        foreach (string name in new[] { "BeingInSituation", "Leave" })
+        {
+            object action = Enum.Parse(T("HeideggerDaseinAction"), name);
+            Check((bool)Call("HeideggerDaseinFlow", "TryPrepare", state, action)!
+                && (bool)Call("HeideggerDaseinFlow", "TryCommitPending", state, journey,
+                    Call("WesternRouteGraph", "LoadEmbedded")!),
+                "The turned Heidegger room commits " + name + ".");
+        }
+        Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_164")
             && (string)Get(journey, "CurrentNodeId") == "MARTIN_HEIDEGGER__SELF_AND_OTHER__CORE"
             && (int)Get(journey, "LastFixedAct") == 3,
             "The turned Husserl answer reaches Heidegger on 164.");
+        Set(run, "_currentActIndex", 2);
+        Set(run, "_currentRooms", new List<AbstractRoom>());
+        object?[] third = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", third)!
+            && third[1] is EventRoom { CanonicalEvent: GadamerFusion },
+            "The turned appearance line opens Gadamer at the third-act boundary, got "
+            + (third[1] is EventRoom thirdRoom ? thirdRoom.CanonicalEvent.GetType().Name : "none") + ".");
+        query = [run, null];
+        Call("PhilosophyRunStateService", "TryGet", query);
+        shared = query[1]!;
+        object gadamer = Get(shared, "GadamerFusion");
+        Check((int)Get(gadamer, "ActIndex") == 3,
+            "Gadamer's turned room records the third act.");
     }
 
     private static async Task CheckBaconDiderotContinuation()
@@ -1659,22 +1710,23 @@ internal static class ActBoundaryFixedEntryNativeChecks
         Call("PhilosophyRunStateService", "MarkResolved", run);
         object?[] prepare = [run, null];
         Check((bool)Call("ActFixedEntryHost", "TryPrepare", prepare)!
-            && prepare[1] is EventRoom { CanonicalEvent: SaussureSign },
-            "The Saussure turn opens Saussure's own room at the real second-act boundary.");
+            && prepare[1] is EventRoom { CanonicalEvent: LeviStraussMyth },
+            "The Saussure turn must open Levi-Strauss, not Saussure's own room, at the real second-act boundary; got "
+            + (prepare[1] is EventRoom secondRoom ? secondRoom.CanonicalEvent.GetType().Name : "none") + ".");
         object?[] query = [run, null];
         Call("PhilosophyRunStateService", "TryGet", query);
         shared = query[1]!;
-        object state = Get(shared, "SaussureSign");
+        object state = Get(shared, "LeviStraussMyth");
         journey = Get(shared, "WesternJourney");
         Check((int)Get(state, "ActIndex") == 2 && (string)Get(state, "EdgeId") == "WESTERN_EDGE_187"
-            && (string)Get(state, "TargetNode") == "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE",
-            "The turned Saussure room uses its actual second-act edge 187.");
-        foreach (string name in new[] { "LanguageParole", "Leave" })
+            && (string)Get(state, "RouteSourceNodeId") == "FERDINAND_DE_SAUSSURE__LANGUAGE_AND_MEANING__CORE",
+            "The turned structure line opens Levi-Strauss on its actual second-act edge 187.");
+        foreach (string name in new[] { "StructuralReading", "Leave" })
         {
-            object action = Enum.Parse(T("SaussureSignAction"), name);
-            Check((bool)Call("SaussureSignFlow", "TryPrepare", state, action)!
-                && (bool)Call("SaussureSignFlow", "TryCommitPending", state, journey, graph)!,
-                "The turned Saussure room commits " + name + ".");
+            object action = Enum.Parse(T("LeviStraussMythAction"), name);
+            Check((bool)Call("LeviStraussMythFlow", "TryPrepare", state, action)!
+                && (bool)Call("LeviStraussMythFlow", "TryCommitPending", state, journey, graph)!,
+                "The turned Levi-Strauss room commits " + name + ".");
         }
         Check(((HashSet<string>)Get(journey, "CompletedEdgeIds")).Contains("WESTERN_EDGE_187")
             && (string)Get(journey, "CurrentNodeId") == "CLAUDE_LEVI_STRAUSS__LANGUAGE_AND_MEANING__CORE"

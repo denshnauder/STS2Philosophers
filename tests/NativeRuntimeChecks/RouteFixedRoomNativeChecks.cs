@@ -98,9 +98,11 @@ internal static class RouteFixedRoomNativeChecks
                 string turnEdge = routeId == "AUTONOMY_AND_HISTORY" ? "WESTERN_EDGE_153" : "WESTERN_EDGE_189";
                 string turnNode = routeId == "AUTONOMY_AND_HISTORY"
                     ? "GEORG_WILHELM_FRIEDRICH_HEGEL__HISTORY_AND_POWER__CORE"
-                    : "SIGMUND_FREUD__SELF_AND_OTHER__CORE";
+                    : "JACQUES_LACAN__SELF_AND_OTHER__CORE";
                 if (routeId == "AUTONOMY_AND_HISTORY" && !rooms.ContainsKey(turnNode))
                     rooms[turnNode] = rooms.Values.First(room => room.Name == "HegelSubstanceSubject");
+                if (routeId == "UNCONSCIOUS_AND_NORM" && !rooms.ContainsKey(turnNode))
+                    rooms[turnNode] = typeof(LacanSignifier);
                 var turnedTuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Methods)!
                     .Invoke(null, [relic, 1])!;
                 var turnedRun = (RunState)turnedTuple[1]!;
