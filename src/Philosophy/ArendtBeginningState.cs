@@ -17,6 +17,9 @@ internal sealed class ArendtBeginningState : IJsonOnDeserialized
 
     public const string MillRequiredEdgeId = "WESTERN_EDGE_175";
     public const string MillCompletionEdgeId = "WESTERN_EDGE_176";
+    // The early Smith turn reaches Mill in act two on 055 and Arendt on 056.
+    public const string EarlyMillRequiredEdgeId = "WESTERN_EDGE_055";
+    public const string EarlyMillCompletionEdgeId = "WESTERN_EDGE_056";
     public const string FoucaultRequiredEdgeId = "WESTERN_EDGE_181";
     public const string FoucaultCompletionEdgeId = "WESTERN_EDGE_182";
 
@@ -38,7 +41,7 @@ internal sealed class ArendtBeginningState : IJsonOnDeserialized
     public static ArendtBeginningState Create(string instanceId, string requiredEdgeId) => new()
     {
         InstanceId = instanceId,
-        RequiredEdgeId = requiredEdgeId is MillRequiredEdgeId or FoucaultRequiredEdgeId
+        RequiredEdgeId = requiredEdgeId is MillRequiredEdgeId or FoucaultRequiredEdgeId or EarlyMillRequiredEdgeId
             ? requiredEdgeId : MillRequiredEdgeId,
     };
 
@@ -46,7 +49,7 @@ internal sealed class ArendtBeginningState : IJsonOnDeserialized
     {
         InstanceId ??= string.Empty;
         ConfirmedActions ??= [];
-        if (RequiredEdgeId is not (MillRequiredEdgeId or FoucaultRequiredEdgeId)) RequiredEdgeId = MillRequiredEdgeId;
+        if (RequiredEdgeId is not (MillRequiredEdgeId or FoucaultRequiredEdgeId or EarlyMillRequiredEdgeId)) RequiredEdgeId = MillRequiredEdgeId;
         if (ActIndex is < 1 or > 3) ActIndex = 3;
     }
 
@@ -56,7 +59,7 @@ internal sealed class ArendtBeginningState : IJsonOnDeserialized
     {
         if (Version != CurrentVersion || string.IsNullOrWhiteSpace(InstanceId)
             || ActIndex is < 1 or > 3
-            || RequiredEdgeId is not (MillRequiredEdgeId or FoucaultRequiredEdgeId)
+            || RequiredEdgeId is not (MillRequiredEdgeId or FoucaultRequiredEdgeId or EarlyMillRequiredEdgeId)
             || !Enum.IsDefined(Stage) || !Enum.IsDefined(PendingAction) || !Enum.IsDefined(Judgment)
             || ConfirmedActions is null || ConfirmedActions.Count > 4
             || ConfirmedActions.Any(action => !Enum.IsDefined(action))
@@ -77,12 +80,16 @@ internal sealed class ArendtBeginningState : IJsonOnDeserialized
 
 internal static class ArendtBeginningFlow
 {
-    public static string SourceNodeIdOf(string requiredEdgeId) => requiredEdgeId == ArendtBeginningState.FoucaultRequiredEdgeId
+    public static string SourceNodeIdOf(string requiredEdgeId) => requiredEdgeId == ArendtBeginningState.EarlyMillRequiredEdgeId
+        ? "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE"
+        : requiredEdgeId == ArendtBeginningState.FoucaultRequiredEdgeId
         ? "MICHEL_FOUCAULT__HISTORY_AND_POWER__CORE"
         : "JOHN_STUART_MILL__FREEDOM_AND_INSTITUTIONS__CORE";
 
-    public static string CompletionEdgeIdOf(string requiredEdgeId) => requiredEdgeId == ArendtBeginningState.FoucaultRequiredEdgeId
-        ? ArendtBeginningState.FoucaultCompletionEdgeId : ArendtBeginningState.MillCompletionEdgeId;
+    public static string CompletionEdgeIdOf(string requiredEdgeId) => requiredEdgeId == ArendtBeginningState.EarlyMillRequiredEdgeId
+        ? ArendtBeginningState.EarlyMillCompletionEdgeId
+        : requiredEdgeId == ArendtBeginningState.FoucaultRequiredEdgeId
+            ? ArendtBeginningState.FoucaultCompletionEdgeId : ArendtBeginningState.MillCompletionEdgeId;
 
     // Whether other people take up the invitation is fixed when the room opens.
     // The player cannot make a public beginning happen alone, and a reload cannot
@@ -155,6 +162,9 @@ internal static class ArendtBeginningFlow
             || !journey.CompletedEdgeIds.Contains(state.RequiredEdgeId)) return false;
         string completion = CompletionEdgeIdOf(state.RequiredEdgeId);
         string source = SourceNodeIdOf(state.RequiredEdgeId);
+        if (journey.CurrentNodeId == ArendtBeginningState.AdoptedNodeId
+            && journey.CompletedEdgeIds.Contains(completion))
+            return journey.LastFixedAct == 3;
         bool adopted = journey.CompletedEdgeIds.Contains(completion);
         if (!state.EdgeCommitted)
             return journey.LastFixedAct >= 2 && !adopted

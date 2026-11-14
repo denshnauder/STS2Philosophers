@@ -126,13 +126,37 @@ public sealed class BeauvoirOther : EventModel
         string instanceId = state.InstanceId;
         BeauvoirOtherStage stage = state.Stage;
         int actionCount = state.ConfirmedActions.Count;
+        string variant = SourceVariant();
         return BeauvoirOtherFlow.Options(stage)
             .Select(action => new EventOption(this,
                 () => Choose(state, instanceId, stage, actionCount, action),
-                $"{LocalizationRoot}.pages.{BeauvoirOtherFlow.StageKey(stage)}.options.{BeauvoirOtherFlow.ActionKey(action)}",
+                $"{LocalizationRoot}.pages.{BeauvoirOtherFlow.StageKey(stage)}.options.{OptionKey(action, variant)}",
                 Array.Empty<IHoverTip>()))
             .ToArray();
     }
+
+    private string SourceVariant()
+    {
+        if (Owner?.RunState is not RunState run
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared is null) return string.Empty;
+        return shared.WesternJourney?.CurrentNodeId switch
+        {
+            BeauvoirOtherState.SartreSourceNodeId => "_SARTRE",
+            BeauvoirOtherState.MerleauSourceNodeId => "_MERLEAU",
+            _ => string.Empty,
+        };
+    }
+
+    private static string OptionKey(BeauvoirOtherAction action, string variant) =>
+        action == BeauvoirOtherAction.KeepWollstonecraft
+            ? variant switch
+            {
+                "_SARTRE" => "KEEP_SARTRE",
+                "_MERLEAU" => "KEEP_MERLEAU",
+                _ => "KEEP_WOLLSTONECRAFT",
+            }
+            : BeauvoirOtherFlow.ActionKey(action);
 
     private BeauvoirOtherState? TryRestoreState()
     {
@@ -155,6 +179,12 @@ public sealed class BeauvoirOther : EventModel
         else Log.Error($"[STS2Philosophers] {reason}");
     }
 
-    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(BeauvoirOtherState state) =>
-        L10NLookup($"{LocalizationRoot}.pages.{BeauvoirOtherFlow.DescriptionKey(state)}.description");
+    private MegaCrit.Sts2.Core.Localization.LocString PageDescription(BeauvoirOtherState state)
+    {
+        string key = BeauvoirOtherFlow.DescriptionKey(state);
+        string variant = SourceVariant();
+        if (variant.Length > 0 && key is "INVITATION" or "RESULT_KEPT")
+            key += variant;
+        return L10NLookup($"{LocalizationRoot}.pages.{key}.description");
+    }
 }

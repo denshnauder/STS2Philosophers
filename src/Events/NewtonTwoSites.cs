@@ -127,9 +127,8 @@ public sealed class NewtonTwoSites : EventModel
     private static bool CommitPending(PhilosophyRunState shared, NewtonTwoSitesState state) =>
         ReferenceEquals(shared.NewtonTwoSites, state)
         && shared.WesternJourney is { } journey
-        && shared.SextusOpposedAppearances is { } sextus
-        && shared.DescartesMethodicReconstruction is { } descartes
-        && NewtonTwoSitesFlow.TryCommitPending(state, journey, sextus, descartes,
+        && NewtonTwoSitesFlow.TryCommitPending(state, journey,
+            shared.SextusOpposedAppearances, shared.DescartesMethodicReconstruction,
             WesternRouteGraph.LoadEmbedded());
 
     private bool HasValidCarrier(RunState run) =>
@@ -139,7 +138,9 @@ public sealed class NewtonTwoSites : EventModel
         && owner.Relics.OfType<SocratesQuestionCup>().FirstOrDefault() is { } cup
         && cup.CanOfferNativeQuestion;
 
-    private bool IsActiveRoom(RunState run) => RouteEventMapBoundary.IsActiveEvent(run, this, 2);
+    private bool IsActiveRoom(RunState run) =>
+        RouteEventMapBoundary.IsActiveEvent(run, this, 2)
+        || RouteEventMapBoundary.IsActiveEvent(run, this, 1);
 
     private void ShowConfirmedState(NewtonTwoSitesState state)
     {
@@ -170,11 +171,10 @@ public sealed class NewtonTwoSites : EventModel
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.NewtonTwoSites is { } state
             && shared.WesternJourney is { } journey
-            && shared.SextusOpposedAppearances is { } sextus
-            && shared.DescartesMethodicReconstruction is { } descartes
-            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:3"
+            && state.InstanceId == $"{LocalizationRoot}:{run.Rng.Seed}:{state.ActIndex}"
             && HasValidCarrier(run)
-            && NewtonTwoSitesFlow.IsRouteConsistent(state, journey, sextus, descartes)) return state;
+            && NewtonTwoSitesFlow.IsRouteConsistent(state, journey,
+                shared.SextusOpposedAppearances, shared.DescartesMethodicReconstruction)) return state;
         return null;
     }
 

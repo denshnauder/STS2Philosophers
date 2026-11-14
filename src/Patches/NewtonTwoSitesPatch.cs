@@ -43,6 +43,28 @@ internal static class NewtonTwoSitesPatch
             return null;
         }
 
+        // The scientific line can reach Newton in act two after the first-act
+        // Bacon turn. That branch has no Sextus/Descartes predecessors: 166 is
+        // its own fixed handover and 167 carries it on to Kuhn.
+        if (FixedEntryScope.Active && run.CurrentActIndex == 1
+            && journey is { RouteId: "SCIENTIFIC_MODEL", LastFixedAct: 2 }
+            && journey.CurrentNodeId == NewtonTwoSitesState.EarlySourceNodeId
+            && !journey.DeclinedFixedActs.Contains(2)
+            && journey.CompletedEdgeIds.Contains("WESTERN_EDGE_165")
+            && !journey.CompletedEdgeIds.Contains(NewtonTwoSitesState.EarlyCompletionEdgeId)
+            && !journey.SeenThinkerIds.Contains("ISAAC_NEWTON")
+            && player?.GetRelicById(ModelDb.GetId<SocratesQuestionCup>()) is SocratesQuestionCup { CanOfferNativeQuestion: true }
+            && canonical is not null && !run.VisitedEventIds.Contains(ModelDb.GetId<NewtonTwoSites>()))
+        {
+            string earlyId = $"NEWTON_TWO_SITES:{run.Rng.Seed}:2";
+            NewtonTwoSitesState early = saved is { EarlyBacon: true } candidateEarly
+                && candidateEarly.InstanceId == earlyId && candidateEarly.IsUsable()
+                ? candidateEarly : NewtonTwoSitesState.CreateEarly(earlyId);
+            if (!early.IsUsable() || !NewtonTwoSitesFlow.IsRouteConsistent(early, journey, null, null)) return null;
+            shared.NewtonTwoSites = early;
+            return canonical;
+        }
+
         string id = $"NEWTON_TWO_SITES:{run.Rng.Seed}:3";
 
         bool Consistent(NewtonTwoSitesState state) =>
