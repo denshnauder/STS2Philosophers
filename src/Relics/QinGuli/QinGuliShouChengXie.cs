@@ -106,27 +106,45 @@ public sealed class QinGuliShouChengXie : RelicModel
         }
 
         ApplyState(nextState);
-        if (shouldApplyWeak)
+        if (!shouldApplyWeak)
         {
-            Creature[] livingEnemies = combatState.Enemies
-                .Where(enemy => enemy.IsAlive)
-                .ToArray();
-            if (livingEnemies.Length > 0)
-            {
-                Flash();
-                await PowerCmd.Apply<WeakPower>(
-                    choiceContext,
-                    livingEnemies,
-                    1m,
-                    Owner.Creature,
-                    null);
-            }
+            return;
         }
 
+        Creature[] livingEnemies = combatState.Enemies
+            .Where(enemy => enemy.IsAlive)
+            .ToArray();
+        if (livingEnemies.Length > 0)
+        {
+            Flash();
+            await PowerCmd.Apply<WeakPower>(
+                choiceContext,
+                livingEnemies,
+                1m,
+                Owner.Creature,
+                null);
+        }
+    }
+
+    public override async Task AfterSideTurnEnd(
+        PlayerChoiceContext choiceContext,
+        CombatSide side,
+        IEnumerable<Creature> participants)
+    {
+        if (side != CombatSide.Player
+            || !participants.Contains(Owner.Creature)
+            || Owner.PlayerCombatState is not { } playerCombatState
+            || Owner.Creature.CombatState is not { } combatState)
+        {
+            return;
+        }
+
+        // The relic's written effect grants Block at the end of its owner's
+        // turn, while sampling the intents that are live for that turn.
         int attackingEnemyCount = combatState.Enemies.Count(enemy =>
             enemy.IsAlive
             && enemy.Monster is { IntendsToAttack: true });
-        nextState = _qinGuliShouChengXie;
+        QinGuliShouChengXieState nextState = _qinGuliShouChengXie;
         if (!nextState.SampleEnemyIntents(
                 playerCombatState.TurnNumber,
                 attackingEnemyCount,
@@ -156,17 +174,16 @@ public sealed class QinGuliShouChengXie : RelicModel
         Creature target,
         CardModel? cardSource)
     {
-        if (!QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(
+        if (!QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(
                 result.Receiver == Owner.Creature,
                 target == Owner.Creature,
-                dealer is { Side: CombatSide.Enemy },
                 result.UnblockedDamage))
         {
             return Task.CompletedTask;
         }
 
         QinGuliShouChengXieState nextState = _qinGuliShouChengXie;
-        if (nextState.RecordEnemyHpLoss(result.UnblockedDamage))
+        if (nextState.RecordOwnerHpLoss(result.UnblockedDamage))
         {
             ApplyState(nextState);
         }

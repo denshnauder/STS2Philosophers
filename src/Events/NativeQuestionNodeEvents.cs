@@ -179,6 +179,10 @@ internal static class NativeQuestionNodeEvents
     {
         if (!IsEntry(run)) return null;
         if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null) return null;
+        // The Eastern continuation owns its own act-two fixed slot and does not
+        // depend on a Western journey record.
+        EventModel? eastern = ActTwoPhilosophersGazePatch.TrySelectFixedNative(run);
+        if (eastern is not null) return eastern;
         // Rousseau's act-two slot is shared by two rooms; the seed decides which
         // one opens the slot, so the pair is asked before the plain chain.
         EventModel? sharedSlot = TrySelectRousseauSecondAct(run);

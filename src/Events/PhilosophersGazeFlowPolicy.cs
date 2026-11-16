@@ -110,12 +110,12 @@ internal enum PhilosophersGazeOption
 internal enum PhilosophersGazeEffect
 {
     None,
-    ObtainKongziMuduoContinue,
-    ObtainKongziQingYuPeiContinue,
-    ObtainMoziMoSeZhuJianContinue,
-    ObtainMoziShouChengTuContinue,
-    ObtainLaoziWuWeiShuJianContinue,
-    ObtainLaoziShuiYuContinue,
+    ObtainKongziMuduo,
+    ObtainKongziQingYuPei,
+    ObtainMoziMoSeZhuJian,
+    ObtainMoziShouChengTu,
+    ObtainLaoziWuWeiShuJian,
+    ObtainLaoziShuiYu,
     ReplaceWithMengziXiongZhang,
     ReplaceWithXunziShengMo,
     ReplaceWithQinGuliShouChengXie,
@@ -157,8 +157,8 @@ internal static class PhilosophersGazeFlowPolicy
             (PhilosophersGazePage.Continuation, PhilosophersGazeOption.Decline) => Navigate(PhilosophersGazePage.ActTwoDeclineConfirm),
             (PhilosophersGazePage.ActOneDeclineConfirm, PhilosophersGazeOption.Confirm) => Finish(PhilosophersGazePage.Decline),
             (PhilosophersGazePage.ActTwoDeclineConfirm, PhilosophersGazeOption.Confirm) => Finish(PhilosophersGazePage.ContinuationDecline, PhilosophersGazeEffect.RecordContinuationDecline),
-            (PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziLi) => Continue(PhilosophersGazePage.XUNZI_INTRO, PhilosophersGazeEffect.ObtainKongziMuduoContinue),
-            (PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziRen) => Continue(PhilosophersGazePage.MENGZI_INTRO, PhilosophersGazeEffect.ObtainKongziQingYuPeiContinue),
+            (PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziLi) => Finish(PhilosophersGazePage.KongziMuduo, PhilosophersGazeEffect.ObtainKongziMuduo),
+            (PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziRen) => Finish(PhilosophersGazePage.KongziQingYuPei, PhilosophersGazeEffect.ObtainKongziQingYuPei),
             (PhilosophersGazePage.KONGZI, PhilosophersGazeOption.Decline) => Finish(PhilosophersGazePage.KongziDecline),
             (PhilosophersGazePage.MOZI, PhilosophersGazeOption.MoziWood) => Navigate(PhilosophersGazePage.MOZI_JIANAI),
             (PhilosophersGazePage.MOZI, PhilosophersGazeOption.MoziCity) => Navigate(PhilosophersGazePage.MOZI_FEIGONG),
@@ -170,13 +170,13 @@ internal static class PhilosophersGazeFlowPolicy
             (PhilosophersGazePage.XUNZI_INTRO, PhilosophersGazeOption.XunziLine) => Navigate(PhilosophersGazePage.XUNZI_RESULT_LINE),
             (PhilosophersGazePage.MENGZI_INTRO, PhilosophersGazeOption.MengziWho) => Navigate(PhilosophersGazePage.MENGZI_RESULT_WHO),
             (PhilosophersGazePage.MENGZI_INTRO, PhilosophersGazeOption.MengziFish) => Navigate(PhilosophersGazePage.MENGZI_RESULT_FISH),
-            (PhilosophersGazePage.MOZI_JIANAI, PhilosophersGazeOption.MoziJianAi) => Continue(PhilosophersGazePage.HUISHI_INTRO, PhilosophersGazeEffect.ObtainMoziMoSeZhuJianContinue),
+            (PhilosophersGazePage.MOZI_JIANAI, PhilosophersGazeOption.MoziJianAi) => Finish(PhilosophersGazePage.MoziMoSeZhuJian, PhilosophersGazeEffect.ObtainMoziMoSeZhuJian),
             (PhilosophersGazePage.MOZI_JIANAI, PhilosophersGazeOption.Leave) => Finish(PhilosophersGazePage.MOZI_DECLINE),
-            (PhilosophersGazePage.MOZI_FEIGONG, PhilosophersGazeOption.MoziFeiGong) => Continue(PhilosophersGazePage.QIN_INTRO, PhilosophersGazeEffect.ObtainMoziShouChengTuContinue),
+            (PhilosophersGazePage.MOZI_FEIGONG, PhilosophersGazeOption.MoziFeiGong) => Finish(PhilosophersGazePage.MoziShouChengTu, PhilosophersGazeEffect.ObtainMoziShouChengTu),
             (PhilosophersGazePage.MOZI_FEIGONG, PhilosophersGazeOption.Leave) => Finish(PhilosophersGazePage.MOZI_DECLINE),
-            (PhilosophersGazePage.LAOZI_STILL, PhilosophersGazeOption.LaoziWuWei) => Continue(PhilosophersGazePage.ZHUANGZI_INTRO, PhilosophersGazeEffect.ObtainLaoziWuWeiShuJianContinue),
+            (PhilosophersGazePage.LAOZI_STILL, PhilosophersGazeOption.LaoziWuWei) => Finish(PhilosophersGazePage.LaoziWuWeiShuJian, PhilosophersGazeEffect.ObtainLaoziWuWeiShuJian),
             (PhilosophersGazePage.LAOZI_STILL, PhilosophersGazeOption.Leave) => Finish(PhilosophersGazePage.LAOZI_DECLINE),
-            (PhilosophersGazePage.LAOZI_LOW, PhilosophersGazeOption.LaoziRuoShui) => Continue(PhilosophersGazePage.YANGZHU_INTRO, PhilosophersGazeEffect.ObtainLaoziShuiYuContinue),
+            (PhilosophersGazePage.LAOZI_LOW, PhilosophersGazeOption.LaoziRuoShui) => Finish(PhilosophersGazePage.LaoziShuiYu, PhilosophersGazeEffect.ObtainLaoziShuiYu),
             (PhilosophersGazePage.LAOZI_LOW, PhilosophersGazeOption.Leave) => Finish(PhilosophersGazePage.LAOZI_DECLINE),
             (PhilosophersGazePage.XUNZI_RESULT_EDGE, PhilosophersGazeOption.Accept) => Finish(PhilosophersGazePage.XunziShengMo, PhilosophersGazeEffect.ReplaceWithXunziShengMo),
             (PhilosophersGazePage.XUNZI_RESULT_EDGE, PhilosophersGazeOption.Decline) => Finish(PhilosophersGazePage.XunziDecline, PhilosophersGazeEffect.RecordContinuationDecline),
@@ -366,11 +366,6 @@ internal static class PhilosophersGazeFlowPolicy
     };
     private static PhilosophersGazeTransition Navigate(PhilosophersGazePage destination) =>
         new(destination, PhilosophersGazeEffect.None, false);
-
-    private static PhilosophersGazeTransition Continue(
-        PhilosophersGazePage destination,
-        PhilosophersGazeEffect effect) =>
-        new(destination, effect, false);
 
     private static PhilosophersGazeTransition Finish(
         PhilosophersGazePage destination,

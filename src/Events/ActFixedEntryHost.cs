@@ -16,8 +16,29 @@ internal static class ActFixedEntryHost
     {
         room = null;
         if (run.CurrentActIndex is not (1 or 2)) return false;
-        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared?.WesternJourney is not { } journey)
+        if (!PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared) || shared is null)
             return false;
+        if (shared.WesternJourney is not { } journey)
+        {
+            // The Eastern continuation is a fixed act-two slot of its own. It
+            // has no WesternJourney, so it must be offered before that field is
+            // required; the room itself still checks relic and durable facts.
+            if (run.CurrentActIndex != 1) return false;
+            EventModel? eastern;
+            try
+            {
+                using (FixedEntryScope.Begin()) eastern = ActTwoPhilosophersGazePatch.TrySelectFixedNative(run);
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"[STS2Philosophers] The Eastern act boundary failed: {exception}");
+                return false;
+            }
+            if (eastern is null) return false;
+            shared.PhilosophersGazeFixedEntryAct = run.CurrentActIndex + 1;
+            room = new EventRoom(eastern);
+            return true;
+        }
         // Released 0.5.25 records predate route-name fields, but their exact
         // fixed Schopenhauer record witnesses the Socratic will/value line.
         // Recover that identity before the third-act selector asks its route.
@@ -73,6 +94,11 @@ internal static class ActFixedEntryHost
         {
             journey.LastFixedAct = arrived;
             return false;
+        }
+        if (model is PhilosophersGaze)
+        {
+            // The Eastern slot is shared by both fixed-entry paths.
+            shared.PhilosophersGazeFixedEntryAct = run.CurrentActIndex + 1;
         }
         room = new EventRoom(model);
         return true;

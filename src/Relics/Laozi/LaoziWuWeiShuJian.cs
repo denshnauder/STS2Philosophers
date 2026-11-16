@@ -162,7 +162,7 @@ public sealed class LaoziWuWeiShuJian : RelicModel
 
         Flash();
         await PlayerCmd.GainEnergy(EnergyReward, Owner);
-        await PowerCmd.Apply<DexterityPower>(
+        await PowerCmd.Apply<LaoziWuWeiTemporaryDexterityPower>(
             choiceContext,
             Owner.Creature,
             DexterityReward,
@@ -175,4 +175,12 @@ public sealed class LaoziWuWeiShuJian : RelicModel
         _laoziWuWeiShuJian.EndCombat();
         return Task.CompletedTask;
     }
+}
+
+
+public sealed class LaoziWuWeiTemporaryDexterityPower : TemporaryDexterityPower
+{
+    public override AbstractModel OriginModel => ModelDb.Relic<LaoziWuWeiShuJian>();
+
+    protected override bool IsVisibleInternal => false;
 }

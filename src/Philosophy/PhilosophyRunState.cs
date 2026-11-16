@@ -7,6 +7,7 @@ internal sealed class PhilosophyRunState
     public CurrentDoctrine? CurrentDoctrine { get; set; }
     public bool PhilosophersGazeFlowInProgress { get; set; }
     public string? PhilosophersGazeFlowPage { get; set; }
+    public int PhilosophersGazeFixedEntryAct { get; set; }
     public List<ThoughtImprint> ThoughtImprints { get; set; } = [];
     public Dictionary<int, ActBehaviorState> ActBehaviorStates { get; set; } = [];
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
@@ -126,6 +127,7 @@ internal sealed class PhilosophyRunState
         ZenoRouteValidationCatalogs.SaveRestore;
 
     public bool HasData => PhilosophersGazeFlowInProgress
+        || PhilosophersGazeFixedEntryAct > 0
         || CurrentDoctrine is not null
         || ThoughtImprints.Count > 0
         || ActBehaviorStates.Count > 0

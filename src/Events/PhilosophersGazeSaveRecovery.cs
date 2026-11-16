@@ -17,7 +17,12 @@ internal static class PhilosophersGazeSaveRecovery
             && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
             && shared?.PhilosophersGazeFlowInProgress == true)
         {
-            return false;
+            // A stale button may have written the in-progress marker after the
+            // event had already granted its relic or recorded a terminal decline.
+            // Those durable facts win over the marker; only a genuinely open
+            // page remains unresolved.
+            return HasActOneGrantFact(owner)
+                || (HasTerminalDecline(owner) && !HasActOneGrantClick(owner));
         }
 
         if (run.CurrentActIndex == 1)

@@ -834,16 +834,18 @@ Check(shouChengXieState.BeginPlayerTurn(2, out bool successfulDefense)
 Check(shouChengXieState.SampleEnemyIntents(2, attackingEnemyCount: 1, out preparedBlock)
       && preparedBlock == QinGuliShouChengXieState.BlockPerAttacker,
     "A single attacker must prepare exactly 4 Block.");
-Check(shouChengXieState.RecordEnemyHpLoss(unblockedDamage: 1)
-      && !shouChengXieState.RecordEnemyHpLoss(unblockedDamage: 2),
-    "Enemy HP loss must fail the active defense window only once.");
+Check(shouChengXieState.RecordOwnerHpLoss(unblockedDamage: 1)
+      && !shouChengXieState.RecordOwnerHpLoss(unblockedDamage: 2),
+    "Any owner HP loss must fail the active defense window only once.");
 Check(shouChengXieState.BeginPlayerTurn(3, out bool failedDefense)
       && !failedDefense,
-    "A defense window with enemy HP loss must not apply Weak.");
-Check(QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, true, 1)
-      && !QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, false, 1)
-      && !QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, true, 0),
-    "City Defense Machinery must count only positive enemy HP loss to its owner.");
+    "A defense window with owner HP loss must not apply Weak.");
+Check(QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 1)
+      && QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 4)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(false, true, 1)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, false, 1)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 0),
+    "The canvas's unqualified no-damage rule counts any positive HP loss to its owner.");
 shouChengXieState.Reset();
 Check(shouChengXieState == default,
     "Combat cleanup must clear City Defense Machinery state.");
@@ -1511,17 +1513,17 @@ PhilosophersGazeTransition[] rootRelicTransitions =
 Check(rootRelicTransitions.Select(transition => transition.Effect).Distinct().Count() == 6,
     "Kongzi, Mozi, and Laozi must expose six distinct mutually exclusive root relic effects.");
 Check(rootRelicTransitions.All(transition =>
-        transition.IsNavigation
-        && !transition.UsesNativeProceed
+        transition.UsesNativeProceed
+        && !transition.IsNavigation
         && transition.Effect != PhilosophersGazeEffect.None),
-    "Root relic choices must grant the relic and continue to the successor introduction instead of finishing.");
-Check(rootRelicTransitions[0].Destination == PhilosophersGazePage.XUNZI_INTRO
-      && rootRelicTransitions[1].Destination == PhilosophersGazePage.MENGZI_INTRO
-      && rootRelicTransitions[2].Destination == PhilosophersGazePage.HUISHI_INTRO
-      && rootRelicTransitions[3].Destination == PhilosophersGazePage.QIN_INTRO
-      && rootRelicTransitions[4].Destination == PhilosophersGazePage.ZHUANGZI_INTRO
-      && rootRelicTransitions[5].Destination == PhilosophersGazePage.YANGZHU_INTRO,
-    "Each root relic choice must lead to its correct successor introduction.");
+    "Root relic choices must grant the relic and finish the first-act encounter instead of opening a successor page.");
+Check(rootRelicTransitions[0].Destination == PhilosophersGazePage.KongziMuduo
+      && rootRelicTransitions[1].Destination == PhilosophersGazePage.KongziQingYuPei
+      && rootRelicTransitions[2].Destination == PhilosophersGazePage.MoziMoSeZhuJian
+      && rootRelicTransitions[3].Destination == PhilosophersGazePage.MoziShouChengTu
+      && rootRelicTransitions[4].Destination == PhilosophersGazePage.LaoziWuWeiShuJian
+      && rootRelicTransitions[5].Destination == PhilosophersGazePage.LaoziShuiYu,
+    "Each root relic choice must end on its own first-act grant page.");
 
 Check(Transition(PhilosophersGazePage.XUNZI_INTRO, PhilosophersGazeOption.XunziEdge).Destination
           == PhilosophersGazePage.XUNZI_RESULT_EDGE
