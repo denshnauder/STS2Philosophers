@@ -5,6 +5,8 @@ namespace STS2Philosophers;
 internal sealed class PhilosophyRunState
 {
     public CurrentDoctrine? CurrentDoctrine { get; set; }
+    public bool PhilosophersGazeFlowInProgress { get; set; }
+    public string? PhilosophersGazeFlowPage { get; set; }
     public List<ThoughtImprint> ThoughtImprints { get; set; } = [];
     public Dictionary<int, ActBehaviorState> ActBehaviorStates { get; set; } = [];
     public Dictionary<string, GeneratedCandidates> GeneratedCandidates { get; set; } = [];
@@ -123,7 +125,8 @@ internal sealed class PhilosophyRunState
     internal ZenoRouteValidationCatalog ZenoRouteValidationCatalog { get; private set; } =
         ZenoRouteValidationCatalogs.SaveRestore;
 
-    public bool HasData => CurrentDoctrine is not null
+    public bool HasData => PhilosophersGazeFlowInProgress
+        || CurrentDoctrine is not null
         || ThoughtImprints.Count > 0
         || ActBehaviorStates.Count > 0
         || GeneratedCandidates.Count > 0

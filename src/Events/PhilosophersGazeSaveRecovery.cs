@@ -13,6 +13,13 @@ internal static class PhilosophersGazeSaveRecovery
     internal static bool IsResolved(Player owner)
     {
         if (owner.RunState is not RunState run) return false;
+        if (run.CurrentActIndex == 0
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.PhilosophersGazeFlowInProgress == true)
+        {
+            return false;
+        }
+
         if (run.CurrentActIndex == 1)
             return PhilosophersGaze.HasContinuationBeenRecorded(owner)
                 || HasContinuationReplacement(owner);
@@ -37,14 +44,27 @@ internal static class PhilosophersGazeSaveRecovery
         // history stays blocked rather than guessing that either callback committed.
         return ChoiceKeys(owner).Any(key => key is
                 "PHILOSOPHERS_GAZE.pages.ACT_ONE_DECLINE_CONFIRM.options.CONFIRM.title"
+                or "PHILOSOPHERS_GAZE.pages.KONGZI.options.DECLINE.title"
+                or "PHILOSOPHERS_GAZE.pages.MOZI.options.DECLINE.title"
+                or "PHILOSOPHERS_GAZE.pages.LAOZI.options.DECLINE.title"
                 or "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.DECLINE.title"
                 or "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.DECLINE.title"
                 or "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.DECLINE.title"
+                or "PHILOSOPHERS_GAZE.pages.MOZI_JIANAI.options.LEAVE.title"
+                or "PHILOSOPHERS_GAZE.pages.MOZI_FEIGONG.options.LEAVE.title"
+                or "PHILOSOPHERS_GAZE.pages.LAOZI_STILL.options.LEAVE.title"
+                or "PHILOSOPHERS_GAZE.pages.LAOZI_LOW.options.LEAVE.title"
                 or "PHILOSOPHERS_GAZE.pages.WESTERN.options.DECLINE.title");
     }
 
     private static bool HasActOneGrantClick(Player owner) => ChoiceKeys(owner).Any(key => key is
-        "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.MUDUO.title"
+        "PHILOSOPHERS_GAZE.pages.KONGZI.options.KONGZI_LI.title"
+        or "PHILOSOPHERS_GAZE.pages.KONGZI.options.KONGZI_REN.title"
+        or "PHILOSOPHERS_GAZE.pages.MOZI_JIANAI.options.MOZI_JIANAI.title"
+        or "PHILOSOPHERS_GAZE.pages.MOZI_FEIGONG.options.MOZI_FEIGONG.title"
+        or "PHILOSOPHERS_GAZE.pages.LAOZI_STILL.options.LAOZI_WUWEI.title"
+        or "PHILOSOPHERS_GAZE.pages.LAOZI_LOW.options.LAOZI_RUOSHUI.title"
+        or "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.MUDUO.title"
         or "PHILOSOPHERS_GAZE.pages.KONGZI_VIEWPOINTS.options.QING_YU_PEI.title"
         or "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.MO_SE_ZHU_JIAN.title"
         or "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.SHOU_CHENG_TU.title"

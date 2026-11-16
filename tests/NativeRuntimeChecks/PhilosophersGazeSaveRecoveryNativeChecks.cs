@@ -161,8 +161,12 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
 
     private static void CheckHistory()
     {
-        foreach (string suffix in new[] { "ACT_ONE_DECLINE_CONFIRM.options.CONFIRM", "KONGZI_VIEWPOINTS.options.DECLINE",
-            "MOZI_VIEWPOINTS.options.DECLINE", "LAOZI_VIEWPOINTS.options.DECLINE", "WESTERN.options.DECLINE" })
+        foreach (string suffix in new[] { "ACT_ONE_DECLINE_CONFIRM.options.CONFIRM", "KONGZI.options.DECLINE",
+            "MOZI.options.DECLINE", "LAOZI.options.DECLINE",
+            "KONGZI_VIEWPOINTS.options.DECLINE", "MOZI_VIEWPOINTS.options.DECLINE",
+            "LAOZI_VIEWPOINTS.options.DECLINE", "MOZI_JIANAI.options.LEAVE",
+            "MOZI_FEIGONG.options.LEAVE", "LAOZI_STILL.options.LEAVE", "LAOZI_LOW.options.LEAVE",
+            "WESTERN.options.DECLINE" })
         {
             var f = Create(); AddChoice(f, $"PHILOSOPHERS_GAZE.pages.{suffix}.title"); Import(f);
             Check(Resolved(f) && Recover() is { IsPreFinished: true }, "Only an actual terminal first-act decline closes a rewardless old invitation.");
@@ -174,6 +178,20 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
             Check(!Resolved(f) && Recover() is { IsPreFinished: false },
                 "Navigation and an asynchronous accept-click without an actual grant never prove completion.");
         }
+        var inProgress = Create();
+        Set(inProgress.Shared, "PhilosophersGazeFlowInProgress", true);
+        Set(inProgress.Shared, "PhilosophersGazeFlowPage", "XUNZI_INTRO");
+        AddChoice(inProgress, "PHILOSOPHERS_GAZE.pages.KONGZI.options.KONGZI_LI.title");
+        Import(inProgress);
+        Check(!Resolved(inProgress) && Recover() is { IsPreFinished: false },
+            "A persisted mid-flow root relic choice stays open instead of being mistaken for a completed legacy grant.");
+        EventModel restoredFlow = ModelDb.Event<PhilosophersGaze>().ToMutable();
+        Set(restoredFlow, "Owner", inProgress.Native.Player);
+        typeof(PhilosophersGaze).GetMethod("SetInitialEventState", Methods)!.Invoke(restoredFlow, [false]);
+        Check(!restoredFlow.IsFinished && restoredFlow.CurrentOptions.Count == 2
+              && restoredFlow.CurrentOptions.All(option => option.HistoryName.LocEntryKey.Contains("XUNZI_INTRO")),
+            "A mid-flow save restores the exact East page instead of reopening the root invitation.");
+
         var foreign = Create(); AddChoice(foreign, "PHILOSOPHERS_GAZE.pages.WESTERN.options.DECLINE.title", "other_mod"); Import(foreign);
         Check(!Resolved(foreign), "A different localization table cannot impersonate this event's decline.");
         var otherPlayer = Create(); otherPlayer.History.PlayerStats[0].PlayerId++;
