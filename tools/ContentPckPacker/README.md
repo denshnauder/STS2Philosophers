@@ -34,7 +34,7 @@ Exit codes:
 
 - `0`: fast PCK written. Before writing, every JSON file is parsed and the
   structural checks the Godot verifier applies are repeated here: the root
-  must be an object, every value must be a non-empty string, every key must be
+  must be an object, every value must be a string (only event option effect descriptions may be empty), every key must be
   non-empty, and `eng`/`zhs` localization files of the same name must carry
   the same keys. A violation fails the build instead of producing a broken PCK.
 - `3`: needs the Godot fallback (missing source/JSON, missing/stale SVG import
