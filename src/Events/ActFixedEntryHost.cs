@@ -14,6 +14,17 @@ internal static class ActFixedEntryHost
         if (run.CurrentActIndex is not (1 or 2)) return false;
         using (FixedEntryScope.Begin())
         {
+            // ENC-201: the Eastern fixed continuation has no WesternJourney.
+            // Claim its one act-two slot before the reviewed Western selectors.
+            EventModel? eastern = ActTwoPhilosophersGazePatch.TrySelectFixedNative(run);
+            if (eastern is not null
+                && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+                && shared is not null)
+            {
+                shared.PhilosophersGazeFixedEntryAct = run.CurrentActIndex + 1;
+                room = new EventRoom(eastern);
+                return true;
+            }
             EventModel? model = AugustinePromisePatch.TrySelectNative(run)
                 ?? TrySelectReviewedTurns(run) ?? TrySelectReviewedDefaults(run);
             model ??= run.CurrentActIndex == 1

@@ -14,6 +14,7 @@ public sealed partial class PhilosophersGaze : EventModel
     private const string LocalizationPrefix = "PHILOSOPHERS_GAZE.pages";
     private readonly PhilosophersGazeResolutionGate _resolutionGate = new();
     private Task? _completionSaveTask;
+    private PhilosophersGazePage _currentPage = PhilosophersGazePage.Initial;
     internal bool HasConfirmedCompletion { get; private set; }
 
     protected override void SetInitialEventState(bool isPreFinished)
@@ -22,28 +23,62 @@ public sealed partial class PhilosophersGaze : EventModel
         // Inventory/business facts also close legacy checkpoints saved mid-resolution.
         if (isPreFinished || Owner is { } owner && PhilosophersGazeSaveRecovery.IsResolved(owner))
         {
+            _currentPage = PhilosophersGazePage.Initial;
+            SetFlowInProgress(false);
             SetEventFinished(L10NLookup($"{LocalizationPrefix}.RESTORED_RESOLVED.description"));
             return;
         }
+        if (Owner is { } flowOwner
+            && TryGetSavedFlowPage(flowOwner, out PhilosophersGazePage savedPage))
+        {
+            _currentPage = savedPage;
+            SetEventState(PageDescription(savedPage), BuildEastOptions(savedPage));
+            return;
+        }
+        if (Owner?.RunState is RunState staleRun
+            && PhilosophyRunStateService.TryGet(staleRun, out PhilosophyRunState? staleShared)
+            && staleShared?.PhilosophersGazeFlowInProgress == true)
+        {
+            // A page from the other act, or one with no renderable options, is
+            // not a resumable East page. Do not let it reopen the event.
+            SetFlowInProgress(false);
+        }
         if (Owner is { } ambiguousOwner && PhilosophersGazeSaveRecovery.HasAmbiguousResolution(ambiguousOwner))
         {
+            _currentPage = PhilosophersGazePage.Initial;
             SetEventState(L10NLookup($"{LocalizationPrefix}.RECOVERY_BLOCKED.description"),
                 [new EventOption(this, null, "ROUTE_EVENT.options.RECOVERING", Array.Empty<IHoverTip>())]);
             return;
         }
         base.SetInitialEventState(false);
+        _currentPage = GetCurrentActIndex(Owner) == 1
+            ? GetContinuationIntroPage() ?? PhilosophersGazePage.Initial
+            : PhilosophersGazePage.Initial;
     }
 
-    public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription =>
-        GetCurrentActIndex(Owner) == 1
-            ? PageDescription(PhilosophersGazePage.Continuation)
-            : base.InitialDescription;
+    public override MegaCrit.Sts2.Core.Localization.LocString InitialDescription
+    {
+        get
+        {
+            if (GetCurrentActIndex(Owner) != 1)
+            {
+                return base.InitialDescription;
+            }
+
+            return PageDescription(GetContinuationIntroPage() ?? PhilosophersGazePage.Continuation);
+        }
+    }
 
     protected override IReadOnlyList<EventOption> GenerateInitialOptions()
     {
-        return GetCurrentActIndex(Owner) == 1
-            ? GenerateContinuationOptions()
-            : GenerateActOneInitialOptions();
+        if (GetCurrentActIndex(Owner) != 1)
+        {
+            return GenerateActOneInitialOptions();
+        }
+
+        return GetContinuationIntroPage() is { } introPage
+            ? BuildEastOptions(introPage)
+            : GenerateContinuationOptions();
     }
 
     private IReadOnlyList<EventOption> GenerateActOneInitialOptions()
@@ -112,57 +147,15 @@ public sealed partial class PhilosophersGaze : EventModel
         return options;
     }
 
-    private Task ShowKongziViewpoints()
-    {
-        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Kongzi))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.KongziViewpoints),
-                [
-                    RouteRelicOption<KongziMuduo>(AcceptKongziMuduo, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Muduo),
-                    RouteRelicOption<KongziQingYuPei>(AcceptKongziQingYuPei, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.QingYuPei),
-                    Option(DeclineKongzi, PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
+    private Task ShowKongziViewpoints() => ShowEastPage(PhilosophersGazePage.KONGZI);
 
-        return Task.CompletedTask;
-    }
+    private Task ShowMoziViewpoints() => ShowEastPage(PhilosophersGazePage.MOZI);
 
-    private Task ShowMoziViewpoints()
-    {
-        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Mozi))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.MoziViewpoints),
-                [
-                    RouteRelicOption<MoziMoSeZhuJian>(AcceptMoziMoSeZhuJian, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
-                    RouteRelicOption<MoziShouChengTu>(AcceptMoziShouChengTu, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
-                    Option(DeclineMozi, PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task ShowLaoziViewpoints()
-    {
-        if (IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Laozi))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.LaoziViewpoints),
-                [
-                    RouteRelicOption<LaoziWuWeiShuJian>(AcceptLaoziWuWeiShuJian, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.WuWeiShuJian),
-                    RouteRelicOption<LaoziShuiYu>(AcceptLaoziShuiYu, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.ShuiYu),
-                    Option(DeclineLaozi, PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
-
-        return Task.CompletedTask;
-    }
+    private Task ShowLaoziViewpoints() => ShowEastPage(PhilosophersGazePage.LAOZI);
 
     private Task ShowActOneDeclineConfirmation()
     {
-        if (IsActOne())
+        if (IsActiveEventRoom() && IsActOne())
         {
             SetEventState(
                 PageDescription(PhilosophersGazePage.ActOneDeclineConfirm),
@@ -172,99 +165,22 @@ public sealed partial class PhilosophersGaze : EventModel
         return Task.CompletedTask;
     }
 
-    private Task ShowMengziViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.MengziXiongZhang))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.MengziViewpoints),
-                [
-                    RouteRelicOption<MengziXiongZhang>(AcceptMengziXiongZhang, PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.XiongZhang),
-                    Option(DeclineMengzi, PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
+    private Task ShowMengziViewpoints() => ShowEastPage(PhilosophersGazePage.MENGZI_INTRO);
 
-        return Task.CompletedTask;
-    }
+    private Task ShowXunziViewpoints() => ShowEastPage(PhilosophersGazePage.XUNZI_INTRO);
 
-    private Task ShowXunziViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.XunziShengMo))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.XunziViewpoints),
-                [
-                    RouteRelicOption<XunziShengMo>(AcceptXunziShengMo, PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.ShengMo),
-                    Option(DeclineXunzi, PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
+    private Task ShowQinGuliViewpoints() => ShowEastPage(PhilosophersGazePage.QIN_INTRO);
 
-        return Task.CompletedTask;
-    }
+    private Task ShowZhuangziViewpoints() => ShowEastPage(PhilosophersGazePage.ZHUANGZI_INTRO);
 
-    private Task ShowQinGuliViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.QinGuliShouChengXie))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.QinGuliViewpoints),
-                [
-                    RouteRelicOption<QinGuliShouChengXie>(AcceptQinGuliShouChengXie, PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.ShouChengXie),
-                    Option(DeclineQinGuli, PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
+    private Task ShowHuishiViewpoints() => ShowEastPage(PhilosophersGazePage.HUISHI_INTRO);
 
-        return Task.CompletedTask;
-    }
-
-    private Task ShowZhuangziViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.ZhuangziDaHu))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.ZhuangziViewpoints),
-                [
-                    RouteRelicOption<ZhuangziDaHu>(AcceptZhuangziDaHu, PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.DaHu),
-                    Option(DeclineZhuangzi, PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task ShowHuishiViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.HuishiLiWuChou))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.HuishiViewpoints),
-                [
-                    RouteRelicOption<HuishiLiWuChou>(AcceptHuishiLiWuChou, PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.LiWuChou),
-                    Option(DeclineHuishi, PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task ShowYangzhuViewpoints()
-    {
-        if (CanChooseContinuation(PhilosophersGazeContinuationOption.YangzhuQuanShengBi))
-        {
-            SetEventState(
-                PageDescription(PhilosophersGazePage.YangzhuViewpoints),
-                [
-                    RouteRelicOption<YangzhuQuanShengBi>(AcceptYangzhuQuanShengBi, PhilosophersGazePage.YangzhuViewpoints, PhilosophersGazeOption.QuanShengBi),
-                    Option(DeclineYangzhu, PhilosophersGazePage.YangzhuViewpoints, PhilosophersGazeOption.Decline),
-                ]);
-        }
-
-        return Task.CompletedTask;
-    }
+    private Task ShowYangzhuViewpoints() => ShowEastPage(PhilosophersGazePage.YANGZHU_INTRO);
 
     private Task ShowActTwoDeclineConfirmation()
     {
-        if (GetAvailableContinuationOptions() != PhilosophersGazeContinuationOption.None)
+        if (IsActiveEventRoom()
+            && GetAvailableContinuationOptions() != PhilosophersGazeContinuationOption.None)
         {
             SetEventState(
                 PageDescription(PhilosophersGazePage.ActTwoDeclineConfirm),
@@ -272,6 +188,192 @@ public sealed partial class PhilosophersGaze : EventModel
         }
 
         return Task.CompletedTask;
+    }
+
+    private async Task ShowEastPage(PhilosophersGazePage page)
+    {
+        if (!IsActiveEventRoom() || !CanShowEastPage(page))
+        {
+            Log.Info($"[STS2Philosophers] PhilosophersGaze ignored a stale or ineligible East page {page}.");
+            return;
+        }
+
+        List<EventOption> options = [];
+        foreach (PhilosophersGazeOption option in PhilosophersGazeFlowPolicy.GetOptions(page))
+        {
+            options.Add(Option(() => AdvanceEastPage(page, option), page, option));
+        }
+
+        _currentPage = page;
+        SetFlowInProgress(true, page);
+        SetEventState(PageDescription(page), options);
+        await PersistCurrentEventAsync();
+    }
+
+    private async Task AdvanceEastPage(PhilosophersGazePage page, PhilosophersGazeOption option)
+    {
+        // A rendered button survives navigation and room exit. The captured
+        // page, event room, and completion state must all still match before a
+        // click is allowed to write shared progress.
+        if (!IsActiveEventRoom() || _currentPage != page)
+        {
+            Log.Info($"[STS2Philosophers] PhilosophersGaze ignored a stale callback {page}.{option}.");
+            return;
+        }
+
+        if (!PhilosophersGazeFlowPolicy.TryGetTransition(page, option, out PhilosophersGazeTransition transition))
+        {
+            Log.Info($"[STS2Philosophers] PhilosophersGaze ignored an unknown transition {page}.{option}.");
+            return;
+        }
+
+        if (transition.IsNavigation)
+        {
+            await ShowEastPage(transition.Destination);
+            return;
+        }
+
+        await ApplyFinishEffect(page, transition);
+    }
+
+    private async Task ApplyFinishEffect(PhilosophersGazePage page, PhilosophersGazeTransition transition)
+    {
+        switch (transition.Effect)
+        {
+            case PhilosophersGazeEffect.ObtainKongziMuduo:
+                await ObtainActOneRelic<KongziMuduo>(transition.Destination, ThinkerProposalCatalog.KongziLi);
+                break;
+            case PhilosophersGazeEffect.ObtainKongziQingYuPei:
+                await ObtainActOneRelic<KongziQingYuPei>(transition.Destination, ThinkerProposalCatalog.KongziRen);
+                break;
+            case PhilosophersGazeEffect.ObtainMoziMoSeZhuJian:
+                await ObtainActOneRelic<MoziMoSeZhuJian>(transition.Destination, ThinkerProposalCatalog.MoziJianAi);
+                break;
+            case PhilosophersGazeEffect.ObtainMoziShouChengTu:
+                await ObtainActOneRelic<MoziShouChengTu>(transition.Destination, ThinkerProposalCatalog.MoziFeiGong);
+                break;
+            case PhilosophersGazeEffect.ObtainLaoziWuWeiShuJian:
+                await ObtainActOneRelic<LaoziWuWeiShuJian>(transition.Destination, ThinkerProposalCatalog.LaoziWuWei);
+                break;
+            case PhilosophersGazeEffect.ObtainLaoziShuiYu:
+                await ObtainActOneRelic<LaoziShuiYu>(transition.Destination, ThinkerProposalCatalog.LaoziRuoShui);
+                break;
+            case PhilosophersGazeEffect.ReplaceWithMengziXiongZhang:
+                await AcceptMengziXiongZhang();
+                break;
+            case PhilosophersGazeEffect.ReplaceWithXunziShengMo:
+                await AcceptXunziShengMo();
+                break;
+            case PhilosophersGazeEffect.ReplaceWithQinGuliShouChengXie:
+                await AcceptQinGuliShouChengXie();
+                break;
+            case PhilosophersGazeEffect.ReplaceWithHuishiLiWuChou:
+                await AcceptHuishiLiWuChou();
+                break;
+            case PhilosophersGazeEffect.ReplaceWithZhuangziDaHu:
+                await AcceptZhuangziDaHu();
+                break;
+            case PhilosophersGazeEffect.ReplaceWithYangzhuQuanShengBi:
+                await AcceptYangzhuQuanShengBi();
+                break;
+            case PhilosophersGazeEffect.RecordContinuationDecline:
+                await DeclineForPage(page);
+                break;
+            default:
+                await FinishActOneWithoutRelic(transition.Destination);
+                break;
+        }
+    }
+
+    private Task DeclineForPage(PhilosophersGazePage page) => page switch
+    {
+        PhilosophersGazePage.MENGZI_RESULT_WHO or PhilosophersGazePage.MENGZI_RESULT_FISH => DeclineMengzi(),
+        PhilosophersGazePage.XUNZI_RESULT_EDGE or PhilosophersGazePage.XUNZI_RESULT_LINE => DeclineXunzi(),
+        PhilosophersGazePage.QIN_RESULT_PUSH or PhilosophersGazePage.QIN_RESULT_MAP => DeclineQinGuli(),
+        PhilosophersGazePage.HUISHI_RESULT_HAND => DeclineHuishi(),
+        PhilosophersGazePage.ZHUANGZI_RESULT_WALK => DeclineZhuangzi(),
+        PhilosophersGazePage.YANGZHU_RESULT_COIL => DeclineYangzhu(),
+        PhilosophersGazePage.ActTwoDeclineConfirm => ConfirmActTwoDecline(),
+        _ => FinishActOneWithoutRelic(PhilosophersGazePage.Decline),
+    };
+
+    private bool CanShowEastPage(PhilosophersGazePage page) => page switch
+    {
+        PhilosophersGazePage.KONGZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Kongzi),
+        PhilosophersGazePage.MOZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Mozi),
+        PhilosophersGazePage.LAOZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Laozi),
+        PhilosophersGazePage.MENGZI_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.MengziXiongZhang),
+        PhilosophersGazePage.XUNZI_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.XunziShengMo),
+        PhilosophersGazePage.QIN_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.QinGuliShouChengXie),
+        PhilosophersGazePage.HUISHI_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.HuishiLiWuChou),
+        PhilosophersGazePage.ZHUANGZI_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.ZhuangziDaHu),
+        PhilosophersGazePage.YANGZHU_INTRO => CanChooseContinuation(
+            PhilosophersGazeContinuationOption.YangzhuQuanShengBi),
+        _ => true,
+    };
+
+    private IReadOnlyList<EventOption> BuildEastOptions(PhilosophersGazePage page)
+    {
+        List<EventOption> options = [];
+        foreach (PhilosophersGazeOption option in PhilosophersGazeFlowPolicy.GetOptions(page))
+        {
+            options.Add(Option(() => AdvanceEastPage(page, option), page, option));
+        }
+
+        return options;
+    }
+
+    private void SetFlowInProgress(bool value, PhilosophersGazePage? page = null)
+    {
+        if (Owner?.RunState is RunState run
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared is not null)
+        {
+            shared.PhilosophersGazeFlowInProgress = value;
+            shared.PhilosophersGazeFlowPage = value && page is { } current
+                ? current.ToString()
+                : null;
+        }
+    }
+
+    private bool TryGetSavedFlowPage(Player owner, out PhilosophersGazePage page)
+    {
+        page = default;
+        return owner.RunState is RunState run
+            && PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            && shared?.PhilosophersGazeFlowInProgress == true
+            && !string.IsNullOrWhiteSpace(shared.PhilosophersGazeFlowPage)
+            && Enum.TryParse(shared.PhilosophersGazeFlowPage, out page)
+            && IsPageValidForCurrentAct(page)
+            && PhilosophersGazeFlowPolicy.GetOptions(page).Length > 0;
+    }
+
+    private void FinishEvent(MegaCrit.Sts2.Core.Localization.LocString description)
+    {
+        SetFlowInProgress(false);
+        SetEventFinished(description);
+    }
+
+    private async Task PersistCurrentEventAsync()
+    {
+        if (Owner?.RunState is not RunState run
+            || run.CurrentRoom is not EventRoom room
+            || !ReferenceEquals(room.LocalMutableEvent, this)
+            || !PhilosophyRunStateService.TryGet(run, out PhilosophyRunState? shared)
+            || shared is null)
+        {
+            return;
+        }
+
+        if (!await RouteEventMapBoundary.PersistEventAsync(run, shared, room))
+        {
+            Log.Error("[STS2Philosophers] PhilosophersGaze could not persist the in-progress East page.");
+        }
     }
 
     private Task AcceptKongziMuduo() => ObtainActOneRelic<KongziMuduo>(
@@ -300,9 +402,9 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private Task DeclineKongzi() => FinishActOneWithoutRelic(PhilosophersGazePage.KongziDecline);
 
-    private Task DeclineMozi() => FinishActOneWithoutRelic(PhilosophersGazePage.MoziDecline);
+    private Task DeclineMozi() => FinishActOneWithoutRelic(PhilosophersGazePage.MOZI_DECLINE);
 
-    private Task DeclineLaozi() => FinishActOneWithoutRelic(PhilosophersGazePage.LaoziDecline);
+    private Task DeclineLaozi() => FinishActOneWithoutRelic(PhilosophersGazePage.LAOZI_DECLINE);
 
     private Task ConfirmActOneDecline() => FinishActOneWithoutRelic(PhilosophersGazePage.Decline);
 
@@ -367,6 +469,12 @@ public sealed partial class PhilosophersGaze : EventModel
         string proposalId)
         where TRelic : RelicModel
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -396,7 +504,7 @@ public sealed partial class PhilosophersGaze : EventModel
                     proposal);
             }
 
-            SetEventFinished(PageDescription(resultPage));
+            FinishEvent(PageDescription(resultPage));
             await SaveRunAfterResolution();
         }
         finally
@@ -407,6 +515,12 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private async Task ReplaceWithMengziXiongZhang()
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -452,7 +566,7 @@ public sealed partial class PhilosophersGaze : EventModel
                 return;
             }
 
-            SetEventFinished(PageDescription(PhilosophersGazePage.MengziXiongZhang));
+            FinishEvent(PageDescription(PhilosophersGazePage.MengziXiongZhang));
             await SaveRunAfterResolution();
         }
         finally
@@ -463,6 +577,12 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private async Task ReplaceWithXunziShengMo()
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -502,7 +622,7 @@ public sealed partial class PhilosophersGaze : EventModel
                 return;
             }
 
-            SetEventFinished(PageDescription(PhilosophersGazePage.XunziShengMo));
+            FinishEvent(PageDescription(PhilosophersGazePage.XunziShengMo));
             await SaveRunAfterResolution();
         }
         finally
@@ -519,6 +639,12 @@ public sealed partial class PhilosophersGaze : EventModel
         where TOriginal : RelicModel
         where TReplacement : RelicModel
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -558,7 +684,7 @@ public sealed partial class PhilosophersGaze : EventModel
                 return;
             }
 
-            SetEventFinished(PageDescription(resultPage));
+            FinishEvent(PageDescription(resultPage));
             await SaveRunAfterResolution();
         }
         finally
@@ -571,6 +697,12 @@ public sealed partial class PhilosophersGaze : EventModel
         PhilosophersGazeContinuationOption choice,
         PhilosophersGazePage resultPage)
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -579,7 +711,7 @@ public sealed partial class PhilosophersGaze : EventModel
         try
         {
             Player? owner = Owner;
-            PhilosophersGazeContinuationOption availableOptions = GetAvailableContinuationOptions();
+            PhilosophersGazeContinuationOption availableOptions = GetSelectableContinuationOptions();
             if (owner is null
                 || choice == PhilosophersGazeContinuationOption.None
                 || (availableOptions & choice) == 0)
@@ -589,7 +721,7 @@ public sealed partial class PhilosophersGaze : EventModel
             }
 
             RecordContinuation(owner);
-            SetEventFinished(PageDescription(resultPage));
+            FinishEvent(PageDescription(resultPage));
             await SaveRunAfterResolution();
         }
         finally
@@ -600,6 +732,12 @@ public sealed partial class PhilosophersGaze : EventModel
 
     private async Task FinishActOneWithoutRelic(PhilosophersGazePage resultPage)
     {
+        if (!IsActiveEventRoom())
+        {
+            Log.Info("[STS2Philosophers] PhilosophersGaze ignored a stale resolution callback outside its active event room.");
+            return;
+        }
+
         if (!TryBeginResolution())
         {
             return;
@@ -613,7 +751,7 @@ public sealed partial class PhilosophersGaze : EventModel
                 return;
             }
 
-            SetEventFinished(PageDescription(resultPage));
+            FinishEvent(PageDescription(resultPage));
             await SaveRunAfterResolution();
         }
         finally
@@ -660,19 +798,105 @@ public sealed partial class PhilosophersGaze : EventModel
     private bool CanChooseContinuation(PhilosophersGazeContinuationOption choice)
     {
         Player? owner = Owner;
-        return owner is not null
-            && !IsFinished
-            && GetCurrentActIndex(owner) == 1
+        if (owner is null || IsFinished)
+        {
+            return false;
+        }
+
+        return GetCurrentActIndex(owner) == 1
             && PhilosophersGazeContinuationPolicy.CanGrant(
                 choice,
                 GetOwnership(owner),
                 HasContinuationBeenRecorded(owner));
     }
 
+    private bool IsPageValidForCurrentAct(PhilosophersGazePage page)
+    {
+        int actIndex = GetCurrentActIndex(Owner);
+        return actIndex switch
+        {
+            0 => page is PhilosophersGazePage.KONGZI
+                or PhilosophersGazePage.MOZI
+                or PhilosophersGazePage.LAOZI
+                or PhilosophersGazePage.MOZI_JIANAI
+                or PhilosophersGazePage.MOZI_FEIGONG
+                or PhilosophersGazePage.LAOZI_STILL
+                or PhilosophersGazePage.LAOZI_LOW
+                or PhilosophersGazePage.ActOneDeclineConfirm,
+            1 => page is PhilosophersGazePage.Continuation
+                or PhilosophersGazePage.XUNZI_INTRO
+                or PhilosophersGazePage.MENGZI_INTRO
+                or PhilosophersGazePage.HUISHI_INTRO
+                or PhilosophersGazePage.QIN_INTRO
+                or PhilosophersGazePage.ZHUANGZI_INTRO
+                or PhilosophersGazePage.YANGZHU_INTRO
+                or PhilosophersGazePage.XUNZI_RESULT_EDGE
+                or PhilosophersGazePage.XUNZI_RESULT_LINE
+                or PhilosophersGazePage.MENGZI_RESULT_WHO
+                or PhilosophersGazePage.MENGZI_RESULT_FISH
+                or PhilosophersGazePage.HUISHI_RESULT_BAMBOO
+                or PhilosophersGazePage.HUISHI_RESULT_EAR
+                or PhilosophersGazePage.QIN_RESULT_PUSH
+                or PhilosophersGazePage.QIN_RESULT_MAP
+                or PhilosophersGazePage.ZHUANGZI_RESULT_LIFT
+                or PhilosophersGazePage.ZHUANGZI_RESULT_ROPE
+                or PhilosophersGazePage.YANGZHU_RESULT_OUTSIDE
+                or PhilosophersGazePage.YANGZHU_RESULT_INSIDE
+                or PhilosophersGazePage.HUISHI_RESULT_FIST
+                or PhilosophersGazePage.HUISHI_RESULT_HAND
+                or PhilosophersGazePage.ZHUANGZI_RESULT_BORROW
+                or PhilosophersGazePage.ZHUANGZI_RESULT_WALK
+                or PhilosophersGazePage.YANGZHU_RESULT_TAKE
+                or PhilosophersGazePage.YANGZHU_RESULT_COIL
+                or PhilosophersGazePage.ActTwoDeclineConfirm,
+            _ => false,
+        };
+    }
+
+    private bool IsActiveEventRoom()
+    {
+        return !IsFinished
+            && Owner?.RunState is RunState run
+            && run.CurrentRoom is EventRoom room
+            && ReferenceEquals(room.LocalMutableEvent, this);
+    }
+
+    private PhilosophersGazePage? GetContinuationIntroPage()
+    {
+        return GetAvailableContinuationOptions() switch
+        {
+            PhilosophersGazeContinuationOption.MengziXiongZhang => PhilosophersGazePage.MENGZI_INTRO,
+            PhilosophersGazeContinuationOption.XunziShengMo => PhilosophersGazePage.XUNZI_INTRO,
+            PhilosophersGazeContinuationOption.QinGuliShouChengXie => PhilosophersGazePage.QIN_INTRO,
+            PhilosophersGazeContinuationOption.HuishiLiWuChou => PhilosophersGazePage.HUISHI_INTRO,
+            PhilosophersGazeContinuationOption.ZhuangziDaHu => PhilosophersGazePage.ZHUANGZI_INTRO,
+            PhilosophersGazeContinuationOption.YangzhuQuanShengBi => PhilosophersGazePage.YANGZHU_INTRO,
+            _ => null,
+        };
+    }
+
     private PhilosophersGazeContinuationOption GetAvailableContinuationOptions()
     {
         Player? owner = Owner;
         if (owner is null || GetCurrentActIndex(owner) != 1)
+        {
+            return PhilosophersGazeContinuationOption.None;
+        }
+
+        return PhilosophersGazeContinuationPolicy.GetAvailableOptions(
+            GetOwnership(owner),
+            HasContinuationBeenRecorded(owner));
+    }
+
+    private PhilosophersGazeContinuationOption GetSelectableContinuationOptions()
+    {
+        Player? owner = Owner;
+        if (owner is null || IsFinished)
+        {
+            return PhilosophersGazeContinuationOption.None;
+        }
+
+        if (GetCurrentActIndex(owner) != 1)
         {
             return PhilosophersGazeContinuationOption.None;
         }

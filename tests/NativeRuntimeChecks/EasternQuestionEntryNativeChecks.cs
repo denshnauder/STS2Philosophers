@@ -63,6 +63,9 @@ internal static class EasternQuestionEntryNativeChecks
                 EventModel chosen = run.Act.PullNextEvent(run);
                 Check(chosen is PhilosophersGaze && run.VisitedEventIds.SetEquals([chosen.Id]) && !run.VisitedEventIds.Contains(original.Id),
                     starter.Name + ": actual native PullNextEvent calls the Eastern carrier and permits act-two Gaze despite the opening's visited ID.");
+                Check((int)shared.GetType().GetProperty("PhilosophersGazeFixedEntryAct", Flags)!.GetValue(shared)! == 2,
+                    starter.Name + ": the first Eastern entry claims the act-two fixed slot.");
+                shared.GetType().GetProperty("PhilosophersGazeFixedEntryAct", Flags)!.SetValue(shared, 0);
                 Check(Encode(shared) == before && JsonSerializer.Serialize(run.Rng.ToSerializable()) == rng
                     && (int)pool.GetType().GetField("eventsVisited")!.GetValue(pool)! == queue,
                     starter.Name + ": native continuation selection consumes no Western slot, new RNG or additional event queue item.");
@@ -74,7 +77,10 @@ internal static class EasternQuestionEntryNativeChecks
                     starter.Name + ": the actual durable resolved flag prevents a second continuation.");
             }
             CheckHanFeiHook();
-            Console.WriteLine("Eastern question-entry checks passed: all six real starter relic hooks through native PullNextEvent, act-two shared-ID/visited behavior, map/combat rejection, unchanged Western state/RNG/queue, native room identity and actual resolved-flag prevention; Xunzi public Han Fei hook. No rendered UI, full run replay or player-save access.");
+            CheckWuWeiTemporaryDexterity().GetAwaiter().GetResult();
+            CheckQinBlockTiming().GetAwaiter().GetResult();
+            CheckActTwoFixedEntry();
+            Console.WriteLine("Eastern question-entry checks passed: all six real starter relic hooks through native PullNextEvent, act-two shared-ID/visited behavior, map/combat rejection, unchanged Western state/RNG/queue, native room identity and actual resolved-flag prevention; the ancient-boundary fixed entry opens the correct successor page without a question, spends its slot once and survives the codec; Wu Wei applies temporary Dexterity and Qin gains no Block at turn start; Xunzi public Han Fei hook. No rendered UI, full run replay or player-save access.");
             return Task.CompletedTask;
         }
         finally
@@ -103,4 +109,81 @@ internal static class EasternQuestionEntryNativeChecks
         Set(run, "_currentRooms", new List<AbstractRoom>());
         Check(ReferenceEquals(carrier.ModifyNextEvent(original), original), "The visited Han Fei identity prevents repeated selection through Xunzi's actual hook.");
     }
+
+    private static async Task CheckWuWeiTemporaryDexterity()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Flags)!
+            .Invoke(null, [typeof(HeraclitusLyre), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ModelDb.Inject(typeof(LaoziWuWeiShuJian));
+        ModelDb.Inject(typeof(LaoziWuWeiTemporaryDexterityPower));
+        ModelDb.Inject(typeof(MegaCrit.Sts2.Core.Models.Powers.DexterityPower));
+        var relic = (LaoziWuWeiShuJian)ModelDb.GetById<RelicModel>(ModelDb.GetId<LaoziWuWeiShuJian>()).ToMutable();
+        relic.Owner = fixture.Player;
+        ((List<RelicModel>)fixture.Player.Relics).Add(relic);
+        await fixture.Begin();
+        typeof(LaoziWuWeiShuJian).GetProperty("PendingRewardTurn", Flags)!.SetValue(relic, fixture.PlayerState.TurnNumber);
+        await relic.AfterPlayerTurnStart(null!, fixture.Player);
+        var power = fixture.Player.Creature.Powers.OfType<LaoziWuWeiTemporaryDexterityPower>().SingleOrDefault();
+        Check(power is { Amount: 2 } && power.GetType().BaseType == typeof(MegaCrit.Sts2.Core.Models.Powers.TemporaryDexterityPower),
+            "Wu Wei's next-turn reward must apply two temporary Dexterity, not permanent Dexterity.");
+    }
+
+    private static async Task CheckQinBlockTiming()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Flags)!
+            .Invoke(null, [typeof(HeraclitusLyre), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        ModelDb.Inject(typeof(QinGuliShouChengXie));
+        var relic = (QinGuliShouChengXie)ModelDb.GetById<RelicModel>(ModelDb.GetId<QinGuliShouChengXie>()).ToMutable();
+        relic.Owner = fixture.Player;
+        ((List<RelicModel>)fixture.Player.Relics).Add(relic);
+        await fixture.Begin();
+        int before = fixture.Player.Creature.Block;
+        await relic.AfterPlayerTurnStartLate(null!, fixture.Player);
+        Check(fixture.Player.Creature.Block == before,
+            "City Defense Machinery must not grant Block at turn start; its Block belongs to the owner's turn end.");
+    }
+
+private static void CheckActTwoFixedEntry()
+    {
+        var tuple = (ITuple)typeof(NativeQuestionNodeChecks).GetMethod("Fixture", Flags)!
+            .Invoke(null, [typeof(HeraclitusLyre), 1])!;
+        var fixture = (NativeRuntimeFixture)tuple[0]!;
+        var run = (RunState)tuple[1]!;
+        ModelDb.Inject(typeof(PhilosophersGaze));
+        ModelDb.Inject(typeof(KongziMuduo));
+        RelicModel carrier = ModelDb.GetById<RelicModel>(ModelDb.GetId<KongziMuduo>()).ToMutable();
+        carrier.Owner = fixture.Player;
+        ((List<RelicModel>)fixture.Player.Relics).Clear();
+        ((List<RelicModel>)fixture.Player.Relics).Add(carrier);
+        object shared = Activator.CreateInstance(T("PhilosophyRunState"), true)!;
+        Call("PhilosophyRunStateService", "Restore", run, shared);
+        Call("PhilosophyRunStateService", "MarkResolved", run);
+
+        object?[] first = [run, null];
+        Check((bool)Call("ActFixedEntryHost", "TryPrepare", first)!,
+            "A Kongzi root relic must open the act-two fixed entry after the ancient without a Western journey.");
+        var room = (EventRoom)first[1]!;
+        Check(room.CanonicalEvent is PhilosophersGaze,
+            "The act-two Eastern fixed entry must open PhilosophersGaze, got " + room.CanonicalEvent.GetType().Name + ".");
+        Check((int)shared.GetType().GetProperty("PhilosophersGazeFixedEntryAct", Flags)!.GetValue(shared)! == 2,
+            "The Eastern fixed entry must record that act two's continuation slot was spent.");
+        object decoded = Call("PhilosophyRunStateCodec", "Decode", Encode(shared))!;
+        Check((int)decoded.GetType().GetProperty("PhilosophersGazeFixedEntryAct", Flags)!.GetValue(decoded)! == 2,
+            "The spent act-two fixed slot must survive a save/load codec round-trip.");
+
+        EventModel local = room.CanonicalEvent.ToMutable();
+        Set(local, "Owner", fixture.Player);
+        typeof(PhilosophersGaze).GetMethod("SetInitialEventState", Flags)!.Invoke(local, [false]);
+        Check(local.InitialDescription.LocEntryKey.EndsWith(".XUNZI_INTRO.description", StringComparison.Ordinal)
+              && local.CurrentOptions.Count == 2
+              && local.CurrentOptions.All(option => option.HistoryName.LocEntryKey.Contains("XUNZI_INTRO")),
+            "The fixed entry must resume directly at Xunzi's introduction, not the old continuation menu.");
+
+        object?[] second = [run, null];
+        Check(!(bool)Call("ActFixedEntryHost", "TryPrepare", second)!,
+            "The same act-two boundary must not present the Eastern continuation a second time.");
+    }
+
 }

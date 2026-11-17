@@ -71,6 +71,20 @@ PY
 expect_status 6 "$tmp/empty-value" "$tmp/empty-value.pck" "$tmp/empty-value.log" "localization value must be non-empty"
 grep -q "Localization key and value must be non-empty" "$tmp/empty-value.log" || fail "empty-value build did not name the non-empty check"
 
+# An optional effect is not permission to omit a title or a page body.
+for required_key in PHILOSOPHERS_GAZE.pages.KONGZI.options.KONGZI_LI.title PHILOSOPHERS_GAZE.pages.KONGZI.description; do
+  cp -R "$repo_dir/content/." "$tmp/required-text"
+  python3 - "$tmp/required-text/STS2Philosophers/localization/eng/events.json" "$required_key" <<'PYCHECK'
+import json, sys
+path, key = sys.argv[1:]
+data = json.load(open(path, encoding="utf-8"))
+data[key] = ""
+json.dump(data, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PYCHECK
+  expect_status 6 "$tmp/required-text" "$tmp/required-text.pck" "$tmp/required-text.log" "required event text: $required_key"
+  rm -rf "$tmp/required-text"
+done
+
 cp -R "$repo_dir/content/." "$tmp/key-parity"
 python3 - "$tmp/key-parity/STS2Philosophers/localization/eng/relics.json" "$tmp/key-parity/STS2Philosophers/localization/zhs/relics.json" <<'PY'
 import json, sys

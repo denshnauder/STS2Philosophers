@@ -161,8 +161,12 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
 
     private static void CheckHistory()
     {
-        foreach (string suffix in new[] { "ACT_ONE_DECLINE_CONFIRM.options.CONFIRM", "KONGZI_VIEWPOINTS.options.DECLINE",
-            "MOZI_VIEWPOINTS.options.DECLINE", "LAOZI_VIEWPOINTS.options.DECLINE", "WESTERN.options.DECLINE" })
+        foreach (string suffix in new[] { "ACT_ONE_DECLINE_CONFIRM.options.CONFIRM", "KONGZI.options.DECLINE",
+            "MOZI.options.DECLINE", "LAOZI.options.DECLINE",
+            "KONGZI_VIEWPOINTS.options.DECLINE", "MOZI_VIEWPOINTS.options.DECLINE",
+            "LAOZI_VIEWPOINTS.options.DECLINE", "MOZI_JIANAI.options.LEAVE",
+            "MOZI_FEIGONG.options.LEAVE", "LAOZI_STILL.options.LEAVE", "LAOZI_LOW.options.LEAVE",
+            "WESTERN.options.DECLINE" })
         {
             var f = Create(); AddChoice(f, $"PHILOSOPHERS_GAZE.pages.{suffix}.title"); Import(f);
             Check(Resolved(f) && Recover() is { IsPreFinished: true }, "Only an actual terminal first-act decline closes a rewardless old invitation.");
@@ -174,6 +178,56 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
             Check(!Resolved(f) && Recover() is { IsPreFinished: false },
                 "Navigation and an asynchronous accept-click without an actual grant never prove completion.");
         }
+        var inProgress = Create();
+        Set(inProgress.Run, "_currentActIndex", 1);
+        ModelDb.Inject(typeof(KongziMuduo));
+        RelicModel muduo = ModelDb.GetById<RelicModel>(ModelDb.GetId<KongziMuduo>()).ToMutable();
+        muduo.Owner = inProgress.Native.Player;
+        ((List<RelicModel>)inProgress.Native.Player.Relics).Add(muduo);
+        Set(inProgress.Shared, "PhilosophersGazeFlowInProgress", true);
+        Set(inProgress.Shared, "PhilosophersGazeFlowPage", "XUNZI_INTRO");
+        AddChoice(inProgress, "PHILOSOPHERS_GAZE.pages.KONGZI.options.KONGZI_LI.title");
+        Import(inProgress);
+        Check(!Resolved(inProgress),
+            "A persisted act-two mid-flow page with its root relic stays open instead of being mistaken for a completed legacy grant.");
+        EventModel restoredFlow = ModelDb.Event<PhilosophersGaze>().ToMutable();
+        Set(restoredFlow, "Owner", inProgress.Native.Player);
+        typeof(PhilosophersGaze).GetMethod("SetInitialEventState", Methods)!.Invoke(restoredFlow, [false]);
+        Check(!restoredFlow.IsFinished && restoredFlow.CurrentOptions.Count == 2
+              && restoredFlow.CurrentOptions.All(option => option.HistoryName.LocEntryKey.Contains("XUNZI_INTRO")),
+            "A mid-flow save restores the exact East page instead of reopening the root invitation.");
+
+        var staleGrant = Create();
+        Set(staleGrant.Run, "_currentActIndex", 0);
+        ModelDb.Inject(typeof(KongziMuduo));
+        RelicModel staleMuduo = ModelDb.GetById<RelicModel>(ModelDb.GetId<KongziMuduo>()).ToMutable();
+        staleMuduo.Owner = staleGrant.Native.Player;
+        ((List<RelicModel>)staleGrant.Native.Player.Relics).Add(staleMuduo);
+        Set(staleGrant.Shared, "PhilosophersGazeFlowInProgress", true);
+        Set(staleGrant.Shared, "PhilosophersGazeFlowPage", "KONGZI");
+        Import(staleGrant);
+        Check(Resolved(staleGrant),
+            "A stale first-act page marker cannot override the root relic already granted by the event.");
+        EventModel staleGrantFlow = ModelDb.Event<PhilosophersGaze>().ToMutable();
+        Set(staleGrantFlow, "Owner", staleGrant.Native.Player);
+        typeof(PhilosophersGaze).GetMethod("SetInitialEventState", Methods)!.Invoke(staleGrantFlow, [false]);
+        Check(staleGrantFlow.IsFinished,
+            "A stale first-act page marker must not reopen the event after its root relic was granted.");
+
+        var wrongAct = Create();
+        Set(wrongAct.Shared, "PhilosophersGazeFlowInProgress", true);
+        Set(wrongAct.Shared, "PhilosophersGazeFlowPage", "XUNZI_INTRO");
+        Import(wrongAct);
+        EventModel wrongActFlow = ModelDb.Event<PhilosophersGaze>().ToMutable();
+        Set(wrongActFlow, "Owner", wrongAct.Native.Player);
+        typeof(PhilosophersGaze).GetMethod("SetInitialEventState", Methods)!.Invoke(wrongActFlow, [false]);
+        Check(!wrongActFlow.IsFinished
+              && !wrongActFlow.CurrentOptions.Any(option => option.HistoryName.LocEntryKey.Contains("XUNZI_INTRO"))
+              && !(bool)Get(CurrentShared(wrongAct), "PhilosophersGazeFlowInProgress"),
+            "A first-act save cannot resume a second-act successor page; the stale marker is cleared instead of reopening it. flag="
+            + Get(CurrentShared(wrongAct), "PhilosophersGazeFlowInProgress") + " page=" + Get(CurrentShared(wrongAct), "PhilosophersGazeFlowPage")
+            + " options=" + string.Join(",", wrongActFlow.CurrentOptions.Select(option => option.HistoryName.LocEntryKey)));
+
         var foreign = Create(); AddChoice(foreign, "PHILOSOPHERS_GAZE.pages.WESTERN.options.DECLINE.title", "other_mod"); Import(foreign);
         Check(!Resolved(foreign), "A different localization table cannot impersonate this event's decline.");
         var otherPlayer = Create(); otherPlayer.History.PlayerStats[0].PlayerId++;
@@ -190,6 +244,52 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
             "Contradictory legacy clicks restore a locked page, preserving both the invitation and missing reward.");
         Check(!(bool)typeof(PhilosophersGaze).GetMethod("TryBeginResolution", Methods)!.Invoke(blocked, null)!,
             "An obsolete callback cannot bypass the contradictory-history recovery lock.");
+    }
+
+    private static async Task CheckStaleCallbacks()
+    {
+        var f = Create();
+        Import(f);
+        object shared = CurrentShared(f);
+        var room = new EventRoom(ModelDb.Event<PhilosophersGaze>());
+        Set(f.Run, "_currentRooms", new List<AbstractRoom> { room });
+        EventModel local = room.CanonicalEvent.ToMutable();
+        Set(local, "Owner", f.Native.Player);
+        object sync = RuntimeHelpers.GetUninitializedObject(typeof(RunManager).GetProperty("EventSynchronizer")!.PropertyType);
+        Set(sync, "_events", new List<EventModel> { local });
+        Set(sync, "_playerCollection", f.Run);
+        Set(sync, "_localPlayerId", f.Native.Player.NetId);
+        Set(sync, "_pendingOptionTasks", new List<Task>());
+        Set(RunManager.Instance, "EventSynchronizer", sync);
+        Set(shared, "PhilosophersGazeFlowInProgress", true);
+        Set(shared, "PhilosophersGazeFlowPage", "XUNZI_INTRO");
+        Set(local, "_currentPage", Enum.Parse(T("PhilosophersGazePage"), "XUNZI_INTRO"));
+        MethodInfo advance = typeof(PhilosophersGaze).GetMethod("AdvanceEastPage", Methods)!;
+        object edge = Enum.Parse(T("PhilosophersGazeOption"), "XunziEdge");
+        object page = Enum.Parse(T("PhilosophersGazePage"), "XUNZI_INTRO");
+
+        // A page other than the one that rendered the button is stale even while
+        // the event room is still active.
+        Set(local, "_currentPage", Enum.Parse(T("PhilosophersGazePage"), "MENGZI_INTRO"));
+        await (Task)advance.Invoke(local, [page, edge])!;
+        Check((string)Get(shared, "PhilosophersGazeFlowPage") == "XUNZI_INTRO",
+            "A callback from a superseded East page must not write the shared page marker.");
+
+        // Leaving the room without finishing also invalidates the rendered button.
+        Set(local, "_currentPage", page);
+        Set(f.Run, "_currentRooms", new List<AbstractRoom>());
+        await (Task)advance.Invoke(local, [page, edge])!;
+        Check((string)Get(shared, "PhilosophersGazeFlowPage") == "XUNZI_INTRO",
+            "A callback from an event room that has been left must not write shared progress.");
+
+        // A finished event is terminal even if its old room object still points at it.
+        Set(f.Run, "_currentRooms", new List<AbstractRoom> { room });
+        typeof(PhilosophersGaze).GetMethod("FinishEvent", Methods)!.Invoke(local,
+            [new LocString("events", "PHILOSOPHERS_GAZE.pages.XUNZI_RESULT_EDGE.description")]);
+        Set(shared, "PhilosophersGazeFlowPage", "XUNZI_INTRO");
+        await (Task)advance.Invoke(local, [page, edge])!;
+        Check(local.IsFinished && (string)Get(shared, "PhilosophersGazeFlowPage") == "XUNZI_INTRO",
+            "A callback from a finished event must not reopen or advance the shared page.");
     }
 
     private static void CheckGuards()
@@ -464,8 +564,8 @@ internal static class PhilosophersGazeSaveRecoveryNativeChecks
             typeof(RouteEventMapBoundaryNativeChecks).GetMethod("InitializeLocalization", Methods)!.Invoke(null, null);
             InitializeCharacterLocalization();
             Call("PhilosophyRunStateRitsuStore", "Initialize");
-            CheckOpenAndResolved(); CheckHistory(); CheckGuards(); CheckPatchBinding(); await CheckNativeHistoryTiming(); await CheckRealSaveAndRetry();
-            Console.WriteLine("ENC197 Gaze recovery native checks passed: native ToSave routing and in-memory writer/loadback with real Ritsu save hooks, closed completion confirmation and Proceed release, failed-write retry without grants, nonpersistent completion, legacy null-room identity/flag recovery, unchanged candidates, carrier/doctrine and exact decline history, native history-before-async-reward timing, ambiguous-click lock, real load-prefix binding and singleplayer/initial-node/foreign-room/malformed isolation; no rendered game or player-save access.");
+            CheckOpenAndResolved(); CheckHistory(); CheckStaleCallbacks(); CheckGuards(); CheckPatchBinding(); await CheckNativeHistoryTiming(); await CheckRealSaveAndRetry();
+            Console.WriteLine("ENC197 Gaze recovery native checks passed: native ToSave routing and in-memory writer/loadback with real Ritsu save hooks, closed completion confirmation and Proceed release, failed-write retry without grants, nonpersistent completion, legacy null-room identity/flag recovery, unchanged candidates, carrier/doctrine and exact decline history, native history-before-async-reward timing, stale page/room/finished callback guards, cross-act page rejection, stale grant-marker precedence, ambiguous-click lock, real load-prefix binding and singleplayer/initial-node/foreign-room/malformed isolation; no rendered game or player-save access.");
         }
         finally
         {

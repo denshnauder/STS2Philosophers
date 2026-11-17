@@ -153,7 +153,12 @@ int ValidateJson(string resourcePath, byte[] resourceBytes)
         {
             if (property.Value.ValueKind != JsonValueKind.String)
                 return RejectJson($"Localization value must be a string: {resourcePath}: {property.Name}");
-            if (property.Name.Length == 0 || property.Value.GetString()!.Length == 0)
+            // Native narrative options can intentionally omit their effect text.
+            // Titles, page bodies and every other localization value remain required.
+            bool optionalOptionEffect = resourcePath.EndsWith("/events.json", StringComparison.Ordinal)
+                && Regex.IsMatch(property.Name, @"^[A-Z0-9_]+\.pages\.[A-Z0-9_]+\.options\.[A-Z0-9_]+\.description$");
+            if (property.Name.Length == 0
+                || property.Value.GetString()!.Length == 0 && !optionalOptionEffect)
                 return RejectJson($"Localization key and value must be non-empty: {resourcePath}");
             keys.Add(property.Name);
         }

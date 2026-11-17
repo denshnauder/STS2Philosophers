@@ -758,16 +758,18 @@ Check(shouChengXieState.BeginPlayerTurn(2, out bool successfulDefense)
 Check(shouChengXieState.SampleEnemyIntents(2, attackingEnemyCount: 1, out preparedBlock)
       && preparedBlock == QinGuliShouChengXieState.BlockPerAttacker,
     "A single attacker must prepare exactly 4 Block.");
-Check(shouChengXieState.RecordEnemyHpLoss(unblockedDamage: 1)
-      && !shouChengXieState.RecordEnemyHpLoss(unblockedDamage: 2),
-    "Enemy HP loss must fail the active defense window only once.");
+Check(shouChengXieState.RecordOwnerHpLoss(unblockedDamage: 1)
+      && !shouChengXieState.RecordOwnerHpLoss(unblockedDamage: 2),
+    "Any owner HP loss must fail the active defense window only once.");
 Check(shouChengXieState.BeginPlayerTurn(3, out bool failedDefense)
       && !failedDefense,
-    "A defense window with enemy HP loss must not apply Weak.");
-Check(QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, true, 1)
-      && !QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, false, 1)
-      && !QinGuliShouChengXieDamagePolicy.IsEnemyHpLossToOwner(true, true, true, 0),
-    "City Defense Machinery must count only positive enemy HP loss to its owner.");
+    "A defense window with owner HP loss must not apply Weak.");
+Check(QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 1)
+      && QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 4)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(false, true, 1)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, false, 1)
+      && !QinGuliShouChengXieDamagePolicy.IsOwnerHpLoss(true, true, 0),
+    "The canvas's unqualified no-damage rule counts any positive HP loss to its owner.");
 shouChengXieState.Reset();
 Check(shouChengXieState == default,
     "Combat cleanup must clear City Defense Machinery state.");
@@ -1365,9 +1367,9 @@ PhilosophersGazeTransition initialLaozi = Transition(
 PhilosophersGazeTransition initialDecline = Transition(
     PhilosophersGazePage.Initial,
     PhilosophersGazeOption.Decline);
-Check(initialKongzi.Destination == PhilosophersGazePage.KongziViewpoints
-      && initialMozi.Destination == PhilosophersGazePage.MoziViewpoints
-      && initialLaozi.Destination == PhilosophersGazePage.LaoziViewpoints
+Check(initialKongzi.Destination == PhilosophersGazePage.KONGZI
+      && initialMozi.Destination == PhilosophersGazePage.MOZI
+      && initialLaozi.Destination == PhilosophersGazePage.LAOZI
       && initialDecline.Destination == PhilosophersGazePage.ActOneDeclineConfirm,
     "The act one flow must support Kongzi, Mozi, Laozi, and the refusal confirmation route before candidate filtering.");
 Check(new[] { initialKongzi, initialMozi, initialLaozi, initialDecline }.All(transition =>
@@ -1376,67 +1378,136 @@ Check(new[] { initialKongzi, initialMozi, initialLaozi, initialDecline }.All(tra
         && !transition.UsesNativeProceed),
     "Every act one home-page option must be navigation-only with zero relic side effects.");
 
-PhilosophersGazeTransition[] navigationTransitions =
+PhilosophersGazePage[] eastPages =
 [
-    initialKongzi,
-    initialMozi,
-    initialLaozi,
-    initialDecline,
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Mengzi),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Xunzi),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.QinGuli),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Huishi),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Zhuangzi),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Yangzhu),
-    Transition(PhilosophersGazePage.Continuation, PhilosophersGazeOption.Decline),
+    PhilosophersGazePage.KONGZI,
+    PhilosophersGazePage.MOZI,
+    PhilosophersGazePage.LAOZI,
+    PhilosophersGazePage.XUNZI_INTRO,
+    PhilosophersGazePage.MENGZI_INTRO,
+    PhilosophersGazePage.MOZI_JIANAI,
+    PhilosophersGazePage.MOZI_FEIGONG,
+    PhilosophersGazePage.LAOZI_STILL,
+    PhilosophersGazePage.LAOZI_LOW,
+    PhilosophersGazePage.XUNZI_RESULT_EDGE,
+    PhilosophersGazePage.XUNZI_RESULT_LINE,
+    PhilosophersGazePage.MENGZI_RESULT_WHO,
+    PhilosophersGazePage.MENGZI_RESULT_FISH,
+    PhilosophersGazePage.HUISHI_INTRO,
+    PhilosophersGazePage.QIN_INTRO,
+    PhilosophersGazePage.ZHUANGZI_INTRO,
+    PhilosophersGazePage.YANGZHU_INTRO,
+    PhilosophersGazePage.HUISHI_RESULT_BAMBOO,
+    PhilosophersGazePage.HUISHI_RESULT_EAR,
+    PhilosophersGazePage.QIN_RESULT_PUSH,
+    PhilosophersGazePage.QIN_RESULT_MAP,
+    PhilosophersGazePage.ZHUANGZI_RESULT_LIFT,
+    PhilosophersGazePage.ZHUANGZI_RESULT_ROPE,
+    PhilosophersGazePage.YANGZHU_RESULT_OUTSIDE,
+    PhilosophersGazePage.YANGZHU_RESULT_INSIDE,
+    PhilosophersGazePage.HUISHI_RESULT_FIST,
+    PhilosophersGazePage.HUISHI_RESULT_HAND,
+    PhilosophersGazePage.ZHUANGZI_RESULT_BORROW,
+    PhilosophersGazePage.ZHUANGZI_RESULT_WALK,
+    PhilosophersGazePage.YANGZHU_RESULT_TAKE,
+    PhilosophersGazePage.YANGZHU_RESULT_COIL,
 ];
-Check(navigationTransitions.All(transition =>
-        transition.IsNavigation && transition.Effect == PhilosophersGazeEffect.None),
-    "Intermediate philosopher and confirmation pages must be safe to lose on reload because navigation has no player side effects.");
+int eastOptionCount = 0;
+foreach (PhilosophersGazePage page in eastPages)
+{
+    foreach (PhilosophersGazeOption option in PhilosophersGazeFlowPolicy.GetOptions(page))
+    {
+        Transition(page, option);
+        eastOptionCount++;
+    }
+}
 
-PhilosophersGazeTransition[] actOneRelicResults =
-[
-    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Muduo),
-    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.QingYuPei),
-    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.MoSeZhuJian),
-    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.ShouChengTu),
-    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.WuWeiShuJian),
-    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.ShuiYu),
-];
-Check(actOneRelicResults.Select(transition => transition.Effect).Distinct().Count() == 6,
-    "Kongzi, Mozi, and Laozi viewpoint pages must expose six distinct mutually exclusive root effects.");
+Check(eastPages.Length == 31, "The final East flow must contain exactly 31 pages.");
+Check(eastOptionCount == 59, "The final East flow must contain exactly 59 page options.");
 
-PhilosophersGazeTransition[] allResultTransitions =
+PhilosophersGazeTransition[] rootRelicTransitions =
 [
-    ..actOneRelicResults,
-    Transition(PhilosophersGazePage.KongziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.MoziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.LaoziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.ActOneDeclineConfirm, PhilosophersGazeOption.Confirm),
-    Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.XiongZhang),
-    Transition(PhilosophersGazePage.MengziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.ShengMo),
-    Transition(PhilosophersGazePage.XunziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.ShouChengXie),
-    Transition(PhilosophersGazePage.QinGuliViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.LiWuChou),
-    Transition(PhilosophersGazePage.HuishiViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.DaHu),
-    Transition(PhilosophersGazePage.ZhuangziViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.YangzhuViewpoints, PhilosophersGazeOption.QuanShengBi),
-    Transition(PhilosophersGazePage.YangzhuViewpoints, PhilosophersGazeOption.Decline),
-    Transition(PhilosophersGazePage.ActTwoDeclineConfirm, PhilosophersGazeOption.Confirm),
+    Transition(PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziLi),
+    Transition(PhilosophersGazePage.KONGZI, PhilosophersGazeOption.KongziRen),
+    Transition(PhilosophersGazePage.MOZI_JIANAI, PhilosophersGazeOption.MoziJianAi),
+    Transition(PhilosophersGazePage.MOZI_FEIGONG, PhilosophersGazeOption.MoziFeiGong),
+    Transition(PhilosophersGazePage.LAOZI_STILL, PhilosophersGazeOption.LaoziWuWei),
+    Transition(PhilosophersGazePage.LAOZI_LOW, PhilosophersGazeOption.LaoziRuoShui),
 ];
-Check(allResultTransitions.All(transition =>
-        transition.FinishesEvent && transition.UsesNativeProceed),
-    "Every accept and refusal path must finish on an independent result page that relies on native Proceed.");
+Check(rootRelicTransitions.Select(transition => transition.Effect).Distinct().Count() == 6,
+    "Kongzi, Mozi, and Laozi must expose six distinct mutually exclusive root relic effects.");
+Check(rootRelicTransitions.All(transition =>
+        transition.UsesNativeProceed
+        && !transition.IsNavigation
+        && transition.Effect != PhilosophersGazeEffect.None),
+    "Root relic choices must grant the relic and finish the first-act encounter instead of opening a successor page.");
+Check(rootRelicTransitions[0].Destination == PhilosophersGazePage.KongziMuduo
+      && rootRelicTransitions[1].Destination == PhilosophersGazePage.KongziQingYuPei
+      && rootRelicTransitions[2].Destination == PhilosophersGazePage.MoziMoSeZhuJian
+      && rootRelicTransitions[3].Destination == PhilosophersGazePage.MoziShouChengTu
+      && rootRelicTransitions[4].Destination == PhilosophersGazePage.LaoziWuWeiShuJian
+      && rootRelicTransitions[5].Destination == PhilosophersGazePage.LaoziShuiYu,
+    "Each root relic choice must end on its own first-act grant page.");
+
+Check(Transition(PhilosophersGazePage.XUNZI_INTRO, PhilosophersGazeOption.XunziEdge).Destination
+          == PhilosophersGazePage.XUNZI_RESULT_EDGE
+      && Transition(PhilosophersGazePage.XUNZI_INTRO, PhilosophersGazeOption.XunziLine).Destination
+          == PhilosophersGazePage.XUNZI_RESULT_LINE
+      && Transition(PhilosophersGazePage.MENGZI_INTRO, PhilosophersGazeOption.MengziWho).Destination
+          == PhilosophersGazePage.MENGZI_RESULT_WHO
+      && Transition(PhilosophersGazePage.MENGZI_INTRO, PhilosophersGazeOption.MengziFish).Destination
+          == PhilosophersGazePage.MENGZI_RESULT_FISH,
+    "Xunzi and Mengzi introductions must lead to their two result pages.");
+
+Check(Transition(PhilosophersGazePage.XUNZI_RESULT_EDGE, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithXunziShengMo
+      && Transition(PhilosophersGazePage.MENGZI_RESULT_FISH, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithMengziXiongZhang
+      && Transition(PhilosophersGazePage.QIN_RESULT_MAP, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithQinGuliShouChengXie
+      && Transition(PhilosophersGazePage.HUISHI_RESULT_FIST, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithHuishiLiWuChou
+      && Transition(PhilosophersGazePage.ZHUANGZI_RESULT_BORROW, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithZhuangziDaHu
+      && Transition(PhilosophersGazePage.YANGZHU_RESULT_TAKE, PhilosophersGazeOption.Accept).Effect
+          == PhilosophersGazeEffect.ReplaceWithYangzhuQuanShengBi,
+    "Every successor accept path must use its own replacement effect.");
+
+Check(Transition(PhilosophersGazePage.HUISHI_RESULT_BAMBOO, PhilosophersGazeOption.Again).Destination
+          == PhilosophersGazePage.HUISHI_RESULT_FIST
+      && Transition(PhilosophersGazePage.HUISHI_RESULT_BAMBOO, PhilosophersGazeOption.Stop).Destination
+          == PhilosophersGazePage.HUISHI_RESULT_HAND
+      && Transition(PhilosophersGazePage.ZHUANGZI_RESULT_LIFT, PhilosophersGazeOption.ZhuangziBorrow).Destination
+          == PhilosophersGazePage.ZHUANGZI_RESULT_BORROW
+      && Transition(PhilosophersGazePage.ZHUANGZI_RESULT_LIFT, PhilosophersGazeOption.ZhuangziWalk).Destination
+          == PhilosophersGazePage.ZHUANGZI_RESULT_WALK
+      && Transition(PhilosophersGazePage.YANGZHU_RESULT_OUTSIDE, PhilosophersGazeOption.YangzhuTake).Destination
+          == PhilosophersGazePage.YANGZHU_RESULT_TAKE
+      && Transition(PhilosophersGazePage.YANGZHU_RESULT_OUTSIDE, PhilosophersGazeOption.YangzhuCoil).Destination
+          == PhilosophersGazePage.YANGZHU_RESULT_COIL,
+    "The second-step Huishi, Zhuangzi, and Yangzhu pages must preserve their final accept/decline split.");
+
+Check(Transition(PhilosophersGazePage.XUNZI_RESULT_EDGE, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline
+      && Transition(PhilosophersGazePage.MENGZI_RESULT_WHO, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline
+      && Transition(PhilosophersGazePage.QIN_RESULT_PUSH, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline
+      && Transition(PhilosophersGazePage.HUISHI_RESULT_HAND, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline
+      && Transition(PhilosophersGazePage.ZHUANGZI_RESULT_WALK, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline
+      && Transition(PhilosophersGazePage.YANGZHU_RESULT_COIL, PhilosophersGazeOption.Decline).Effect
+          == PhilosophersGazeEffect.RecordContinuationDecline,
+    "Every successor decline path must record the continuation before finishing.");
+
 Check(!PhilosophersGazeFlowPolicy.TryGetTransition(
         PhilosophersGazePage.Initial,
-        PhilosophersGazeOption.Muduo,
+        PhilosophersGazeOption.KongziLi,
         out _)
       && !PhilosophersGazeFlowPolicy.TryGetTransition(
           PhilosophersGazePage.MengziXiongZhang,
-          PhilosophersGazeOption.XiongZhang,
+          PhilosophersGazeOption.Accept,
           out _),
     "Illegal callbacks and callbacks from a result page must not form valid transitions.");
 

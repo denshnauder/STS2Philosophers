@@ -57,7 +57,7 @@ internal record struct QinGuliShouChengXieState
         return true;
     }
 
-    public bool RecordEnemyHpLoss(int unblockedDamage)
+    public bool RecordOwnerHpLoss(int unblockedDamage)
     {
         if (!HasActiveDefenseWindow
             || EnemyDamageTaken
