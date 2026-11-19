@@ -247,10 +247,10 @@ internal static class ZenoCivicSealUpgradeNativeChecks
         Check(seal.ZenoCivicUpgradePayload == beforeAuto, "Repeating the lawmaker callback after base payload restore cannot turn it into a reward.");
         bool rewardAttack = conditional ? !attackLaw : attackLaw;
         CardPlay rewarded = await fixture.PayAndComplete(Card(fixture, rewardAttack), rewardAttack ? fixture.Enemy : null);
-        Check(rewarded.Resources.EnergySpent == (conditional ? 3 : 1)
+        Check(rewarded.Resources.EnergySpent == 2
             && fixture.Player.Creature.Block == startBlock + (conditional ? 0 : 3)
             && fixture.PlayerState.DrawPile.Cards.Count == drawCount - (conditional ? 1 : 0),
-            "The true second manual card keeps old native discount/surcharge and grants exactly the chosen 3 Block/1 draw.");
+            "The true second manual card pays its base price and grants exactly the chosen 3 Block/1 draw.");
         string claimed = seal.ZenoCivicUpgradePayload;
         typeof(PlatoCivicSeal).GetProperty(nameof(PlatoCivicSeal.ZenoCivicUpgradePayload))!.SetValue(seal, claimed);
         fixture.ReloadRelicPayload();

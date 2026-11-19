@@ -59,6 +59,9 @@ internal static class PhilosophersGazeSaveRecovery
                 or "PHILOSOPHERS_GAZE.pages.MOZI_FEIGONG.options.LEAVE.title"
                 or "PHILOSOPHERS_GAZE.pages.LAOZI_STILL.options.LEAVE.title"
                 or "PHILOSOPHERS_GAZE.pages.LAOZI_LOW.options.LEAVE.title"
+                or "PHILOSOPHERS_GAZE.pages.PLATO_B.options.PLATO_DECLINE.title"
+                or "PHILOSOPHERS_GAZE.pages.PLATO_C.options.PLATO_DECLINE.title"
+                or "PHILOSOPHERS_GAZE.pages.PLATO_D.options.PLATO_LEAVE.title"
                 or "PHILOSOPHERS_GAZE.pages.WESTERN.options.DECLINE.title");
     }
 
@@ -75,6 +78,8 @@ internal static class PhilosophersGazeSaveRecovery
         or "PHILOSOPHERS_GAZE.pages.MOZI_VIEWPOINTS.options.SHOU_CHENG_TU.title"
         or "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.WU_WEI_SHU_JIAN.title"
         or "PHILOSOPHERS_GAZE.pages.LAOZI_VIEWPOINTS.options.SHUI_YU.title"
+        or "PHILOSOPHERS_GAZE.pages.PLATO_B.options.PLATO_SEAL_B.title"
+        or "PHILOSOPHERS_GAZE.pages.PLATO_C.options.PLATO_SEAL_C.title"
         || WesternRouteCatalog.Problems.Any(problem =>
             key == $"PHILOSOPHERS_GAZE.pages.WESTERN.options.{problem.ProblemId}.title"));
 

@@ -236,15 +236,6 @@ internal sealed class WesternEntryPracticeState
             && PracticeWaits > 0 && costBeforeThisRelic > 0m)
             return new(-Math.Min(costBeforeThisRelic, PracticeWaits), WesternEntryCostEffect.PracticeDiscount);
 
-        if (ProblemId == FreedomAndInstitutions && LawKind is WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill)
-        {
-            if (kind == LawKind && !LawDiscountUsed && costBeforeThisRelic > 0m)
-                return new(-1m, WesternEntryCostEffect.LawDiscount);
-            if (kind is WesternPracticeCardKind.Attack or WesternPracticeCardKind.Skill
-                && kind != LawKind && !LawSurchargeUsed)
-                return new(1m, WesternEntryCostEffect.LawSurcharge);
-        }
-
         if (ProblemId == SelfAndOther && !OtherResponseUsed && OtherIntentTurn == Turn
             && OtherIntendsAttack is bool intendsAttack && costBeforeThisRelic > 0m)
         {

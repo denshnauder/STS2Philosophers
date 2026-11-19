@@ -28,6 +28,7 @@ try { WesternRouteTableChecks.Run(); } catch (Exception e) { failures.Add("Weste
 try { ActPlacementSaveChecks.Run(); } catch (Exception e) { failures.Add("ActPlacementSaveChecks: " + e.Message); }
 try { WesternGraphRevisionChecks.Run(); } catch (Exception e) { failures.Add("WesternGraphRevisionChecks: " + e.Message); }
 try { WesternPracticeChecks.Run(); } catch (Exception e) { failures.Add("WesternPracticeChecks: " + e.Message); }
+try { PlatoCivicSealChecks.Run(); } catch (Exception e) { failures.Add("PlatoCivicSealChecks: " + e.Message); }
 try { HeraclitusLyreChecks.Run(); } catch (Exception e) { failures.Add("HeraclitusLyreChecks: " + e.Message); }
 try { SocratesBoundedCommitmentChecks.Run(); } catch (Exception e) { failures.Add("SocratesBoundedCommitmentChecks: " + e.Message); }
 try { SocratesBoundedCommitmentSaveChecks.Run(); } catch (Exception e) { failures.Add("SocratesBoundedCommitmentSaveChecks: " + e.Message); }

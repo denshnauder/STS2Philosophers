@@ -258,6 +258,14 @@ public sealed partial class PhilosophersGaze : EventModel
             case PhilosophersGazeEffect.ObtainLaoziShuiYu:
                 await ObtainActOneRelic<LaoziShuiYu>(transition.Destination, ThinkerProposalCatalog.LaoziRuoShui);
                 break;
+            case PhilosophersGazeEffect.ObtainPlatoCivicSealB:
+                await ObtainWesternEntry("PLATO", "FREEDOM_AND_INSTITUTIONS",
+                    "CHECKS_AND_JUSTICE", PhilosophersGazePage.PLATO_B);
+                break;
+            case PhilosophersGazeEffect.ObtainPlatoCivicSealC:
+                await ObtainWesternEntry("PLATO", "FREEDOM_AND_INSTITUTIONS",
+                    "SYMPATHY_AND_PUBLIC_ACTION", PhilosophersGazePage.PLATO_C);
+                break;
             case PhilosophersGazeEffect.ReplaceWithMengziXiongZhang:
                 await AcceptMengziXiongZhang();
                 break;
@@ -300,6 +308,7 @@ public sealed partial class PhilosophersGaze : EventModel
     private bool CanShowEastPage(PhilosophersGazePage page) => page switch
     {
         PhilosophersGazePage.KONGZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Kongzi),
+        PhilosophersGazePage.PLATO_A => IsActOneCandidate("PLATO"),
         PhilosophersGazePage.MOZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Mozi),
         PhilosophersGazePage.LAOZI => IsActOneCandidate(PhilosophersGazeActOneCandidatePolicy.Laozi),
         PhilosophersGazePage.MENGZI_INTRO => CanChooseContinuation(
@@ -818,6 +827,10 @@ public sealed partial class PhilosophersGaze : EventModel
             0 => page is PhilosophersGazePage.KONGZI
                 or PhilosophersGazePage.MOZI
                 or PhilosophersGazePage.LAOZI
+                or PhilosophersGazePage.PLATO_A
+                or PhilosophersGazePage.PLATO_B
+                or PhilosophersGazePage.PLATO_C
+                or PhilosophersGazePage.PLATO_D
                 or PhilosophersGazePage.MOZI_JIANAI
                 or PhilosophersGazePage.MOZI_FEIGONG
                 or PhilosophersGazePage.LAOZI_STILL

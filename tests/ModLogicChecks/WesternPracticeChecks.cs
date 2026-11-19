@@ -122,18 +122,14 @@ internal static class WesternPracticeChecks
         Play(law, "L2", "STRIKE", WesternPracticeCardKind.Attack);
         Check(law.LawKind == WesternPracticeCardKind.Attack,
             "The first manual Attack or Skill must establish the law without retroactive benefit.");
-        WesternEntryCostChange lawDiscount = law.GetCostChange("BASH", WesternPracticeCardKind.Attack, 2m, false, false);
-        Check(lawDiscount.Effect == WesternEntryCostEffect.LawDiscount
-              && law.GetCostChange("DEFEND", WesternPracticeCardKind.Skill, 0m, false, false).Effect
-                  == WesternEntryCostEffect.LawSurcharge,
-            "A law must offer one positive-cost same-kind discount and one opposing-kind surcharge.");
-        Play(law, "L3", "BASH", WesternPracticeCardKind.Attack, 2m, effect: lawDiscount.Effect);
-        Check(law.GetCostChange("SECOND", WesternPracticeCardKind.Attack, 1m, false, false) == default,
-            "The same-kind benefit must be consumed at most once per turn.");
-        WesternEntryCostChange lawSurcharge = law.GetCostChange("DEFEND", WesternPracticeCardKind.Skill, 0m, false, false);
-        Play(law, "L4", "DEFEND", WesternPracticeCardKind.Skill, 0m, effect: lawSurcharge.Effect);
-        Check(law.GetCostChange("SECOND_SKILL", WesternPracticeCardKind.Skill, 1m, false, false) == default,
-            "The opposing-kind burden must be consumed at most once per turn.");
+        Check(law.GetCostChange("BASH", WesternPracticeCardKind.Attack, 2m, false, false) == default
+              && law.GetCostChange("DEFEND", WesternPracticeCardKind.Skill, 2m, false, false) == default,
+            "The old same-kind discount and opposing-kind surcharge must be gone from the civic seal.");
+        Play(law, "L3", "BASH", WesternPracticeCardKind.Attack, 2m);
+        Play(law, "L4", "DEFEND", WesternPracticeCardKind.Skill, 2m);
+        Check(law.GetCostChange("SECOND", WesternPracticeCardKind.Attack, 1m, false, false) == default
+              && law.GetCostChange("SECOND_SKILL", WesternPracticeCardKind.Skill, 1m, false, false) == default,
+            "No later card may receive a civic-seal cost change.");
 
         WesternEntryPracticeState other = Start(WesternEntryPracticeState.SelfAndOther);
         Play(other, "O1", "CLEAVE", WesternPracticeCardKind.Attack, target: null, singleTarget: false);
@@ -223,9 +219,9 @@ internal static class WesternPracticeChecks
         Play(saved, "S2", "BASH", WesternPracticeCardKind.Attack, 2m, effect: savedDiscount.Effect);
         string payload = WesternEntryPracticeStateCodec.Encode(saved);
         WesternEntryPracticeState restored = WesternEntryPracticeStateCodec.Restore(payload, saved.ProblemId);
-        Check(restored.LawKind == WesternPracticeCardKind.Attack && restored.LawDiscountUsed
+        Check(restored.LawKind == WesternPracticeCardKind.Attack
               && !Play(restored, "S2", "BASH", WesternPracticeCardKind.Attack).Counted,
-            "Save/load must preserve rule state and callback idempotency.");
+            "Save/load must preserve the Zeno-facing first-card type and callback idempotency.");
         Check(WesternEntryPracticeStateCodec.Restore(payload, WesternEntryPracticeState.SelfAndOther).Turn == 0,
             "A payload from another entry must not migrate combat benefits.");
         foreach (string invalid in new[]

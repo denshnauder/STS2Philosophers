@@ -39,7 +39,7 @@ if (args.Contains("--enc197-only"))
 }
 if (args.Contains("--enc198-only"))
 {
-    await SlyCostReceiptNativeChecks.Run();
+    await PlatoCivicSealNativeChecks.Run();
     return;
 }
 if (args.Contains("--enc199-special-only"))
@@ -111,7 +111,7 @@ await WesternNodePracticeNativeChecks.Run();
 await HeraclitusSpinozaNativeChecks.Run();
 await ZenoCivicSealUpgradeNativeChecks.Run();
 await PhilosophersGazeSaveRecoveryNativeChecks.Run();
-await SlyCostReceiptNativeChecks.Run();
+await PlatoCivicSealNativeChecks.Run();
 await AllRouteQuestionNodeChecks.Run();
 await ActBoundaryFixedEntryNativeChecks.Run();
 await RouteFixedRoomNativeChecks.Run();

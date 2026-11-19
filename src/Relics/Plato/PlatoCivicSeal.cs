@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
@@ -28,6 +29,9 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     private ZenoCivicSealUpgradeState? _zenoUpgrade;
     private string? _invalidZenoPayload;
     private HashSet<CardPlay>? _zenoCallbacks;
+    private PlatoCivicSealTurnState? _platoTurn;
+    private string? _invalidPlatoTurnPayload;
+    private HashSet<CardPlay>? _platoCallbacks;
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string ZenoCivicUpgradePayload
@@ -61,6 +65,23 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
         InvokeDisplayAmountChanged();
         return true;
     }
+
+    [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+    public string PlatoCivicTurnPayload
+    {
+        get => _invalidPlatoTurnPayload ?? _platoTurn?.Encode() ?? string.Empty;
+        private set
+        {
+            AssertMutable();
+            if (_invalidPlatoTurnPayload is not null) return;
+            if (PlatoCivicSealTurnState.TryRestore(value, out PlatoCivicSealTurnState restored))
+                _platoTurn = restored;
+            else _invalidPlatoTurnPayload = value;
+        }
+    }
+
+    public override int DisplayAmount =>
+        _invalidPlatoTurnPayload is null ? _platoTurn?.RecordedCount ?? 0 : 0;
 
     [SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
     public string AugustinePracticePayload
@@ -129,6 +150,8 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
     public override Task BeforeCombatStart()
     {
         _zenoCallbacks = null;
+        _platoTurn = null;
+        _platoCallbacks = null;
         return base.BeforeCombatStart();
     }
 
@@ -142,6 +165,7 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
             && (_zenoCallbacks ??= new(ReferenceEqualityComparer.Instance)).Add(cardPlay);
         await base.AfterCardPlayed(choiceContext, cardPlay);
         if (freshZenoCallback) await ResolveZenoUpgrade(choiceContext, cardPlay, lawBefore);
+        await ResolvePlatoCivicReturn(cardPlay);
         if (cardPlay.Player != Owner || cardPlay.IsAutoPlay || _invalidAquinasPayload is not null
             || !TryGetAquinasRule(out AquinasRule rule)) return;
         RunManager manager = RunManager.Instance;
@@ -157,6 +181,26 @@ public sealed class PlatoCivicSeal : WesternPracticeRelic
                 cardPlay: null, fast: true);
         else
             await PlayerCmd.GainEnergy(1m, Owner);
+    }
+
+    private async Task ResolvePlatoCivicReturn(CardPlay play)
+    {
+        if (play.Player != Owner || play.IsAutoPlay || _invalidPlatoTurnPayload is not null
+            || Owner.PlayerCombatState is not { } combat
+            || play.Card.Type is not (CardType.Attack or CardType.Skill)) return;
+        _platoCallbacks ??= new(ReferenceEqualityComparer.Instance);
+        if (!_platoCallbacks.Add(play)) return;
+        _platoTurn ??= new();
+        bool pairReady = _platoTurn.Observe(combat.TurnNumber, play.Card, out string returnCardId);
+        InvokeDisplayAmountChanged();
+        if (!pairReady) return;
+        CardModel? target = _platoTurn.FirstCard;
+        if (target is null)
+            target = combat.DiscardPile.Cards.FirstOrDefault(card => card.Id.ToString() == returnCardId);
+        if (target?.Pile?.Type != PileType.Discard) return;
+        await CardPileCmd.Add(target, PileType.Hand, CardPilePosition.Bottom, this);
+        _platoTurn.MarkReturned();
+        InvokeDisplayAmountChanged();
     }
 
     private async Task ResolveZenoUpgrade(PlayerChoiceContext context, CardPlay play,

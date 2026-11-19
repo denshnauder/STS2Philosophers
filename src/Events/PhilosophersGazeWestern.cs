@@ -47,6 +47,11 @@ public sealed partial class PhilosophersGaze
             return Task.CompletedTask;
         }
 
+        if (thinkerId == "PLATO")
+        {
+            return ShowEastPage(PhilosophersGazePage.PLATO_A);
+        }
+
         List<EventOption> options = [];
         foreach (WesternProblem problem in WesternRouteCatalog.Problems.Where(p => p.EntryThinkerId == thinkerId))
         {
@@ -77,9 +82,10 @@ public sealed partial class PhilosophersGaze
         return Task.CompletedTask;
     }
 
-    private async Task ObtainWesternEntry(string thinkerId, string problemId, string? routeId = null)
+    private async Task ObtainWesternEntry(string thinkerId, string problemId, string? routeId = null,
+        PhilosophersGazePage? resultPage = null)
     {
-        if (!TryBeginResolution()) return;
+        if (!IsActiveEventRoom() || !TryBeginResolution()) return;
         try
         {
             if (Owner is not { } owner || owner.RunState is not RunState run) return;
@@ -92,7 +98,9 @@ public sealed partial class PhilosophersGaze
             RelicModel relic = WesternEntryRelic(problemId);
             if (owner.GetRelicById(relic.Id) is null) return;
             if (!WesternEntryPolicy.RecordObtained(state, candidates, thinkerId, problemId, relic.Id.Entry, routeId)) return;
-            SetEventFinished(L10NLookup($"{LocalizationPrefix}.WESTERN_{problemId}.result"));
+            SetEventFinished(resultPage is { } page
+                ? PageDescription(page)
+                : L10NLookup($"{LocalizationPrefix}.WESTERN_{problemId}.result"));
             await SaveRunAfterResolution();
         }
         finally { EndResolution(); }
